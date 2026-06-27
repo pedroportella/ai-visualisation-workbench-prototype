@@ -19,7 +19,8 @@ prototype.
 
 Readiness is limited to the implemented local API health and metadata surface.
 Schemas, Docker files and deployment scripts are not implemented in this
-backend slice.
+backend slice. A container-compatible backend start command is available for
+future local container runtime work.
 
 The Evidence Workbench fixture endpoints return deterministic synthetic
 fixture payloads:
@@ -167,3 +168,38 @@ The smoke command checks only:
 It verifies the local fixture runtime label, synthetic contract mode, contract
 version, source-set version and public-context-set version. It does not require
 the frontend, Docker, AWS credentials or cloud resources.
+
+## Backend Container Readiness
+
+The backend has a server-side runtime entrypoint for container-compatible
+process startup:
+
+```text
+python -m aivis_api.server
+```
+
+By default this runs the existing app target on a container-compatible host and
+port:
+
+```text
+appTarget: aivis_api.main:app
+AIVIS_BACKEND_HOST: 0.0.0.0
+AIVIS_BACKEND_PORT: 8000
+```
+
+The host and port can be overridden by server process environment variables:
+
+```text
+AIVIS_BACKEND_HOST=0.0.0.0 AIVIS_BACKEND_PORT=8000 python -m aivis_api.server
+```
+
+For local-only development, keep using the loopback Uvicorn command above. For
+container smoke checks, publish the backend port and run the existing smoke
+script against the host-visible base URL:
+
+```text
+backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.0.1:8000
+```
+
+These settings are backend process settings only. They do not add browser
+secrets, a Dockerfile, a compose file, cloud resources or deployment scripts.

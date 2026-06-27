@@ -21,6 +21,14 @@ from aivis_api.review_state import (
     ReviewActionRequest,
     reset_review_action_state,
 )
+from aivis_api.server import (
+    APP_TARGET,
+    DEFAULT_HOST,
+    DEFAULT_PORT,
+    HOST_ENV_VAR,
+    PORT_ENV_VAR,
+    get_backend_server_settings,
+)
 
 
 def get_route(path: str) -> APIRoute:
@@ -133,6 +141,38 @@ def test_app_imports_as_fastapi_instance() -> None:
     assert isinstance(app, FastAPI)
     assert app.title == "AI Visualisation Workbench API"
     assert app.version == "0.1.0"
+
+
+def test_backend_server_settings_default_to_container_ready_runtime() -> None:
+    settings = get_backend_server_settings({})
+
+    assert settings.app_target == "aivis_api.main:app"
+    assert settings.host == "0.0.0.0"
+    assert settings.port == 8000
+    assert settings.as_uvicorn_kwargs() == {
+        "app": APP_TARGET,
+        "host": DEFAULT_HOST,
+        "port": DEFAULT_PORT,
+    }
+
+
+def test_backend_server_settings_allow_server_side_host_and_port_override() -> None:
+    settings = get_backend_server_settings(
+        {
+            HOST_ENV_VAR: " 127.0.0.1 ",
+            PORT_ENV_VAR: " 8077 ",
+        }
+    )
+
+    assert settings.app_target == APP_TARGET
+    assert settings.host == "127.0.0.1"
+    assert settings.port == 8077
+
+
+@pytest.mark.parametrize("port_value", ["not-a-port", "0", "65536", "-1"])
+def test_backend_server_settings_reject_invalid_ports(port_value: str) -> None:
+    with pytest.raises(ValueError, match=PORT_ENV_VAR):
+        get_backend_server_settings({PORT_ENV_VAR: port_value})
 
 
 def test_operational_routes_are_scaffolded() -> None:
