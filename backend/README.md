@@ -18,9 +18,8 @@ prototype.
   - `POST /evidence-workbench/review-actions`
 
 Readiness is limited to the implemented local API health and metadata surface.
-Schemas, Docker files and deployment scripts are not implemented in this
-backend slice. A container-compatible backend start command is available for
-future local container runtime work.
+Schema files and deployment scripts are not implemented in this backend slice.
+A backend container is available for local health smoke checks.
 
 The Evidence Workbench fixture endpoints return deterministic synthetic
 fixture payloads:
@@ -169,7 +168,7 @@ It verifies the local fixture runtime label, synthetic contract mode, contract
 version, source-set version and public-context-set version. It does not require
 the frontend, Docker, AWS credentials or cloud resources.
 
-## Backend Container Readiness
+## Backend Container Runtime
 
 The backend has a server-side runtime entrypoint for container-compatible
 process startup:
@@ -194,12 +193,26 @@ AIVIS_BACKEND_HOST=0.0.0.0 AIVIS_BACKEND_PORT=8000 python -m aivis_api.server
 ```
 
 For local-only development, keep using the loopback Uvicorn command above. For
-container smoke checks, publish the backend port and run the existing smoke
-script against the host-visible base URL:
+container smoke checks, build the backend image from the repo root:
 
 ```text
-backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.0.1:8000
+docker build -f backend/Dockerfile -t aivis-backend:local backend
+```
+
+Then run the container with a host-visible port:
+
+```text
+docker run --rm --name aivis-backend-smoke -p 8080:8000 aivis-backend:local
+```
+
+In another terminal, from the repo root, run the existing smoke script against
+the host-visible base URL:
+
+```text
+backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.0.1:8080
 ```
 
 These settings are backend process settings only. They do not add browser
-secrets, a Dockerfile, a compose file, cloud resources or deployment scripts.
+secrets, a compose file, cloud resources or deployment scripts. The image
+copies the backend package metadata and source only; local virtual environments,
+test caches and `.env` files are excluded from the build context.
