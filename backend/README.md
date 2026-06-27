@@ -43,3 +43,27 @@ From this `backend/` directory:
 python -m uvicorn aivis_api.main:app --reload --host 127.0.0.1 --port 8000
 python -m pytest
 ```
+
+## Local Runtime Smoke
+
+Terminal A, from this `backend/` directory:
+
+```text
+python -m uvicorn aivis_api.main:app --host 127.0.0.1 --port 8000
+```
+
+Terminal B, from the repo root:
+
+```text
+backend/.venv/bin/python scripts/local-backend-smoke.py
+```
+
+The smoke command checks only:
+
+- `GET /health/live`
+- `GET /health/ready`
+- `GET /meta`
+
+It verifies the local fixture runtime label, synthetic contract mode, contract
+version, source-set version and public-context-set version. It does not require
+the frontend, Docker, AWS credentials or cloud resources.
