@@ -8,11 +8,24 @@ prototype.
 - Package: `aivis_api`.
 - App target: `aivis_api.main:app`.
 - Runtime dependencies: managed through `pyproject.toml`.
-- Implemented routes: none beyond FastAPI's generated documentation routes.
+- Implemented routes:
+  - `GET /health/live`
+  - `GET /health/ready`
+  - `GET /meta`
 
-Health, readiness and mode/version metadata endpoints are planned for B02.
+Readiness is limited to the implemented local API health and metadata surface.
 Fixture endpoints, review actions, schemas, Docker files and deployment
-scripts are future packets.
+scripts are not implemented in this backend slice.
+
+`/meta` reports the local synthetic fixture posture:
+
+```text
+runtimeModeLabel: local_fixture
+contractMode: synthetic_fixture
+contractVersion: aivis-evidence-workbench-contract@0.1.0
+sourceSetVersion: synthetic-source-set-v1
+publicContextSetVersion: public-context-anchor-set-v1
+```
 
 ## Local Setup
 
@@ -30,6 +43,3 @@ From this `backend/` directory:
 python -m uvicorn aivis_api.main:app --reload --host 127.0.0.1 --port 8000
 python -m pytest
 ```
-
-The Uvicorn command starts the importable scaffold only. It does not imply that
-B02 health, readiness or metadata endpoints exist yet.
