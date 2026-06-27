@@ -4,7 +4,7 @@ from copy import deepcopy
 from threading import Lock
 from typing import Final
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from aivis_api.fixture_data import (
     AUDIT_METADATA,
@@ -25,13 +25,26 @@ PRIMARY_REVIEWER_NOTE: Final = (
     "advise the customer."
 )
 BLOCKER_WARNING_IDS: Final = ["WARN-001", "WARN-002", "WARN-003"]
+ID_PATTERN: Final = r"^[A-Z0-9-]+$"
 
 
 class ReviewActionRequest(BaseModel):
-    reviewActionId: str
-    reviewerNote: str
-    reviewStateId: str = "REV-001"
-    answerId: str = "ANS-001"
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    reviewActionId: str = Field(min_length=1, max_length=80, pattern=ID_PATTERN)
+    reviewerNote: str = Field(min_length=1, max_length=600)
+    reviewStateId: str = Field(
+        default="REV-001",
+        min_length=1,
+        max_length=40,
+        pattern=ID_PATTERN,
+    )
+    answerId: str = Field(
+        default="ANS-001",
+        min_length=1,
+        max_length=40,
+        pattern=ID_PATTERN,
+    )
 
 
 class ReviewActionError(RuntimeError):

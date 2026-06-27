@@ -90,6 +90,43 @@ synthetic fixture records, and review actions update local process state only.
 The docs do not claim live retrieval, source-system writeback, production audit
 logging, QChat integration or official Queensland Government service status.
 
+## Validation, Errors And Local CORS
+
+The review action endpoint validates its request body before applying local
+state. The body rejects unknown fields, blank ids and oversized reviewer notes.
+
+Error responses use a stable JSON envelope so frontend adapters can handle
+validation, missing fixture objects and review-action conflicts consistently:
+
+```json
+{
+  "error": {
+    "code": "review_action_conflict",
+    "message": "ACT-MARK-REVIEWED is unavailable while WARN-001, WARN-002 or WARN-003 are active.",
+    "statusCode": 409,
+    "runtimeModeLabel": "local_fixture",
+    "contractMode": "synthetic_fixture",
+    "contractVersion": "aivis-evidence-workbench-contract@0.1.0",
+    "sourceSetVersion": "synthetic-source-set-v1",
+    "publicContextSetVersion": "public-context-anchor-set-v1"
+  }
+}
+```
+
+Validation errors include only field names and issue codes. They do not echo
+request values, fixture links, secrets or external URLs.
+
+The backend enables CORS only for local frontend development origins:
+
+```text
+http://localhost:3000
+http://127.0.0.1:3000
+http://localhost:5173
+http://127.0.0.1:5173
+```
+
+Wildcard origins and credentialed browser requests are not enabled.
+
 ## Local Setup
 
 ```text

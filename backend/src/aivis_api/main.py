@@ -1,8 +1,16 @@
 from typing import Annotated
 
 from fastapi import Body, FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.middleware.cors import CORSMiddleware
 
 from aivis_api import __version__
+from aivis_api.errors import (
+    build_error_payload,
+    http_exception_handler,
+    request_validation_exception_handler,
+)
 from aivis_api.fixture_data import (
     CONTRACT_MODE,
     CONTRACT_VERSION,
@@ -63,6 +71,12 @@ OPENAPI_TAGS = [
             "writeback or production audit logging."
         ),
     },
+]
+LOCAL_CORS_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
 LIVE_RESPONSE: dict[str, object] = {
@@ -259,10 +273,41 @@ REVIEW_ACTION_OPENAPI_EXAMPLE: dict[str, object] = {
 }
 
 REVIEW_ACTION_CONFLICT_EXAMPLE: dict[str, object] = {
-    "detail": (
-        "ACT-MARK-REVIEWED is unavailable while WARN-001, WARN-002 or "
-        "WARN-003 are active."
+    **build_error_payload(
+        status_code=409,
+        code="review_action_conflict",
+        message=(
+            "ACT-MARK-REVIEWED is unavailable while WARN-001, WARN-002 or "
+            "WARN-003 are active."
+        ),
     )
+}
+REVIEW_ACTION_INVALID_EXAMPLE: dict[str, object] = {
+    **build_error_payload(
+        status_code=400,
+        code="invalid_review_action_request",
+        message="ACT-REQUEST-SOURCE-UPDATE requires the deterministic reviewer note.",
+    )
+}
+REVIEW_ACTION_NOT_FOUND_EXAMPLE: dict[str, object] = {
+    **build_error_payload(
+        status_code=404,
+        code="fixture_object_not_found",
+        message="Unknown review state: REV-404",
+    )
+}
+VALIDATION_ERROR_EXAMPLE: dict[str, object] = {
+    **build_error_payload(
+        status_code=422,
+        code="request_validation_failed",
+        message="Request body did not match the local API contract.",
+        invalid_fields=[{"field": "reviewerNote", "issue": "missing"}],
+    )
+}
+REVIEW_ACTION_ERROR_CODE_BY_STATUS = {
+    400: "invalid_review_action_request",
+    404: "fixture_object_not_found",
+    409: "review_action_conflict",
 }
 
 
@@ -274,6 +319,19 @@ def create_app() -> FastAPI:
         description=APP_DESCRIPTION,
         version=__version__,
         openapi_tags=OPENAPI_TAGS,
+    )
+    api.add_middleware(
+        CORSMiddleware,
+        allow_origins=LOCAL_CORS_ORIGINS,
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["content-type"],
+        max_age=600,
+    )
+    api.add_exception_handler(StarletteHTTPException, http_exception_handler)
+    api.add_exception_handler(
+        RequestValidationError,
+        request_validation_exception_handler,
     )
 
     @api.get(
@@ -418,11 +476,25 @@ def create_app() -> FastAPI:
                 "description": "Local review-action transition result.",
                 "content": {"application/json": {"example": REVIEW_ACTION_OPENAPI_EXAMPLE}},
             },
-            400: {"description": "The deterministic reviewer note is missing or changed."},
-            404: {"description": "The requested review action, review state or answer is unknown."},
+            400: {
+                "description": "The deterministic reviewer note is missing or changed.",
+                "content": {
+                    "application/json": {"example": REVIEW_ACTION_INVALID_EXAMPLE}
+                },
+            },
+            404: {
+                "description": "The requested review action, review state or answer is unknown.",
+                "content": {
+                    "application/json": {"example": REVIEW_ACTION_NOT_FOUND_EXAMPLE}
+                },
+            },
             409: {
                 "description": "The requested review action is unavailable in the current local state.",
                 "content": {"application/json": {"example": REVIEW_ACTION_CONFLICT_EXAMPLE}},
+            },
+            422: {
+                "description": "The request body failed local contract validation.",
+                "content": {"application/json": {"example": VALIDATION_ERROR_EXAMPLE}},
             },
         },
     )
@@ -435,7 +507,13 @@ def create_app() -> FastAPI:
         try:
             return apply_review_action(request)
         except ReviewActionError as error:
-            raise HTTPException(status_code=error.status_code, detail=error.detail) from error
+            raise HTTPException(
+                status_code=error.status_code,
+                detail={
+                    "code": REVIEW_ACTION_ERROR_CODE_BY_STATUS[error.status_code],
+                    "message": error.detail,
+                },
+            ) from error
 
     return api
 

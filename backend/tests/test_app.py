@@ -1,6 +1,20 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.routing import APIRoute
+import asyncio
+import json
 
+import pytest
+from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
+from fastapi.routing import APIRoute
+from pydantic import ValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.middleware.cors import CORSMiddleware
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+
+from aivis_api.errors import (
+    http_exception_handler,
+    request_validation_exception_handler,
+)
 from aivis_api.main import app
 from aivis_api.review_state import (
     PRIMARY_REVIEWER_NOTE,
@@ -53,6 +67,31 @@ def call_review_action_error(body: dict[str, object]) -> HTTPException:
     raise AssertionError("Expected review action endpoint to raise HTTPException.")
 
 
+def make_request(path: str = "/evidence-workbench/review-actions") -> Request:
+    return Request({"type": "http", "method": "POST", "path": path, "headers": []})
+
+
+def decode_json_response(response: JSONResponse) -> dict[str, object]:
+    payload = json.loads(response.body)
+
+    assert isinstance(payload, dict)
+    return payload
+
+
+def handle_http_error(exception: StarletteHTTPException) -> dict[str, object]:
+    response = asyncio.run(http_exception_handler(make_request(), exception))
+
+    assert response.status_code == exception.status_code
+    return decode_json_response(response)
+
+
+def handle_validation_error(exception: RequestValidationError) -> dict[str, object]:
+    response = asyncio.run(request_validation_exception_handler(make_request(), exception))
+
+    assert response.status_code == 422
+    return decode_json_response(response)
+
+
 def require_mapping(payload: dict[str, object], key: str) -> dict[str, object]:
     value = payload[key]
     assert isinstance(value, dict)
@@ -68,6 +107,26 @@ def require_object_list(payload: dict[str, object], key: str) -> list[dict[str, 
 
 def by_id(items: list[dict[str, object]]) -> dict[str, dict[str, object]]:
     return {str(item["id"]): item for item in items}
+
+
+def assert_error_payload(
+    payload: dict[str, object],
+    *,
+    status_code: int,
+    code: str,
+    message: str,
+) -> dict[str, object]:
+    error = require_mapping(payload, "error")
+
+    assert error["statusCode"] == status_code
+    assert error["code"] == code
+    assert error["message"] == message
+    assert error["runtimeModeLabel"] == "local_fixture"
+    assert error["contractMode"] == "synthetic_fixture"
+    assert error["contractVersion"] == "aivis-evidence-workbench-contract@0.1.0"
+    assert error["sourceSetVersion"] == "synthetic-source-set-v1"
+    assert error["publicContextSetVersion"] == "public-context-anchor-set-v1"
+    return error
 
 
 def test_app_imports_as_fastapi_instance() -> None:
@@ -91,6 +150,101 @@ def test_fixture_routes_are_scaffolded_with_review_action_endpoint() -> None:
     assert routes["/evidence-workbench/sources"].methods == {"GET"}
     assert routes["/evidence-workbench/graph"].methods == {"GET"}
     assert routes["/evidence-workbench/review-actions"].methods == {"POST"}
+
+
+def test_cors_is_limited_to_local_frontend_origins() -> None:
+    cors_middleware = [
+        middleware for middleware in app.user_middleware if middleware.cls is CORSMiddleware
+    ]
+
+    assert len(cors_middleware) == 1
+    options = cors_middleware[0].kwargs
+    assert options["allow_origins"] == [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+    assert options["allow_credentials"] is False
+    assert options["allow_methods"] == ["GET", "POST", "OPTIONS"]
+    assert options["allow_headers"] == ["content-type"]
+    assert options["max_age"] == 600
+
+
+def test_review_action_request_validation_rejects_extra_and_blank_fields() -> None:
+    with pytest.raises(ValidationError):
+        ReviewActionRequest(
+            reviewActionId="ACT-REQUEST-SOURCE-UPDATE",
+            reviewerNote=PRIMARY_REVIEWER_NOTE,
+            unexpectedField="not part of the contract",
+        )
+
+    with pytest.raises(ValidationError):
+        ReviewActionRequest(
+            reviewActionId="",
+            reviewerNote=PRIMARY_REVIEWER_NOTE,
+        )
+
+    with pytest.raises(ValidationError):
+        ReviewActionRequest(
+            reviewActionId="ACT-REQUEST-SOURCE-UPDATE",
+            reviewerNote="x" * 601,
+        )
+
+
+def test_http_error_handler_returns_stable_public_safe_payload() -> None:
+    payload = handle_http_error(
+        StarletteHTTPException(
+            status_code=404,
+            detail={
+                "code": "fixture_object_not_found",
+                "message": "Unknown answer: ANS-404",
+            },
+        )
+    )
+
+    assert_error_payload(
+        payload,
+        status_code=404,
+        code="fixture_object_not_found",
+        message="Unknown answer: ANS-404",
+    )
+    assert "http://" not in json.dumps(payload)
+
+
+def test_validation_error_handler_does_not_echo_request_values() -> None:
+    payload = handle_validation_error(
+        RequestValidationError(
+            [
+                {
+                    "loc": ("body", "reviewerNote"),
+                    "msg": "Field required",
+                    "type": "missing",
+                    "input": "private-input-value",
+                },
+                {
+                    "loc": ("body", "unexpectedField"),
+                    "msg": "Extra inputs are not permitted",
+                    "type": "extra_forbidden",
+                    "input": "also-not-echoed",
+                },
+            ]
+        )
+    )
+    error = assert_error_payload(
+        payload,
+        status_code=422,
+        code="request_validation_failed",
+        message="Request body did not match the local API contract.",
+    )
+
+    assert error["invalidFields"] == [
+        {"field": "reviewerNote", "issue": "missing"},
+        {"field": "unexpectedField", "issue": "extra_forbidden"},
+    ]
+    serialized = json.dumps(payload)
+    assert "private-input-value" not in serialized
+    assert "also-not-echoed" not in serialized
 
 
 def test_openapi_info_documents_contract_and_public_boundary() -> None:
@@ -255,6 +409,65 @@ def test_openapi_examples_document_fixture_contract_ids() -> None:
     assert local_state["sourceSystemWriteback"] == "not_performed"
 
 
+def test_openapi_documents_review_action_validation_and_error_examples() -> None:
+    openapi = app.openapi()
+    review_operation = get_openapi_operation("/evidence-workbench/review-actions", "post")
+    responses = require_mapping(review_operation, "responses")
+    request_body = require_mapping(review_operation, "requestBody")
+    request_content = require_mapping(require_mapping(request_body, "content"), "application/json")
+    request_schema = require_mapping(request_content, "schema")
+    schema_ref = str(request_schema["$ref"]).removeprefix("#/components/schemas/")
+    review_action_schema = require_mapping(
+        require_mapping(require_mapping(openapi, "components"), "schemas"),
+        schema_ref,
+    )
+    properties = require_mapping(review_action_schema, "properties")
+
+    assert review_action_schema["additionalProperties"] is False
+    assert properties["reviewActionId"]["minLength"] == 1
+    assert properties["reviewActionId"]["maxLength"] == 80
+    assert properties["reviewerNote"]["minLength"] == 1
+    assert properties["reviewerNote"]["maxLength"] == 600
+
+    expected_errors = {
+        "400": (
+            "invalid_review_action_request",
+            "ACT-REQUEST-SOURCE-UPDATE requires the deterministic reviewer note.",
+        ),
+        "404": ("fixture_object_not_found", "Unknown review state: REV-404"),
+        "409": (
+            "review_action_conflict",
+            "ACT-MARK-REVIEWED is unavailable while WARN-001, WARN-002 or WARN-003 are active.",
+        ),
+        "422": (
+            "request_validation_failed",
+            "Request body did not match the local API contract.",
+        ),
+    }
+
+    for status, (code, message) in expected_errors.items():
+        response = require_mapping(responses, status)
+        content = require_mapping(response, "content")
+        json_content = require_mapping(content, "application/json")
+        example = require_mapping(json_content, "example")
+        assert_error_payload(
+            example,
+            status_code=int(status),
+            code=code,
+            message=message,
+        )
+
+    validation_error = require_mapping(
+        require_mapping(
+            require_mapping(require_mapping(responses, "422"), "content"),
+            "application/json",
+        ),
+        "example",
+    )
+    validation_fields = require_mapping(validation_error, "error")["invalidFields"]
+    assert validation_fields == [{"field": "reviewerNote", "issue": "missing"}]
+
+
 def test_health_live_returns_deterministic_json() -> None:
     assert call_endpoint("/health/live") == {
         "status": "ok",
@@ -293,7 +506,7 @@ def test_meta_returns_mode_and_contract_version_labels() -> None:
     }
 
 
-def test_answer_fixture_returns_contract_shape_and_c02_markdown() -> None:
+def test_answer_fixture_returns_contract_shape_and_markdown() -> None:
     payload = call_endpoint("/evidence-workbench/answer")
     answer = require_mapping(payload, "answer")
     claims = require_object_list(payload, "answerClaims")
@@ -352,7 +565,7 @@ def test_answer_fixture_returns_contract_shape_and_c02_markdown() -> None:
     assert audit_metadata["runtimeModeLabel"] == "local_fixture"
 
 
-def test_source_inventory_returns_c03_sources_and_fixture_versions() -> None:
+def test_source_inventory_returns_sources_and_fixture_versions() -> None:
     payload = call_endpoint("/evidence-workbench/sources")
     sources = require_object_list(payload, "sources")
     warnings = require_object_list(payload, "sourceWarnings")
@@ -452,7 +665,7 @@ def test_public_context_anchors_are_context_only_not_evidence_sources() -> None:
         )
 
 
-def test_evidence_graph_fixture_returns_c04_shape_and_fallback_metadata() -> None:
+def test_evidence_graph_fixture_returns_contract_shape_and_fallback_metadata() -> None:
     payload = call_endpoint("/evidence-workbench/graph")
     graph = require_mapping(payload, "evidenceGraph")
     nodes = require_object_list(payload, "evidenceNodes")
@@ -825,7 +1038,16 @@ def test_review_action_rejects_repeated_primary_action_during_runtime() -> None:
         "ACT-REQUEST-SOURCE-UPDATE"
     )
     assert second_error.status_code == 409
-    assert second_error.detail == "ACT-REQUEST-SOURCE-UPDATE has already been completed."
+    assert second_error.detail == {
+        "code": "review_action_conflict",
+        "message": "ACT-REQUEST-SOURCE-UPDATE has already been completed.",
+    }
+    assert_error_payload(
+        handle_http_error(second_error),
+        status_code=409,
+        code="review_action_conflict",
+        message="ACT-REQUEST-SOURCE-UPDATE has already been completed.",
+    )
 
 
 def test_review_action_rejects_mark_reviewed_while_blockers_remain() -> None:
@@ -839,12 +1061,23 @@ def test_review_action_rejects_mark_reviewed_while_blockers_remain() -> None:
     )
 
     assert error.status_code == 409
-    assert error.detail == (
-        "ACT-MARK-REVIEWED is unavailable while WARN-001, WARN-002 or WARN-003 are active."
+    assert error.detail == {
+        "code": "review_action_conflict",
+        "message": (
+            "ACT-MARK-REVIEWED is unavailable while WARN-001, WARN-002 or WARN-003 are active."
+        ),
+    }
+    assert_error_payload(
+        handle_http_error(error),
+        status_code=409,
+        code="review_action_conflict",
+        message=(
+            "ACT-MARK-REVIEWED is unavailable while WARN-001, WARN-002 or WARN-003 are active."
+        ),
     )
 
 
-def test_review_action_requires_the_c05_primary_note() -> None:
+def test_review_action_requires_the_primary_fixture_note() -> None:
     reset_review_action_state()
 
     error = call_review_action_error(
@@ -855,6 +1088,38 @@ def test_review_action_requires_the_c05_primary_note() -> None:
     )
 
     assert error.status_code == 400
-    assert error.detail == (
-        "ACT-REQUEST-SOURCE-UPDATE requires the deterministic reviewer note."
+    assert error.detail == {
+        "code": "invalid_review_action_request",
+        "message": "ACT-REQUEST-SOURCE-UPDATE requires the deterministic reviewer note.",
+    }
+    assert_error_payload(
+        handle_http_error(error),
+        status_code=400,
+        code="invalid_review_action_request",
+        message="ACT-REQUEST-SOURCE-UPDATE requires the deterministic reviewer note.",
+    )
+
+
+def test_review_action_returns_predictable_not_found_error() -> None:
+    reset_review_action_state()
+
+    error = call_review_action_error(
+        {
+            "reviewActionId": "ACT-REQUEST-SOURCE-UPDATE",
+            "reviewStateId": "REV-404",
+            "answerId": "ANS-001",
+            "reviewerNote": PRIMARY_REVIEWER_NOTE,
+        }
+    )
+
+    assert error.status_code == 404
+    assert error.detail == {
+        "code": "fixture_object_not_found",
+        "message": "Unknown review state: REV-404",
+    }
+    assert_error_payload(
+        handle_http_error(error),
+        status_code=404,
+        code="fixture_object_not_found",
+        message="Unknown review state: REV-404",
     )
