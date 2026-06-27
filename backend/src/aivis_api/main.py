@@ -1,19 +1,24 @@
 from fastapi import FastAPI
 
 from aivis_api import __version__
+from aivis_api.fixture_data import (
+    CONTRACT_MODE,
+    CONTRACT_VERSION,
+    PUBLIC_CONTEXT_SET_VERSION,
+    RUNTIME_MODE_LABEL,
+    SERVICE_ID,
+    SOURCE_SET_VERSION,
+    get_answer_fixture_response,
+    get_source_inventory_response,
+)
 
 APP_TITLE = "AI Visualisation Workbench API"
 APP_SUMMARY = "Local prototype API scaffold for AIVIS."
 APP_DESCRIPTION = (
     "Minimal FastAPI API spine for the AI Visualisation Workbench prototype. "
-    "The current surface exposes local health, readiness and mode metadata."
+    "The current surface exposes local health, readiness, mode metadata and "
+    "deterministic answer/source fixtures."
 )
-SERVICE_ID = "aivis-api"
-RUNTIME_MODE_LABEL = "local_fixture"
-CONTRACT_MODE = "synthetic_fixture"
-CONTRACT_VERSION = "aivis-evidence-workbench-contract@0.1.0"
-SOURCE_SET_VERSION = "synthetic-source-set-v1"
-PUBLIC_CONTEXT_SET_VERSION = "public-context-anchor-set-v1"
 
 LIVE_RESPONSE: dict[str, object] = {
     "status": "ok",
@@ -49,7 +54,7 @@ META_RESPONSE: dict[str, object] = {
 
 
 def create_app() -> FastAPI:
-    """Create the FastAPI app without fixture or business endpoints."""
+    """Create the FastAPI app for the local fixture backend."""
     api = FastAPI(
         title=APP_TITLE,
         summary=APP_SUMMARY,
@@ -68,6 +73,14 @@ def create_app() -> FastAPI:
     @api.get("/meta", tags=["metadata"])
     def meta() -> dict[str, object]:
         return META_RESPONSE
+
+    @api.get("/evidence-workbench/answer", tags=["evidence-workbench"])
+    def evidence_workbench_answer() -> dict[str, object]:
+        return get_answer_fixture_response()
+
+    @api.get("/evidence-workbench/sources", tags=["evidence-workbench"])
+    def evidence_workbench_sources() -> dict[str, object]:
+        return get_source_inventory_response()
 
     return api
 

@@ -12,10 +12,24 @@ prototype.
   - `GET /health/live`
   - `GET /health/ready`
   - `GET /meta`
+  - `GET /evidence-workbench/answer`
+  - `GET /evidence-workbench/sources`
 
 Readiness is limited to the implemented local API health and metadata surface.
-Fixture endpoints, review actions, schemas, Docker files and deployment
-scripts are not implemented in this backend slice.
+Graph endpoints, review-action mutation endpoints, schemas, Docker files and
+deployment scripts are not implemented in this backend slice.
+
+The Evidence Workbench fixture endpoints return deterministic synthetic
+fixture payloads:
+
+- `GET /evidence-workbench/answer` returns `ANS-001`, answer claims,
+  citations, active warning state, prompt context, public context anchors,
+  initial review state and audit metadata.
+- `GET /evidence-workbench/sources` returns `SRC-001` through `SRC-007`,
+  active warning records and `PublicContextAnchor` context records.
+
+Public context anchors are context only. Citation and claim-support fields
+reference `Source` ids only.
 
 `/meta` reports the local synthetic fixture posture:
 
