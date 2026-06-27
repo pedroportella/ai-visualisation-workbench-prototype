@@ -196,13 +196,13 @@ def apply_review_action(request: ReviewActionRequest) -> JsonObject:
     if review_action_id != PRIMARY_REVIEW_ACTION_ID:
         raise ReviewActionError(
             409,
-            f"{review_action_id} is a C05 follow-up action and is not implemented by the B05 endpoint.",
+            f"{review_action_id} is a follow-up action and is not implemented by this local review-action endpoint.",
         )
 
     if request.reviewerNote.strip() != PRIMARY_REVIEWER_NOTE:
         raise ReviewActionError(
             400,
-            "ACT-REQUEST-SOURCE-UPDATE requires the deterministic C05 reviewer note.",
+            "ACT-REQUEST-SOURCE-UPDATE requires the deterministic reviewer note.",
         )
 
     with _state_lock:

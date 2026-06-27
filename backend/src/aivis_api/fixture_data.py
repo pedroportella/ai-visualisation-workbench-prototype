@@ -11,7 +11,7 @@ RUNTIME_MODE_LABEL: Final = "local_fixture"
 CONTRACT_MODE: Final = "synthetic_fixture"
 CONTRACT_VERSION: Final = "aivis-evidence-workbench-contract@0.1.0"
 SCENARIO_ID: Final = "brisbane-south-bank-pa-hospital-accessible-shuttle-review-v1"
-FIXTURE_SET_ID: Final = "c00-synthetic-south-bank-pa-hospital-v1"
+FIXTURE_SET_ID: Final = "synthetic-south-bank-pa-hospital-v1"
 SOURCE_SET_VERSION: Final = "synthetic-source-set-v1"
 PUBLIC_CONTEXT_SET_VERSION: Final = "public-context-anchor-set-v1"
 GENERATED_AT: Final = "2026-06-27T09:00:00+10:00"
@@ -113,9 +113,9 @@ PUBLIC_CONTEXT_ANCHORS: Final[list[JsonObject]] = [
         "allowedGraphEdgeTypes": ["uses_place_anchor"],
         "publicSourceUrl": None,
         "sourceAccessedDate": None,
-        "licenceOrTermsNote": "No public snapshot is committed in B03.",
+        "licenceOrTermsNote": "No public snapshot is committed in this fixture.",
         "sourceRecordId": None,
-        "transformNote": "Label-only context anchor from the C00 scenario brief.",
+        "transformNote": "Label-only context anchor from the synthetic scenario setup.",
     },
     {
         "id": "PCA-002",
@@ -127,9 +127,9 @@ PUBLIC_CONTEXT_ANCHORS: Final[list[JsonObject]] = [
         "allowedGraphEdgeTypes": ["uses_place_anchor"],
         "publicSourceUrl": None,
         "sourceAccessedDate": None,
-        "licenceOrTermsNote": "No public snapshot is committed in B03.",
+        "licenceOrTermsNote": "No public snapshot is committed in this fixture.",
         "sourceRecordId": None,
-        "transformNote": "Label-only context anchor from the C00 scenario brief.",
+        "transformNote": "Label-only context anchor from the synthetic scenario setup.",
     },
     {
         "id": "PCA-003",
@@ -141,9 +141,9 @@ PUBLIC_CONTEXT_ANCHORS: Final[list[JsonObject]] = [
         "allowedGraphEdgeTypes": ["uses_place_anchor"],
         "publicSourceUrl": None,
         "sourceAccessedDate": None,
-        "licenceOrTermsNote": "No public snapshot is committed in B03.",
+        "licenceOrTermsNote": "No public snapshot is committed in this fixture.",
         "sourceRecordId": None,
-        "transformNote": "Label-only context anchor from the C00 scenario brief.",
+        "transformNote": "Label-only context anchor from the synthetic scenario setup.",
     },
     {
         "id": "PCA-004",
@@ -155,9 +155,9 @@ PUBLIC_CONTEXT_ANCHORS: Final[list[JsonObject]] = [
         "allowedGraphEdgeTypes": ["uses_place_anchor"],
         "publicSourceUrl": None,
         "sourceAccessedDate": None,
-        "licenceOrTermsNote": "No public snapshot is committed in B03.",
+        "licenceOrTermsNote": "No public snapshot is committed in this fixture.",
         "sourceRecordId": None,
-        "transformNote": "Label-only context anchor from the C00 scenario brief.",
+        "transformNote": "Label-only context anchor from the synthetic scenario setup.",
     },
 ]
 
@@ -435,7 +435,7 @@ SOURCES: Final[list[JsonObject]] = [
         "contextAnchorIds": ["PCA-004"],
         "syntheticExcerptPreview": (
             "Fixture note gives neutral hospital-precinct transfer wording, but "
-            "the C02 answer does not cite or rely on it."
+            "the answer fixture does not cite or rely on it."
         ),
         "reviewOwnerQueue": "revenue-support-transfer-note-review",
     },

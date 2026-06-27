@@ -29,7 +29,7 @@ fixture payloads:
   initial review state and audit metadata.
 - `GET /evidence-workbench/sources` returns `SRC-001` through `SRC-007`,
   active warning records and `PublicContextAnchor` context records.
-- `GET /evidence-workbench/graph` returns `GRAPH-001`, its C04 node and edge
+- `GET /evidence-workbench/graph` returns `GRAPH-001`, its node and edge
   inventory, active warning records, public context anchors, the initial review
   state, accessible graph summary and small-viewport step-list fallback.
 - `POST /evidence-workbench/review-actions` records the local
@@ -42,7 +42,7 @@ reference `Source` ids only. Graph context-anchor nodes use
 `uses_place_anchor` edges only and never originate citation or support-like
 edges.
 
-Review actions are local prototype state only. The B05 endpoint keeps
+Review actions are local prototype state only. The review-action endpoint keeps
 `ACT-MARK-REVIEWED` unavailable while `WARN-001`, `WARN-002` or `WARN-003`
 remain active, does not write to external source systems and does not create
 production audit logs. `GET /evidence-workbench/answer` and
@@ -61,6 +61,34 @@ contractVersion: aivis-evidence-workbench-contract@0.1.0
 sourceSetVersion: synthetic-source-set-v1
 publicContextSetVersion: public-context-anchor-set-v1
 ```
+
+## OpenAPI And Contract Docs
+
+FastAPI exposes the implemented API contract at:
+
+- `GET /openapi.json`
+- `GET /docs`
+- `GET /redoc`
+
+The OpenAPI metadata documents only the implemented local fixture surface:
+health, readiness, `/meta`, the answer fixture endpoint, the source inventory
+fixture endpoint, the graph fixture endpoint and the local review-action
+endpoint. Route summaries, tag descriptions and request/response examples
+include the shared contract labels:
+
+```text
+runtimeModeLabel: local_fixture
+contractMode: synthetic_fixture
+contractVersion: aivis-evidence-workbench-contract@0.1.0
+sourceSetVersion: synthetic-source-set-v1
+publicContextSetVersion: public-context-anchor-set-v1
+```
+
+The OpenAPI descriptions preserve the public boundary: real Brisbane place
+names are `PublicContextAnchor` context labels only, evidence sources are
+synthetic fixture records, and review actions update local process state only.
+The docs do not claim live retrieval, source-system writeback, production audit
+logging, QChat integration or official Queensland Government service status.
 
 ## Local Setup
 

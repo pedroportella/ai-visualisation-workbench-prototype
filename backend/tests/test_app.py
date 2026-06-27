@@ -17,6 +17,15 @@ def get_route(path: str) -> APIRoute:
     raise AssertionError(f"Expected route not found: {path}")
 
 
+def get_openapi_operation(path: str, method: str) -> dict[str, object]:
+    openapi = app.openapi()
+    paths = require_mapping(openapi, "paths")
+    path_item = require_mapping(paths, path)
+    operation = require_mapping(path_item, method)
+
+    return operation
+
+
 def call_endpoint(path: str) -> dict[str, object]:
     route = get_route(path)
     payload = route.endpoint()
@@ -67,7 +76,7 @@ def test_app_imports_as_fastapi_instance() -> None:
     assert app.version == "0.1.0"
 
 
-def test_b02_operational_routes_are_scaffolded() -> None:
+def test_operational_routes_are_scaffolded() -> None:
     routes = {route.path: route for route in app.routes if isinstance(route, APIRoute)}
 
     assert routes["/health/live"].methods == {"GET"}
@@ -82,6 +91,168 @@ def test_fixture_routes_are_scaffolded_with_review_action_endpoint() -> None:
     assert routes["/evidence-workbench/sources"].methods == {"GET"}
     assert routes["/evidence-workbench/graph"].methods == {"GET"}
     assert routes["/evidence-workbench/review-actions"].methods == {"POST"}
+
+
+def test_openapi_info_documents_contract_and_public_boundary() -> None:
+    openapi = app.openapi()
+    info = require_mapping(openapi, "info")
+    tags = require_object_list(openapi, "tags")
+    tags_by_name = {str(tag["name"]): tag for tag in tags}
+
+    assert info["title"] == "AI Visualisation Workbench API"
+    assert info["summary"] == "Local fixture API for AIVIS contract review."
+    assert info["version"] == "0.1.0"
+
+    description = str(info["description"])
+    assert "runtimeModeLabel: local_fixture" in description
+    assert "contractMode: synthetic_fixture" in description
+    assert "contractVersion: aivis-evidence-workbench-contract@0.1.0" in description
+    assert "sourceSetVersion: synthetic-source-set-v1" in description
+    assert "publicContextSetVersion: public-context-anchor-set-v1" in description
+    assert "PublicContextAnchor context labels" in description
+    assert "not connected to TMR systems" in description
+    assert "not QChat" in description
+    assert "not an official Queensland Government service" in description
+
+    assert set(tags_by_name) == {"health", "metadata", "evidence-workbench"}
+    assert "fixture backend only" in str(tags_by_name["health"]["description"])
+    assert "Runtime mode and contract labels" in str(tags_by_name["metadata"]["description"])
+    assert "source-system writeback" in str(tags_by_name["evidence-workbench"]["description"])
+
+
+def test_openapi_documents_route_summaries_and_fixture_examples() -> None:
+    expected_operations = {
+        ("/health/live", "get"): "Check live API process",
+        ("/health/ready", "get"): "Check local readiness",
+        ("/meta", "get"): "Return fixture contract metadata",
+        ("/evidence-workbench/answer", "get"): "Get Evidence Workbench answer fixture",
+        ("/evidence-workbench/sources", "get"): "Get Evidence Workbench source inventory fixture",
+        ("/evidence-workbench/graph", "get"): "Get Evidence Workbench evidence graph fixture",
+        ("/evidence-workbench/review-actions", "post"): (
+            "Record local Evidence Workbench review action"
+        ),
+    }
+
+    for (path, method), summary in expected_operations.items():
+        operation = get_openapi_operation(path, method)
+        responses = require_mapping(operation, "responses")
+        ok_response = require_mapping(responses, "200")
+        content = require_mapping(ok_response, "content")
+        json_content = require_mapping(content, "application/json")
+
+        assert operation["summary"] == summary
+        assert "description" in operation
+        assert "example" in json_content
+
+    meta_example = require_mapping(
+        require_mapping(
+            require_mapping(
+                require_mapping(
+                    require_mapping(get_openapi_operation("/meta", "get"), "responses"),
+                    "200",
+                ),
+                "content",
+            ),
+            "application/json",
+        ),
+        "example",
+    )
+    assert meta_example["runtimeModeLabel"] == "local_fixture"
+    assert meta_example["contractMode"] == "synthetic_fixture"
+    assert meta_example["contractVersion"] == "aivis-evidence-workbench-contract@0.1.0"
+    assert meta_example["sourceSetVersion"] == "synthetic-source-set-v1"
+    assert meta_example["publicContextSetVersion"] == "public-context-anchor-set-v1"
+
+
+def test_openapi_examples_document_fixture_contract_ids() -> None:
+    answer_operation = get_openapi_operation("/evidence-workbench/answer", "get")
+    answer_example = require_mapping(
+        require_mapping(
+            require_mapping(
+                require_mapping(require_mapping(answer_operation, "responses"), "200"),
+                "content",
+            ),
+            "application/json",
+        ),
+        "example",
+    )
+    answer = require_mapping(answer_example, "answer")
+    answer_claims = require_object_list(answer_example, "answerClaims")
+    citations = require_object_list(answer_example, "citations")
+    anchors = require_object_list(answer_example, "publicContextAnchors")
+
+    assert answer_example["contractVersion"] == "aivis-evidence-workbench-contract@0.1.0"
+    assert answer["id"] == "ANS-001"
+    assert answer["defaultSelectedClaimId"] == "CLAIM-003"
+    assert answer_claims[0]["id"] == "CLAIM-003"
+    assert answer_claims[0]["requiredMissingSourceIds"] == ["SRC-006"]
+    assert citations[0]["id"] == "CIT-003-B"
+    assert citations[0]["relationship"] == "missing_evidence"
+    assert anchors[0]["id"] == "PCA-001"
+    assert anchors[0]["evidenceUseProhibited"] is True
+
+    sources_operation = get_openapi_operation("/evidence-workbench/sources", "get")
+    sources_example = require_mapping(
+        require_mapping(
+            require_mapping(
+                require_mapping(require_mapping(sources_operation, "responses"), "200"),
+                "content",
+            ),
+            "application/json",
+        ),
+        "example",
+    )
+    sources = require_object_list(sources_example, "sources")
+    assert [source["id"] for source in sources] == ["SRC-002", "SRC-006"]
+    assert sources[0]["freshness"] == "stale"
+    assert sources[1]["sourceOrigin"] == "missing_source_placeholder"
+
+    graph_operation = get_openapi_operation("/evidence-workbench/graph", "get")
+    graph_example = require_mapping(
+        require_mapping(
+            require_mapping(
+                require_mapping(require_mapping(graph_operation, "responses"), "200"),
+                "content",
+            ),
+            "application/json",
+        ),
+        "example",
+    )
+    graph = require_mapping(graph_example, "evidenceGraph")
+    edges = require_object_list(graph_example, "evidenceEdges")
+    assert graph["id"] == "GRAPH-001"
+    assert graph["defaultSelectedNodeId"] == "NODE-CLAIM-003"
+    assert edges[0]["id"] == "EDGE-SRC006-CLAIM003"
+    assert edges[0]["type"] == "missing_evidence"
+
+    review_operation = get_openapi_operation("/evidence-workbench/review-actions", "post")
+    request_body = require_mapping(review_operation, "requestBody")
+    request_content = require_mapping(require_mapping(request_body, "content"), "application/json")
+    request_examples = require_mapping(request_content, "examples")
+    request_example = require_mapping(
+        require_mapping(request_examples, "requestSourceUpdate"),
+        "value",
+    )
+    assert request_example["reviewActionId"] == "ACT-REQUEST-SOURCE-UPDATE"
+    assert request_example["reviewStateId"] == "REV-001"
+    assert request_example["answerId"] == "ANS-001"
+
+    review_example = require_mapping(
+        require_mapping(
+            require_mapping(
+                require_mapping(require_mapping(review_operation, "responses"), "200"),
+                "content",
+            ),
+            "application/json",
+        ),
+        "example",
+    )
+    review_state = require_mapping(review_example, "reviewState")
+    local_state = require_mapping(review_example, "localState")
+    assert review_state["status"] == "source_update_requested"
+    assert review_state["lastActionId"] == "ACT-REQUEST-SOURCE-UPDATE"
+    assert local_state["storage"] == "in_memory_process"
+    assert local_state["sourceSystemWriteback"] == "not_performed"
 
 
 def test_health_live_returns_deterministic_json() -> None:
@@ -685,5 +856,5 @@ def test_review_action_requires_the_c05_primary_note() -> None:
 
     assert error.status_code == 400
     assert error.detail == (
-        "ACT-REQUEST-SOURCE-UPDATE requires the deterministic C05 reviewer note."
+        "ACT-REQUEST-SOURCE-UPDATE requires the deterministic reviewer note."
     )
