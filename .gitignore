@@ -1,0 +1,42 @@
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Node / pnpm
+node_modules/
+.pnpm-store/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frontend build output
+.next/
+out/
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+
+# Python backend output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Docker / local runtime
+docker/.data/
+docker/data/
+
+# Logs
+*.log
+
