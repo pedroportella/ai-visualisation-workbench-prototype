@@ -1,0 +1,58 @@
+import { useId } from "react";
+
+import type { ReactNode, TextareaHTMLAttributes } from "react";
+
+import { QhdsFormField } from "../QhdsFormField";
+import { getQhdsFieldIds, joinClassNames } from "../fieldIds";
+
+import "./QhdsTextarea.scss";
+
+export interface QhdsTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  error?: ReactNode;
+  hint?: ReactNode;
+  label: ReactNode;
+  optional?: boolean;
+}
+
+export function QhdsTextarea({
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
+  className,
+  disabled = false,
+  error,
+  hint,
+  id,
+  label,
+  optional = false,
+  required = false,
+  ...textareaProps
+}: QhdsTextareaProps) {
+  const generatedId = useId();
+  const controlId = id ?? `ssq-textarea-${generatedId}`;
+  const fieldIds = getQhdsFieldIds({ controlId, describedBy: ariaDescribedBy, error, hint });
+  const classes = joinClassNames("qld__text-input", "qld__text-input--block", error ? "qld__text-input--error" : undefined, "ssq-textarea", className);
+
+  return (
+    <QhdsFormField
+      disabled={disabled}
+      error={error}
+      errorId={fieldIds.errorId}
+      hint={hint}
+      hintId={fieldIds.hintId}
+      id={controlId}
+      label={label}
+      optional={optional}
+      required={required}
+    >
+      <textarea
+        aria-describedby={fieldIds.describedBy}
+        aria-invalid={ariaInvalid ?? (error ? true : undefined)}
+        className={classes}
+        disabled={disabled}
+        id={controlId}
+        required={required}
+        {...textareaProps}
+      />
+    </QhdsFormField>
+  );
+}

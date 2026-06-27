@@ -4,6 +4,12 @@
   "version": "0.0.0",
   "description": "Prototype monorepo for the AI Visualisation Workbench.",
   "packageManager": "pnpm@10.18.3",
+  "scripts": {
+    "build": "pnpm -r build",
+    "check": "pnpm -r check",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck"
+  },
   "type": "module"
 }
-

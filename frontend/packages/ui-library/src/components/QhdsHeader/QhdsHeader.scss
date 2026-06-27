@@ -1,0 +1,216 @@
+.ssq-header {
+  --ssq-color-link: var(--ssq-color-header-text);
+  --ssq-color-link-decoration: var(--ssq-color-header-text);
+  --ssq-color-link-visited: var(--ssq-color-header-text);
+
+  background: var(--ssq-color-header-background);
+  color: var(--ssq-color-header-text);
+}
+
+.ssq-header--app .container-fluid {
+  max-width: none;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.ssq-header--contained .container-fluid {
+  max-width: var(--qld-grid-container-max-width);
+}
+
+.ssq-header .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.ssq-header .row > [class*="col-"] {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.ssq-header__pre-header {
+  background: var(--ssq-palette-strong-background);
+  color: var(--ssq-color-header-text);
+  font-size: 0.875rem;
+  line-height: 1.7143;
+  padding: 0.5rem 0;
+}
+
+.ssq-header__pre-header-content,
+.ssq-header__main-content {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ssq-space-4);
+}
+
+.ssq-header__pre-header-content {
+  justify-content: space-between;
+  min-height: 1.5rem;
+}
+
+.ssq-header__pre-header-url {
+  color: inherit;
+  display: inline-flex;
+  font-weight: 700;
+}
+
+.ssq-header__main {
+  background: var(--ssq-color-header-background);
+  min-height: 7.5625rem;
+  padding: 0;
+}
+
+.ssq-header__main-content {
+  align-items: stretch;
+  min-height: 7.5625rem;
+}
+
+.ssq-header__brand {
+  align-items: center;
+  box-sizing: border-box;
+  color: inherit;
+  display: flex;
+  gap: var(--ssq-space-6);
+  font-weight: 700;
+  min-height: 7.5625rem;
+  padding: 2rem 0;
+  text-decoration: none;
+}
+
+.ssq-header__qg-lockup {
+  align-items: center;
+  border-right: 2px solid var(--ssq-color-header-accent);
+  display: flex;
+  min-height: 3.5rem;
+  padding-right: var(--ssq-space-6);
+}
+
+.ssq-header__qg-logo {
+  display: block;
+  filter: brightness(0) invert(1);
+  height: 3.5rem;
+  width: 10.625rem;
+}
+
+.ssq-header__site-name {
+  display: block;
+  font-family: var(--ssq-font-family-site-title);
+}
+
+.ssq-header__heading {
+  display: block;
+  font-size: var(--ssq-font-size-h5-desktop);
+  line-height: var(--ssq-line-height-heading);
+}
+
+.ssq-header__subline {
+  color: var(--ssq-palette-bold-muted);
+  display: block;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-top: var(--ssq-space-1);
+}
+
+.ssq-header__nav {
+  width: 100%;
+}
+
+.ssq-header__nav-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ssq-space-4);
+  list-style: none;
+  margin: var(--ssq-space-2) 0 0;
+  padding: 0;
+}
+
+.ssq-header__link {
+  color: inherit;
+  font-weight: 700;
+}
+
+.ssq-header__actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ssq-space-4);
+  margin-left: auto;
+}
+
+.ssq-header__cta-link {
+  align-items: center;
+  color: inherit;
+  display: inline-flex;
+  font-weight: 700;
+}
+
+.ssq-header__cta-link:hover .ssq-header__cta-link-icon {
+  color: var(--QLD-color-dark__action--secondary-hover);
+  fill: var(--QLD-color-dark__action--secondary-hover);
+}
+
+.ssq-header__cta-link-icon {
+  align-items: center;
+  color: var(--QLD-color-dark__action--secondary);
+  display: inline-flex;
+  flex: 0 0 auto;
+  fill: var(--QLD-color-dark__action--secondary);
+  height: 1.25rem;
+  line-height: 1;
+  margin-right: var(--ssq-space-2);
+  width: 1.25rem;
+}
+
+.ssq-header__cta-svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 40rem) {
+  .ssq-header--app .container-fluid {
+    padding-left: var(--ssq-space-4);
+    padding-right: var(--ssq-space-4);
+  }
+
+  .ssq-header__actions {
+    justify-content: flex-end;
+    margin-left: 0;
+  }
+
+  .ssq-header__brand {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--ssq-space-4);
+    padding: var(--ssq-space-5) 0;
+  }
+
+  .ssq-header__qg-lockup {
+    border-right: 0;
+    min-height: 0;
+    padding-right: 0;
+  }
+
+  .ssq-header__main,
+  .ssq-header__main-content,
+  .ssq-header__brand {
+    min-height: 0;
+  }
+}
+
+@media (min-width: 62rem) {
+  .ssq-header__main-content {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .ssq-header__nav {
+    margin-left: auto;
+    width: auto;
+  }
+
+  .ssq-header__nav-list {
+    margin-top: 0;
+  }
+}
