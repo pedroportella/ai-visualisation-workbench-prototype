@@ -51,12 +51,12 @@ def test_b02_operational_routes_are_scaffolded() -> None:
     assert routes["/meta"].methods == {"GET"}
 
 
-def test_b03_fixture_routes_are_scaffolded_without_graph_or_review_mutation() -> None:
+def test_fixture_routes_are_scaffolded_without_review_mutation() -> None:
     routes = {route.path: route for route in app.routes if isinstance(route, APIRoute)}
 
     assert routes["/evidence-workbench/answer"].methods == {"GET"}
     assert routes["/evidence-workbench/sources"].methods == {"GET"}
-    assert "/evidence-workbench/graph" not in routes
+    assert routes["/evidence-workbench/graph"].methods == {"GET"}
     assert "/evidence-workbench/review-actions" not in routes
 
 
@@ -255,3 +255,251 @@ def test_public_context_anchors_are_context_only_not_evidence_sources() -> None:
             )
             for target in applies_to
         )
+
+
+def test_evidence_graph_fixture_returns_c04_shape_and_fallback_metadata() -> None:
+    payload = call_endpoint("/evidence-workbench/graph")
+    graph = require_mapping(payload, "evidenceGraph")
+    nodes = require_object_list(payload, "evidenceNodes")
+    edges = require_object_list(payload, "evidenceEdges")
+    fallback_steps = require_object_list(payload, "smallViewportFallbackSteps")
+    review_state = require_mapping(payload, "reviewState")
+
+    assert payload["runtimeModeLabel"] == "local_fixture"
+    assert payload["contractMode"] == "synthetic_fixture"
+    assert payload["contractVersion"] == "aivis-evidence-workbench-contract@0.1.0"
+    assert payload["sourceSetVersion"] == "synthetic-source-set-v1"
+    assert payload["publicContextSetVersion"] == "public-context-anchor-set-v1"
+
+    assert graph["id"] == "GRAPH-001"
+    assert graph["answerId"] == "ANS-001"
+    assert graph["promptContextId"] == "CTX-001"
+    assert graph["reviewStateId"] == "REV-001"
+    assert graph["auditMetadataId"] == "AUDIT-001"
+    assert graph["rootNodeId"] == "NODE-Q"
+    assert graph["defaultSelectedNodeId"] == "NODE-CLAIM-003"
+    assert graph["defaultSelectedClaimId"] == "CLAIM-003"
+    assert graph["defaultFocusedSourceIds"] == ["SRC-003", "SRC-006"]
+    assert graph["defaultFocusedWarningIds"] == ["WARN-002", "WARN-003"]
+    assert graph["layoutHint"] == "left_to_right_review_flow"
+    assert graph["supportsKeyboardSummary"] is True
+    assert graph["smallViewportFallback"] == "step_list"
+    assert [node["id"] for node in nodes] == graph["nodeIds"]
+    assert [edge["id"] for edge in edges] == graph["edgeIds"]
+    assert len(nodes) == 19
+    assert len(edges) == 22
+
+    accessible_summary = graph["accessibleSummary"]
+    assert isinstance(accessible_summary, str)
+    assert "context anchors are labels only and do not provide evidence" in accessible_summary
+    assert "CLAIM-003 is selected by default" in accessible_summary
+    assert "SRC-005 is present as uncited inventory only" in accessible_summary
+
+    assert [step["step"] for step in fallback_steps] == [1, 2, 3, 4, 5, 6]
+    assert fallback_steps[1]["heading"] == "Context anchors"
+    assert fallback_steps[1]["includeIds"] == [
+        "NODE-PCA-001",
+        "NODE-PCA-002",
+        "NODE-PCA-003",
+        "NODE-PCA-004",
+    ]
+    assert "context only" in str(fallback_steps[1]["summary"])
+    assert fallback_steps[4]["includeIds"] == [
+        "NODE-SRC-003",
+        "NODE-SRC-006",
+        "NODE-CLAIM-003",
+        "WARN-002",
+        "WARN-003",
+    ]
+    assert "ACT-REQUEST-SOURCE-UPDATE" in review_state["availableActionIds"]
+    assert "ACT-MARK-REVIEWED" not in review_state["availableActionIds"]
+
+
+def test_evidence_graph_references_existing_fixture_objects() -> None:
+    answer_payload = call_endpoint("/evidence-workbench/answer")
+    source_payload = call_endpoint("/evidence-workbench/sources")
+    graph_payload = call_endpoint("/evidence-workbench/graph")
+    graph = require_mapping(graph_payload, "evidenceGraph")
+    nodes = require_object_list(graph_payload, "evidenceNodes")
+    edges = require_object_list(graph_payload, "evidenceEdges")
+    review_state = require_mapping(graph_payload, "reviewState")
+
+    node_ids = set(graph["nodeIds"])
+    edge_ids = set(graph["edgeIds"])
+    nodes_by_id = by_id(nodes)
+    edges_by_id = by_id(edges)
+
+    assert len(node_ids) == len(nodes)
+    assert len(edge_ids) == len(edges)
+    assert set(nodes_by_id) == node_ids
+    assert set(edges_by_id) == edge_ids
+    assert all(node["graphId"] == "GRAPH-001" for node in nodes)
+    assert all(edge["graphId"] == "GRAPH-001" for edge in edges)
+
+    prompt_context = require_mapping(answer_payload, "promptContext")
+    source_ids = {source["id"] for source in require_object_list(source_payload, "sources")}
+    anchor_ids = {anchor["id"] for anchor in require_object_list(source_payload, "publicContextAnchors")}
+    claim_ids = {claim["id"] for claim in require_object_list(answer_payload, "answerClaims")}
+    citation_ids = {citation["id"] for citation in require_object_list(answer_payload, "citations")}
+    warning_ids = {warning["id"] for warning in require_object_list(answer_payload, "sourceWarnings")}
+    action_ids = set(review_state["availableActionIds"])
+
+    for node in nodes:
+        assert node["id"] in node_ids
+        ref_type = node["refObjectType"]
+        ref_id = node["refObjectId"]
+        if ref_type == "PromptContext":
+            assert ref_id == prompt_context["id"]
+        elif ref_type == "Source":
+            assert ref_id in source_ids
+        elif ref_type == "PublicContextAnchor":
+            assert ref_id in anchor_ids
+        elif ref_type == "AnswerClaim":
+            assert ref_id in claim_ids
+        elif ref_type == "ReviewAction":
+            assert ref_id in action_ids
+        else:
+            raise AssertionError(f"Unexpected node ref type: {ref_type}")
+
+    for edge in edges:
+        assert edge["fromNodeId"] in node_ids
+        assert edge["toNodeId"] in node_ids
+        ref_type = edge["refObjectType"]
+        ref_id = edge["refObjectId"]
+        if ref_type == "PromptContext":
+            assert ref_id == prompt_context["id"]
+        elif ref_type == "Source":
+            assert ref_id in source_ids
+        elif ref_type == "PublicContextAnchor":
+            assert ref_id in anchor_ids
+        elif ref_type == "Citation":
+            assert ref_id in citation_ids
+        elif ref_type == "SourceWarning":
+            assert ref_id in warning_ids
+        elif ref_type == "ReviewAction":
+            assert ref_id in action_ids
+        else:
+            raise AssertionError(f"Unexpected edge ref type: {ref_type}")
+
+    assert edges_by_id["EDGE-Q-CONTEXT"]["fromNodeId"] == "NODE-Q"
+    assert edges_by_id["EDGE-CONTEXT-SRC006"]["toNodeId"] == "NODE-SRC-006"
+    assert edges_by_id["EDGE-SRC006-CLAIM003"]["toNodeId"] == "NODE-CLAIM-003"
+    assert edges_by_id["EDGE-CLAIM003-ACT-WARN003"]["toNodeId"] == (
+        "NODE-ACT-REQUEST-SOURCE-UPDATE"
+    )
+
+
+def test_evidence_graph_preserves_source_claim_warning_guardrails() -> None:
+    answer_payload = call_endpoint("/evidence-workbench/answer")
+    source_payload = call_endpoint("/evidence-workbench/sources")
+    graph_payload = call_endpoint("/evidence-workbench/graph")
+    nodes_by_id = by_id(require_object_list(graph_payload, "evidenceNodes"))
+    edges = require_object_list(graph_payload, "evidenceEdges")
+    edges_by_id = by_id(edges)
+    claims_by_id = by_id(require_object_list(answer_payload, "answerClaims"))
+    sources_by_id = by_id(require_object_list(source_payload, "sources"))
+
+    support_like_edge_types = {
+        "supports",
+        "supports_with_warning",
+        "partial_support",
+        "missing_evidence",
+        "cites",
+    }
+    support_like_edges = [
+        edge for edge in edges if edge["type"] in support_like_edge_types
+    ]
+
+    assert nodes_by_id["NODE-SRC-002"]["type"] == "source_warning"
+    assert nodes_by_id["NODE-SRC-002"]["warningIds"] == ["WARN-001"]
+    assert nodes_by_id["NODE-CLAIM-002"]["warningIds"] == ["WARN-001"]
+    assert sources_by_id["SRC-002"]["freshness"] == "stale"
+    assert edges_by_id["EDGE-SRC002-CLAIM002"]["type"] == "supports_with_warning"
+    assert edges_by_id["EDGE-SRC002-CLAIM002"]["warningIds"] == ["WARN-001"]
+
+    assert claims_by_id["CLAIM-003"]["evidencePosture"] == "weak_support"
+    assert claims_by_id["CLAIM-003"]["supportingSourceIds"] == ["SRC-003"]
+    assert claims_by_id["CLAIM-003"]["requiredMissingSourceIds"] == ["SRC-006"]
+    assert nodes_by_id["NODE-CLAIM-003"]["warningIds"] == ["WARN-002", "WARN-003"]
+    assert edges_by_id["EDGE-SRC003-CLAIM003"]["type"] == "partial_support"
+    assert edges_by_id["EDGE-SRC003-CLAIM003"]["refObjectId"] == "CIT-003-A"
+    assert edges_by_id["EDGE-SRC003-CLAIM003"]["warningIds"] == ["WARN-002"]
+
+    assert sources_by_id["SRC-006"]["sourceOrigin"] == "missing_source_placeholder"
+    assert sources_by_id["SRC-006"]["isClaimSupportingEvidence"] is False
+    assert nodes_by_id["NODE-SRC-006"]["type"] == "missing_source"
+    assert nodes_by_id["NODE-SRC-006"]["warningIds"] == ["WARN-003"]
+    assert edges_by_id["EDGE-SRC006-CLAIM003"]["type"] == "missing_evidence"
+    assert edges_by_id["EDGE-SRC006-CLAIM003"]["refObjectId"] == "CIT-003-B"
+    assert edges_by_id["EDGE-SRC006-CLAIM003"]["warningIds"] == ["WARN-003"]
+
+    assert sources_by_id["SRC-005"]["citationCount"] == 0
+    assert nodes_by_id["NODE-SRC-005"]["status"] == "current_uncited"
+    assert [
+        edge["id"]
+        for edge in edges
+        if edge["fromNodeId"] == "NODE-SRC-005" or edge["toNodeId"] == "NODE-SRC-005"
+    ] == ["EDGE-CONTEXT-SRC005"]
+    assert all(
+        edge["fromNodeId"] != "NODE-SRC-005" and edge["toNodeId"] != "NODE-SRC-005"
+        for edge in support_like_edges
+    )
+
+    citation_edge_refs = [
+        edge["refObjectId"] for edge in support_like_edges if edge["refObjectType"] == "Citation"
+    ]
+    assert sorted(citation_edge_refs) == [
+        "CIT-001-A",
+        "CIT-002-A",
+        "CIT-003-A",
+        "CIT-003-B",
+        "CIT-004-A",
+        "CIT-005-A",
+    ]
+
+
+def test_evidence_graph_keeps_public_context_anchor_nodes_context_only() -> None:
+    graph_payload = call_endpoint("/evidence-workbench/graph")
+    source_payload = call_endpoint("/evidence-workbench/sources")
+    nodes_by_id = by_id(require_object_list(graph_payload, "evidenceNodes"))
+    edges = require_object_list(graph_payload, "evidenceEdges")
+    anchors = require_object_list(source_payload, "publicContextAnchors")
+    anchor_ids = {anchor["id"] for anchor in anchors}
+    anchor_node_ids = {
+        node["id"]
+        for node in nodes_by_id.values()
+        if node["type"] == "public_context_anchor"
+    }
+    support_like_edge_types = {
+        "supports",
+        "supports_with_warning",
+        "partial_support",
+        "missing_evidence",
+        "cites",
+    }
+
+    assert anchor_node_ids == {
+        "NODE-PCA-001",
+        "NODE-PCA-002",
+        "NODE-PCA-003",
+        "NODE-PCA-004",
+    }
+
+    for anchor_node_id in anchor_node_ids:
+        node = nodes_by_id[anchor_node_id]
+        assert node["refObjectId"] in anchor_ids
+        assert node["warningIds"] == []
+        assert node["status"] == "context_only"
+
+    for edge in edges:
+        from_type = nodes_by_id[str(edge["fromNodeId"])]["type"]
+        to_type = nodes_by_id[str(edge["toNodeId"])]["type"]
+
+        if from_type == "public_context_anchor" or to_type == "public_context_anchor":
+            assert edge["type"] == "uses_place_anchor"
+            assert edge["refObjectType"] == "PublicContextAnchor"
+
+        if edge["type"] in support_like_edge_types:
+            assert from_type != "public_context_anchor"
+            assert to_type != "public_context_anchor"
+            assert not str(edge["refObjectId"]).startswith("PCA-")

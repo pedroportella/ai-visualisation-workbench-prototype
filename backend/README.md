@@ -14,10 +14,11 @@ prototype.
   - `GET /meta`
   - `GET /evidence-workbench/answer`
   - `GET /evidence-workbench/sources`
+  - `GET /evidence-workbench/graph`
 
 Readiness is limited to the implemented local API health and metadata surface.
-Graph endpoints, review-action mutation endpoints, schemas, Docker files and
-deployment scripts are not implemented in this backend slice.
+Review-action mutation endpoints, schemas, Docker files and deployment scripts
+are not implemented in this backend slice.
 
 The Evidence Workbench fixture endpoints return deterministic synthetic
 fixture payloads:
@@ -27,9 +28,14 @@ fixture payloads:
   initial review state and audit metadata.
 - `GET /evidence-workbench/sources` returns `SRC-001` through `SRC-007`,
   active warning records and `PublicContextAnchor` context records.
+- `GET /evidence-workbench/graph` returns `GRAPH-001`, its C04 node and edge
+  inventory, active warning records, public context anchors, the initial review
+  state, accessible graph summary and small-viewport step-list fallback.
 
 Public context anchors are context only. Citation and claim-support fields
-reference `Source` ids only.
+reference `Source` ids only. Graph context-anchor nodes use
+`uses_place_anchor` edges only and never originate citation or support-like
+edges.
 
 `/meta` reports the local synthetic fixture posture:
 

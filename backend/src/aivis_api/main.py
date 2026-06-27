@@ -9,6 +9,7 @@ from aivis_api.fixture_data import (
     SERVICE_ID,
     SOURCE_SET_VERSION,
     get_answer_fixture_response,
+    get_evidence_graph_response,
     get_source_inventory_response,
 )
 
@@ -17,7 +18,7 @@ APP_SUMMARY = "Local prototype API scaffold for AIVIS."
 APP_DESCRIPTION = (
     "Minimal FastAPI API spine for the AI Visualisation Workbench prototype. "
     "The current surface exposes local health, readiness, mode metadata and "
-    "deterministic answer/source fixtures."
+    "deterministic answer/source/graph fixtures."
 )
 
 LIVE_RESPONSE: dict[str, object] = {
@@ -81,6 +82,10 @@ def create_app() -> FastAPI:
     @api.get("/evidence-workbench/sources", tags=["evidence-workbench"])
     def evidence_workbench_sources() -> dict[str, object]:
         return get_source_inventory_response()
+
+    @api.get("/evidence-workbench/graph", tags=["evidence-workbench"])
+    def evidence_workbench_graph() -> dict[str, object]:
+        return get_evidence_graph_response()
 
     return api
 
