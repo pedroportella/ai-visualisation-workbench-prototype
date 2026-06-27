@@ -15,10 +15,11 @@ prototype.
   - `GET /evidence-workbench/answer`
   - `GET /evidence-workbench/sources`
   - `GET /evidence-workbench/graph`
+  - `POST /evidence-workbench/review-actions`
 
 Readiness is limited to the implemented local API health and metadata surface.
-Review-action mutation endpoints, schemas, Docker files and deployment scripts
-are not implemented in this backend slice.
+Schemas, Docker files and deployment scripts are not implemented in this
+backend slice.
 
 The Evidence Workbench fixture endpoints return deterministic synthetic
 fixture payloads:
@@ -31,11 +32,25 @@ fixture payloads:
 - `GET /evidence-workbench/graph` returns `GRAPH-001`, its C04 node and edge
   inventory, active warning records, public context anchors, the initial review
   state, accessible graph summary and small-viewport step-list fallback.
+- `POST /evidence-workbench/review-actions` records the local
+  `ACT-REQUEST-SOURCE-UPDATE` action for `REV-001`, returns the
+  post-primary-action review state, introduces `WARN-007`, removes `WARN-005`
+  from the active warning response and updates `AUDIT-001` metadata.
 
 Public context anchors are context only. Citation and claim-support fields
 reference `Source` ids only. Graph context-anchor nodes use
 `uses_place_anchor` edges only and never originate citation or support-like
 edges.
+
+Review actions are local prototype state only. The B05 endpoint keeps
+`ACT-MARK-REVIEWED` unavailable while `WARN-001`, `WARN-002` or `WARN-003`
+remain active, does not write to external source systems and does not create
+production audit logs. `GET /evidence-workbench/answer` and
+`GET /evidence-workbench/graph` continue to return the initial read-only
+fixture state; the post-action state is returned by the review-action response.
+
+Review-action state is stored in memory for the running API process. Restarting
+the API process resets `REV-001` and `AUDIT-001` to the initial fixture state.
 
 `/meta` reports the local synthetic fixture posture:
 

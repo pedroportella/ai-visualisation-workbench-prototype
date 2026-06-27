@@ -1,7 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.routing import APIRoute
 
 from aivis_api.main import app
+from aivis_api.review_state import (
+    PRIMARY_REVIEWER_NOTE,
+    ReviewActionRequest,
+    reset_review_action_state,
+)
 
 
 def get_route(path: str) -> APIRoute:
@@ -18,6 +23,25 @@ def call_endpoint(path: str) -> dict[str, object]:
 
     assert isinstance(payload, dict)
     return payload
+
+
+def call_review_action_endpoint(body: dict[str, object]) -> dict[str, object]:
+    route = get_route("/evidence-workbench/review-actions")
+    payload = route.endpoint(ReviewActionRequest(**body))
+
+    assert isinstance(payload, dict)
+    return payload
+
+
+def call_review_action_error(body: dict[str, object]) -> HTTPException:
+    route = get_route("/evidence-workbench/review-actions")
+
+    try:
+        route.endpoint(ReviewActionRequest(**body))
+    except HTTPException as error:
+        return error
+
+    raise AssertionError("Expected review action endpoint to raise HTTPException.")
 
 
 def require_mapping(payload: dict[str, object], key: str) -> dict[str, object]:
@@ -51,13 +75,13 @@ def test_b02_operational_routes_are_scaffolded() -> None:
     assert routes["/meta"].methods == {"GET"}
 
 
-def test_fixture_routes_are_scaffolded_without_review_mutation() -> None:
+def test_fixture_routes_are_scaffolded_with_review_action_endpoint() -> None:
     routes = {route.path: route for route in app.routes if isinstance(route, APIRoute)}
 
     assert routes["/evidence-workbench/answer"].methods == {"GET"}
     assert routes["/evidence-workbench/sources"].methods == {"GET"}
     assert routes["/evidence-workbench/graph"].methods == {"GET"}
-    assert "/evidence-workbench/review-actions" not in routes
+    assert routes["/evidence-workbench/review-actions"].methods == {"POST"}
 
 
 def test_health_live_returns_deterministic_json() -> None:
@@ -503,3 +527,163 @@ def test_evidence_graph_keeps_public_context_anchor_nodes_context_only() -> None
             assert from_type != "public_context_anchor"
             assert to_type != "public_context_anchor"
             assert not str(edge["refObjectId"]).startswith("PCA-")
+
+
+def test_review_action_source_update_returns_post_primary_state() -> None:
+    reset_review_action_state()
+
+    payload = call_review_action_endpoint(
+        {
+            "reviewActionId": "ACT-REQUEST-SOURCE-UPDATE",
+            "reviewStateId": "REV-001",
+            "answerId": "ANS-001",
+            "reviewerNote": PRIMARY_REVIEWER_NOTE,
+        }
+    )
+
+    review_state = require_mapping(payload, "reviewState")
+    audit_metadata = require_mapping(payload, "auditMetadata")
+    source_warnings = require_object_list(payload, "sourceWarnings")
+    local_state = require_mapping(payload, "localState")
+
+    assert payload["runtimeModeLabel"] == "local_fixture"
+    assert payload["contractMode"] == "synthetic_fixture"
+    assert payload["contractVersion"] == "aivis-evidence-workbench-contract@0.1.0"
+    assert payload["sourceSetVersion"] == "synthetic-source-set-v1"
+    assert payload["publicContextSetVersion"] == "public-context-anchor-set-v1"
+    assert payload["implementedActionIds"] == ["ACT-REQUEST-SOURCE-UPDATE"]
+
+    assert review_state["id"] == "REV-001"
+    assert review_state["answerId"] == "ANS-001"
+    assert review_state["status"] == "source_update_requested"
+    assert review_state["statusLabel"] == "Source update requested"
+    assert review_state["activeWarningIds"] == [
+        "WARN-001",
+        "WARN-002",
+        "WARN-003",
+        "WARN-004",
+        "WARN-006",
+        "WARN-007",
+    ]
+    assert review_state["availableActionIds"] == [
+        "ACT-ADD-REVIEW-NOTE",
+        "ACT-ESCALATE-SOURCE-OWNER",
+        "ACT-MARK-UNSAFE",
+    ]
+    assert "ACT-MARK-REVIEWED" not in review_state["availableActionIds"]
+    assert review_state["completedActionIds"] == ["ACT-REQUEST-SOURCE-UPDATE"]
+    assert review_state["lastActionId"] == "ACT-REQUEST-SOURCE-UPDATE"
+    assert review_state["reviewerNote"] == PRIMARY_REVIEWER_NOTE
+    assert review_state["updatedAt"] == "2026-06-27T09:15:00+10:00"
+    assert review_state["copyState"] == "disabled"
+    assert review_state["approvalBlockedByWarningIds"] == [
+        "WARN-001",
+        "WARN-002",
+        "WARN-003",
+    ]
+
+    assert audit_metadata["id"] == "AUDIT-001"
+    assert audit_metadata["reviewEventIds"] == [
+        "AUDIT-EVT-001",
+        "AUDIT-EVT-002",
+        "AUDIT-EVT-003",
+        "AUDIT-EVT-004",
+    ]
+    assert audit_metadata["lastReviewActionId"] == "ACT-REQUEST-SOURCE-UPDATE"
+    assert audit_metadata["runtimeModeLabel"] == "local_fixture"
+
+    warning_ids = {warning["id"] for warning in source_warnings}
+    assert warning_ids == set(review_state["activeWarningIds"])
+    assert "WARN-005" not in warning_ids
+    assert by_id(source_warnings)["WARN-007"]["introducedByActionId"] == (
+        "ACT-REQUEST-SOURCE-UPDATE"
+    )
+
+    assert local_state["storage"] == "in_memory_process"
+    assert local_state["sourceSystemWriteback"] == "not_performed"
+    assert local_state["productionAuditLogging"] == "not_performed"
+
+
+def test_review_action_preserves_context_anchor_and_blocker_guardrails() -> None:
+    reset_review_action_state()
+
+    payload = call_review_action_endpoint(
+        {
+            "reviewActionId": "ACT-REQUEST-SOURCE-UPDATE",
+            "reviewerNote": PRIMARY_REVIEWER_NOTE,
+        }
+    )
+
+    review_state = require_mapping(payload, "reviewState")
+    review_actions = require_object_list(payload, "reviewActions")
+    source_warnings = require_object_list(payload, "sourceWarnings")
+
+    assert "WARN-001" in review_state["activeWarningIds"]
+    assert "WARN-002" in review_state["activeWarningIds"]
+    assert "WARN-003" in review_state["activeWarningIds"]
+    assert "ACT-MARK-REVIEWED" not in review_state["availableActionIds"]
+
+    for action in review_actions:
+        target_object_ids = action["targetObjectIds"]
+        assert isinstance(target_object_ids, list)
+        assert all(not str(target_id).startswith("PCA-") for target_id in target_object_ids)
+
+    for warning in source_warnings:
+        applies_to = warning["appliesTo"]
+        assert isinstance(applies_to, list)
+        assert all(
+            not (
+                isinstance(target, dict)
+                and target.get("objectType") == "PublicContextAnchor"
+            )
+            for target in applies_to
+        )
+
+
+def test_review_action_rejects_repeated_primary_action_during_runtime() -> None:
+    reset_review_action_state()
+    request_body = {
+        "reviewActionId": "ACT-REQUEST-SOURCE-UPDATE",
+        "reviewerNote": PRIMARY_REVIEWER_NOTE,
+    }
+
+    first_payload = call_review_action_endpoint(request_body)
+    second_error = call_review_action_error(request_body)
+
+    assert require_mapping(first_payload, "reviewState")["lastActionId"] == (
+        "ACT-REQUEST-SOURCE-UPDATE"
+    )
+    assert second_error.status_code == 409
+    assert second_error.detail == "ACT-REQUEST-SOURCE-UPDATE has already been completed."
+
+
+def test_review_action_rejects_mark_reviewed_while_blockers_remain() -> None:
+    reset_review_action_state()
+
+    error = call_review_action_error(
+        {
+            "reviewActionId": "ACT-MARK-REVIEWED",
+            "reviewerNote": PRIMARY_REVIEWER_NOTE,
+        }
+    )
+
+    assert error.status_code == 409
+    assert error.detail == (
+        "ACT-MARK-REVIEWED is unavailable while WARN-001, WARN-002 or WARN-003 are active."
+    )
+
+
+def test_review_action_requires_the_c05_primary_note() -> None:
+    reset_review_action_state()
+
+    error = call_review_action_error(
+        {
+            "reviewActionId": "ACT-REQUEST-SOURCE-UPDATE",
+            "reviewerNote": "Please refresh the map.",
+        }
+    )
+
+    assert error.status_code == 400
+    assert error.detail == (
+        "ACT-REQUEST-SOURCE-UPDATE requires the deterministic C05 reviewer note."
+    )

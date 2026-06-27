@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 from aivis_api import __version__
 from aivis_api.fixture_data import (
@@ -11,6 +11,11 @@ from aivis_api.fixture_data import (
     get_answer_fixture_response,
     get_evidence_graph_response,
     get_source_inventory_response,
+)
+from aivis_api.review_state import (
+    ReviewActionError,
+    ReviewActionRequest,
+    apply_review_action,
 )
 
 APP_TITLE = "AI Visualisation Workbench API"
@@ -86,6 +91,15 @@ def create_app() -> FastAPI:
     @api.get("/evidence-workbench/graph", tags=["evidence-workbench"])
     def evidence_workbench_graph() -> dict[str, object]:
         return get_evidence_graph_response()
+
+    @api.post("/evidence-workbench/review-actions", tags=["evidence-workbench"])
+    def evidence_workbench_review_action(
+        request: ReviewActionRequest,
+    ) -> dict[str, object]:
+        try:
+            return apply_review_action(request)
+        except ReviewActionError as error:
+            raise HTTPException(status_code=error.status_code, detail=error.detail) from error
 
     return api
 
