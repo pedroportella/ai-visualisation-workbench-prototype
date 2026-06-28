@@ -280,6 +280,7 @@
   --ssq-link-decoration-offset: var(--QLD-underline__offset);
   --ssq-content-width: 86rem;
 
+  --aivis-color-scheme: light;
   --aivis-palette-page: #f5f7fb;
   --aivis-palette-surface: var(--ssq-primitive-color-white);
   --aivis-palette-surface-muted: #f8fbff;
@@ -433,6 +434,98 @@
   --aivis-workbench-status-padding: 0.3rem var(--aivis-space-2-5);
   --aivis-workbench-status-min-block-size: 1.75rem;
   --aivis-workbench-step-marker-size: var(--aivis-space-7);
+}
+
+.light,
+.light-theme,
+[data-aivis-theme="light"],
+[data-theme="light"] {
+  --aivis-color-scheme: light;
+  --aivis-palette-page: #f5f7fb;
+  --aivis-palette-surface: var(--ssq-primitive-color-white);
+  --aivis-palette-surface-muted: #f8fbff;
+  --aivis-palette-surface-raised: #fbfcff;
+  --aivis-palette-border: #cbd7e8;
+  --aivis-palette-border-muted: #dbe7f4;
+  --aivis-palette-border-soft: #dde6f1;
+  --aivis-palette-text: #172033;
+  --aivis-palette-text-muted: #53657d;
+  --aivis-palette-accent: var(--QLD-color-light__action--primary);
+  --aivis-palette-accent-strong: var(--QLD-color-dark__background--alt);
+  --aivis-palette-accent-soft: #eef8ff;
+  --aivis-palette-accent-soft-border: #c8e3f8;
+  --aivis-palette-focus: var(--QLD-color-light__focus);
+  --aivis-palette-on-strong: var(--ssq-primitive-color-white);
+  --aivis-palette-success-text: #1f6d31;
+  --aivis-palette-success-surface: #ecf8ef;
+  --aivis-palette-success-border-rgb: 31 109 49;
+  --aivis-palette-warning-text: #7a5a00;
+  --aivis-palette-warning-text-strong: #694c00;
+  --aivis-palette-warning-surface: #fff8e5;
+  --aivis-palette-warning-surface-strong: #fff6d8;
+  --aivis-palette-warning-border-rgb: 122 90 0;
+  --aivis-shell-shadow: 0 18px 48px rgb(0 29 116 / 10%);
+}
+
+.dark,
+.dark-theme,
+[data-aivis-theme="dark"],
+[data-theme="dark"] {
+  --aivis-color-scheme: dark;
+  --aivis-palette-page: #0d1424;
+  --aivis-palette-surface: #151f32;
+  --aivis-palette-surface-muted: #1b2940;
+  --aivis-palette-surface-raised: #111b2d;
+  --aivis-palette-border: #38506d;
+  --aivis-palette-border-muted: #2b405b;
+  --aivis-palette-border-soft: #263b55;
+  --aivis-palette-text: #f4f8ff;
+  --aivis-palette-text-muted: #b9c7dc;
+  --aivis-palette-accent: var(--QLD-color-dark__action--primary);
+  --aivis-palette-accent-strong: var(--QLD-color-dark__action--primary);
+  --aivis-palette-accent-soft: #12334d;
+  --aivis-palette-accent-soft-border: #337099;
+  --aivis-palette-focus: var(--QLD-color-dark__focus);
+  --aivis-palette-on-strong: var(--QLD-color-dark__link--on-action);
+  --aivis-palette-success-text: #a7f3d0;
+  --aivis-palette-success-surface: #12382f;
+  --aivis-palette-success-border-rgb: 95 211 171;
+  --aivis-palette-warning-text: #fde68a;
+  --aivis-palette-warning-text-strong: #fef3c7;
+  --aivis-palette-warning-surface: #34270f;
+  --aivis-palette-warning-surface-strong: #463514;
+  --aivis-palette-warning-border-rgb: 253 230 138;
+  --aivis-shell-shadow: 0 18px 48px rgb(0 0 0 / 34%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.light-theme):not([data-aivis-theme="light"]):not([data-theme="light"]) {
+    --aivis-color-scheme: dark;
+    --aivis-palette-page: #0d1424;
+    --aivis-palette-surface: #151f32;
+    --aivis-palette-surface-muted: #1b2940;
+    --aivis-palette-surface-raised: #111b2d;
+    --aivis-palette-border: #38506d;
+    --aivis-palette-border-muted: #2b405b;
+    --aivis-palette-border-soft: #263b55;
+    --aivis-palette-text: #f4f8ff;
+    --aivis-palette-text-muted: #b9c7dc;
+    --aivis-palette-accent: var(--QLD-color-dark__action--primary);
+    --aivis-palette-accent-strong: var(--QLD-color-dark__action--primary);
+    --aivis-palette-accent-soft: #12334d;
+    --aivis-palette-accent-soft-border: #337099;
+    --aivis-palette-focus: var(--QLD-color-dark__focus);
+    --aivis-palette-on-strong: var(--QLD-color-dark__link--on-action);
+    --aivis-palette-success-text: #a7f3d0;
+    --aivis-palette-success-surface: #12382f;
+    --aivis-palette-success-border-rgb: 95 211 171;
+    --aivis-palette-warning-text: #fde68a;
+    --aivis-palette-warning-text-strong: #fef3c7;
+    --aivis-palette-warning-surface: #34270f;
+    --aivis-palette-warning-surface-strong: #463514;
+    --aivis-palette-warning-border-rgb: 253 230 138;
+    --aivis-shell-shadow: 0 18px 48px rgb(0 0 0 / 34%);
+  }
 }
 
 :root {

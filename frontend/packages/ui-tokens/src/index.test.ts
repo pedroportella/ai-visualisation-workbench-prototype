@@ -66,6 +66,11 @@ describe("prototypeTokens", () => {
   });
 
   it("documents AIVIS workbench semantic token boundaries", () => {
+    expect(prototypeTokens.aivis.theme.defaultMode).toBe("system");
+    expect(prototypeTokens.aivis.theme.modes).toEqual(["light", "dark"]);
+    expect(prototypeTokens.aivis.theme.selectors).toContain("[data-aivis-theme=\"dark\"]");
+    expect(prototypeTokens.aivis.theme.selectors).toContain("[data-theme=\"light\"]");
+    expect(prototypeTokens.aivis.theme.systemPreference).toBe("@media (prefers-color-scheme: dark)");
     expect(prototypeTokens.aivis.color.paletteVariables).toContain("--aivis-palette-page");
     expect(prototypeTokens.aivis.color.paletteVariables).toContain("--aivis-palette-warning-surface");
     expect(prototypeTokens.aivis.color.semanticVariables).toContain("--aivis-shell-page");
@@ -78,6 +83,11 @@ describe("prototypeTokens", () => {
     expect(styles).toContain("--aivis-shell-radius: var(--aivis-radius-md)");
     expect(styles).toContain("--aivis-color-warning-border: rgb(var(--aivis-palette-warning-border-rgb) / 28%)");
     expect(styles).toContain("--aivis-workbench-card-padding: var(--aivis-space-3-25)");
+    expect(styles).toContain("[data-aivis-theme=\"light\"]");
+    expect(styles).toContain("[data-aivis-theme=\"dark\"]");
+    expect(styles).toContain("--aivis-color-scheme: dark");
+    expect(styles).toContain("--aivis-palette-page: #0d1424");
+    expect(styles).toContain(":root:not(.light):not(.light-theme)");
   });
 
   it("maps QHDS light, alt, dark and dark-alt layers in SCSS", () => {

@@ -127,8 +127,24 @@ export const prototypeTokens = {
     sectionPaddingMobile: "2.25rem"
   },
   aivis: {
+    theme: {
+      defaultMode: "system",
+      modes: ["light", "dark"],
+      selectors: [
+        ".light",
+        ".light-theme",
+        ".dark",
+        ".dark-theme",
+        "[data-aivis-theme=\"light\"]",
+        "[data-aivis-theme=\"dark\"]",
+        "[data-theme=\"light\"]",
+        "[data-theme=\"dark\"]"
+      ],
+      systemPreference: "@media (prefers-color-scheme: dark)"
+    },
     color: {
       paletteVariables: [
+        "--aivis-color-scheme",
         "--aivis-palette-page",
         "--aivis-palette-surface",
         "--aivis-palette-surface-muted",

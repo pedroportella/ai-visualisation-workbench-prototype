@@ -1,6 +1,11 @@
 @use "../app-shell/workbench-app-shell";
 @use "../containers/evidence-workbench/evidence-workbench";
 
+html {
+  color-scheme: var(--aivis-color-scheme);
+}
+
 body {
   background: var(--aivis-shell-page);
+  color: var(--aivis-shell-text);
 }
