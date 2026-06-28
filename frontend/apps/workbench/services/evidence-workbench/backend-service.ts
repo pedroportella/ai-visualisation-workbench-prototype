@@ -1,7 +1,14 @@
 import "server-only";
 
 import { fallbackEvidenceWorkbenchData } from "./fallback-fixture";
-import type { EvidenceWorkbenchViewModel } from "./types";
+import type {
+  EvidenceWorkbenchCitation,
+  EvidenceWorkbenchContextAnchor,
+  EvidenceWorkbenchSource,
+  EvidenceWorkbenchSourceFilter,
+  EvidenceWorkbenchSourceWarning,
+  EvidenceWorkbenchViewModel
+} from "./types";
 
 const DEFAULT_BACKEND_ORIGIN = "http://127.0.0.1:8000";
 
@@ -20,8 +27,10 @@ interface PromptContext {
 }
 
 interface PublicContextAnchor {
+  evidenceUseProhibited?: boolean;
   fixtureUse: string;
   id: string;
+  kind?: string;
   label: string;
 }
 
@@ -36,10 +45,14 @@ interface AnswerFixture {
 }
 
 interface AnswerClaimFixture {
+  citationIds: string[];
+  contextAnchorIds: string[];
   displayOrder: number;
   evidencePosture: string;
   id: string;
+  requiredMissingSourceIds: string[];
   reviewRequired: boolean;
+  supportingSourceIds: string[];
   text: string;
   warningIds: string[];
 }
@@ -52,16 +65,28 @@ interface ReviewStateFixture {
 }
 
 interface SourceWarningFixture {
+  appliesTo?: SourceWarningAppliesToFixture[];
+  blocksApproval?: boolean;
+  code: string;
+  evidenceImpact?: string;
   id: string;
   message: string;
+  recommendedActionId?: string;
   severity: string;
+}
+
+interface SourceWarningAppliesToFixture {
+  objectId: string;
+  objectType: string;
 }
 
 interface CitationFixture {
   claimId: string;
   confidenceLabel: string;
+  excerptId: string;
   id: string;
   marker: string;
+  relationship: string;
   sourceId: string;
   sourceLocationLabel: string;
   warningIds: string[];
@@ -69,10 +94,17 @@ interface CitationFixture {
 
 interface SourceFixture {
   citationCount: number;
+  contextAnchorIds: string[];
+  excerptIds: string[];
+  expiresAt: string | null;
   freshness: string;
   id: string;
+  isClaimSupportingEvidence: boolean;
   lastUpdated: string | null;
+  ownerLabel: string;
+  reviewOwnerQueue: string;
   sourceOrigin: string;
+  sourceType: string;
   syntheticExcerptPreview: string;
   title: string;
   warningIds: string[];
@@ -99,6 +131,8 @@ interface AnswerFixtureResponse extends FixtureMetadata {
 }
 
 interface SourceInventoryResponse extends FixtureMetadata {
+  publicContextAnchors?: PublicContextAnchor[];
+  sourceWarnings?: SourceWarningFixture[];
   sources: SourceFixture[];
 }
 
@@ -151,12 +185,34 @@ function buildEvidenceWorkbenchViewModel(
   sourceResponse: SourceInventoryResponse,
   graphResponse: EvidenceGraphResponse
 ): EvidenceWorkbenchViewModel {
+  const sourceWarnings = sourceResponse.sourceWarnings ?? answerResponse.sourceWarnings;
   const warningsById = new Map(
-    answerResponse.sourceWarnings.map((warning) => [warning.id, warning])
+    sourceWarnings.map((warning) => [warning.id, warning])
   );
   const activeWarnings = answerResponse.reviewState.activeWarningIds
     .map((warningId) => warningsById.get(warningId))
     .filter((warning): warning is SourceWarningFixture => Boolean(warning));
+  const contextAnchors = sourceResponse.publicContextAnchors ?? answerResponse.publicContextAnchors;
+  const contextAnchorsById = new Map(
+    contextAnchors.map((anchor) => [anchor.id, mapContextAnchor(anchor)])
+  );
+  const citations = answerResponse.citations.map(mapCitation);
+  const citationsBySourceId = groupCitationsBySourceId(citations);
+  const selectedClaim = answerResponse.answerClaims.find(
+    (claim) => claim.id === answerResponse.answer.defaultSelectedClaimId
+  );
+  const selectedClaimSourceIds = new Set([
+    ...(selectedClaim?.supportingSourceIds ?? []),
+    ...(selectedClaim?.requiredMissingSourceIds ?? [])
+  ]);
+  const sourceItems = sourceResponse.sources.map((source) =>
+    mapSourceItem(source, {
+      citations: citationsBySourceId.get(source.id) ?? [],
+      contextAnchorsById,
+      selectedClaimSourceIds,
+      warningsById
+    })
+  );
 
   return {
     answer: {
@@ -166,21 +222,9 @@ function buildEvidenceWorkbenchViewModel(
       summary: answerResponse.answer.summary,
       title: answerResponse.answer.title
     },
-    citations: answerResponse.citations.map((citation) => ({
-      claimId: citation.claimId,
-      id: citation.id,
-      marker: citation.marker,
-      sourceId: citation.sourceId,
-      sourceLabel: citation.sourceLocationLabel,
-      status: formatLabel(citation.confidenceLabel),
-      warningIds: citation.warningIds
-    })),
+    citations,
     context: {
-      anchors: answerResponse.publicContextAnchors.map((anchor) => ({
-        id: anchor.id,
-        label: anchor.label,
-        supportingText: anchor.fixtureUse
-      })),
+      anchors: answerResponse.publicContextAnchors.map(mapContextAnchor),
       plannedTravelDate: answerResponse.promptContext.plannedTravelDate,
       question: contextSummary(answerResponse.promptContext),
       title: "Step-free transfer guidance needs evidence review"
@@ -216,15 +260,8 @@ function buildEvidenceWorkbenchViewModel(
         title: formatClaimTitle(claim),
         warningIds: claim.warningIds
       })),
-    sourceItems: sourceResponse.sources
-      .filter((source) => source.citationCount > 0 || source.warningIds.length > 0)
-      .map((source) => ({
-        id: source.id,
-        meta: sourceMeta(source),
-        preview: source.syntheticExcerptPreview,
-        status: sourceStatus(source),
-        title: source.title
-      })),
+    sourceFilters: buildSourceFilters(sourceItems),
+    sourceItems,
     summary: [
       {
         label: "Fixture mode",
@@ -248,6 +285,179 @@ function buildEvidenceWorkbenchViewModel(
       message: warning.message,
       severity: formatLabel(warning.severity)
     }))
+  };
+}
+
+interface MapSourceItemContext {
+  citations: EvidenceWorkbenchCitation[];
+  contextAnchorsById: Map<string, EvidenceWorkbenchContextAnchor>;
+  selectedClaimSourceIds: Set<string>;
+  warningsById: Map<string, SourceWarningFixture>;
+}
+
+function mapSourceItem(
+  source: SourceFixture,
+  context: MapSourceItemContext
+): EvidenceWorkbenchSource {
+  const directWarnings = source.warningIds
+    .map((warningId) => context.warningsById.get(warningId))
+    .filter((warning): warning is SourceWarningFixture => Boolean(warning))
+    .map(mapSourceWarning);
+  const directWarningIds = new Set(directWarnings.map((warning) => warning.id));
+  const relationshipWarnings = uniqueStrings(
+    context.citations.flatMap((citation) => citation.warningIds)
+  )
+    .filter((warningId) => !directWarningIds.has(warningId))
+    .map((warningId) => context.warningsById.get(warningId))
+    .filter((warning): warning is SourceWarningFixture => Boolean(warning))
+    .map(mapSourceWarning);
+
+  return {
+    citationCount: source.citationCount,
+    citations: context.citations,
+    contextAnchors: source.contextAnchorIds.map(
+      (anchorId) =>
+        context.contextAnchorsById.get(anchorId) ?? {
+          evidenceUseProhibited: true,
+          id: anchorId,
+          label: anchorId,
+          supportingText: "Context anchor only"
+        }
+    ),
+    directWarnings,
+    excerptIds: source.excerptIds,
+    expiresAt: source.expiresAt,
+    freshness: formatLabel(source.freshness),
+    id: source.id,
+    isClaimSupportingEvidence: source.isClaimSupportingEvidence,
+    isSelectedClaimSource: context.selectedClaimSourceIds.has(source.id),
+    lastUpdated: source.lastUpdated,
+    meta: sourceMeta(source),
+    ownerLabel: source.ownerLabel,
+    preview: source.syntheticExcerptPreview,
+    relationshipWarnings,
+    reviewOwnerQueue: source.reviewOwnerQueue,
+    sourceOrigin: source.sourceOrigin,
+    sourceType: formatLabel(source.sourceType),
+    status: sourceStatus(source, relationshipWarnings),
+    title: source.title,
+    trustState: sourceTrustState(source, relationshipWarnings)
+  };
+}
+
+function mapCitation(citation: CitationFixture): EvidenceWorkbenchCitation {
+  return {
+    claimId: citation.claimId,
+    excerptId: citation.excerptId,
+    id: citation.id,
+    marker: citation.marker,
+    relationship: formatLabel(citation.relationship),
+    sourceId: citation.sourceId,
+    sourceLabel: citation.sourceLocationLabel,
+    status: formatLabel(citation.confidenceLabel),
+    warningIds: citation.warningIds
+  };
+}
+
+function mapContextAnchor(anchor: PublicContextAnchor): EvidenceWorkbenchContextAnchor {
+  return {
+    evidenceUseProhibited: anchor.evidenceUseProhibited ?? true,
+    id: anchor.id,
+    kind: anchor.kind ? formatLabel(anchor.kind) : undefined,
+    label: anchor.label,
+    supportingText: anchor.fixtureUse
+  };
+}
+
+function mapSourceWarning(warning: SourceWarningFixture): EvidenceWorkbenchSourceWarning {
+  return {
+    blocksApproval: Boolean(warning.blocksApproval),
+    code: formatLabel(warning.code),
+    evidenceImpact: warning.evidenceImpact ?? warning.message,
+    id: warning.id,
+    message: warning.message,
+    severity: formatLabel(warning.severity)
+  };
+}
+
+function groupCitationsBySourceId(
+  citations: EvidenceWorkbenchCitation[]
+): Map<string, EvidenceWorkbenchCitation[]> {
+  const groups = new Map<string, EvidenceWorkbenchCitation[]>();
+
+  for (const citation of citations) {
+    groups.set(citation.sourceId, [...(groups.get(citation.sourceId) ?? []), citation]);
+  }
+
+  return groups;
+}
+
+function buildSourceFilters(sources: EvidenceWorkbenchSource[]): EvidenceWorkbenchSourceFilter[] {
+  return [
+    sourceFilter("all-sources", "All sources", sources, "Every source inventory record."),
+    sourceFilter(
+      "cited-in-answer",
+      "Cited in answer",
+      sources.filter((source) => source.citationCount > 0),
+      "Sources connected to citation markers in the draft answer."
+    ),
+    sourceFilter(
+      "current-support",
+      "Current support",
+      sources.filter(
+        (source) =>
+          source.trustState === "current_supporting" &&
+          source.citationCount > 0 &&
+          source.directWarnings.length === 0 &&
+          source.relationshipWarnings.length === 0
+      ),
+      "Current cited sources without active source or citation warnings."
+    ),
+    sourceFilter(
+      "conditional-support",
+      "Conditional support",
+      sources.filter((source) => source.trustState === "current_conditional_support"),
+      "Current sources with a warning on the citation or claim relationship."
+    ),
+    sourceFilter(
+      "stale-blockers",
+      "Stale blockers",
+      sources.filter((source) => source.trustState === "stale_blocker"),
+      "Sources blocked by a stale freshness state."
+    ),
+    sourceFilter(
+      "missing-evidence",
+      "Missing evidence",
+      sources.filter((source) => source.trustState === "missing_blocker"),
+      "Missing-source placeholders required before approval."
+    ),
+    sourceFilter(
+      "uncited-inventory",
+      "Uncited inventory",
+      sources.filter((source) => source.trustState === "current_uncited"),
+      "Source records present in the inventory but not cited by the answer."
+    ),
+    sourceFilter(
+      "needs-owner-action",
+      "Needs owner action",
+      sources.filter((source) => source.trustState === "stale_blocker" || source.trustState === "missing_blocker"),
+      "First source-owner queues for stale or missing evidence."
+    )
+  ];
+}
+
+function sourceFilter(
+  id: string,
+  label: string,
+  sources: EvidenceWorkbenchSource[],
+  description: string
+): EvidenceWorkbenchSourceFilter {
+  return {
+    count: sources.length,
+    description,
+    id,
+    label,
+    sourceIds: sources.map((source) => source.id)
   };
 }
 
@@ -303,14 +513,21 @@ function formatLabel(value: string): string {
 }
 
 function sourceMeta(source: SourceFixture): string {
-  if (source.lastUpdated) {
-    return `Fixture source updated: ${source.lastUpdated}`;
+  const dateLabel = source.lastUpdated
+    ? `Updated ${source.lastUpdated}`
+    : "Missing-source placeholder";
+
+  if (source.expiresAt) {
+    return `${formatLabel(source.sourceType)}; ${dateLabel}; expires ${source.expiresAt}`;
   }
 
-  return "Evidence state: missing-source placeholder";
+  return `${formatLabel(source.sourceType)}; ${dateLabel}`;
 }
 
-function sourceStatus(source: SourceFixture): string {
+function sourceStatus(
+  source: SourceFixture,
+  relationshipWarnings: EvidenceWorkbenchSourceWarning[]
+): string {
   if (source.sourceOrigin === "missing_source_placeholder" || source.freshness === "missing") {
     return "Missing evidence";
   }
@@ -319,5 +536,40 @@ function sourceStatus(source: SourceFixture): string {
     return "Stale source";
   }
 
-  return "Synthetic fixture";
+  if (relationshipWarnings.length > 0) {
+    return "Conditional support";
+  }
+
+  if (source.citationCount === 0) {
+    return "Uncited inventory";
+  }
+
+  return "Current support";
+}
+
+function sourceTrustState(
+  source: SourceFixture,
+  relationshipWarnings: EvidenceWorkbenchSourceWarning[]
+): string {
+  if (source.sourceOrigin === "missing_source_placeholder" || source.freshness === "missing") {
+    return "missing_blocker";
+  }
+
+  if (source.freshness === "stale") {
+    return "stale_blocker";
+  }
+
+  if (relationshipWarnings.length > 0) {
+    return "current_conditional_support";
+  }
+
+  if (source.citationCount === 0) {
+    return "current_uncited";
+  }
+
+  return "current_supporting";
+}
+
+function uniqueStrings(values: string[]): string[] {
+  return [...new Set(values)];
 }

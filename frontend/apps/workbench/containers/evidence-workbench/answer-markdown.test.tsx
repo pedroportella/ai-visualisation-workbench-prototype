@@ -7,8 +7,10 @@ import { AnswerMarkdown } from "./answer-markdown";
 const fixtureCitations: EvidenceWorkbenchCitation[] = [
   {
     claimId: "CLAIM-001",
+    excerptId: "SRC-001-EXCERPT-001",
     id: "CIT-001-A",
     marker: "[CIT-001-A]",
+    relationship: "Supports",
     sourceId: "SRC-001",
     sourceLabel: "Synthetic lift works brief excerpt",
     status: "Supported",
@@ -16,8 +18,10 @@ const fixtureCitations: EvidenceWorkbenchCitation[] = [
   },
   {
     claimId: "CLAIM-002",
+    excerptId: "SRC-002-EXCERPT-001",
     id: "CIT-002-A",
     marker: "[CIT-002-A]",
+    relationship: "Supports With Warning",
     sourceId: "SRC-002",
     sourceLabel: "Stale temporary boarding map excerpt",
     status: "Stale",
@@ -25,8 +29,10 @@ const fixtureCitations: EvidenceWorkbenchCitation[] = [
   },
   {
     claimId: "CLAIM-003",
+    excerptId: "SRC-003-EXCERPT-001",
     id: "CIT-003-A",
     marker: "[CIT-003-A]",
+    relationship: "Partial Support",
     sourceId: "SRC-003",
     sourceLabel: "Accessible vehicle allocation guidance excerpt",
     status: "Conditional",
@@ -34,8 +40,10 @@ const fixtureCitations: EvidenceWorkbenchCitation[] = [
   },
   {
     claimId: "CLAIM-003",
+    excerptId: "SRC-006-EXCERPT-MISSING",
     id: "CIT-003-B",
     marker: "[CIT-003-B]",
+    relationship: "Missing Evidence",
     sourceId: "SRC-006",
     sourceLabel: "Missing dispatch confirmation placeholder",
     status: "Not available",

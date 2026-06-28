@@ -1,4 +1,175 @@
-import type { EvidenceWorkbenchViewModel } from "./types";
+import type {
+  EvidenceWorkbenchContextAnchor,
+  EvidenceWorkbenchSource,
+  EvidenceWorkbenchSourceFilter,
+  EvidenceWorkbenchViewModel
+} from "./types";
+
+const fallbackContextAnchors: EvidenceWorkbenchContextAnchor[] = [
+  {
+    evidenceUseProhibited: true,
+    id: "PCA-FALLBACK-001",
+    kind: "Station",
+    label: "South Brisbane station",
+    supportingText: "Context anchor only"
+  },
+  {
+    evidenceUseProhibited: true,
+    id: "PCA-FALLBACK-002",
+    kind: "Place",
+    label: "QPAC/Grey Street",
+    supportingText: "Context anchor only"
+  },
+  {
+    evidenceUseProhibited: true,
+    id: "PCA-FALLBACK-003",
+    kind: "Hospital",
+    label: "Princess Alexandra Hospital",
+    supportingText: "Context anchor only"
+  }
+];
+
+const fallbackSourceItems: EvidenceWorkbenchSource[] = [
+  {
+    citationCount: 0,
+    citations: [],
+    contextAnchors: [fallbackContextAnchors[0]],
+    directWarnings: [],
+    excerptIds: ["SRC-FALLBACK-001-EXCERPT-001"],
+    expiresAt: null,
+    freshness: "Unknown",
+    id: "SRC-FALLBACK-001",
+    isClaimSupportingEvidence: true,
+    isSelectedClaimSource: false,
+    lastUpdated: null,
+    meta: "Fixture timestamp unavailable",
+    ownerLabel: "Fallback source set",
+    preview: "Synthetic fixture preview is bundled with the app fallback.",
+    relationshipWarnings: [],
+    reviewOwnerQueue: "fallback-source-review",
+    sourceOrigin: "synthetic_fixture",
+    sourceType: "Fallback source",
+    status: "Synthetic fixture",
+    title: "Synthetic station access notice",
+    trustState: "fallback_current"
+  },
+  {
+    citationCount: 0,
+    citations: [],
+    contextAnchors: [fallbackContextAnchors[1]],
+    directWarnings: [
+      {
+        blocksApproval: true,
+        code: "Source stale",
+        evidenceImpact: "Fallback source remains blocked for a freshness check.",
+        id: "WARN-FALLBACK-001",
+        message: "Temporary boarding map needs a freshness check.",
+        severity: "High"
+      }
+    ],
+    excerptIds: ["SRC-FALLBACK-002-EXCERPT-001"],
+    expiresAt: null,
+    freshness: "Unknown",
+    id: "SRC-FALLBACK-002",
+    isClaimSupportingEvidence: true,
+    isSelectedClaimSource: false,
+    lastUpdated: null,
+    meta: "Review note: source may be stale",
+    ownerLabel: "Fallback source set",
+    preview: "Synthetic wayfinding map extract remains blocked for review.",
+    relationshipWarnings: [
+      {
+        blocksApproval: true,
+        code: "Claim weak support",
+        evidenceImpact: "Fallback relationship keeps shuttle wording conditional.",
+        id: "WARN-FALLBACK-002",
+        message: "Step-free shuttle wording is stronger than the evidence.",
+        severity: "High"
+      }
+    ],
+    reviewOwnerQueue: "fallback-source-review",
+    sourceOrigin: "synthetic_fixture",
+    sourceType: "Fallback source",
+    status: "Stale source",
+    title: "Synthetic wayfinding map extract",
+    trustState: "stale_blocker"
+  },
+  {
+    citationCount: 0,
+    citations: [],
+    contextAnchors: [],
+    directWarnings: [
+      {
+        blocksApproval: true,
+        code: "Missing source",
+        evidenceImpact: "Fallback placeholder keeps dispatch confirmation unresolved.",
+        id: "WARN-FALLBACK-003",
+        message: "Dispatch confirmation is missing.",
+        severity: "High"
+      }
+    ],
+    excerptIds: ["SRC-FALLBACK-003-EXCERPT-MISSING"],
+    expiresAt: null,
+    freshness: "Missing",
+    id: "SRC-FALLBACK-003",
+    isClaimSupportingEvidence: false,
+    isSelectedClaimSource: true,
+    lastUpdated: null,
+    meta: "Evidence state: missing-source placeholder",
+    ownerLabel: "Fallback source set",
+    preview: "Dispatch confirmation remains unavailable in the fallback view.",
+    relationshipWarnings: [],
+    reviewOwnerQueue: "fallback-source-review",
+    sourceOrigin: "missing_source_placeholder",
+    sourceType: "Missing-source placeholder",
+    status: "Missing evidence",
+    title: "Dispatch confirmation placeholder",
+    trustState: "missing_blocker"
+  }
+];
+
+const fallbackSourceFilters: EvidenceWorkbenchSourceFilter[] = [
+  sourceFilter("all-sources", "All sources", fallbackSourceItems, "Every fallback source record."),
+  sourceFilter(
+    "cited-in-answer",
+    "Cited in answer",
+    [],
+    "Fallback markdown does not carry citation metadata."
+  ),
+  sourceFilter(
+    "stale-blockers",
+    "Stale blockers",
+    [fallbackSourceItems[1]],
+    "Fallback source that still needs a freshness check."
+  ),
+  sourceFilter(
+    "missing-evidence",
+    "Missing evidence",
+    [fallbackSourceItems[2]],
+    "Fallback missing-source placeholder."
+  ),
+  sourceFilter(
+    "needs-owner-action",
+    "Needs owner action",
+    [fallbackSourceItems[1], fallbackSourceItems[2]],
+    "Fallback stale or missing source states."
+  )
+];
+
+function sourceFilter(
+  id: string,
+  label: string,
+  sources: EvidenceWorkbenchSource[],
+  description: string
+): EvidenceWorkbenchSourceFilter {
+  return {
+    count: sources.length,
+    description,
+    id,
+    label,
+    sourceIds: sources.map((source) => source.id)
+  };
+}
 
 export const fallbackEvidenceWorkbenchData: EvidenceWorkbenchViewModel = {
   answer: {
@@ -31,23 +202,7 @@ new source claims.
   },
   citations: [],
   context: {
-    anchors: [
-      {
-        id: "PCA-FALLBACK-001",
-        label: "South Brisbane station",
-        supportingText: "Context anchor only"
-      },
-      {
-        id: "PCA-FALLBACK-002",
-        label: "QPAC/Grey Street",
-        supportingText: "Context anchor only"
-      },
-      {
-        id: "PCA-FALLBACK-003",
-        label: "Princess Alexandra Hospital",
-        supportingText: "Context anchor only"
-      }
-    ],
+    anchors: fallbackContextAnchors,
     plannedTravelDate: "Fixture travel date unavailable",
     question: "Backend fixture data was unavailable, so this fallback keeps the review case visible.",
     title: "Step-free transfer guidance needs evidence review"
@@ -109,29 +264,8 @@ new source claims.
       warningIds: ["WARN-FALLBACK-003"]
     }
   ],
-  sourceItems: [
-    {
-      id: "SRC-FALLBACK-001",
-      meta: "Fixture timestamp unavailable",
-      preview: "Synthetic fixture preview is bundled with the app fallback.",
-      status: "Synthetic fixture",
-      title: "Synthetic station access notice"
-    },
-    {
-      id: "SRC-FALLBACK-002",
-      meta: "Review note: source may be stale",
-      preview: "Synthetic wayfinding map extract remains blocked for review.",
-      status: "Stale source",
-      title: "Synthetic wayfinding map extract"
-    },
-    {
-      id: "SRC-FALLBACK-003",
-      meta: "Evidence state: missing-source placeholder",
-      preview: "Dispatch confirmation remains unavailable in the fallback view.",
-      status: "Missing evidence",
-      title: "Dispatch confirmation placeholder"
-    }
-  ],
+  sourceFilters: fallbackSourceFilters,
+  sourceItems: fallbackSourceItems,
   summary: [
     {
       label: "Fixture mode",

@@ -1,5 +1,6 @@
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 import { AnswerMarkdown } from "./answer-markdown";
+import { SourceTracePanel } from "./source-trace-panel";
 
 export default function EvidenceWorkbenchContainer({
   data
@@ -103,16 +104,11 @@ export default function EvidenceWorkbenchContainer({
             <span className="evidence-workbench-status">Synthetic fixture</span>
           </div>
           <h2 id="sources-title">Evidence sources</h2>
-          <ul className="evidence-workbench-source-list">
-            {data.sourceItems.map((source) => (
-              <li id={`source-${source.id}`} key={source.id}>
-                <strong>{source.title}</strong>
-                <span>{source.meta}</span>
-                <p>{source.preview}</p>
-                <em>{source.status}</em>
-              </li>
-            ))}
-          </ul>
+          <SourceTracePanel
+            filters={data.sourceFilters}
+            selectedClaimId={data.review.selectedClaimId}
+            sources={data.sourceItems}
+          />
         </aside>
 
         <section className="evidence-workbench-panel" aria-labelledby="review-title">
