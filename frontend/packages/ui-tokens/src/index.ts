@@ -125,5 +125,92 @@ export const prototypeTokens = {
     contentBlockSpacingMobile: "2rem",
     sectionPaddingDesktop: "4rem",
     sectionPaddingMobile: "2.25rem"
+  },
+  aivis: {
+    color: {
+      paletteVariables: [
+        "--aivis-palette-page",
+        "--aivis-palette-surface",
+        "--aivis-palette-surface-muted",
+        "--aivis-palette-surface-raised",
+        "--aivis-palette-border",
+        "--aivis-palette-border-muted",
+        "--aivis-palette-border-soft",
+        "--aivis-palette-text",
+        "--aivis-palette-text-muted",
+        "--aivis-palette-accent",
+        "--aivis-palette-accent-strong",
+        "--aivis-palette-accent-soft",
+        "--aivis-palette-accent-soft-border",
+        "--aivis-palette-success-text",
+        "--aivis-palette-warning-text",
+        "--aivis-palette-warning-surface"
+      ],
+      semanticVariables: [
+        "--aivis-shell-page",
+        "--aivis-shell-surface",
+        "--aivis-shell-surface-muted",
+        "--aivis-shell-border",
+        "--aivis-shell-border-muted",
+        "--aivis-shell-text",
+        "--aivis-shell-muted",
+        "--aivis-shell-accent",
+        "--aivis-shell-accent-strong",
+        "--aivis-shell-focus",
+        "--aivis-shell-on-accent",
+        "--aivis-shell-chip-background",
+        "--aivis-shell-chip-border",
+        "--aivis-color-card-surface",
+        "--aivis-color-card-border",
+        "--aivis-color-success-text",
+        "--aivis-color-success-background",
+        "--aivis-color-success-border",
+        "--aivis-color-warning-text",
+        "--aivis-color-warning-background",
+        "--aivis-color-warning-border"
+      ]
+    },
+    radiusVariables: [
+      "--aivis-radius-sm",
+      "--aivis-radius-md",
+      "--aivis-radius-pill",
+      "--aivis-shell-radius"
+    ],
+    spacingVariables: [
+      "--aivis-space-0",
+      "--aivis-space-1",
+      "--aivis-space-2",
+      "--aivis-space-3",
+      "--aivis-space-4",
+      "--aivis-space-5",
+      "--aivis-space-6",
+      "--aivis-space-7",
+      "--aivis-space-9",
+      "--aivis-space-10",
+      "--aivis-workbench-section-gap",
+      "--aivis-workbench-panel-gap",
+      "--aivis-workbench-card-padding",
+      "--aivis-shell-content-padding"
+    ],
+    typographyVariables: [
+      "--aivis-font-size-eyebrow",
+      "--aivis-font-size-small",
+      "--aivis-font-size-caption",
+      "--aivis-font-size-body-sm",
+      "--aivis-font-size-panel-heading",
+      "--aivis-font-size-title-fluid",
+      "--aivis-font-weight-bold",
+      "--aivis-font-weight-heavy",
+      "--aivis-line-height-title",
+      "--aivis-line-height-lead"
+    ],
+    layoutVariables: [
+      "--aivis-shell-sidebar-columns",
+      "--aivis-workbench-header-columns",
+      "--aivis-workbench-context-columns",
+      "--aivis-workbench-grid-columns",
+      "--aivis-workbench-grid-columns-medium",
+      "--aivis-workbench-summary-columns"
+    ]
   }
 } as const;

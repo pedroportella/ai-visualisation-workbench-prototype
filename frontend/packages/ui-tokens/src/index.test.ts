@@ -65,6 +65,21 @@ describe("prototypeTokens", () => {
     expect(prototypeTokens.layout.sectionPaddingMobile).toBe("2.25rem");
   });
 
+  it("documents AIVIS workbench semantic token boundaries", () => {
+    expect(prototypeTokens.aivis.color.paletteVariables).toContain("--aivis-palette-page");
+    expect(prototypeTokens.aivis.color.paletteVariables).toContain("--aivis-palette-warning-surface");
+    expect(prototypeTokens.aivis.color.semanticVariables).toContain("--aivis-shell-page");
+    expect(prototypeTokens.aivis.color.semanticVariables).toContain("--aivis-shell-chip-background");
+    expect(prototypeTokens.aivis.color.semanticVariables).toContain("--aivis-color-warning-border");
+    expect(prototypeTokens.aivis.spacingVariables).toContain("--aivis-workbench-card-padding");
+    expect(prototypeTokens.aivis.typographyVariables).toContain("--aivis-font-size-title-fluid");
+    expect(prototypeTokens.aivis.layoutVariables).toContain("--aivis-workbench-grid-columns");
+    expect(styles).toContain("--aivis-shell-page: var(--aivis-palette-page)");
+    expect(styles).toContain("--aivis-shell-radius: var(--aivis-radius-md)");
+    expect(styles).toContain("--aivis-color-warning-border: rgb(var(--aivis-palette-warning-border-rgb) / 28%)");
+    expect(styles).toContain("--aivis-workbench-card-padding: var(--aivis-space-3-25)");
+  });
+
   it("maps QHDS light, alt, dark and dark-alt layers in SCSS", () => {
     expect(styles).toContain('--ssq-palette-name: "qld-health"');
     expect(styles).toContain("--QLD-color-light__heading: #000053");

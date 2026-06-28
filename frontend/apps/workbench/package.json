@@ -16,7 +16,8 @@
     "@aivis/ui-library": "workspace:*",
     "next": "16.2.9",
     "react": "19.1.1",
-    "react-dom": "19.1.1"
+    "react-dom": "19.1.1",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

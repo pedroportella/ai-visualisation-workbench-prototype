@@ -1,71 +1,8 @@
-const workbenchSummary = [
-  {
-    label: "Fixture mode",
-    value: "Synthetic fixture"
-  },
-  {
-    label: "Runtime",
-    value: "Local fixture"
-  },
-  {
-    label: "Review state",
-    value: "Needs review"
-  }
-];
+import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 
-const contextAnchors = [
-  "South Brisbane station",
-  "QPAC Grey Street",
-  "Princess Alexandra Hospital"
-];
-
-const reviewClaims = [
-  {
-    id: "Claim 1",
-    title: "Access change summary",
-    status: "Stale source",
-    text: "Synthetic scenario says the station access note needs a freshness check before reuse."
-  },
-  {
-    id: "Claim 2",
-    title: "Temporary boarding point",
-    status: "Weak support",
-    text: "Draft guidance references Grey Street context, but the supporting fixture source is incomplete."
-  },
-  {
-    id: "Claim 3",
-    title: "Step-free transfer assurance",
-    status: "Missing evidence",
-    text: "Day-of-service confirmation is represented by a missing-source placeholder."
-  }
-];
-
-const sourceItems = [
-  {
-    title: "Synthetic station access notice",
-    meta: "Fixture timestamp: 2026-06-27 09:00 AEST",
-    status: "Synthetic fixture"
-  },
-  {
-    title: "Synthetic wayfinding map extract",
-    meta: "Review note: source may be stale",
-    status: "Stale source"
-  },
-  {
-    title: "Dispatch confirmation placeholder",
-    meta: "Evidence state: missing-source placeholder",
-    status: "Missing evidence"
-  }
-];
-
-const reviewPath = [
-  "Context anchor",
-  "Draft answer",
-  "Citation check",
-  "Needs review"
-];
-
-export default function EvidenceWorkbenchContainer() {
+export default function EvidenceWorkbenchContainer({
+  data
+}: Readonly<{ data: EvidenceWorkbenchViewModel }>) {
   return (
     <main
       aria-labelledby="evidence-workbench-title"
@@ -83,7 +20,7 @@ export default function EvidenceWorkbenchContainer() {
           </p>
         </div>
         <dl className="evidence-workbench-summary" aria-label="Workbench status">
-          {workbenchSummary.map((item) => (
+          {data.summary.map((item) => (
             <div className="evidence-workbench-summary-item" key={item.label}>
               <dt>{item.label}</dt>
               <dd>{item.value}</dd>
@@ -92,21 +29,28 @@ export default function EvidenceWorkbenchContainer() {
         </dl>
       </header>
 
+      {data.fetchState.message ? (
+        <section className="evidence-workbench-fetch-state" role="status">
+          <strong>{data.fetchState.message}</strong>
+          <span>Review can continue against the fallback fixture state.</span>
+        </section>
+      ) : null}
+
       <section className="evidence-workbench-context" aria-labelledby="scenario-title">
         <div>
           <p className="evidence-workbench-eyebrow">Local review case</p>
-          <h2 id="scenario-title">Step-free transfer guidance needs evidence review</h2>
-          <p>
-            Brisbane place names make the local fixture legible as context
-            anchors. Review the draft answer, source trace and blockers before
-            reuse.
+          <h2 id="scenario-title">{data.context.title}</h2>
+          <p>{data.context.question}</p>
+          <p className="evidence-workbench-context-date">
+            Planned fixture travel date: {data.context.plannedTravelDate}
           </p>
         </div>
         <ul className="evidence-workbench-anchor-list" aria-label="Context anchors">
-          {contextAnchors.map((anchor) => (
-            <li key={anchor}>
+          {data.context.anchors.map((anchor) => (
+            <li key={anchor.id}>
               <span>Context anchor</span>
-              {anchor}
+              <strong>{anchor.label}</strong>
+              <small>{anchor.supportingText}</small>
             </li>
           ))}
         </ul>
@@ -117,24 +61,23 @@ export default function EvidenceWorkbenchContainer() {
           <div className="evidence-workbench-panel-heading">
             <p className="evidence-workbench-eyebrow">Draft answer</p>
             <span className="evidence-workbench-status evidence-workbench-status-warning">
-              Needs review
+              {data.answer.status}
             </span>
           </div>
-          <h2 id="answer-title">Reviewer answer preview</h2>
-          <p className="evidence-workbench-lead">
-            The draft guidance can describe a temporary step-free transfer, but
-            it should stay blocked until stale and missing fixture evidence is
-            resolved.
+          <h2 id="answer-title">{data.answer.title}</h2>
+          <p className="evidence-workbench-lead">{data.answer.summary}</p>
+          <p className="evidence-workbench-answer-meta">
+            Fixture timestamp: {data.answer.generatedAt}
           </p>
           <div className="evidence-workbench-claim-stack" aria-label="Claims requiring review">
-            {reviewClaims.map((claim) => (
+            {data.reviewClaims.map((claim) => (
               <article className="evidence-workbench-claim" key={claim.id}>
                 <div>
                   <span>{claim.id}</span>
                   <strong>{claim.title}</strong>
                 </div>
                 <p>{claim.text}</p>
-                <span className="evidence-workbench-status">{claim.status}</span>
+                <span className={statusClassName(claim.status)}>{claim.status}</span>
               </article>
             ))}
           </div>
@@ -147,10 +90,11 @@ export default function EvidenceWorkbenchContainer() {
           </div>
           <h2 id="sources-title">Evidence sources</h2>
           <ul className="evidence-workbench-source-list">
-            {sourceItems.map((source) => (
-              <li key={source.title}>
+            {data.sourceItems.map((source) => (
+              <li key={source.id}>
                 <strong>{source.title}</strong>
                 <span>{source.meta}</span>
+                <p>{source.preview}</p>
                 <em>{source.status}</em>
               </li>
             ))}
@@ -164,16 +108,40 @@ export default function EvidenceWorkbenchContainer() {
           </div>
           <h2 id="review-title">Evidence path</h2>
           <ol className="evidence-workbench-review-path">
-            {reviewPath.map((step) => (
-              <li key={step}>{step}</li>
+            {data.graph.fallbackSteps.map((step) => (
+              <li key={step.heading}>
+                <strong>{step.heading}</strong>
+                <span>{step.summary}</span>
+              </li>
             ))}
           </ol>
+          <p className="evidence-workbench-review-summary">{data.graph.accessibleSummary}</p>
           <p className="evidence-workbench-review-note">
-            Copy and approval actions remain unavailable while the fixture
-            answer has stale, weak-support and missing-evidence states.
+            Copy state is {data.review.copyState}. Approval remains blocked by{" "}
+            {data.review.blockedByWarningIds.join(", ")} with{" "}
+            {data.review.activeWarningCount} active fixture warnings.
           </p>
+          <ul className="evidence-workbench-warning-list" aria-label="Active fixture warnings">
+            {data.warnings.map((warning) => (
+              <li key={warning.id}>
+                <strong>{warning.id}</strong>
+                <span>{warning.severity}</span>
+                <p>{warning.message}</p>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </main>
   );
+}
+
+function statusClassName(status: string): string {
+  const isWarning = /missing|stale|weak|partial/i.test(status);
+  return [
+    "evidence-workbench-status",
+    isWarning ? "evidence-workbench-status-warning" : ""
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
