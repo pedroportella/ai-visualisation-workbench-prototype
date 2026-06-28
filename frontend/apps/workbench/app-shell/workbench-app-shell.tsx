@@ -57,7 +57,7 @@ export function WorkbenchAppShell({ children }: Readonly<{ children: ReactNode }
       className="aivis-app-shell"
       contentLabelledBy="evidence-workbench-title"
       footer={
-        <QhdsFooter contactAction={null}>
+        <QhdsFooter>
           <p>Evidence Workbench uses synthetic fixture evidence and local review state only.</p>
         </QhdsFooter>
       }
@@ -66,13 +66,6 @@ export function WorkbenchAppShell({ children }: Readonly<{ children: ReactNode }
           accountHref="#review-title"
           accountName="Fixture reviewer"
           brandHref="/evidence-workbench"
-          ctaItems={[
-            {
-              href: "#review-title",
-              icon: <QhdsIcon className="ssq-header__cta-svg" symbol="document" />,
-              label: "Local fixture"
-            }
-          ]}
           logoutHref="/evidence-workbench"
           logoutLabel="Exit"
           serviceDescription="Evidence Workbench"

@@ -1,7 +1,9 @@
 import {
+  QhdsCol,
   QhdsContentSection,
   QhdsPageAlert,
   QhdsPageHeader,
+  QhdsRow,
   QhdsSummaryList
 } from "@aivis/ui-library";
 
@@ -27,8 +29,7 @@ export default function EvidenceWorkbenchContainer({
             }))}
           />
         }
-        contextLabel="Evidence Workbench"
-        heading="AI Visualisation Workbench"
+        heading="Evidence Workbench"
         headingId="evidence-workbench-title"
         lead="Review a synthetic transport-service guidance answer, its source trace and the blockers that keep it in review."
       />
@@ -74,105 +75,111 @@ export default function EvidenceWorkbenchContainer({
         </div>
       </QhdsContentSection>
 
-      <div className="evidence-workbench-grid">
-        <QhdsContentSection
-          className="evidence-workbench-panel"
-          heading="Draft answer"
-          headingId="answer-title"
-          lead={data.answer.summary}
-        >
-          <div className="evidence-workbench-panel-heading">
-            <p className="evidence-workbench-eyebrow">Draft answer</p>
-            <span className="evidence-workbench-status evidence-workbench-status-warning">
-              {data.answer.status}
-            </span>
-          </div>
-          <p className="evidence-workbench-answer-meta">
-            Fixture timestamp: {data.answer.generatedAt}
-          </p>
-          <AnswerMarkdown
-            citations={data.citations}
-            markdown={data.answer.markdown}
-            selectedClaimId={data.review.selectedClaimId}
-          />
-          <div
-            className="evidence-workbench-claim-stack"
-            id="selected-claim"
-            aria-label="Claims requiring review"
+      <QhdsRow className="evidence-workbench-grid">
+        <QhdsCol lg={12} xl={6}>
+          <QhdsContentSection
+            className="evidence-workbench-panel"
+            heading="Draft answer"
+            headingId="answer-title"
+            lead={data.answer.summary}
           >
-            {data.reviewClaims.map((claim) => (
-              <article
-                aria-current={claim.id === data.review.selectedClaimId ? "true" : undefined}
-                className={claimClassName(claim.id === data.review.selectedClaimId)}
-                data-selected-claim={claim.id === data.review.selectedClaimId ? "true" : undefined}
-                id={`claim-${claim.id}`}
-                key={claim.id}
-              >
-                <div className="evidence-workbench-claim-heading">
-                  <span>{claim.id}</span>
-                  <strong>{claim.title}</strong>
-                  {claim.id === data.review.selectedClaimId ? (
-                    <span className="evidence-workbench-status">Selected claim</span>
-                  ) : null}
-                </div>
-                <p>{claim.text}</p>
-                <span className={statusClassName(claim.status)}>{claim.status}</span>
-              </article>
-            ))}
-          </div>
-        </QhdsContentSection>
+            <div className="evidence-workbench-panel-heading">
+              <p className="evidence-workbench-eyebrow">Draft answer</p>
+              <span className="evidence-workbench-status evidence-workbench-status-warning">
+                {data.answer.status}
+              </span>
+            </div>
+            <p className="evidence-workbench-answer-meta">
+              Fixture timestamp: {data.answer.generatedAt}
+            </p>
+            <AnswerMarkdown
+              citations={data.citations}
+              markdown={data.answer.markdown}
+              selectedClaimId={data.review.selectedClaimId}
+            />
+            <div
+              className="evidence-workbench-claim-stack"
+              id="selected-claim"
+              aria-label="Claims requiring review"
+            >
+              {data.reviewClaims.map((claim) => (
+                <article
+                  aria-current={claim.id === data.review.selectedClaimId ? "true" : undefined}
+                  className={claimClassName(claim.id === data.review.selectedClaimId)}
+                  data-selected-claim={claim.id === data.review.selectedClaimId ? "true" : undefined}
+                  id={`claim-${claim.id}`}
+                  key={claim.id}
+                >
+                  <div className="evidence-workbench-claim-heading">
+                    <span>{claim.id}</span>
+                    <strong>{claim.title}</strong>
+                    {claim.id === data.review.selectedClaimId ? (
+                      <span className="evidence-workbench-status">Selected claim</span>
+                    ) : null}
+                  </div>
+                  <p>{claim.text}</p>
+                  <span className={statusClassName(claim.status)}>{claim.status}</span>
+                </article>
+              ))}
+            </div>
+          </QhdsContentSection>
+        </QhdsCol>
 
-        <QhdsContentSection
-          className="evidence-workbench-panel"
-          heading="Evidence sources"
-          headingId="sources-title"
-          lead="Source inventory, citation relationships and blocker state."
-        >
-          <div className="evidence-workbench-panel-heading">
-            <p className="evidence-workbench-eyebrow">Source trace</p>
-            <span className="evidence-workbench-status">Synthetic fixture</span>
-          </div>
-          <SourceTracePanel
-            filters={data.sourceFilters}
-            selectedClaimId={data.review.selectedClaimId}
-            sources={data.sourceItems}
-          />
-        </QhdsContentSection>
+        <QhdsCol lg={12} xl={6}>
+          <QhdsContentSection
+            className="evidence-workbench-panel"
+            heading="Evidence sources"
+            headingId="sources-title"
+            lead="Source inventory, citation relationships and blocker state."
+          >
+            <div className="evidence-workbench-panel-heading">
+              <p className="evidence-workbench-eyebrow">Source trace</p>
+              <span className="evidence-workbench-status">Synthetic fixture</span>
+            </div>
+            <SourceTracePanel
+              filters={data.sourceFilters}
+              selectedClaimId={data.review.selectedClaimId}
+              sources={data.sourceItems}
+            />
+          </QhdsContentSection>
+        </QhdsCol>
 
-        <QhdsContentSection
-          className="evidence-workbench-panel evidence-workbench-panel-wide"
-          heading="Evidence path"
-          headingId="review-title"
-          lead={data.graph.accessibleSummary}
-        >
-          <div className="evidence-workbench-panel-heading">
-            <p className="evidence-workbench-eyebrow">Review lane</p>
-            <span className="evidence-workbench-status">Local fixture</span>
-          </div>
-          <ol className="evidence-workbench-review-path">
-            {data.graph.fallbackSteps.map((step) => (
-              <li key={step.heading}>
-                <strong>{step.heading}</strong>
-                <span>{step.summary}</span>
-              </li>
-            ))}
-          </ol>
-          <p className="evidence-workbench-review-note">
-            Copy state is {data.review.copyState}. Approval remains blocked by{" "}
-            {data.review.blockedByWarningIds.join(", ")} with{" "}
-            {data.review.activeWarningCount} active fixture warnings.
-          </p>
-          <ul className="evidence-workbench-warning-list" aria-label="Active fixture warnings">
-            {data.warnings.map((warning) => (
-              <li key={warning.id}>
-                <strong>{warning.id}</strong>
-                <span>{warning.severity}</span>
-                <p>{warning.message}</p>
-              </li>
-            ))}
-          </ul>
-        </QhdsContentSection>
-      </div>
+        <QhdsCol xs={12}>
+          <QhdsContentSection
+            className="evidence-workbench-panel"
+            heading="Evidence path"
+            headingId="review-title"
+            lead={data.graph.accessibleSummary}
+          >
+            <div className="evidence-workbench-panel-heading">
+              <p className="evidence-workbench-eyebrow">Review lane</p>
+              <span className="evidence-workbench-status">Local fixture</span>
+            </div>
+            <ol className="evidence-workbench-review-path">
+              {data.graph.fallbackSteps.map((step) => (
+                <li key={step.heading}>
+                  <strong>{step.heading}</strong>
+                  <span>{step.summary}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="evidence-workbench-review-note">
+              Copy state is {data.review.copyState}. Approval remains blocked by{" "}
+              {data.review.blockedByWarningIds.join(", ")} with{" "}
+              {data.review.activeWarningCount} active fixture warnings.
+            </p>
+            <ul className="evidence-workbench-warning-list" aria-label="Active fixture warnings">
+              {data.warnings.map((warning) => (
+                <li key={warning.id}>
+                  <strong>{warning.id}</strong>
+                  <span>{warning.severity}</span>
+                  <p>{warning.message}</p>
+                </li>
+              ))}
+            </ul>
+          </QhdsContentSection>
+        </QhdsCol>
+      </QhdsRow>
     </section>
   );
 }

@@ -13,8 +13,7 @@ export default function EvidenceWorkbenchLoading() {
             items={[{ description: "Loading fixture", term: "Data source" }]}
           />
         }
-        contextLabel="Evidence Workbench"
-        heading="AI Visualisation Workbench"
+        heading="Evidence Workbench"
         headingId="evidence-workbench-title"
         lead="Loading local fixture evidence for review."
       />
