@@ -53,4 +53,19 @@ describe("QhdsTable", () => {
     expect(html).not.toContain("qld__table--scroll");
     expect(html).not.toContain("tabindex");
   });
+
+  it("supports data labels when the rendered header is not plain text", () => {
+    const html = renderToStaticMarkup(
+      <QhdsTable
+        caption="Citation status"
+        columns={[
+          { dataLabel: "Evidence state", header: <strong>Evidence state</strong>, key: "state" }
+        ]}
+        rows={[{ id: "supported", state: "Supported" }]}
+      />
+    );
+
+    expect(html).toContain('data-label="Evidence state"');
+    expect(html).toContain("<strong>Evidence state</strong>");
+  });
 });

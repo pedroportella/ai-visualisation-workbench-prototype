@@ -1,5 +1,12 @@
 import type { ReactElement, ReactNode } from "react";
 
+import {
+  AivisEvidenceCallout,
+  QhdsTable,
+  type QhdsTableColumn,
+  type QhdsTableRow
+} from "@aivis/ui-library";
+
 import type { EvidenceWorkbenchCitation } from "../../services/evidence-workbench/types";
 
 interface AnswerMarkdownProps {
@@ -48,9 +55,11 @@ function renderBlock(
       return renderHeading(block, context);
     case "blockquote":
       return (
-        <blockquote key={context.keyPrefix}>
-          <p>{renderInlineContent(block.text, context)}</p>
-        </blockquote>
+        <AivisEvidenceCallout heading="Review note" key={context.keyPrefix} tone="warning">
+          <blockquote>
+            <p>{renderInlineContent(block.text, context)}</p>
+          </blockquote>
+        </AivisEvidenceCallout>
       );
     case "list":
       return (
@@ -66,44 +75,7 @@ function renderBlock(
         </ul>
       );
     case "table":
-      return (
-        <div
-          aria-label="Answer evidence summary table"
-          className="evidence-workbench-markdown-table-wrap"
-          key={context.keyPrefix}
-          role="region"
-          tabIndex={0}
-        >
-          <table>
-            <thead>
-              <tr>
-                {block.headers.map((header, index) => (
-                  <th key={`${context.keyPrefix}-header-${index}`} scope="col">
-                    {renderInlineContent(header, {
-                      ...context,
-                      keyPrefix: `${context.keyPrefix}-header-${index}`
-                    })}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {block.rows.map((row, rowIndex) => (
-                <tr key={`${context.keyPrefix}-row-${rowIndex}`}>
-                  {row.map((cell, cellIndex) => (
-                    <td key={`${context.keyPrefix}-cell-${rowIndex}-${cellIndex}`}>
-                      {renderInlineContent(cell, {
-                        ...context,
-                        keyPrefix: `${context.keyPrefix}-cell-${rowIndex}-${cellIndex}`
-                      })}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
+      return renderTable(block, context);
     case "paragraph":
       return (
         <p key={context.keyPrefix}>
@@ -111,6 +83,43 @@ function renderBlock(
         </p>
       );
   }
+}
+
+function renderTable(
+  block: Extract<MarkdownBlock, { kind: "table" }>,
+  context: RenderInlineContext
+): ReactElement {
+  const columns: QhdsTableColumn[] = block.headers.map((header, index) => ({
+    dataLabel: header,
+    header: renderInlineContent(header, {
+      ...context,
+      keyPrefix: `${context.keyPrefix}-header-${index}`
+    }),
+    key: `column-${index}`
+  }));
+  const rows: QhdsTableRow[] = block.rows.map((row, rowIndex) => {
+    const cells: QhdsTableRow = { id: `${context.keyPrefix}-row-${rowIndex}` };
+
+    row.forEach((cell, cellIndex) => {
+      cells[`column-${cellIndex}`] = renderInlineContent(cell, {
+        ...context,
+        keyPrefix: `${context.keyPrefix}-cell-${rowIndex}-${cellIndex}`
+      });
+    });
+
+    return cells;
+  });
+
+  return (
+    <QhdsTable
+      caption="Answer evidence summary"
+      captionDescription="Source-linked evidence states from the draft answer."
+      columns={columns}
+      key={context.keyPrefix}
+      rows={rows}
+      striped
+    />
+  );
 }
 
 function renderHeading(
@@ -199,6 +208,7 @@ function citationClassName(
   isSelectedClaim: boolean
 ): string {
   return [
+    "qld__tag",
     "evidence-workbench-citation",
     citation.warningIds.length > 0 ? "evidence-workbench-citation-warning" : "",
     isSelectedClaim ? "evidence-workbench-citation-selected" : ""

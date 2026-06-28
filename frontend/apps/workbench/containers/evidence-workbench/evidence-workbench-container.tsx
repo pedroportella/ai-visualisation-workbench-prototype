@@ -1,4 +1,10 @@
 import {
+  AivisEvidenceClaimCard,
+  AivisEvidenceContextAnchors,
+  AivisEvidencePanelHeader,
+  AivisEvidencePathList,
+  AivisEvidenceWarningList,
+  type AivisEvidenceTone,
   QhdsCol,
   QhdsContentSection,
   QhdsPageAlert,
@@ -52,27 +58,17 @@ export default function EvidenceWorkbenchContainer({
         headingId="scenario-title"
         lead="Local review case"
       >
-        <div className="evidence-workbench-context">
-          <div className="evidence-workbench-case-summary">
-            <p>{data.context.question}</p>
-            <p className="evidence-workbench-context-date">
-              Planned fixture travel date: {data.context.plannedTravelDate}
-            </p>
-          </div>
-          <div className="evidence-workbench-anchor-panel">
-            <h3>Public context anchors</h3>
-            <p>Place labels only; they are not treated as evidence sources.</p>
-            <ul className="evidence-workbench-anchor-list" aria-label="Context anchors">
-              {data.context.anchors.map((anchor) => (
-                <li key={anchor.id}>
-                  <strong>{anchor.label}</strong>
-                  <span>Context only</span>
-                  <small>{anchor.supportingText}</small>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <AivisEvidenceContextAnchors
+          anchorSummary="Place labels only; they are not treated as evidence sources."
+          anchors={data.context.anchors.map((anchor) => ({
+            description: anchor.supportingText,
+            id: anchor.id,
+            label: anchor.label,
+            meta: "Context only"
+          }))}
+          dateLabel={`Planned fixture travel date: ${data.context.plannedTravelDate}`}
+          summary={data.context.question}
+        />
       </QhdsContentSection>
 
       <QhdsRow className="evidence-workbench-grid">
@@ -83,12 +79,11 @@ export default function EvidenceWorkbenchContainer({
             headingId="answer-title"
             lead={data.answer.summary}
           >
-            <div className="evidence-workbench-panel-heading">
-              <p className="evidence-workbench-eyebrow">Draft answer</p>
-              <span className="evidence-workbench-status evidence-workbench-status-warning">
-                {data.answer.status}
-              </span>
-            </div>
+            <AivisEvidencePanelHeader
+              label="Draft answer"
+              status={data.answer.status}
+              statusTone="warning"
+            />
             <p className="evidence-workbench-answer-meta">
               Fixture timestamp: {data.answer.generatedAt}
             </p>
@@ -103,23 +98,17 @@ export default function EvidenceWorkbenchContainer({
               aria-label="Claims requiring review"
             >
               {data.reviewClaims.map((claim) => (
-                <article
-                  aria-current={claim.id === data.review.selectedClaimId ? "true" : undefined}
-                  className={claimClassName(claim.id === data.review.selectedClaimId)}
-                  data-selected-claim={claim.id === data.review.selectedClaimId ? "true" : undefined}
+                <AivisEvidenceClaimCard
+                  claimId={claim.id}
                   id={`claim-${claim.id}`}
                   key={claim.id}
-                >
-                  <div className="evidence-workbench-claim-heading">
-                    <span>{claim.id}</span>
-                    <strong>{claim.title}</strong>
-                    {claim.id === data.review.selectedClaimId ? (
-                      <span className="evidence-workbench-status">Selected claim</span>
-                    ) : null}
-                  </div>
-                  <p>{claim.text}</p>
-                  <span className={statusClassName(claim.status)}>{claim.status}</span>
-                </article>
+                  selected={claim.id === data.review.selectedClaimId}
+                  selectedLabel="Selected claim"
+                  status={claim.status}
+                  statusTone={statusTone(claim.status)}
+                  text={claim.text}
+                  title={claim.title}
+                />
               ))}
             </div>
           </QhdsContentSection>
@@ -132,10 +121,10 @@ export default function EvidenceWorkbenchContainer({
             headingId="sources-title"
             lead="Source inventory, citation relationships and blocker state."
           >
-            <div className="evidence-workbench-panel-heading">
-              <p className="evidence-workbench-eyebrow">Source trace</p>
-              <span className="evidence-workbench-status">Synthetic fixture</span>
-            </div>
+            <AivisEvidencePanelHeader
+              label="Source trace"
+              status="Synthetic fixture"
+            />
             <SourceTracePanel
               filters={data.sourceFilters}
               selectedClaimId={data.review.selectedClaimId}
@@ -151,32 +140,29 @@ export default function EvidenceWorkbenchContainer({
             headingId="review-title"
             lead={data.graph.accessibleSummary}
           >
-            <div className="evidence-workbench-panel-heading">
-              <p className="evidence-workbench-eyebrow">Review lane</p>
-              <span className="evidence-workbench-status">Local fixture</span>
-            </div>
-            <ol className="evidence-workbench-review-path">
-              {data.graph.fallbackSteps.map((step) => (
-                <li key={step.heading}>
-                  <strong>{step.heading}</strong>
-                  <span>{step.summary}</span>
-                </li>
-              ))}
-            </ol>
+            <AivisEvidencePanelHeader
+              label="Review lane"
+              status="Local fixture"
+            />
+            <AivisEvidencePathList
+              items={data.graph.fallbackSteps.map((step) => ({
+                heading: step.heading,
+                summary: step.summary
+              }))}
+            />
             <p className="evidence-workbench-review-note">
               Copy state is {data.review.copyState}. Approval remains blocked by{" "}
               {data.review.blockedByWarningIds.join(", ")} with{" "}
               {data.review.activeWarningCount} active fixture warnings.
             </p>
-            <ul className="evidence-workbench-warning-list" aria-label="Active fixture warnings">
-              {data.warnings.map((warning) => (
-                <li key={warning.id}>
-                  <strong>{warning.id}</strong>
-                  <span>{warning.severity}</span>
-                  <p>{warning.message}</p>
-                </li>
-              ))}
-            </ul>
+            <AivisEvidenceWarningList
+              ariaLabel="Active fixture warnings"
+              warnings={data.warnings.map((warning) => ({
+                id: warning.id,
+                message: warning.message,
+                severity: warning.severity
+              }))}
+            />
           </QhdsContentSection>
         </QhdsCol>
       </QhdsRow>
@@ -184,18 +170,8 @@ export default function EvidenceWorkbenchContainer({
   );
 }
 
-function claimClassName(isSelected: boolean): string {
-  return ["evidence-workbench-claim", isSelected ? "evidence-workbench-claim-selected" : ""]
-    .filter(Boolean)
-    .join(" ");
-}
-
-function statusClassName(status: string): string {
+function statusTone(status: string): AivisEvidenceTone {
   const isWarning = /missing|stale|weak|partial/i.test(status);
-  return [
-    "evidence-workbench-status",
-    isWarning ? "evidence-workbench-status-warning" : ""
-  ]
-    .filter(Boolean)
-    .join(" ");
+
+  return isWarning ? "warning" : "success";
 }

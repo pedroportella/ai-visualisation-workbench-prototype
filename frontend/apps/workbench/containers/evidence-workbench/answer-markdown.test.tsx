@@ -89,7 +89,11 @@ describe("AnswerMarkdown", () => {
     expect(html).toContain("<strong>Review status:</strong>");
     expect(html).toContain("<blockquote>");
     expect(html).toContain("<ul>");
-    expect(html).toContain("<table>");
+    expect(html).toContain("<table class=");
+    expect(html).toContain("qld__table__wrapper");
+    expect(html).toContain("qld__table");
+    expect(html).toContain("Answer evidence summary");
+    expect(html).toContain("qld__callout");
     expect(html).toContain("<code>WARN-001</code>");
     expect(html).toContain("<code>CLAIM-003</code>");
   });
@@ -107,6 +111,7 @@ describe("AnswerMarkdown", () => {
     expect(html).toContain('href="#source-SRC-006"');
     expect(html).toContain('aria-label="Citation CIT-003-A for CLAIM-003.');
     expect(html).toContain('aria-current="true"');
+    expect(html).toContain("qld__tag");
     expect(html).toContain("evidence-workbench-citation-warning");
     expect(html).toContain("[CIT-003-A]");
   });

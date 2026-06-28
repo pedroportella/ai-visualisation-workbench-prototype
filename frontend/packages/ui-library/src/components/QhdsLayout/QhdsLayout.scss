@@ -105,7 +105,7 @@
     flex: 1 1 auto;
   }
 
-  .qld__body--left-nav .ssq-layout__container {
+  .ssq-layout--app.ssq-layout--has-left-nav .qld__body--left-nav .ssq-layout__container {
     padding-left: clamp(3rem, 5vw, 8rem);
     padding-right: var(--ssq-space-10);
   }

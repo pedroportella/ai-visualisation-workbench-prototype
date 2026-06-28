@@ -86,7 +86,9 @@ describe("QhdsLayout", () => {
     expect(styles).toContain(".ssq-layout__left-nav > .qld__left-nav.ssq-side-nav");
     expect(styles).toContain("background-color: transparent");
     expect(styles).toContain("border-right: 0");
-    expect(styles).toContain(".qld__body--left-nav .ssq-layout__container");
+    expect(styles).toContain(".ssq-layout--app.ssq-layout--has-left-nav .qld__body--left-nav .ssq-layout__container");
+    expect(styles).toContain("padding-left: clamp(3rem, 5vw, 8rem)");
+    expect(styles).toContain("padding-right: var(--ssq-space-10)");
   });
 
   it("keeps skip-link ownership in the layout when composed with QhdsHeader", () => {

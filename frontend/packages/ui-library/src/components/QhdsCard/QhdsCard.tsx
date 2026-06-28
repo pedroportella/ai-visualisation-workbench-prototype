@@ -1,22 +1,32 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactElement, ReactNode } from "react";
 
 import "./QhdsCard.scss";
 
-export interface QhdsCardProps {
+export interface QhdsCardProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
   action?: ReactNode;
   children: ReactNode;
-  heading: string;
+  heading: ReactNode;
+  headingId?: string;
+  headingLevel?: 2 | 3 | 4;
 }
 
-export function QhdsCard({ action, children, heading }: QhdsCardProps) {
-  const cardClassName = ["qld__card", action ? "qld__card__multi-action" : "", "ssq-card"].filter(Boolean).join(" ");
+export function QhdsCard({
+  action,
+  children,
+  className,
+  heading,
+  headingId,
+  headingLevel = 2,
+  ...props
+}: QhdsCardProps) {
+  const cardClassName = ["qld__card", action ? "qld__card__multi-action" : "", "ssq-card", className].filter(Boolean).join(" ");
 
   return (
-    <article className={cardClassName}>
+    <article className={cardClassName} {...props}>
       <div className="qld__card__inner ssq-card__body">
         <div className="qld__card__content ssq-card__content">
           <div className="qld__card__content-inner ssq-card__content-inner">
-            <h2 className="qld__card__title ssq-card__heading">{heading}</h2>
+            {renderHeading(heading, headingId, headingLevel)}
             <div className="ssq-card__content-body">{children}</div>
           </div>
         </div>
@@ -28,4 +38,25 @@ export function QhdsCard({ action, children, heading }: QhdsCardProps) {
       ) : null}
     </article>
   );
+}
+
+function renderHeading(
+  heading: ReactNode,
+  headingId: string | undefined,
+  headingLevel: 2 | 3 | 4
+): ReactElement {
+  const props = {
+    className: "qld__card__title ssq-card__heading",
+    id: headingId
+  };
+
+  if (headingLevel === 3) {
+    return <h3 {...props}>{heading}</h3>;
+  }
+
+  if (headingLevel === 4) {
+    return <h4 {...props}>{heading}</h4>;
+  }
+
+  return <h2 {...props}>{heading}</h2>;
 }

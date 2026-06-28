@@ -211,6 +211,9 @@ describe("SourceTracePanel", () => {
 
     expect(html).toContain('data-source-filter-state="stale_blocker"');
     expect(html).toContain('data-source-filter-state="current_conditional_support"');
+    expect(html).toContain("aivis-evidence-source-card");
+    expect(html).toContain("qld__summary-list");
+    expect(html).toContain("qld__callout");
     expect(html).toContain("Direct source warning");
     expect(html).toContain("Citation or claim warning");
     expect(html).toContain("WARN-001");
@@ -221,7 +224,7 @@ describe("SourceTracePanel", () => {
   it("keeps public context anchors distinct from evidence sources", () => {
     const html = renderPanel();
 
-    expect(html).toContain("evidence-workbench-context-chip-list");
+    expect(html).toContain("aivis-evidence-anchor-chip-list");
     expect(html).toContain("South Brisbane station");
     expect(html).toContain("Princess Alexandra Hospital");
     expect(html).toContain("Context only");

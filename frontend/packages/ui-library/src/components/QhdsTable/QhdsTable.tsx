@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "./QhdsTable.scss";
 
 export interface QhdsTableColumn {
+  dataLabel?: string;
   header: ReactNode;
   key: string;
   render?: (row: QhdsTableRow) => ReactNode;
@@ -61,7 +62,7 @@ export function QhdsTable({
               {columns.map((column) => (
                 <td
                   className="qld__table__cell"
-                  data-label={typeof column.header === "string" ? column.header : undefined}
+                  data-label={column.dataLabel ?? (typeof column.header === "string" ? column.header : undefined)}
                   key={column.key}
                 >
                   {column.render ? column.render(row) : row[column.key]}

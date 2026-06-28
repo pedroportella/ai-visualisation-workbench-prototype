@@ -32,11 +32,7 @@ describe("WorkbenchAppShell", () => {
     expect(html).not.toContain("Local fixture");
   });
 
-  it("keeps the left-nav content gutter aligned with the government app shell", () => {
-    expect(styles).toContain(
-      ".aivis-app-shell.ssq-layout--has-left-nav .qld__body--left-nav .ssq-layout__container"
-    );
-    expect(styles).toContain("padding-left: clamp(3rem, 5vw, 8rem)");
-    expect(styles).toContain("padding-right: var(--ssq-space-10)");
+  it("leaves left-nav content gutters owned by the shared layout adapter", () => {
+    expect(styles).not.toContain(".qld__body--left-nav .ssq-layout__container");
   });
 });

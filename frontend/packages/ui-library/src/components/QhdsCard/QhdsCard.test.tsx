@@ -20,4 +20,22 @@ describe("QhdsCard", () => {
     expect(html).toContain("Prepare your details.");
     expect(html).toContain('href="/start"');
   });
+
+  it("passes through card attributes and heading level for composed panels", () => {
+    const html = renderToStaticMarkup(
+      <QhdsCard
+        aria-current="true"
+        data-panel-state="selected"
+        heading="Evidence source"
+        headingId="source-heading"
+        headingLevel={3}
+        id="source-card"
+      >
+        <p>Source summary.</p>
+      </QhdsCard>
+    );
+
+    expect(html).toContain('<article class="qld__card ssq-card" aria-current="true" data-panel-state="selected" id="source-card">');
+    expect(html).toContain('<h3 class="qld__card__title ssq-card__heading" id="source-heading">Evidence source</h3>');
+  });
 });

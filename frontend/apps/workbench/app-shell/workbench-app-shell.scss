@@ -10,10 +10,3 @@
 .aivis-app-shell .ssq-footer__content p {
   margin: 0;
 }
-
-@media (min-width: 992px) {
-  .aivis-app-shell.ssq-layout--has-left-nav .qld__body--left-nav .ssq-layout__container {
-    padding-left: clamp(3rem, 5vw, 8rem);
-    padding-right: var(--ssq-space-10);
-  }
-}

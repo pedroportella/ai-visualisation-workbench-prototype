@@ -18,6 +18,12 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("row evidence-workbench-grid");
     expect(html).toContain("col-xs-12 col-lg-12 col-xl-6");
     expect(html).toContain("ssq-content-section");
+    expect(html).toContain("qld__card");
+    expect(html).toContain("aivis-evidence-claim-card");
+    expect(html).toContain("aivis-evidence-path-list");
+    expect(html).toContain("qld__table__wrapper");
+    expect(html).toContain("qld__callout");
     expect(html).not.toContain("evidence-workbench-panel-wide");
+    expect(html).not.toContain("evidence-workbench-claim ");
   });
 });
