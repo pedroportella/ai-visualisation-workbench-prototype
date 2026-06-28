@@ -200,8 +200,8 @@ def test_cors_is_limited_to_local_frontend_origins() -> None:
     assert len(cors_middleware) == 1
     options = cors_middleware[0].kwargs
     assert options["allow_origins"] == [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
+        "http://localhost:3200",
+        "http://127.0.0.1:3200",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
     ]

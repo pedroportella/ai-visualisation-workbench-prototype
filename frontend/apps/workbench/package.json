@@ -6,9 +6,9 @@
   "scripts": {
     "build": "next build",
     "check": "pnpm typecheck && pnpm test && pnpm build",
-    "dev": "next dev --hostname 127.0.0.1 --port 3000",
+    "dev": "next dev --hostname 127.0.0.1 --port 3200",
     "lint": "pnpm typecheck",
-    "start": "next start --hostname 127.0.0.1 --port 3000",
+    "start": "next start --hostname 127.0.0.1 --port 3200",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
