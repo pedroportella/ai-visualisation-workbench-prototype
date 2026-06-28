@@ -1,3 +1,10 @@
+import {
+  QhdsContentSection,
+  QhdsPageAlert,
+  QhdsPageHeader,
+  QhdsSummaryList
+} from "@aivis/ui-library";
+
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 import { AnswerMarkdown } from "./answer-markdown";
 import { SourceTracePanel } from "./source-trace-panel";
@@ -6,68 +13,80 @@ export default function EvidenceWorkbenchContainer({
   data
 }: Readonly<{ data: EvidenceWorkbenchViewModel }>) {
   return (
-    <main
+    <section
       aria-labelledby="evidence-workbench-title"
       className="evidence-workbench"
-      id="aivis-main"
-      tabIndex={-1}
     >
-      <header className="evidence-workbench-header">
-        <div className="evidence-workbench-header-copy">
-          <p className="evidence-workbench-eyebrow">Evidence Workbench</p>
-          <h1 id="evidence-workbench-title">AI Visualisation Workbench</h1>
-          <p>
-            Review a synthetic transport-service guidance answer, its source
-            trace and the blockers that keep it in review.
-          </p>
-        </div>
-        <dl className="evidence-workbench-summary" aria-label="Workbench status">
-          {data.summary.map((item) => (
-            <div className="evidence-workbench-summary-item" key={item.label}>
-              <dt>{item.label}</dt>
-              <dd>{item.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </header>
+      <QhdsPageHeader
+        aside={
+          <QhdsSummaryList
+            ariaLabel="Workbench status"
+            items={data.summary.map((item) => ({
+              description: item.value,
+              term: item.label
+            }))}
+          />
+        }
+        contextLabel="Evidence Workbench"
+        heading="AI Visualisation Workbench"
+        headingId="evidence-workbench-title"
+        lead="Review a synthetic transport-service guidance answer, its source trace and the blockers that keep it in review."
+      />
+
+      <QhdsPageAlert heading="Synthetic fixture review data" tone="info">
+        <p>
+          This workbench separates public context anchors from synthetic evidence sources so the draft answer can stay in review until source blockers are resolved.
+        </p>
+      </QhdsPageAlert>
 
       {data.fetchState.message ? (
-        <section className="evidence-workbench-fetch-state" role="status">
-          <strong>{data.fetchState.message}</strong>
-          <span>Review can continue against the fallback fixture state.</span>
-        </section>
+        <QhdsPageAlert heading={data.fetchState.message} tone="warning">
+          <p>Review can continue against the fallback fixture state.</p>
+        </QhdsPageAlert>
       ) : null}
 
-      <section className="evidence-workbench-context" aria-labelledby="scenario-title">
-        <div>
-          <p className="evidence-workbench-eyebrow">Local review case</p>
-          <h2 id="scenario-title">{data.context.title}</h2>
-          <p>{data.context.question}</p>
-          <p className="evidence-workbench-context-date">
-            Planned fixture travel date: {data.context.plannedTravelDate}
-          </p>
+      <QhdsContentSection
+        className="evidence-workbench-context-section"
+        heading={data.context.title}
+        headingId="scenario-title"
+        lead="Local review case"
+      >
+        <div className="evidence-workbench-context">
+          <div className="evidence-workbench-case-summary">
+            <p>{data.context.question}</p>
+            <p className="evidence-workbench-context-date">
+              Planned fixture travel date: {data.context.plannedTravelDate}
+            </p>
+          </div>
+          <div className="evidence-workbench-anchor-panel">
+            <h3>Public context anchors</h3>
+            <p>Place labels only; they are not treated as evidence sources.</p>
+            <ul className="evidence-workbench-anchor-list" aria-label="Context anchors">
+              {data.context.anchors.map((anchor) => (
+                <li key={anchor.id}>
+                  <strong>{anchor.label}</strong>
+                  <span>Context only</span>
+                  <small>{anchor.supportingText}</small>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <ul className="evidence-workbench-anchor-list" aria-label="Context anchors">
-          {data.context.anchors.map((anchor) => (
-            <li key={anchor.id}>
-              <span>Context anchor</span>
-              <strong>{anchor.label}</strong>
-              <small>{anchor.supportingText}</small>
-            </li>
-          ))}
-        </ul>
-      </section>
+      </QhdsContentSection>
 
       <div className="evidence-workbench-grid">
-        <section className="evidence-workbench-panel" aria-labelledby="answer-title">
+        <QhdsContentSection
+          className="evidence-workbench-panel"
+          heading="Draft answer"
+          headingId="answer-title"
+          lead={data.answer.summary}
+        >
           <div className="evidence-workbench-panel-heading">
             <p className="evidence-workbench-eyebrow">Draft answer</p>
             <span className="evidence-workbench-status evidence-workbench-status-warning">
               {data.answer.status}
             </span>
           </div>
-          <h2 id="answer-title">{data.answer.title}</h2>
-          <p className="evidence-workbench-lead">{data.answer.summary}</p>
           <p className="evidence-workbench-answer-meta">
             Fixture timestamp: {data.answer.generatedAt}
           </p>
@@ -76,11 +95,16 @@ export default function EvidenceWorkbenchContainer({
             markdown={data.answer.markdown}
             selectedClaimId={data.review.selectedClaimId}
           />
-          <div className="evidence-workbench-claim-stack" aria-label="Claims requiring review">
+          <div
+            className="evidence-workbench-claim-stack"
+            id="selected-claim"
+            aria-label="Claims requiring review"
+          >
             {data.reviewClaims.map((claim) => (
               <article
                 aria-current={claim.id === data.review.selectedClaimId ? "true" : undefined}
                 className={claimClassName(claim.id === data.review.selectedClaimId)}
+                data-selected-claim={claim.id === data.review.selectedClaimId ? "true" : undefined}
                 id={`claim-${claim.id}`}
                 key={claim.id}
               >
@@ -96,27 +120,35 @@ export default function EvidenceWorkbenchContainer({
               </article>
             ))}
           </div>
-        </section>
+        </QhdsContentSection>
 
-        <aside className="evidence-workbench-panel" aria-labelledby="sources-title">
+        <QhdsContentSection
+          className="evidence-workbench-panel"
+          heading="Evidence sources"
+          headingId="sources-title"
+          lead="Source inventory, citation relationships and blocker state."
+        >
           <div className="evidence-workbench-panel-heading">
             <p className="evidence-workbench-eyebrow">Source trace</p>
             <span className="evidence-workbench-status">Synthetic fixture</span>
           </div>
-          <h2 id="sources-title">Evidence sources</h2>
           <SourceTracePanel
             filters={data.sourceFilters}
             selectedClaimId={data.review.selectedClaimId}
             sources={data.sourceItems}
           />
-        </aside>
+        </QhdsContentSection>
 
-        <section className="evidence-workbench-panel" aria-labelledby="review-title">
+        <QhdsContentSection
+          className="evidence-workbench-panel evidence-workbench-panel-wide"
+          heading="Evidence path"
+          headingId="review-title"
+          lead={data.graph.accessibleSummary}
+        >
           <div className="evidence-workbench-panel-heading">
             <p className="evidence-workbench-eyebrow">Review lane</p>
             <span className="evidence-workbench-status">Local fixture</span>
           </div>
-          <h2 id="review-title">Evidence path</h2>
           <ol className="evidence-workbench-review-path">
             {data.graph.fallbackSteps.map((step) => (
               <li key={step.heading}>
@@ -125,7 +157,6 @@ export default function EvidenceWorkbenchContainer({
               </li>
             ))}
           </ol>
-          <p className="evidence-workbench-review-summary">{data.graph.accessibleSummary}</p>
           <p className="evidence-workbench-review-note">
             Copy state is {data.review.copyState}. Approval remains blocked by{" "}
             {data.review.blockedByWarningIds.join(", ")} with{" "}
@@ -140,9 +171,9 @@ export default function EvidenceWorkbenchContainer({
               </li>
             ))}
           </ul>
-        </section>
+        </QhdsContentSection>
       </div>
-    </main>
+    </section>
   );
 }
 

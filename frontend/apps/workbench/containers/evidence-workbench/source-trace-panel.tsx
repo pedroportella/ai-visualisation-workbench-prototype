@@ -24,6 +24,7 @@ export function SourceTracePanel({
       <section
         aria-labelledby="source-focus-title"
         className="evidence-workbench-source-focus"
+        id="selected-claim-sources"
       >
         <h3 id="source-focus-title">Selected claim source focus</h3>
         <p>
@@ -58,7 +59,7 @@ export function SourceTracePanel({
         </ul>
       </nav>
 
-      <ul className="evidence-workbench-source-list">
+      <ul className="evidence-workbench-source-list" id="source-inventory">
         {sources.map((source) => (
           <li
             aria-current={source.isSelectedClaimSource ? "true" : undefined}

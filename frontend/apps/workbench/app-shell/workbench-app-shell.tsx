@@ -1,64 +1,89 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
+import {
+  QhdsFooter,
+  QhdsHeader,
+  QhdsIcon,
+  QhdsLayout,
+  QhdsSideNav
+} from "@aivis/ui-library";
 
-const navigationItems = [
-  {
-    description: "Review answer, sources and blockers",
-    href: "/evidence-workbench",
-    label: "Evidence Workbench"
-  }
-];
+function WorkbenchSideNav() {
+  return (
+    <QhdsSideNav
+      activeHref="/evidence-workbench"
+      ariaLabel="Evidence Workbench navigation"
+      heading="Evidence Workbench"
+      headingHref="/evidence-workbench"
+      headingIcon={<QhdsIcon size="md" symbol="home" />}
+      items={[
+        {
+          expanded: true,
+          href: "#answer-title",
+          icon: <QhdsIcon size="md" symbol="document" />,
+          items: [
+            { href: "#answer-title", label: "Draft answer" },
+            { href: "#selected-claim", label: "Selected claim" }
+          ],
+          label: "Answer review"
+        },
+        {
+          expanded: true,
+          href: "#sources-title",
+          icon: <QhdsIcon size="md" symbol="document" />,
+          items: [
+            { href: "#selected-claim-sources", label: "Selected claim sources" },
+            { href: "#source-inventory", label: "Source inventory" }
+          ],
+          label: "Source trace"
+        },
+        {
+          href: "#scenario-title",
+          icon: <QhdsIcon size="md" symbol="location" />,
+          label: "Scenario context"
+        },
+        {
+          href: "#review-title",
+          icon: <QhdsIcon size="md" symbol="clock" />,
+          label: "Review lane"
+        }
+      ]}
+    />
+  );
+}
 
 export function WorkbenchAppShell({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <div className="aivis-app-shell">
-      <a className="aivis-app-shell-skip-link" href="#aivis-main">
-        Skip to Evidence Workbench
-      </a>
-
-      <header className="aivis-app-shell-header">
-        <Link
-          aria-label="AI Visualisation Workbench home"
-          className="aivis-app-shell-brand"
-          href="/evidence-workbench"
-        >
-          <span aria-hidden="true" className="aivis-app-shell-brand-mark">
-            AI
-          </span>
-          <span className="aivis-app-shell-brand-copy">
-            <strong>AI Visualisation Workbench</strong>
-            <span>Evidence review prototype</span>
-          </span>
-        </Link>
-        <span className="aivis-app-shell-mode">Local fixture</span>
-      </header>
-
-      <div className="aivis-app-shell-body">
-        <aside className="aivis-app-shell-sidebar">
-          <nav aria-label="Workbench sections" className="aivis-app-shell-nav">
-            <p className="aivis-app-shell-nav-heading">Review</p>
-            <ul>
-              {navigationItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    aria-current="page"
-                    className="aivis-app-shell-nav-link"
-                    href={item.href}
-                  >
-                    <strong>{item.label}</strong>
-                    <span>{item.description}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <p className="aivis-app-shell-note">
-            Synthetic fixture evidence and local review state only.
-          </p>
-        </aside>
-
-        <div className="aivis-app-shell-content">{children}</div>
-      </div>
-    </div>
+    <QhdsLayout
+      className="aivis-app-shell"
+      contentLabelledBy="evidence-workbench-title"
+      footer={
+        <QhdsFooter contactAction={null}>
+          <p>Evidence Workbench uses synthetic fixture evidence and local review state only.</p>
+        </QhdsFooter>
+      }
+      header={
+        <QhdsHeader
+          accountHref="#review-title"
+          accountName="Fixture reviewer"
+          brandHref="/evidence-workbench"
+          ctaItems={[
+            {
+              href: "#review-title",
+              icon: <QhdsIcon className="ssq-header__cta-svg" symbol="document" />,
+              label: "Local fixture"
+            }
+          ]}
+          logoutHref="/evidence-workbench"
+          logoutLabel="Exit"
+          serviceDescription="Evidence Workbench"
+          serviceName="AI Visualisation Workbench"
+        />
+      }
+      mainId="aivis-main"
+      mainLabel="Evidence Workbench"
+      sideNav={<WorkbenchSideNav />}
+    >
+      {children}
+    </QhdsLayout>
   );
 }
