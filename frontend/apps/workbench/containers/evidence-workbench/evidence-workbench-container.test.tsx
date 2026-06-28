@@ -16,6 +16,8 @@ describe("EvidenceWorkbenchContainer", () => {
     );
     const caseBarIndex = html.indexOf("evidence-workbench-case-bar");
     const answerIndex = html.indexOf('id="answer-title"');
+    const inspectorIndex = html.indexOf('id="source-inspector-title"');
+    const inventoryIndex = html.indexOf('id="sources-title"');
     const scenarioIndex = html.indexOf('id="scenario-title"');
 
     expect(html).toContain('class="qld__body qld__body--light evidence-workbench"');
@@ -30,10 +32,17 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).not.toContain("qhds-page-header__context");
     expect(caseBarIndex).toBeGreaterThanOrEqual(0);
     expect(answerIndex).toBeGreaterThan(caseBarIndex);
-    expect(scenarioIndex).toBeGreaterThan(answerIndex);
+    expect(inspectorIndex).toBeGreaterThan(answerIndex);
+    expect(inventoryIndex).toBeGreaterThan(inspectorIndex);
+    expect(scenarioIndex).toBeGreaterThan(inventoryIndex);
     expect(html).toContain("row evidence-workbench-grid");
-    expect(html).toContain("col-xs-12 col-lg-12 col-xl-6");
+    expect(html).toContain("evidence-workbench-primary-frame");
+    expect(html).toContain("col-xs-12 col-lg-7 col-xl-7");
+    expect(html).toContain("col-xs-12 col-lg-5 col-xl-5");
     expect(html).toContain("qhds-content-section");
+    expect(html).toContain("Source inspector");
+    expect(html).toContain("selected-claim-sources");
+    expect(html).toContain("View full source inventory");
     expect(html).toContain("qld__card");
     expect(html).toContain("aivis-evidence-claim-card");
     expect(html).toContain("aivis-evidence-path-list");

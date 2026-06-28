@@ -1,4 +1,5 @@
 import {
+  AivisEvidenceCallout,
   AivisEvidenceClaimCard,
   AivisEvidenceContextAnchors,
   AivisEvidencePanelHeader,
@@ -13,6 +14,10 @@ import {
 
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 import { AnswerMarkdown } from "./answer-markdown";
+import {
+  SelectedSourceInspector,
+  selectedSourceWarnings
+} from "./selected-source-inspector";
 import { SourceTracePanel } from "./source-trace-panel";
 import { WorkbenchCaseBar } from "./workbench-case-bar";
 
@@ -20,6 +25,13 @@ export default function EvidenceWorkbenchContainer({
   data
 }: Readonly<{ data: EvidenceWorkbenchViewModel }>) {
   const summary = summaryMap(data);
+  const selectedClaim = data.reviewClaims.find(
+    (claim) => claim.id === data.review.selectedClaimId
+  );
+  const selectedSources = data.sourceItems.filter((source) => source.isSelectedClaimSource);
+  const selectedClaimTopWarning = selectedSourceWarnings(selectedSources).find(
+    (warning) => warning.blocksApproval
+  );
 
   return (
     <section
@@ -42,8 +54,8 @@ export default function EvidenceWorkbenchContainer({
         </QhdsPageAlert>
       ) : null}
 
-      <QhdsRow className="evidence-workbench-grid">
-        <QhdsCol lg={12} xl={6}>
+      <QhdsRow className="evidence-workbench-grid evidence-workbench-primary-frame">
+        <QhdsCol lg={7} xl={7}>
           <QhdsContentSection
             className="evidence-workbench-panel"
             heading="Draft answer"
@@ -63,6 +75,20 @@ export default function EvidenceWorkbenchContainer({
               markdown={data.answer.markdown}
               selectedClaimId={data.review.selectedClaimId}
             />
+            {selectedClaimTopWarning ? (
+              <AivisEvidenceCallout
+                className="evidence-workbench-selected-claim-warning"
+                heading={`${data.review.selectedClaimId} selected blocker`}
+                tone="warning"
+              >
+                <p>{selectedClaimTopWarning.message}</p>
+                <p>
+                  <a href="#selected-claim-sources">
+                    Review the selected source inspector for linked evidence.
+                  </a>
+                </p>
+              </AivisEvidenceCallout>
+            ) : null}
             <div
               className="evidence-workbench-claim-stack"
               id="selected-claim"
@@ -85,12 +111,30 @@ export default function EvidenceWorkbenchContainer({
           </QhdsContentSection>
         </QhdsCol>
 
-        <QhdsCol lg={12} xl={6}>
+        <QhdsCol lg={5} xl={5}>
+          <QhdsContentSection
+            className="evidence-workbench-panel evidence-workbench-source-inspector-section"
+            heading="Source inspector"
+            headingId="source-inspector-title"
+            lead="Focused source evidence for the selected claim."
+          >
+            <SelectedSourceInspector
+              selectedClaim={selectedClaim}
+              selectedClaimId={data.review.selectedClaimId}
+              sources={data.sourceItems}
+            />
+          </QhdsContentSection>
+        </QhdsCol>
+
+      </QhdsRow>
+
+      <QhdsRow className="evidence-workbench-grid evidence-workbench-lower-workspace">
+        <QhdsCol xs={12}>
           <QhdsContentSection
             className="evidence-workbench-panel"
-            heading="Evidence sources"
+            heading="Source inventory"
             headingId="sources-title"
-            lead="Source inventory, citation relationships and blocker state."
+            lead="Full source inventory, citation relationships and blocker state."
           >
             <AivisEvidencePanelHeader
               label="Source trace"
