@@ -195,35 +195,82 @@ const filters: EvidenceWorkbenchSourceFilter[] = [
 ];
 
 describe("SourceTracePanel", () => {
-  it("renders selected claim source focus and filter counts", () => {
+  it("renders compact source inventory controls and row content", () => {
     const html = renderPanel();
 
-    expect(html).toContain("CLAIM-003 is aligned to 2 sources.");
+    expect(html).toContain("Compact source inventory");
+    expect(html).toContain("CLAIM-003 is aligned to 2 selected sources.");
+    expect(html).toContain("3 sources currently block approval.");
     expect(html).toContain('href="#source-SRC-003"');
     expect(html).toContain('href="#source-SRC-006"');
     expect(html).toContain("All sources");
     expect(html).toContain("Needs owner action");
     expect(html).toContain('aria-label="Needs owner action: 2 sources.');
+    expect(html).toContain("evidence-workbench-source-inventory");
+    expect(html).toContain("Status");
+    expect(html).toContain("Freshness");
+    expect(html).toContain("Owner");
+    expect(html).toContain("Citations");
+    expect(html).toContain("Issue");
+    expect(html).toContain("SRC-002");
+    expect(html).toContain("Interchange Operations");
+    expect(html).toContain("WARN-001 blocks approval");
+    expect(html).toContain("Synthetic owner queue");
   });
 
-  it("separates direct source warnings from citation relationship warnings", () => {
+  it("orders selected blocker sources before other blockers and inventory rows", () => {
+    const html = renderPanel();
+    const selectedRelationshipBlockerIndex = html.indexOf('id="source-SRC-003"');
+    const selectedMissingBlockerIndex = html.indexOf('id="source-SRC-006"');
+    const staleBlockerIndex = html.indexOf('id="source-SRC-002"');
+    const uncitedInventoryIndex = html.indexOf('id="source-SRC-005"');
+
+    expect(selectedRelationshipBlockerIndex).toBeGreaterThanOrEqual(0);
+    expect(selectedMissingBlockerIndex).toBeGreaterThan(selectedRelationshipBlockerIndex);
+    expect(staleBlockerIndex).toBeGreaterThan(selectedMissingBlockerIndex);
+    expect(uncitedInventoryIndex).toBeGreaterThan(staleBlockerIndex);
+    expect(html).toContain('data-source-priority="selected_blocker"');
+    expect(html).toContain('data-source-priority="approval_blocker"');
+    expect(html).toContain('data-source-priority="inventory_source"');
+  });
+
+  it("opens selected and approval-blocking sources by default", () => {
+    const html = renderPanel();
+    const openSourceIds = sourceIdsWithAttribute(html, "open");
+    const defaultExpandedSourceIds = sourceIdsWithAttribute(
+      html,
+      'data-source-expanded-default="true"'
+    );
+
+    expect(openSourceIds).toEqual(["SRC-003", "SRC-006", "SRC-002"]);
+    expect(defaultExpandedSourceIds).toEqual(["SRC-003", "SRC-006", "SRC-002"]);
+    expect(sourceHasAttribute(html, "SRC-005", 'data-source-expanded-default="false"')).toBe(
+      true
+    );
+  });
+
+  it("keeps warnings reachable while reducing repeated callout rendering", () => {
     const html = renderPanel();
 
     expect(html).toContain('data-source-filter-state="stale_blocker"');
     expect(html).toContain('data-source-filter-state="current_conditional_support"');
-    expect(html).toContain("aivis-evidence-source-card");
-    expect(html).toContain("qld__summary-list");
-    expect(html).toContain("qld__callout");
-    expect(html).toContain("Direct source warning");
-    expect(html).toContain("Citation or claim warning");
+    expect(html).not.toContain("aivis-evidence-source-card");
+    expect(html).not.toContain("aivis-evidence-warning-group");
+    expect(html).not.toContain("qld__callout");
+    expect(html).toContain("Warning summary");
     expect(html).toContain("WARN-001");
     expect(html).toContain("WARN-002");
     expect(html).toContain("WARN-003");
+    expect(html).toContain("High approval blocker");
   });
 
-  it("keeps public context anchors distinct from evidence sources", () => {
+  it("preserves source anchors, claim links and public context boundary", () => {
     const html = renderPanel();
 
+    expect(html).toContain('id="source-SRC-003"');
+    expect(html).toContain('id="source-SRC-006"');
+    expect(html).toContain('href="#claim-CLAIM-003"');
+    expect(html).toContain('href="#claim-CLAIM-002"');
     expect(html).toContain("aivis-evidence-anchor-chip-list");
     expect(html).toContain("South Brisbane station");
     expect(html).toContain("Princess Alexandra Hospital");
@@ -240,5 +287,24 @@ function renderPanel(): string {
       selectedClaimId="CLAIM-003"
       sources={sourceItems}
     />
+  );
+}
+
+function sourceIdsWithAttribute(html: string, attribute: string): string[] {
+  return Array.from(html.matchAll(/<details(?<attrs>[^>]*)>/g))
+    .filter((match) => match.groups?.attrs.includes(attribute))
+    .map((match) => {
+      const idMatch = match.groups?.attrs.match(/id="source-([^"]+)"/);
+
+      return idMatch?.[1] ?? "";
+    })
+    .filter(Boolean);
+}
+
+function sourceHasAttribute(html: string, sourceId: string, attribute: string): boolean {
+  return Array.from(html.matchAll(/<details(?<attrs>[^>]*)>/g)).some(
+    (match) =>
+      Boolean(match.groups?.attrs.includes(`id="source-${sourceId}"`)) &&
+      Boolean(match.groups?.attrs.includes(attribute))
   );
 }

@@ -2,11 +2,10 @@ import type { ReactElement } from "react";
 
 import {
   AivisEvidenceAnchorChipList,
-  AivisEvidenceCallout,
   AivisEvidenceFilterNav,
-  AivisEvidenceSourceCard,
+  AivisEvidencePanelHeader,
+  AivisEvidenceStatus,
   AivisEvidenceTokenList,
-  AivisEvidenceWarningGroup,
   type AivisEvidenceTone
 } from "@aivis/ui-library";
 
@@ -28,17 +27,23 @@ export function SourceTracePanel({
   sources
 }: Readonly<SourceTracePanelProps>): ReactElement {
   const focusedSources = sources.filter((source) => source.isSelectedClaimSource);
+  const blockerSources = sources.filter(hasApprovalBlocker);
+  const orderedSources = sourceInventoryOrder(sources);
 
   return (
     <div className="evidence-workbench-source-trace">
-      <AivisEvidenceCallout
-        className="evidence-workbench-source-focus"
-        heading="Selected claim source focus"
-        tone="neutral"
+      <section
+        aria-label="Compact source inventory priority"
+        className="evidence-workbench-source-inventory-summary"
       >
+        <AivisEvidencePanelHeader
+          label="Compact source inventory"
+          status={`${sources.length} source${sources.length === 1 ? "" : "s"}`}
+        />
         <p>
-          {selectedClaimId} is aligned to {focusedSources.length} source
-          {focusedSources.length === 1 ? "" : "s"}.
+          {selectedClaimId} is aligned to {focusedSources.length} selected source
+          {focusedSources.length === 1 ? "" : "s"}. {blockerSources.length} source
+          {blockerSources.length === 1 ? "" : "s"} currently block approval.
         </p>
         <AivisEvidenceTokenList
           ariaLabel={`Sources linked to ${selectedClaimId}`}
@@ -49,10 +54,10 @@ export function SourceTracePanel({
             label: source.id
           }))}
         />
-      </AivisEvidenceCallout>
+      </section>
 
       <AivisEvidenceFilterNav
-        ariaLabel="Source trace filters"
+        ariaLabel="Source inventory groups"
         filters={filters.map((filter) => ({
           ariaLabel: `${filter.label}: ${filter.count} source${filter.count === 1 ? "" : "s"}. ${filter.description}`,
           count: filter.count,
@@ -62,89 +67,170 @@ export function SourceTracePanel({
         }))}
       />
 
-      <ul className="evidence-workbench-source-list" id="source-inventory">
-        {sources.map((source) => (
-          <li className="evidence-workbench-source-list__item" key={source.id}>
-            <AivisEvidenceSourceCard
-              data-source-filter-state={source.trustState}
-              id={`source-${source.id}`}
-              metadataItems={[
-                { description: source.freshness, term: "Freshness" },
-                { description: source.ownerLabel, term: "Owner" },
-                { description: source.citationCount, term: "Citations" },
-                { description: source.sourceType, term: "Type" }
-              ]}
-              preview={source.preview}
-              selected={source.isSelectedClaimSource}
-              selectedLabel="Selected claim source"
-              sourceId={source.id}
-              status={source.status}
-              statusTone={sourceStatusTone(source.status)}
-              title={source.title}
-            >
-              <div className="evidence-workbench-source-evidence-row">
-                <section aria-label={`${source.id} citation relationships`}>
-                  <h3>Citation relationship</h3>
-                  <AivisEvidenceTokenList
-                    ariaLabel={`${source.id} citation relationships`}
-                    emptyMessage="Present in the inventory, not cited by this answer."
-                    items={source.citations.map((citation) => ({
-                      description: citation.relationship,
-                      href: `#claim-${citation.claimId}`,
-                      id: citation.id,
-                      label: citation.marker
-                    }))}
-                  />
-                </section>
+      <ol className="evidence-workbench-source-inventory" id="source-inventory">
+        {orderedSources.map((source, index) => {
+          const issueSummary = sourceIssueSummary(source);
+          const warnings = sourceWarnings(source);
+          const expandedByDefault = source.isSelectedClaimSource || hasApprovalBlocker(source);
 
-                <section aria-label={`${source.id} context anchors`}>
-                  <h3>Context anchors</h3>
-                  <AivisEvidenceAnchorChipList
-                    anchors={source.contextAnchors.map((anchor) => ({
-                      description: anchor.supportingText,
-                      id: anchor.id,
-                      label: anchor.label,
-                      meta: "Context only"
-                    }))}
-                    ariaLabel={`${source.id} context anchors`}
-                    emptyMessage="No public context anchor attached."
-                  />
-                </section>
-              </div>
+          return (
+            <li className="evidence-workbench-source-inventory__item" key={source.id}>
+              <details
+                className="evidence-workbench-source-inventory__details"
+                data-source-filter-state={source.trustState}
+                data-source-expanded-default={expandedByDefault ? "true" : "false"}
+                data-source-priority={sourcePriority(source)}
+                data-source-row-order={index + 1}
+                id={`source-${source.id}`}
+                open={expandedByDefault}
+              >
+                <summary className="evidence-workbench-source-inventory__summary">
+                  <span className="evidence-workbench-source-inventory__source">
+                    <span className="evidence-workbench-source-inventory__cell-label">
+                      Source
+                    </span>
+                    <strong>{source.id}</strong>
+                    <span>{source.title}</span>
+                    <span className="evidence-workbench-source-inventory__badges">
+                      {source.isSelectedClaimSource ? (
+                        <AivisEvidenceStatus tone="neutral">Selected claim source</AivisEvidenceStatus>
+                      ) : null}
+                      {hasApprovalBlocker(source) ? (
+                        <AivisEvidenceStatus tone="warning">Approval blocker</AivisEvidenceStatus>
+                      ) : null}
+                    </span>
+                  </span>
 
-              <AivisEvidenceWarningGroup
-                label="Direct source warning"
-                warnings={source.directWarnings.map((warning) => ({
-                  id: warning.id,
-                  impact: warning.evidenceImpact,
-                  message: warning.message,
-                  severity: warningSeverityLabel(warning)
-                }))}
-              />
+                  <span className="evidence-workbench-source-inventory__cell">
+                    <span className="evidence-workbench-source-inventory__cell-label">
+                      Status
+                    </span>
+                    <AivisEvidenceStatus tone={sourceStatusTone(source.status)}>
+                      {source.status}
+                    </AivisEvidenceStatus>
+                  </span>
 
-              <AivisEvidenceWarningGroup
-                label="Citation or claim warning"
-                warnings={source.relationshipWarnings.map((warning) => ({
-                  id: warning.id,
-                  impact: warning.evidenceImpact,
-                  message: warning.message,
-                  severity: warningSeverityLabel(warning)
-                }))}
-              />
+                  <span className="evidence-workbench-source-inventory__cell">
+                    <span className="evidence-workbench-source-inventory__cell-label">
+                      Freshness
+                    </span>
+                    <strong>{source.freshness}</strong>
+                  </span>
 
-              <p className="aivis-evidence-source-card__owner">
-                Synthetic owner queue: <code>{source.reviewOwnerQueue}</code>
-              </p>
-            </AivisEvidenceSourceCard>
-          </li>
-        ))}
-      </ul>
+                  <span className="evidence-workbench-source-inventory__cell">
+                    <span className="evidence-workbench-source-inventory__cell-label">
+                      Owner
+                    </span>
+                    <strong>{source.ownerLabel}</strong>
+                  </span>
+
+                  <span className="evidence-workbench-source-inventory__cell">
+                    <span className="evidence-workbench-source-inventory__cell-label">
+                      Citations
+                    </span>
+                    <strong>{source.citationCount}</strong>
+                  </span>
+
+                  <span className="evidence-workbench-source-inventory__issue">
+                    <span className="evidence-workbench-source-inventory__cell-label">
+                      Issue
+                    </span>
+                    <strong>{issueSummary.label}</strong>
+                    <span>{issueSummary.description}</span>
+                  </span>
+                </summary>
+
+                <div className="evidence-workbench-source-inventory__detail-panel">
+                  <div className="evidence-workbench-source-evidence-row">
+                    <section aria-label={`${source.id} evidence preview`}>
+                      <h3>Evidence preview</h3>
+                      <p>{source.preview}</p>
+                      <p>
+                        Source type: <strong>{source.sourceType}</strong>
+                      </p>
+                    </section>
+
+                    <section aria-label={`${source.id} citation relationships`}>
+                      <h3>Citation relationship</h3>
+                      <AivisEvidenceTokenList
+                        ariaLabel={`${source.id} citation relationships`}
+                        emptyMessage="Present in the inventory, not cited by this answer."
+                        items={source.citations.map((citation) => ({
+                          description: citation.relationship,
+                          href: `#claim-${citation.claimId}`,
+                          id: citation.id,
+                          label: citation.marker
+                        }))}
+                      />
+                    </section>
+
+                    <section aria-label={`${source.id} context anchors`}>
+                      <h3>Context anchors</h3>
+                      <AivisEvidenceAnchorChipList
+                        anchors={source.contextAnchors.map((anchor) => ({
+                          description: anchor.supportingText,
+                          id: anchor.id,
+                          label: anchor.label,
+                          meta: "Context only"
+                        }))}
+                        ariaLabel={`${source.id} context anchors`}
+                        emptyMessage="No public context anchor attached."
+                      />
+                    </section>
+                  </div>
+
+                  <SourceWarningSummary source={source} warnings={warnings} />
+
+                  <p className="evidence-workbench-source-inventory__owner">
+                    Synthetic owner queue: <code>{source.reviewOwnerQueue}</code>
+                  </p>
+                </div>
+              </details>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
 
+function SourceWarningSummary({
+  source,
+  warnings
+}: Readonly<{
+  source: EvidenceWorkbenchSource;
+  warnings: EvidenceWorkbenchSourceWarning[];
+}>): ReactElement {
+  if (warnings.length === 0) {
+    return (
+      <p className="evidence-workbench-source-inventory__warning-empty">
+        No direct source or citation relationship warning is attached to {source.id}.
+      </p>
+    );
+  }
+
+  return (
+    <section
+      aria-label={`${source.id} warning summary`}
+      className="evidence-workbench-source-inventory__warning-summary"
+    >
+      <h3>Warning summary</h3>
+      <ul>
+        {warnings.map((warning) => (
+          <li key={warning.id}>
+            <AivisEvidenceStatus tone="warning">{warningSeverityLabel(warning)}</AivisEvidenceStatus>
+            <strong>{warning.id}</strong>
+            <span>{warning.message}</span>
+            <small>{warning.evidenceImpact}</small>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function sourceStatusTone(status: string): AivisEvidenceTone {
-  return /missing|stale|conditional/i.test(status) ? "warning" : "success";
+  return /missing|stale|conditional|weak|partial/i.test(status) ? "warning" : "success";
 }
 
 function warningSeverityLabel(warning: EvidenceWorkbenchSourceWarning): string {
@@ -153,4 +239,115 @@ function warningSeverityLabel(warning: EvidenceWorkbenchSourceWarning): string {
 
 function sourceFilterHref(filter: EvidenceWorkbenchSourceFilter): string {
   return filter.sourceIds[0] ? `#source-${filter.sourceIds[0]}` : "#sources-title";
+}
+
+function sourceInventoryOrder(sources: EvidenceWorkbenchSource[]): EvidenceWorkbenchSource[] {
+  return sources
+    .map((source, index) => ({ index, source }))
+    .sort((left, right) => {
+      const priorityDelta = sourcePriorityRank(left.source) - sourcePriorityRank(right.source);
+
+      return priorityDelta === 0 ? left.index - right.index : priorityDelta;
+    })
+    .map(({ source }) => source);
+}
+
+function sourcePriorityRank(source: EvidenceWorkbenchSource): number {
+  const approvalBlocker = hasApprovalBlocker(source);
+
+  if (source.isSelectedClaimSource && approvalBlocker) {
+    return 0;
+  }
+
+  if (approvalBlocker) {
+    return 1;
+  }
+
+  if (source.isSelectedClaimSource) {
+    return 2;
+  }
+
+  if (sourceWarnings(source).length > 0) {
+    return 3;
+  }
+
+  if (source.citationCount > 0) {
+    return 4;
+  }
+
+  return 5;
+}
+
+function sourcePriority(source: EvidenceWorkbenchSource): string {
+  if (source.isSelectedClaimSource && hasApprovalBlocker(source)) {
+    return "selected_blocker";
+  }
+
+  if (hasApprovalBlocker(source)) {
+    return "approval_blocker";
+  }
+
+  if (source.isSelectedClaimSource) {
+    return "selected_claim_source";
+  }
+
+  if (sourceWarnings(source).length > 0) {
+    return "warning";
+  }
+
+  if (source.citationCount > 0) {
+    return "cited_source";
+  }
+
+  return "inventory_source";
+}
+
+function sourceIssueSummary(source: EvidenceWorkbenchSource): {
+  description: string;
+  label: string;
+} {
+  const warnings = sourceWarnings(source);
+  const approvalBlocker = warnings.find((warning) => warning.blocksApproval);
+  const firstWarning = warnings[0];
+
+  if (approvalBlocker) {
+    return {
+      description: approvalBlocker.message,
+      label: `${approvalBlocker.id} blocks approval`
+    };
+  }
+
+  if (firstWarning) {
+    return {
+      description: firstWarning.message,
+      label: `${warnings.length} review warning${warnings.length === 1 ? "" : "s"}`
+    };
+  }
+
+  if (source.isSelectedClaimSource) {
+    return {
+      description: "Linked to the selected answer claim.",
+      label: "Selected claim evidence"
+    };
+  }
+
+  if (source.citationCount === 0) {
+    return {
+      description: "Available in the source set but not cited by the draft answer.",
+      label: "Uncited inventory"
+    };
+  }
+
+  return {
+    description: "No direct source or citation relationship warning.",
+    label: "No active issue"
+  };
+}
+
+function hasApprovalBlocker(source: EvidenceWorkbenchSource): boolean {
+  return sourceWarnings(source).some((warning) => warning.blocksApproval);
+}
+
+function sourceWarnings(source: EvidenceWorkbenchSource): EvidenceWorkbenchSourceWarning[] {
+  return [...source.directWarnings, ...source.relationshipWarnings];
 }
