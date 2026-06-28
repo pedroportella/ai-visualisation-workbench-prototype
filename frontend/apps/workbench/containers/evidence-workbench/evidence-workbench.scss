@@ -1,0 +1,280 @@
+.evidence-workbench {
+  display: grid;
+  align-content: start;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1160px;
+  min-width: 0;
+}
+
+.evidence-workbench:focus {
+  outline: 0;
+}
+
+.evidence-workbench-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.75fr);
+  gap: 2rem;
+  align-items: start;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--aivis-shell-border);
+}
+
+.evidence-workbench-header-copy {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.evidence-workbench-header h1 {
+  max-width: 14ch;
+  color: var(--aivis-shell-accent-strong);
+  font-size: clamp(2rem, 1.8rem + 1vw, 3rem);
+  line-height: 1.12;
+}
+
+.evidence-workbench-header p,
+.evidence-workbench-context p,
+.evidence-workbench-lead,
+.evidence-workbench-review-note {
+  max-width: 760px;
+  color: var(--aivis-shell-muted);
+  line-height: 1.65;
+}
+
+.evidence-workbench-eyebrow,
+.evidence-workbench-status,
+.evidence-workbench-summary dt,
+.evidence-workbench-anchor-list span {
+  color: var(--aivis-shell-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.evidence-workbench-eyebrow {
+  margin: 0;
+  color: var(--aivis-shell-accent);
+}
+
+.evidence-workbench-summary {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  margin: 0;
+}
+
+.evidence-workbench-summary-item {
+  padding: 0.85rem;
+  background: var(--aivis-shell-surface-muted);
+  border: 1px solid var(--aivis-shell-border-muted);
+  border-radius: var(--aivis-shell-radius);
+}
+
+.evidence-workbench-summary dt {
+  margin-bottom: 0.35rem;
+}
+
+.evidence-workbench-summary dd {
+  margin: 0;
+  color: var(--aivis-shell-text);
+  font-weight: 700;
+}
+
+.evidence-workbench-context {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.7fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.evidence-workbench-context h2,
+.evidence-workbench-panel h2 {
+  color: var(--aivis-shell-text);
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.evidence-workbench-anchor-list,
+.evidence-workbench-source-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.evidence-workbench-anchor-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.evidence-workbench-anchor-list li {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem;
+  color: var(--aivis-shell-text);
+  background: #eef8ff;
+  border: 1px solid #c8e3f8;
+  border-radius: var(--aivis-shell-radius);
+}
+
+.evidence-workbench-anchor-list span {
+  color: var(--aivis-shell-accent);
+}
+
+.evidence-workbench-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.75fr) minmax(18rem, 0.75fr);
+  gap: 1rem;
+}
+
+.evidence-workbench-panel {
+  min-width: 0;
+  padding: 1rem;
+  background: var(--aivis-shell-surface);
+  border: 1px solid var(--aivis-shell-border);
+  border-radius: var(--aivis-shell-radius);
+  box-shadow: var(--aivis-shell-shadow);
+}
+
+.evidence-workbench-panel-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: start;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.evidence-workbench-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: 0.3rem 0.65rem;
+  color: #1f6d31;
+  text-transform: none;
+  background: #ecf8ef;
+  border: 1px solid rgb(31 109 49 / 30%);
+  border-radius: 999px;
+}
+
+.evidence-workbench-status-warning {
+  color: #7a5a00;
+  background: #fff6d8;
+  border-color: rgb(122 90 0 / 30%);
+}
+
+.evidence-workbench-claim-stack,
+.evidence-workbench-source-list,
+.evidence-workbench-review-path {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.evidence-workbench-claim {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  background: #fbfcff;
+  border: 1px solid #dde6f1;
+  border-left: 4px solid #7a5a00;
+  border-radius: var(--aivis-shell-radius);
+}
+
+.evidence-workbench-claim div,
+.evidence-workbench-source-list li {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.evidence-workbench-claim span:first-child,
+.evidence-workbench-source-list span,
+.evidence-workbench-source-list em {
+  color: var(--aivis-shell-muted);
+  font-size: 0.95rem;
+  font-style: normal;
+}
+
+.evidence-workbench-claim p {
+  margin: 0;
+  color: var(--aivis-shell-muted);
+  line-height: 1.55;
+}
+
+.evidence-workbench-source-list li {
+  padding: 0.85rem;
+  background: #fbfcff;
+  border: 1px solid #dde6f1;
+  border-radius: var(--aivis-shell-radius);
+}
+
+.evidence-workbench-source-list em {
+  color: var(--aivis-shell-accent);
+  font-weight: 700;
+}
+
+.evidence-workbench-review-path {
+  padding: 0;
+  margin-bottom: 0;
+  counter-reset: review-step;
+  list-style: none;
+}
+
+.evidence-workbench-review-path li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0.75rem;
+  background: var(--aivis-shell-surface-muted);
+  border: 1px solid var(--aivis-shell-border-muted);
+  border-radius: var(--aivis-shell-radius);
+}
+
+.evidence-workbench-review-path li::before {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: #ffffff;
+  content: counter(review-step);
+  counter-increment: review-step;
+  background: var(--aivis-shell-accent-strong);
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+@media (max-width: 1180px) {
+  .evidence-workbench-grid {
+    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.85fr);
+  }
+
+  .evidence-workbench-grid > :last-child {
+    grid-column: 1 / -1;
+  }
+
+  .evidence-workbench-review-path {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .evidence-workbench,
+  .evidence-workbench-header,
+  .evidence-workbench-context,
+  .evidence-workbench-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .evidence-workbench-grid > :last-child {
+    grid-column: auto;
+  }
+
+  .evidence-workbench-review-path {
+    grid-template-columns: 1fr;
+  }
+}

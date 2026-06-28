@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import { prototypeTokens } from "./index";
 
 const styles = readFileSync(
-  join(dirname(fileURLToPath(import.meta.url)), "styles.css"),
+  join(dirname(fileURLToPath(import.meta.url)), "styles.scss"),
   "utf8"
 );
 
@@ -65,7 +65,7 @@ describe("prototypeTokens", () => {
     expect(prototypeTokens.layout.sectionPaddingMobile).toBe("2.25rem");
   });
 
-  it("maps QHDS light, alt, dark and dark-alt layers in CSS", () => {
+  it("maps QHDS light, alt, dark and dark-alt layers in SCSS", () => {
     expect(styles).toContain('--ssq-palette-name: "qld-health"');
     expect(styles).toContain("--QLD-color-light__heading: #000053");
     expect(styles).toContain("--QLD-color-light__text: #353535");

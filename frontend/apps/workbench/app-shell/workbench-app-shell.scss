@@ -1,0 +1,223 @@
+:root {
+  --aivis-shell-page: #f5f7fb;
+  --aivis-shell-surface: #ffffff;
+  --aivis-shell-surface-muted: #f8fbff;
+  --aivis-shell-border: #cbd7e8;
+  --aivis-shell-border-muted: #dbe7f4;
+  --aivis-shell-text: #172033;
+  --aivis-shell-muted: #53657d;
+  --aivis-shell-accent: #005eb8;
+  --aivis-shell-accent-strong: #001d74;
+  --aivis-shell-focus: #002e85;
+  --aivis-shell-radius: 8px;
+  --aivis-shell-shadow: 0 18px 48px rgb(0 29 116 / 10%);
+}
+
+.aivis-app-shell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  background: var(--aivis-shell-page);
+  color: var(--aivis-shell-text);
+}
+
+.aivis-app-shell-skip-link {
+  position: fixed;
+  z-index: 30;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.75rem 1rem;
+  color: #ffffff;
+  background: var(--aivis-shell-accent-strong);
+  border-radius: var(--aivis-shell-radius);
+  font-weight: 700;
+  transform: translateY(-160%);
+}
+
+.aivis-app-shell-skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+.aivis-app-shell-header {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+  padding: 1rem clamp(1rem, 3vw, 2rem);
+  background: color-mix(in srgb, var(--aivis-shell-surface) 94%, transparent);
+  border-bottom: 1px solid var(--aivis-shell-border);
+  backdrop-filter: blur(16px);
+}
+
+.aivis-app-shell-brand {
+  display: inline-flex;
+  gap: 0.875rem;
+  align-items: center;
+  min-width: 0;
+  color: inherit;
+  border-radius: var(--aivis-shell-radius);
+  text-decoration: none;
+}
+
+.aivis-app-shell-brand-mark {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  color: #ffffff;
+  background: var(--aivis-shell-accent-strong);
+  border-radius: var(--aivis-shell-radius);
+  font-weight: 800;
+}
+
+.aivis-app-shell-brand-copy {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.aivis-app-shell-brand-copy strong,
+.aivis-app-shell-brand-copy span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aivis-app-shell-brand-copy strong {
+  color: var(--aivis-shell-text);
+  line-height: 1.15;
+}
+
+.aivis-app-shell-brand-copy span {
+  color: var(--aivis-shell-muted);
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.aivis-app-shell-mode {
+  flex: 0 0 auto;
+  padding: 0.4rem 0.7rem;
+  color: var(--aivis-shell-accent-strong);
+  background: #eef8ff;
+  border: 1px solid #c8e3f8;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.aivis-app-shell-body {
+  display: grid;
+  grid-template-columns: minmax(248px, 288px) minmax(0, 1fr);
+  min-height: 0;
+}
+
+.aivis-app-shell-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 0;
+  padding: 1.5rem;
+  background: var(--aivis-shell-surface);
+  border-right: 1px solid var(--aivis-shell-border);
+}
+
+.aivis-app-shell-nav {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.aivis-app-shell-nav-heading {
+  margin: 0;
+  color: var(--aivis-shell-muted);
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.aivis-app-shell-nav ul {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.aivis-app-shell-nav-link {
+  display: grid;
+  gap: 0.25rem;
+  min-height: 50px;
+  padding: 0.75rem;
+  color: var(--aivis-shell-text);
+  background: var(--aivis-shell-surface-muted);
+  border: 1px solid var(--aivis-shell-border-muted);
+  border-radius: var(--aivis-shell-radius);
+  text-decoration: none;
+}
+
+.aivis-app-shell-nav-link span {
+  color: var(--aivis-shell-muted);
+  font-size: 0.9rem;
+}
+
+.aivis-app-shell-note {
+  margin: auto 0 0;
+  padding: 1rem;
+  color: var(--aivis-shell-muted);
+  background: var(--aivis-shell-surface-muted);
+  border: 1px solid var(--aivis-shell-border-muted);
+  border-radius: var(--aivis-shell-radius);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.aivis-app-shell-content {
+  display: grid;
+  align-items: stretch;
+  min-width: 0;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.aivis-app-shell-brand:focus-visible,
+.aivis-app-shell-nav-link:focus-visible {
+  outline: 3px solid var(--aivis-shell-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 980px) {
+  .aivis-app-shell-body {
+    grid-template-columns: 1fr;
+  }
+
+  .aivis-app-shell-sidebar {
+    gap: 0.875rem;
+    padding: 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--aivis-shell-border);
+  }
+
+  .aivis-app-shell-note {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .aivis-app-shell-header {
+    min-height: 64px;
+    padding: 0.875rem 1rem;
+  }
+
+  .aivis-app-shell-brand-copy span,
+  .aivis-app-shell-mode {
+    display: none;
+  }
+
+  .aivis-app-shell-content {
+    padding: 1rem;
+  }
+}

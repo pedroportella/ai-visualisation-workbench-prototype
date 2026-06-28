@@ -1,11 +1,10 @@
 # Frontend Apps
 
-Planned first app:
+First app:
 
 ```text
 workbench
 ```
 
-The first route should be the Evidence Workbench, not a marketing landing page
-or generic dashboard.
-
+The app exposes `/evidence-workbench` as the first product route, not a
+marketing landing page or generic dashboard.

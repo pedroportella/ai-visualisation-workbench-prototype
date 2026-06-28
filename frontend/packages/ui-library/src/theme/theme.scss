@@ -1,5 +1,5 @@
-@import "@aivis/ui-tokens/styles.css";
-@import "./qhds-grid.css";
+@use "../../../ui-tokens/src/styles";
+@use "./qhds-grid";
 
 html {
   color-scheme: var(--ssq-color-scheme);

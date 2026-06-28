@@ -1,0 +1,6 @@
+@use "../app-shell/workbench-app-shell";
+@use "../containers/evidence-workbench/evidence-workbench";
+
+body {
+  background: var(--aivis-shell-page);
+}

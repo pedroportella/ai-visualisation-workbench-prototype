@@ -1,0 +1,28 @@
+{
+  "name": "@aivis/workbench",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "check": "pnpm typecheck && pnpm build",
+    "dev": "next dev --hostname 127.0.0.1 --port 3000",
+    "lint": "pnpm typecheck",
+    "start": "next start --hostname 127.0.0.1 --port 3000",
+    "test": "pnpm typecheck",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@aivis/ui-library": "workspace:*",
+    "next": "16.2.9",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "sass": "1.100.0",
+    "typescript": "^5.7.2"
+  }
+}
