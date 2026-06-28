@@ -1,63 +1,63 @@
-.ssq-file-upload {
+.qhds-file-upload {
   display: grid;
-  gap: var(--ssq-space-3);
+  gap: var(--qhds-space-3);
 }
 
-.ssq-file-upload__label {
+.qhds-file-upload__label {
   font-weight: 700;
 }
 
-.ssq-file-upload__hint,
-.ssq-file-upload__meta,
-.ssq-file-upload__message {
-  color: var(--ssq-color-muted);
+.qhds-file-upload__hint,
+.qhds-file-upload__meta,
+.qhds-file-upload__message {
+  color: var(--qhds-color-muted);
   margin: 0;
 }
 
-.ssq-file-upload__input {
-  background: var(--ssq-color-surface);
-  border: 2px dashed var(--ssq-color-border-strong);
-  border-radius: var(--ssq-radius-sm);
+.qhds-file-upload__input {
+  background: var(--qhds-color-surface);
+  border: 2px dashed var(--qhds-color-border-strong);
+  border-radius: var(--qhds-radius-sm);
   box-sizing: border-box;
-  color: var(--ssq-color-text);
-  padding: var(--ssq-space-4);
+  color: var(--qhds-color-text);
+  padding: var(--qhds-space-4);
   width: min(100%, 32rem);
 }
 
-.ssq-file-upload--invalid .ssq-file-upload__input {
-  border-color: var(--ssq-color-invalid-border);
+.qhds-file-upload--invalid .qhds-file-upload__input {
+  border-color: var(--qhds-color-invalid-border);
 }
 
-.ssq-file-upload__error {
-  color: var(--ssq-color-error);
+.qhds-file-upload__error {
+  color: var(--qhds-color-error);
   font-weight: 700;
   margin: 0;
 }
 
-.ssq-file-upload__list {
+.qhds-file-upload__list {
   display: grid;
-  gap: var(--ssq-space-3);
+  gap: var(--qhds-space-3);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.ssq-file-upload__item {
-  border-left: 4px solid var(--ssq-color-success-border);
+.qhds-file-upload__item {
+  border-left: 4px solid var(--qhds-color-success-border);
   display: grid;
-  gap: var(--ssq-space-1);
-  padding-left: var(--ssq-space-3);
+  gap: var(--qhds-space-1);
+  padding-left: var(--qhds-space-3);
 }
 
-.ssq-file-upload__item--rejected {
-  border-left-color: var(--ssq-color-invalid-border);
+.qhds-file-upload__item--rejected {
+  border-left-color: var(--qhds-color-invalid-border);
 }
 
-.ssq-file-upload__file-name,
-.ssq-file-upload__status {
+.qhds-file-upload__file-name,
+.qhds-file-upload__status {
   font-weight: 700;
 }
 
-.ssq-file-upload__status {
+.qhds-file-upload__status {
   font-size: 0.925rem;
 }

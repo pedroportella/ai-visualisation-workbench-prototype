@@ -14,8 +14,8 @@ export function QhdsDirectionLink({ children, className, direction = "left", ...
   const classes = [
     "qld__direction-link",
     `qld__direction-link--${direction}`,
-    "ssq-direction-link",
-    `ssq-direction-link--${direction}`,
+    "qhds-direction-link",
+    `qhds-direction-link--${direction}`,
     className
   ]
     .filter(Boolean)

@@ -1,12 +1,12 @@
-.aivis-app-shell.ssq-layout {
-  background: var(--ssq-color-background);
-  color: var(--ssq-color-text);
+.aivis-app-shell.qhds-layout {
+  background: var(--aivis-shell-page);
+  color: var(--aivis-shell-text);
 }
 
-.aivis-app-shell .ssq-footer__content {
-  color: var(--ssq-palette-strong-muted);
+.aivis-app-shell .qhds-footer__content {
+  color: var(--aivis-shell-footer-muted);
 }
 
-.aivis-app-shell .ssq-footer__content p {
+.aivis-app-shell .qhds-footer__content p {
   margin: 0;
 }

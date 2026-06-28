@@ -39,21 +39,21 @@ export function QhdsLayout({
   const contentClasses = [
     "col-xs-12",
     "col-lg-12 col-xl-12",
-    "ssq-layout__content",
-    `ssq-layout__content--${resolvedContentWidth}`
+    "qhds-layout__content",
+    `qhds-layout__content--${resolvedContentWidth}`
   ];
   const layoutClasses = [
     "qld__grid",
     hasSideNav ? "vertical-nav" : "",
-    "ssq-layout",
-    `ssq-layout--${width}`,
-    hasSideNav ? "ssq-layout--has-left-nav" : "",
-    focusMode ? "ssq-layout--focus" : "",
+    "qhds-layout",
+    `qhds-layout--${width}`,
+    hasSideNav ? "qhds-layout--has-left-nav" : "",
+    focusMode ? "qhds-layout--focus" : "",
     className
   ];
   const bodyContent = (
-    <section className="qld__body ssq-layout__body">
-      <div className="container-fluid ssq-layout__container">
+    <section className="qld__body qhds-layout__body">
+      <div className="container-fluid qhds-layout__container">
         <div className="row">
           <div aria-labelledby={contentLabelledBy} className={contentClasses.filter(Boolean).join(" ")} id={mainId}>
             {children}
@@ -65,20 +65,20 @@ export function QhdsLayout({
 
   return (
     <div className={layoutClasses.filter(Boolean).join(" ")}>
-      <nav aria-label="skip links" className="qld__skip-link ssq-layout__skip-links" tabIndex={-1}>
-        <a className="qld__skip-link__link ssq-layout__skip-link" href={`#${mainId}`}>
+      <nav aria-label="skip links" className="qld__skip-link qhds-layout__skip-links" tabIndex={-1}>
+        <a className="qld__skip-link__link qhds-layout__skip-link" href={`#${mainId}`}>
           {skipLinkLabel}
         </a>
         {hasSideNav ? (
-          <a className="qld__skip-link__link ssq-layout__skip-link" href="#section-navigation">
+          <a className="qld__skip-link__link qhds-layout__skip-link" href="#section-navigation">
             Skip to section navigation
           </a>
         ) : null}
       </nav>
       {header}
-      <main aria-label={mainLabel} className="main ssq-layout__main" tabIndex={-1}>
-        {hasSideNav ? <div className="ssq-layout__left-nav" id="section-navigation">{sideNav}</div> : null}
-        {hasSideNav ? <div className="qld__body--left-nav ssq-layout__left-nav-content">{bodyContent}</div> : bodyContent}
+      <main aria-label={mainLabel} className="main qhds-layout__main" tabIndex={-1}>
+        {hasSideNav ? <div className="qhds-layout__left-nav" id="section-navigation">{sideNav}</div> : null}
+        {hasSideNav ? <div className="qld__body--left-nav qhds-layout__left-nav-content">{bodyContent}</div> : bodyContent}
       </main>
       {footer}
     </div>

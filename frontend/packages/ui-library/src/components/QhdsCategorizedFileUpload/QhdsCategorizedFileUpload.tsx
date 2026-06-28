@@ -43,7 +43,7 @@ function createUploadItemId() {
   }
 
   fallbackId += 1;
-  return `ssq-upload-${fallbackId}`;
+  return `qhds-upload-${fallbackId}`;
 }
 
 function useControlledUploadItems({
@@ -169,22 +169,22 @@ export function QhdsCategorizedFileUpload({
   };
 
   return (
-    <div className="qld__form-group ssq-categorized-upload">
-      <div className="ssq-categorized-upload__header">
-        <span className="qld__label ssq-categorized-upload__label">{label}</span>
+    <div className="qld__form-group qhds-categorized-upload">
+      <div className="qhds-categorized-upload__header">
+        <span className="qld__label qhds-categorized-upload__label">{label}</span>
         {hint ? (
-          <p className="qld__hint-text ssq-categorized-upload__hint" id={hintId}>
+          <p className="qld__hint-text qhds-categorized-upload__hint" id={hintId}>
             {hint}
           </p>
         ) : null}
-        <p className="qld__hint-text ssq-categorized-upload__hint" id={policyId}>
+        <p className="qld__hint-text qhds-categorized-upload__hint" id={policyId}>
           Accepted file types: {acceptedLabel}. Maximum file size: {formatCategorizedUploadBytes(policy.maxFileSizeBytes)}. Maximum{" "}
           {policy.maxFilesPerPerson} file{policy.maxFilesPerPerson === 1 ? "" : "s"} and{" "}
           {formatCategorizedUploadBytes(policy.maxTotalSizeBytesPerPerson)} total per person.
         </p>
       </div>
 
-      <div className="ssq-categorized-upload__people">
+      <div className="qhds-categorized-upload__people">
         {people.map((person) => {
           const personId = `${id}-${toSafeControlId(person.key)}`;
           const personItems = items.filter((item) => item.personKey === person.key);
@@ -194,19 +194,19 @@ export function QhdsCategorizedFileUpload({
           const inputDescribedBy = [hintId, policyId, person.hint ? `${personId}-hint` : undefined, personErrorId].filter(Boolean).join(" ");
 
           return (
-            <fieldset className="qld__fieldset ssq-categorized-upload__person" key={person.key}>
-              <legend className="qld__legend ssq-categorized-upload__person-heading">{person.label}</legend>
+            <fieldset className="qld__fieldset qhds-categorized-upload__person" key={person.key}>
+              <legend className="qld__legend qhds-categorized-upload__person-heading">{person.label}</legend>
               {person.hint ? (
-                <p className="qld__hint-text ssq-categorized-upload__hint" id={`${personId}-hint`}>
+                <p className="qld__hint-text qhds-categorized-upload__hint" id={`${personId}-hint`}>
                   {person.hint}
                 </p>
               ) : null}
 
-              <div className="qld__form-file-wrapper ssq-categorized-upload__wrapper">
+              <div className="qld__form-file-wrapper qhds-categorized-upload__wrapper">
                 <div
                   className={joinClassNames(
                     "qld__form-file-dropzone",
-                    "ssq-categorized-upload__dropzone",
+                    "qhds-categorized-upload__dropzone",
                     personErrors.length > 0 ? "qld__input--error" : undefined
                   )}
                   onDragOver={(event) => event.preventDefault()}
@@ -216,7 +216,7 @@ export function QhdsCategorizedFileUpload({
                     accept={policy.acceptedFileTypes.join(",")}
                     aria-describedby={inputDescribedBy || undefined}
                     aria-invalid={personErrors.length > 0 ? true : undefined}
-                    className="qld__file-input ssq-categorized-upload__input"
+                    className="qld__file-input qhds-categorized-upload__input"
                     disabled={disabled}
                     id={inputId}
                     multiple
@@ -228,7 +228,7 @@ export function QhdsCategorizedFileUpload({
               </div>
 
               {personErrors.length > 0 ? (
-                <ul className="qld__input--error ssq-categorized-upload__errors" id={personErrorId}>
+                <ul className="qld__input--error qhds-categorized-upload__errors" id={personErrorId}>
                   {personErrors.map((error) => (
                     <li key={error}>{error}</li>
                   ))}
@@ -236,7 +236,7 @@ export function QhdsCategorizedFileUpload({
               ) : null}
 
               {personItems.length > 0 ? (
-                <ul className="qld__form-file-preview ssq-categorized-upload__list">
+                <ul className="qld__form-file-preview qhds-categorized-upload__list">
                   {personItems.map((item) => {
                     const fileErrors = validation.fileErrors[item.id] ?? [];
                     const itemHasErrors = item.status === "rejected" || fileErrors.length > 0;
@@ -248,20 +248,20 @@ export function QhdsCategorizedFileUpload({
                         className={joinClassNames(
                           "qld__form-file",
                           itemHasErrors ? "qld__form-file--error" : "qld__form-file--complete",
-                          "ssq-categorized-upload__item",
-                          itemHasErrors ? "ssq-categorized-upload__item--error" : "ssq-categorized-upload__item--staged"
+                          "qhds-categorized-upload__item",
+                          itemHasErrors ? "qhds-categorized-upload__item--error" : "qhds-categorized-upload__item--staged"
                         )}
                         id={`${item.id}-row`}
                         key={item.id}
                       >
-                        <div className="ssq-categorized-upload__item-main">
-                          <span className="ssq-categorized-upload__file-name">{item.fileName}</span>
-                          <span className="ssq-categorized-upload__meta">{formatCategorizedUploadBytes(item.sizeBytes)}</span>
+                        <div className="qhds-categorized-upload__item-main">
+                          <span className="qhds-categorized-upload__file-name">{item.fileName}</span>
+                          <span className="qhds-categorized-upload__meta">{formatCategorizedUploadBytes(item.sizeBytes)}</span>
                         </div>
 
                         {item.status !== "rejected" ? (
-                          <div className="ssq-categorized-upload__category">
-                            <label className="qld__label ssq-categorized-upload__category-label" htmlFor={categoryId}>
+                          <div className="qhds-categorized-upload__category">
+                            <label className="qld__label qhds-categorized-upload__category-label" htmlFor={categoryId}>
                               Category for {item.fileName}
                             </label>
                             <select
@@ -284,17 +284,17 @@ export function QhdsCategorizedFileUpload({
                         ) : null}
 
                         {fileErrors.length > 0 ? (
-                          <ul className="qld__input--error ssq-categorized-upload__errors" id={fileErrorId}>
+                          <ul className="qld__input--error qhds-categorized-upload__errors" id={fileErrorId}>
                             {fileErrors.map((error) => (
                               <li key={error}>{error}</li>
                             ))}
                           </ul>
                         ) : null}
 
-                        {item.message ? <p className="ssq-categorized-upload__message">{item.message}</p> : null}
+                        {item.message ? <p className="qhds-categorized-upload__message">{item.message}</p> : null}
 
                         <button
-                          className="qld__btn qld__btn--tertiary ssq-categorized-upload__remove"
+                          className="qld__btn qld__btn--tertiary qhds-categorized-upload__remove"
                           disabled={disabled}
                           onClick={() => removeItem(item.id)}
                           type="button"

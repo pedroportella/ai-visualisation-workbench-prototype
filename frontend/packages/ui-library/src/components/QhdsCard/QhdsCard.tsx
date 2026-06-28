@@ -19,20 +19,20 @@ export function QhdsCard({
   headingLevel = 2,
   ...props
 }: QhdsCardProps) {
-  const cardClassName = ["qld__card", action ? "qld__card__multi-action" : "", "ssq-card", className].filter(Boolean).join(" ");
+  const cardClassName = ["qld__card", action ? "qld__card__multi-action" : "", "qhds-card", className].filter(Boolean).join(" ");
 
   return (
     <article className={cardClassName} {...props}>
-      <div className="qld__card__inner ssq-card__body">
-        <div className="qld__card__content ssq-card__content">
-          <div className="qld__card__content-inner ssq-card__content-inner">
+      <div className="qld__card__inner qhds-card__body">
+        <div className="qld__card__content qhds-card__content">
+          <div className="qld__card__content-inner qhds-card__content-inner">
             {renderHeading(heading, headingId, headingLevel)}
-            <div className="ssq-card__content-body">{children}</div>
+            <div className="qhds-card__content-body">{children}</div>
           </div>
         </div>
       </div>
       {action ? (
-        <div className="qld__card__footer ssq-card__action">
+        <div className="qld__card__footer qhds-card__action">
           <div className="qld__card__footer-inner">{action}</div>
         </div>
       ) : null}
@@ -46,7 +46,7 @@ function renderHeading(
   headingLevel: 2 | 3 | 4
 ): ReactElement {
   const props = {
-    className: "qld__card__title ssq-card__heading",
+    className: "qld__card__title qhds-card__heading",
     id: headingId
   };
 

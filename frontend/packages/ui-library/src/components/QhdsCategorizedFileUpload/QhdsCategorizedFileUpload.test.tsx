@@ -201,7 +201,7 @@ describe("QhdsCategorizedFileUpload", () => {
       })
     ]);
 
-    const remove = element.querySelector<HTMLButtonElement>(".ssq-categorized-upload__remove");
+    const remove = element.querySelector<HTMLButtonElement>(".qhds-categorized-upload__remove");
     expect(remove).not.toBeNull();
 
     act(() => {

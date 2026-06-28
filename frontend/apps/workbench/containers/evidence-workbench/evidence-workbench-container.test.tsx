@@ -10,14 +10,14 @@ describe("EvidenceWorkbenchContainer", () => {
       <EvidenceWorkbenchContainer data={fallbackEvidenceWorkbenchData} />
     );
 
-    expect(html).toContain("ssq-page-header");
+    expect(html).toContain("qhds-page-header");
     expect(html).toContain(
-      '<h1 class="ssq-page-header__heading" id="evidence-workbench-title">Evidence Workbench</h1>'
+      '<h1 class="qhds-page-header__heading" id="evidence-workbench-title">Evidence Workbench</h1>'
     );
-    expect(html).not.toContain("ssq-page-header__context");
+    expect(html).not.toContain("qhds-page-header__context");
     expect(html).toContain("row evidence-workbench-grid");
     expect(html).toContain("col-xs-12 col-lg-12 col-xl-6");
-    expect(html).toContain("ssq-content-section");
+    expect(html).toContain("qhds-content-section");
     expect(html).toContain("qld__card");
     expect(html).toContain("aivis-evidence-claim-card");
     expect(html).toContain("aivis-evidence-path-list");

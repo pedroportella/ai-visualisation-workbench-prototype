@@ -16,9 +16,9 @@ describe("QhdsFooter", () => {
       </QhdsFooter>
     );
 
-    expect(html).toContain('class="qld__footer qld__footer--dark-alt ssq-footer ssq-footer--app"');
+    expect(html).toContain('class="qld__footer qld__footer--dark-alt qhds-footer qhds-footer--app"');
     expect(html).toContain('role="contentinfo"');
-    expect(html).toContain('class="container-fluid ssq-footer__container"');
+    expect(html).toContain('class="container-fluid qhds-footer__container"');
     expect(html).toContain("qld__footer__row");
     expect(html).toContain("qld__footer__heading");
     expect(html).toContain("Contact Us");
@@ -41,15 +41,15 @@ describe("QhdsFooter", () => {
       />
     );
 
-    expect(html).toContain("ssq-footer--contained");
+    expect(html).toContain("qhds-footer--contained");
     expect(html).toContain('href="/feedback"');
     expect(html).toContain("Feedback");
     expect(html).toContain('href="/privacy"');
     expect(html).toContain("Privacy");
-    expect(styles).toContain(".ssq-footer--app .ssq-footer__container");
+    expect(styles).toContain(".qhds-footer--app .qhds-footer__container");
     expect(styles).toContain("max-width: none");
     expect(styles).toContain("padding-left: 2rem");
-    expect(styles).toContain(".ssq-footer--contained .ssq-footer__container");
+    expect(styles).toContain(".qhds-footer--contained .qhds-footer__container");
     expect(styles).toContain("max-width: var(--qld-grid-container-max-width)");
   });
 

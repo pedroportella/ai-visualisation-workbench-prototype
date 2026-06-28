@@ -47,11 +47,11 @@ function getCheckedValues(input: HTMLInputElement, name: string) {
 
 function renderRequirement(required: boolean, optional: boolean) {
   if (required) {
-    return <span className="ssq-form-field__requirement">required</span>;
+    return <span className="qhds-form-field__requirement">required</span>;
   }
 
   if (optional) {
-    return <span className="qld__label--optional ssq-form-field__requirement">optional</span>;
+    return <span className="qld__label--optional qhds-form-field__requirement">optional</span>;
   }
 
   return null;
@@ -75,15 +75,15 @@ export function QhdsCheckbox({
   ...inputProps
 }: QhdsCheckboxProps) {
   const generatedId = useId();
-  const controlId = id ?? `ssq-checkbox-${generatedId}`;
+  const controlId = id ?? `qhds-checkbox-${generatedId}`;
   const fieldIds = getQhdsFieldIds({ controlId, describedBy: ariaDescribedBy, error, hint });
-  const classes = joinClassNames("qld__control-input__input", error ? "qld__input--error" : undefined, "ssq-checkbox__input", className);
+  const classes = joinClassNames("qld__control-input__input", error ? "qld__input--error" : undefined, "qhds-checkbox__input", className);
   const checkedProps = checked !== undefined ? { checked } : { defaultChecked };
   const resolvedReadOnly = readOnly ?? (checked !== undefined && onChange === undefined ? true : undefined);
 
   return (
-    <div className={joinClassNames("qld__form-group", "ssq-checkbox", disabled && "ssq-checkbox--disabled", error ? "ssq-checkbox--invalid" : undefined)}>
-      <div className="qld__control-input qld__control-input--block ssq-checkbox__control">
+    <div className={joinClassNames("qld__form-group", "qhds-checkbox", disabled && "qhds-checkbox--disabled", error ? "qhds-checkbox--invalid" : undefined)}>
+      <div className="qld__control-input qld__control-input--block qhds-checkbox__control">
         <input
           {...inputProps}
           {...checkedProps}
@@ -97,18 +97,18 @@ export function QhdsCheckbox({
           required={required}
           type="checkbox"
         />
-        <label className="qld__control-input__text ssq-checkbox__label" htmlFor={controlId}>
+        <label className="qld__control-input__text qhds-checkbox__label" htmlFor={controlId}>
           {label}
           {renderRequirement(required, optional)}
         </label>
       </div>
       {hint ? (
-        <p className="qld__hint-text ssq-form-field__hint ssq-checkbox__hint" id={fieldIds.hintId}>
+        <p className="qld__hint-text qhds-form-field__hint qhds-checkbox__hint" id={fieldIds.hintId}>
           {hint}
         </p>
       ) : null}
       {error ? (
-        <p className="qld__input--error ssq-form-field__error ssq-checkbox__error" id={fieldIds.errorId}>
+        <p className="qld__input--error qhds-form-field__error qhds-checkbox__error" id={fieldIds.errorId}>
           {error}
         </p>
       ) : null}
@@ -134,7 +134,7 @@ export function QhdsCheckboxGroup({
   ...fieldsetProps
 }: QhdsCheckboxGroupProps) {
   const generatedId = useId();
-  const controlId = id ?? `ssq-checkbox-group-${generatedId}`;
+  const controlId = id ?? `qhds-checkbox-group-${generatedId}`;
   const fieldIds = getQhdsFieldIds({ controlId, describedBy: ariaDescribedBy, error, hint });
   const groupName = name ?? controlId;
   const controlledValues = value;
@@ -149,30 +149,30 @@ export function QhdsCheckboxGroup({
       className={joinClassNames(
         "qld__form-group",
         "qld__checkboxes",
-        "ssq-checkbox-group",
-        disabled && "ssq-checkbox-group--disabled",
-        error ? "ssq-checkbox-group--invalid" : undefined,
+        "qhds-checkbox-group",
+        disabled && "qhds-checkbox-group--disabled",
+        error ? "qhds-checkbox-group--invalid" : undefined,
         className
       )}
       disabled={disabled}
       id={controlId}
       role="group"
     >
-      <legend className="qld__fieldset__legend ssq-checkbox-group__legend" id={`${controlId}-legend`}>
+      <legend className="qld__fieldset__legend qhds-checkbox-group__legend" id={`${controlId}-legend`}>
         {legend}
         {renderRequirement(required, optional)}
       </legend>
       {hint ? (
-        <span className="qld__hint-text ssq-form-field__hint ssq-checkbox-group__hint" id={fieldIds.hintId}>
+        <span className="qld__hint-text qhds-form-field__hint qhds-checkbox-group__hint" id={fieldIds.hintId}>
           {hint}
         </span>
       ) : null}
       {error ? (
-        <span aria-live="polite" className="qld__input--error ssq-form-field__error ssq-checkbox-group__error" id={fieldIds.errorId} role="status">
+        <span aria-live="polite" className="qld__input--error qhds-form-field__error qhds-checkbox-group__error" id={fieldIds.errorId} role="status">
           {error}
         </span>
       ) : null}
-      <div className="qld__control-group ssq-checkbox-group__options">
+      <div className="qld__control-group qhds-checkbox-group__options">
         {options.map((option, index) => {
           const optionId = option.id ?? `${controlId}-${toSafeControlId(option.value) || `option-${index + 1}`}`;
           const optionHintId = option.hint ? `${optionId}-hint` : undefined;
@@ -184,12 +184,12 @@ export function QhdsCheckboxGroup({
               : { defaultChecked: defaultValues.includes(option.value) };
 
           return (
-            <div className="qld__control-input qld__control-input--block ssq-checkbox-group__option" key={optionId}>
+            <div className="qld__control-input qld__control-input--block qhds-checkbox-group__option" key={optionId}>
               <input
                 {...checkedProps}
                 aria-describedby={describedBy}
                 aria-invalid={error ? true : undefined}
-                className={joinClassNames("qld__control-input__input", error ? "qld__input--error" : undefined, "ssq-checkbox__input")}
+                className={joinClassNames("qld__control-input__input", error ? "qld__input--error" : undefined, "qhds-checkbox__input")}
                 disabled={optionDisabled}
                 id={optionId}
                 name={groupName}
@@ -202,11 +202,11 @@ export function QhdsCheckboxGroup({
                 type="checkbox"
                 value={option.value}
               />
-              <label className="qld__control-input__text ssq-checkbox__label" htmlFor={optionId}>
+              <label className="qld__control-input__text qhds-checkbox__label" htmlFor={optionId}>
                 {option.label}
               </label>
               {option.hint ? (
-                <span className="qld__hint-text ssq-checkbox__hint" id={optionHintId}>
+                <span className="qld__hint-text qhds-checkbox__hint" id={optionHintId}>
                   {option.hint}
                 </span>
               ) : null}

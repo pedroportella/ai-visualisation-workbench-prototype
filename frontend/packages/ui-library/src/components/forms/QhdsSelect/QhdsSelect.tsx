@@ -63,7 +63,7 @@ export function QhdsSelect({
   ...selectProps
 }: QhdsSelectProps) {
   const generatedId = useId();
-  const controlId = id ?? `ssq-select-${generatedId}`;
+  const controlId = id ?? `qhds-select-${generatedId}`;
   const fieldIds = getQhdsFieldIds({ controlId, describedBy: ariaDescribedBy, error, hint });
   const widthClass = width ? `qld__field-width--${width}` : undefined;
   const classes = joinClassNames(
@@ -71,15 +71,15 @@ export function QhdsSelect({
     "qld__text-input--block",
     widthClass,
     error ? "qld__text-input--error" : undefined,
-    "ssq-select",
+    "qhds-select",
     className
   );
   const wrapperClasses = joinClassNames(
     "qld__select",
     error ? "qld__select-error" : undefined,
-    multiple ? "ssq-select-wrapper--multiple" : undefined,
-    width ? `ssq-select-wrapper--${width}` : undefined,
-    "ssq-select-wrapper"
+    multiple ? "qhds-select-wrapper--multiple" : undefined,
+    width ? `qhds-select-wrapper--${width}` : undefined,
+    "qhds-select-wrapper"
   );
 
   return (

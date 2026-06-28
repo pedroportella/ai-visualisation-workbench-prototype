@@ -64,7 +64,7 @@ describe("QhdsRadioGroup", () => {
     expect(html).toContain('aria-labelledby="age-eligible-legend"');
     expect(html).toContain('aria-required="true"');
     expect(html).toContain('aria-describedby="external-help age-eligible-hint age-eligible-error"');
-    expect(html).toContain('<legend class="qld__fieldset__legend ssq-radio-group__legend" id="age-eligible-legend"');
+    expect(html).toContain('<legend class="qld__fieldset__legend qhds-radio-group__legend" id="age-eligible-legend"');
     expect(html).toContain('id="age-eligible-hint"');
     expect(html).toContain('id="age-eligible-error"');
     expect(html).toContain('role="status"');
@@ -94,7 +94,7 @@ describe("QhdsRadioGroup", () => {
     );
 
     expect(html).toContain('<fieldset aria-labelledby="contact-method-legend"');
-    expect(html).toContain("ssq-radio-group--disabled");
+    expect(html).toContain("qhds-radio-group--disabled");
     expect(html).toContain('disabled=""');
     expect(html).toContain('id="contact-method-email"');
     expect(html).toContain('id="contact-method-phone"');

@@ -51,9 +51,9 @@ describe("QhdsButton", () => {
     expect(html).toContain("qld__btn");
     expect(html).not.toContain("qld__btn--primary");
     expect(html).toContain("qld__btn--secondary");
-    expect(html).toContain("ssq-button--primary");
-    expect(html).toContain("ssq-button--secondary");
-    expect(html).toContain("ssq-button--tertiary");
+    expect(html).toContain("qhds-button--primary");
+    expect(html).toContain("qhds-button--secondary");
+    expect(html).toContain("qhds-button--tertiary");
     expect(html).toContain('type="button"');
   });
 
@@ -61,19 +61,19 @@ describe("QhdsButton", () => {
     const stylesheet = readFileSync("src/components/QhdsButton/QhdsButton.scss", "utf8");
 
     expect(stylesheet).toMatch(
-      /@media \(prefers-color-scheme: dark\) \{[\s\S]*?\.ssq-button \{[\s\S]*?--ssq-button-secondary-color: var\(--QLD-color-dark__link\);/
+      /@media \(prefers-color-scheme: dark\) \{[\s\S]*?\.qhds-button \{[\s\S]*?--qhds-button-secondary-color: var\(--QLD-color-dark__link\);/
     );
     expect(stylesheet).toMatch(
-      /\.qld__body--light \.ssq-button,[\s\S]*?\.qld__body--alt \.ssq-button \{[\s\S]*?--ssq-button-secondary-color: var\(--QLD-color-light__link\);/
+      /\.qld__body--light \.qhds-button,[\s\S]*?\.qld__body--alt \.qhds-button \{[\s\S]*?--qhds-button-secondary-color: var\(--QLD-color-light__link\);/
     );
     expect(stylesheet).toMatch(
-      /\.qld__body--dark \.ssq-button,[\s\S]*?\.qld__footer--dark-alt \.ssq-button \{[\s\S]*?--ssq-button-secondary-color: var\(--QLD-color-dark__link\);/
+      /\.qld__body--dark \.qhds-button,[\s\S]*?\.qld__footer--dark-alt \.qhds-button \{[\s\S]*?--qhds-button-secondary-color: var\(--QLD-color-dark__link\);/
     );
     expect(stylesheet).toMatch(
-      /\.ssq-button--secondary,\na\.ssq-button--secondary:visited \{[\s\S]*?color: var\(--ssq-button-secondary-color\);/
+      /\.qhds-button--secondary,\na\.qhds-button--secondary:visited \{[\s\S]*?color: var\(--qhds-button-secondary-color\);/
     );
     expect(stylesheet).toMatch(
-      /\.ssq-button--tertiary,\na\.ssq-button--tertiary:visited \{[\s\S]*?color: var\(--ssq-button-tertiary-color\);/
+      /\.qhds-button--tertiary,\na\.qhds-button--tertiary:visited \{[\s\S]*?color: var\(--qhds-button-tertiary-color\);/
     );
   });
 
@@ -95,9 +95,9 @@ describe("QhdsButton", () => {
 
     expect(html).toContain("qld__btn--icon-lead");
     expect(html).toContain("qld__btn--icon-trail");
-    expect(html).toContain("ssq-button--icon-lead");
-    expect(html).toContain("ssq-button--icon-trail");
-    expect(html).toContain('class="qld__icon qld__icon--sm ssq-button__icon"');
+    expect(html).toContain("qhds-button--icon-lead");
+    expect(html).toContain("qhds-button--icon-trail");
+    expect(html).toContain('class="qld__icon qld__icon--sm qhds-button__icon"');
     expect(html).toContain('aria-hidden="true"');
     expect(html).toContain("Leading icon");
     expect(html).toContain("Trailing icon");
@@ -116,7 +116,7 @@ describe("QhdsButton", () => {
     expect(anchorHtml).not.toContain('href="/disabled"');
     expect(anchorHtml).toContain('aria-disabled="true"');
     expect(anchorHtml).toContain('tabindex="-1"');
-    expect(anchorHtml).toContain("ssq-button--disabled");
+    expect(anchorHtml).toContain("qhds-button--disabled");
   });
 
   it("suppresses disabled anchor clicks", () => {

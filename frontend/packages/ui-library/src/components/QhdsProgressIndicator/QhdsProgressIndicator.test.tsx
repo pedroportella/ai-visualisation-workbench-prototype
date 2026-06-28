@@ -19,7 +19,7 @@ describe("QhdsProgressIndicator", () => {
     expect(html).toContain('aria-label="Application progress"');
     expect(html).toContain("qld__progress-indicator");
     expect(html).toContain("qld__progress-indicator__item--current");
-    expect(html).toContain("ssq-progress__step--completed");
+    expect(html).toContain("qhds-progress__step--completed");
     expect(html).toContain('aria-current="step"');
     expect(html).toContain("Current section");
   });

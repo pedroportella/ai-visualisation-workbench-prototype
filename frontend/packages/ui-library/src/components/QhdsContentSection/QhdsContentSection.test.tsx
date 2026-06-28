@@ -12,7 +12,7 @@ describe("QhdsContentSection", () => {
     );
 
     expect(html).toContain("qld__body");
-    expect(html).toContain("ssq-content-section");
+    expect(html).toContain("qhds-content-section");
     expect(html).toContain('aria-labelledby="request-summary-section"');
     expect(html).toContain("<h2");
     expect(html).toContain("qld__abstract");

@@ -21,7 +21,7 @@ describe("WorkbenchAppShell", () => {
     expect(html).toContain("qld__header__pre-header");
     expect(html).toContain("qld.gov.au");
     expect(html).toContain('alt="Queensland Government"');
-    expect(html).toContain("ssq-header__qg-logo");
+    expect(html).toContain("qhds-header__qg-logo");
     expect(html).toContain("AI Visualisation Workbench");
     expect(html).toContain("Evidence Workbench");
     expect(html).toContain("qld__left-nav");
@@ -33,6 +33,6 @@ describe("WorkbenchAppShell", () => {
   });
 
   it("leaves left-nav content gutters owned by the shared layout adapter", () => {
-    expect(styles).not.toContain(".qld__body--left-nav .ssq-layout__container");
+    expect(styles).not.toContain(".qld__body--left-nav .qhds-layout__container");
   });
 });

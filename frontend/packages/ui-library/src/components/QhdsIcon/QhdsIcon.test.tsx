@@ -5,10 +5,10 @@ import { getQhdsIconReference, QhdsIcon } from "./QhdsIcon";
 
 describe("QhdsIcon", () => {
   it("renders decorative QLD sprite icons by default", () => {
-    const html = renderToStaticMarkup(<QhdsIcon className="ssq-header__cta-svg" symbol="profile" />);
+    const html = renderToStaticMarkup(<QhdsIcon className="qhds-header__cta-svg" symbol="profile" />);
 
     expect(html).toContain('aria-hidden="true"');
-    expect(html).toContain('class="qld__icon ssq-header__cta-svg"');
+    expect(html).toContain('class="qld__icon qhds-header__cta-svg"');
     expect(html).toContain('focusable="false"');
     expect(html).toContain("QLD-icons.svg#profile");
   });

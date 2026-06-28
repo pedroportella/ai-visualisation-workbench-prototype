@@ -48,7 +48,7 @@ describe("QhdsTable", () => {
       />
     );
 
-    expect(html).toContain('class="qld__table__wrapper ssq-table"');
+    expect(html).toContain('class="qld__table__wrapper qhds-table"');
     expect(html).not.toContain("qld__table--contained");
     expect(html).not.toContain("qld__table--scroll");
     expect(html).not.toContain("tabindex");

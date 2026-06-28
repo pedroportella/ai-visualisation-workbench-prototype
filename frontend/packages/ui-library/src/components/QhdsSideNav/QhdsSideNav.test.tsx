@@ -24,7 +24,7 @@ describe("QhdsSideNav", () => {
       />
     );
 
-    expect(html).toContain('class="qld__left-nav ssq-side-nav"');
+    expect(html).toContain('class="qld__left-nav qhds-side-nav"');
     expect(html).toContain('id="left-nav"');
     expect(html).toContain("qld__left-nav__content");
     expect(html).toContain("qld__left-nav__item-link");
@@ -32,7 +32,7 @@ describe("QhdsSideNav", () => {
     expect(html).toContain("qld__left-nav__item-icon");
     expect(html).toContain('class="qld__icon qld__icon--md"');
     expect(html).toContain('aria-label="left navigation"');
-    expect(html).toContain('class="active ssq-side-nav__item"');
+    expect(html).toContain('class="active qhds-side-nav__item"');
     expect(html).toContain('aria-current="page"');
     expect(html).toContain("Home");
     expect(html).toContain("Requests");
@@ -60,7 +60,7 @@ describe("QhdsSideNav", () => {
     expect(html).toContain('aria-controls="left-nav-requests-children"');
     expect(html).toContain('id="left-nav-requests-children"');
     expect(html).toContain("qld__accordion__body");
-    expect(html).toContain("ssq-side-nav__list--nested");
+    expect(html).toContain("qhds-side-nav__list--nested");
     expect(html).toContain("Seniors Card");
   });
 
@@ -83,11 +83,11 @@ describe("QhdsSideNav", () => {
   });
 
   it("matches QGDS left navigation shell and accordion control styling", () => {
-    expect(styles).toContain("--ssq-left-nav-background: var(--ssq-color-left-nav-background)");
-    expect(styles).toContain("--ssq-left-nav-border: var(--ssq-color-left-nav-border)");
+    expect(styles).toContain("--qhds-left-nav-background: var(--qhds-color-left-nav-background)");
+    expect(styles).toContain("--qhds-left-nav-border: var(--qhds-color-left-nav-border)");
     expect(styles).toContain("box-sizing: border-box");
-    expect(styles).toContain("border-right: var(--QLD-border-width-default) solid var(--ssq-left-nav-border)");
-    expect(styles).toContain("box-shadow:\n    rgb(0 0 0 / 20%) 0 1px 2px,\n    rgb(0 0 0 / 10%) 0 1px 3px 1px");
+    expect(styles).toContain("border-right: var(--QLD-border-width-default) solid var(--qhds-left-nav-border)");
+    expect(styles).toContain("box-shadow: var(--qhds-shadow-side-nav-toggle)");
     expect(styles).toContain("display: block");
     expect(styles).toContain("position: relative");
     expect(styles).toContain("height: 1.25rem");
@@ -98,11 +98,11 @@ describe("QhdsSideNav", () => {
 
   it("keeps visited navigation links on the accessible side-nav palette", () => {
     expect(styles).toContain("a.qld__left-nav__item-link:visited");
-    expect(styles).toContain("color: var(--ssq-left-nav-text)");
+    expect(styles).toContain("color: var(--qhds-left-nav-text)");
     expect(styles).toContain("a.qld__left-nav__item-link:visited:hover");
-    expect(styles).toContain("color: var(--ssq-left-nav-link)");
+    expect(styles).toContain("color: var(--qhds-left-nav-link)");
     expect(styles).toContain("a.qld__left-nav__item-link--open:visited");
     expect(styles).toContain(".qld__accordion__body a.qld__left-nav__item-link:visited");
-    expect(styles).not.toContain("var(--ssq-color-link-visited)");
+    expect(styles).not.toContain("var(--qhds-color-link-visited)");
   });
 });

@@ -54,8 +54,8 @@ describe("QhdsCheckbox", () => {
     expect(html).toContain("qld__control-input__input");
     expect(html).toContain("qld__control-input__text");
     expect(html).toContain("qld__input--error");
-    expect(html).toContain("ssq-checkbox--disabled");
-    expect(html).toContain("ssq-checkbox--invalid");
+    expect(html).toContain("qhds-checkbox--disabled");
+    expect(html).toContain("qhds-checkbox--invalid");
     expect(html).toContain('disabled=""');
     expect(html).toContain('aria-invalid="true"');
     expect(html).toContain('aria-describedby="declaration-hint declaration-error"');
@@ -86,7 +86,7 @@ describe("QhdsCheckbox", () => {
     expect(html).toContain('aria-labelledby="support-types-legend"');
     expect(html).toContain('aria-describedby="support-types-hint support-types-error"');
     expect(html).toContain('aria-required="true"');
-    expect(html).toContain('<legend class="qld__fieldset__legend ssq-checkbox-group__legend" id="support-types-legend"');
+    expect(html).toContain('<legend class="qld__fieldset__legend qhds-checkbox-group__legend" id="support-types-legend"');
     expect(html).toContain('id="support-types-hint"');
     expect(html).toContain('id="support-types-error"');
     expect(html).toContain('role="status"');

@@ -30,20 +30,20 @@ export function QhdsFormField({
   required = false
 }: QhdsFormFieldProps) {
   return (
-    <div className={joinClassNames("qld__form-group", "ssq-form-field", disabled && "ssq-form-field--disabled", error ? "ssq-form-field--invalid" : undefined)}>
-      <label className="qld__label ssq-form-field__label" htmlFor={id}>
+    <div className={joinClassNames("qld__form-group", "qhds-form-field", disabled && "qhds-form-field--disabled", error ? "qhds-form-field--invalid" : undefined)}>
+      <label className="qld__label qhds-form-field__label" htmlFor={id}>
         {label}
-        {required ? <span className="ssq-form-field__requirement">required</span> : null}
-        {!required && optional ? <span className="qld__label--optional ssq-form-field__requirement">optional</span> : null}
+        {required ? <span className="qhds-form-field__requirement">required</span> : null}
+        {!required && optional ? <span className="qld__label--optional qhds-form-field__requirement">optional</span> : null}
       </label>
       {hint ? (
-        <p className="qld__hint-text ssq-form-field__hint" id={hintId}>
+        <p className="qld__hint-text qhds-form-field__hint" id={hintId}>
           {hint}
         </p>
       ) : null}
       {children}
       {error ? (
-        <p className="qld__input--error ssq-form-field__error" id={errorId}>
+        <p className="qld__input--error qhds-form-field__error" id={errorId}>
           {error}
         </p>
       ) : null}

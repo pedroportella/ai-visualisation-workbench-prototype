@@ -27,6 +27,6 @@ describe("QhdsFormField", () => {
     expect(html).toContain('id="full-name-hint"');
     expect(html).toContain('id="full-name-error"');
     expect(html).toContain("required");
-    expect(html).toContain("ssq-form-field--invalid");
+    expect(html).toContain("qhds-form-field--invalid");
   });
 });

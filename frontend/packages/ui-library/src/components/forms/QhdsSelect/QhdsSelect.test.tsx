@@ -81,8 +81,8 @@ describe("QhdsSelect", () => {
     );
 
     expect(html).toContain("qld__field-width--half");
-    expect(html).toContain("ssq-select-wrapper--half");
-    expect(html).toContain("ssq-select-wrapper--multiple");
+    expect(html).toContain("qhds-select-wrapper--half");
+    expect(html).toContain("qhds-select-wrapper--multiple");
     expect(html).toContain('disabled=""');
     expect(html).toContain('multiple=""');
   });

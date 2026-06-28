@@ -55,11 +55,11 @@ function getButtonClasses({
     variantClass,
     leadingIcon ? "qld__btn--icon-lead" : undefined,
     trailingIcon ? "qld__btn--icon-trail" : undefined,
-    "ssq-button",
-    `ssq-button--${variant}`,
-    leadingIcon ? "ssq-button--icon-lead" : undefined,
-    trailingIcon ? "ssq-button--icon-trail" : undefined,
-    disabled ? "ssq-button--disabled" : undefined,
+    "qhds-button",
+    `qhds-button--${variant}`,
+    leadingIcon ? "qhds-button--icon-lead" : undefined,
+    trailingIcon ? "qhds-button--icon-trail" : undefined,
+    disabled ? "qhds-button--disabled" : undefined,
     className
   ]
     .filter(Boolean)
@@ -68,7 +68,7 @@ function getButtonClasses({
 
 function renderIcon(icon: ReactNode) {
   return (
-    <span aria-hidden="true" className="qld__icon qld__icon--sm ssq-button__icon">
+    <span aria-hidden="true" className="qld__icon qld__icon--sm qhds-button__icon">
       {icon}
     </span>
   );

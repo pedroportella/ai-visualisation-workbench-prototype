@@ -56,25 +56,25 @@ export function QhdsFileUpload({
   const describedBy = [customHintId, hintId, error ? errorId : undefined].filter(Boolean).join(" ");
 
   return (
-    <div className={joinClassNames("qld__form-group", "ssq-file-upload", error ? "ssq-file-upload--invalid" : undefined)}>
-      <label className="qld__label ssq-file-upload__label" htmlFor={id}>
+    <div className={joinClassNames("qld__form-group", "qhds-file-upload", error ? "qhds-file-upload--invalid" : undefined)}>
+      <label className="qld__label qhds-file-upload__label" htmlFor={id}>
         {label}
       </label>
       {hint ? (
-        <p className="qld__hint-text ssq-file-upload__hint" id={customHintId}>
+        <p className="qld__hint-text qhds-file-upload__hint" id={customHintId}>
           {hint}
         </p>
       ) : null}
-      <p className="qld__hint-text ssq-file-upload__hint" id={hintId}>
+      <p className="qld__hint-text qhds-file-upload__hint" id={hintId}>
         Accepted file types: {acceptedLabel}. Maximum file size: {formatBytes(policy.maxFileSizeBytes)}.
       </p>
-      <div className="qld__form-file-wrapper ssq-file-upload__wrapper">
-        <div className={joinClassNames("qld__form-file-dropzone", error ? "qld__input--error" : undefined, "ssq-file-upload__dropzone")}>
+      <div className="qld__form-file-wrapper qhds-file-upload__wrapper">
+        <div className={joinClassNames("qld__form-file-dropzone", error ? "qld__input--error" : undefined, "qhds-file-upload__dropzone")}>
           <input
             accept={policy.acceptedFileTypes.join(",")}
             aria-describedby={describedBy}
             aria-invalid={error ? true : undefined}
-            className="qld__file-input ssq-file-upload__input"
+            className="qld__file-input qhds-file-upload__input"
             id={id}
             multiple={multiple}
             name={name}
@@ -84,34 +84,34 @@ export function QhdsFileUpload({
         </div>
       </div>
       {error ? (
-        <p className="qld__input--error ssq-file-upload__error" id={errorId}>
+        <p className="qld__input--error qhds-file-upload__error" id={errorId}>
           {error}
         </p>
       ) : null}
       {uploadedFiles.length > 0 ? (
-        <ul className="qld__form-file-preview ssq-file-upload__list">
+        <ul className="qld__form-file-preview qhds-file-upload__list">
           {uploadedFiles.map((file) => (
             <li
               className={joinClassNames(
                 "qld__form-file",
                 file.status === "uploaded" ? "qld__form-file--success" : "qld__form-file--error",
-                `ssq-file-upload__item ssq-file-upload__item--${file.status}`
+                `qhds-file-upload__item qhds-file-upload__item--${file.status}`
               )}
               key={`${file.status}-${file.fileName}`}
             >
               {file.downloadHref ? (
-                <a className="ssq-file-upload__file-name" href={file.downloadHref}>
+                <a className="qhds-file-upload__file-name" href={file.downloadHref}>
                   {file.fileName}
                 </a>
               ) : (
-                <span className="ssq-file-upload__file-name">{file.fileName}</span>
+                <span className="qhds-file-upload__file-name">{file.fileName}</span>
               )}
-              <span className="ssq-file-upload__meta">
+              <span className="qhds-file-upload__meta">
                 {file.category ? `${file.category} - ` : ""}
                 {formatBytes(file.sizeBytes)}
               </span>
-              <span className="ssq-file-upload__status">{file.status === "uploaded" ? "Uploaded" : "Rejected"}</span>
-              {file.message ? <span className="ssq-file-upload__message">{file.message}</span> : null}
+              <span className="qhds-file-upload__status">{file.status === "uploaded" ? "Uploaded" : "Rejected"}</span>
+              {file.message ? <span className="qhds-file-upload__message">{file.message}</span> : null}
             </li>
           ))}
         </ul>

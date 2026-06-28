@@ -29,14 +29,14 @@ export function QhdsTextInput({
   ...inputProps
 }: QhdsTextInputProps) {
   const generatedId = useId();
-  const controlId = id ?? `ssq-text-input-${generatedId}`;
+  const controlId = id ?? `qhds-text-input-${generatedId}`;
   const fieldIds = getQhdsFieldIds({ controlId, describedBy: ariaDescribedBy, error, hint });
   const classes = joinClassNames(
     "qld__text-input",
     "qld__text-input--block",
     type === "number" && "qld__text-input--number",
     error ? "qld__text-input--error" : undefined,
-    "ssq-input",
+    "qhds-input",
     className
   );
 

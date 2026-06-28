@@ -66,7 +66,7 @@ export function QhdsAccordion({ allowMultipleOpen = true, headingLevel = 2, item
   }
 
   return (
-    <div className="qld__accordion-group js ssq-accordion">
+    <div className="qld__accordion-group js qhds-accordion">
       {items.map((item, index) => {
         const isOpen = openIds.includes(item.id);
         const buttonId = `${item.id}-accordion-button`;
@@ -74,31 +74,31 @@ export function QhdsAccordion({ allowMultipleOpen = true, headingLevel = 2, item
         const stateClassName = isOpen ? "qld__accordion--open" : "qld__accordion--closed";
 
         return (
-          <section className={`qld__accordion ${stateClassName} ssq-accordion__item`} key={item.id}>
-            <Heading className="ssq-accordion__heading">
+          <section className={`qld__accordion ${stateClassName} qhds-accordion__item`} key={item.id}>
+            <Heading className="qhds-accordion__heading">
               <button
                 aria-controls={panelId}
                 aria-expanded={isOpen}
-                className={`qld__accordion__title js-qld__accordion ${stateClassName} ssq-accordion__button`}
+                className={`qld__accordion__title js-qld__accordion ${stateClassName} qhds-accordion__button`}
                 id={buttonId}
                 onClick={() => toggleItem(item.id)}
                 onKeyDown={(event) => handleButtonKeyDown(event, index)}
                 type="button"
               >
                 <span>{item.title}</span>
-                <span aria-hidden="true" className="ssq-accordion__icon">
+                <span aria-hidden="true" className="qhds-accordion__icon">
                   {isOpen ? "-" : "+"}
                 </span>
               </button>
             </Heading>
             <div
               aria-labelledby={buttonId}
-              className={`qld__accordion__body ${stateClassName} ssq-accordion__panel`}
+              className={`qld__accordion__body ${stateClassName} qhds-accordion__panel`}
               hidden={!isOpen}
               id={panelId}
               role="region"
             >
-              <div className="qld__accordion__body-wrapper ssq-accordion__body-wrapper">{item.content}</div>
+              <div className="qld__accordion__body-wrapper qhds-accordion__body-wrapper">{item.content}</div>
             </div>
           </section>
         );

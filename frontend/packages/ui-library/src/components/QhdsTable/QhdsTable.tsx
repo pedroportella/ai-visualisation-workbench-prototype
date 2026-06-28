@@ -34,7 +34,7 @@ export function QhdsTable({
     "qld__table__wrapper",
     contained ? "qld__table--contained" : undefined,
     scroll ? "qld__table--scroll" : undefined,
-    "ssq-table"
+    "qhds-table"
   ]
     .filter(Boolean)
     .join(" ");

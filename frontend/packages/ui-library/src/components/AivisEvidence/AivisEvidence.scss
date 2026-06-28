@@ -89,7 +89,7 @@
   font-size: var(--aivis-font-size-body-sm);
 }
 
-.aivis-evidence-card.ssq-card {
+.aivis-evidence-card.qhds-card {
   background: var(--aivis-color-card-surface);
   border-color: var(--aivis-color-card-border);
   border-radius: var(--aivis-radius-sm);
@@ -97,18 +97,18 @@
   padding: var(--aivis-workbench-card-padding);
 }
 
-.aivis-evidence-card--warning.ssq-card {
+.aivis-evidence-card--warning.qhds-card {
   border-left: var(--aivis-border-width-accent) solid var(--aivis-color-warning-text);
 }
 
-.aivis-evidence-card--selected.ssq-card,
+.aivis-evidence-card--selected.qhds-card,
 .aivis-evidence-source-card:target {
   background: var(--aivis-color-accent-surface);
   border-color: var(--aivis-shell-accent);
   box-shadow: inset 0 0 0 var(--aivis-border-width-thin) var(--aivis-shell-accent);
 }
 
-.aivis-evidence-card .ssq-card__heading {
+.aivis-evidence-card .qhds-card__heading {
   font-size: var(--aivis-font-size-body-sm);
   line-height: var(--aivis-line-height-heading);
 }
@@ -118,7 +118,7 @@
 }
 
 .aivis-evidence-card__meta .aivis-evidence-status,
-.aivis-evidence-claim-card > .ssq-card__body .aivis-evidence-status {
+.aivis-evidence-claim-card > .qhds-card__body .aivis-evidence-status {
   justify-self: start;
 }
 
@@ -170,17 +170,17 @@
   gap: var(--aivis-space-2);
 }
 
-.aivis-evidence-metadata.ssq-summary-list {
+.aivis-evidence-metadata.qhds-summary-list {
   border-top: var(--aivis-border-width-thin) solid var(--aivis-shell-border-muted);
   margin-top: var(--aivis-space-3);
 }
 
-.aivis-evidence-metadata .ssq-summary-list__term {
+.aivis-evidence-metadata .qhds-summary-list__term {
   color: var(--aivis-shell-muted);
   font-size: var(--aivis-font-size-caption);
 }
 
-.aivis-evidence-metadata .ssq-summary-list__description {
+.aivis-evidence-metadata .qhds-summary-list__description {
   color: var(--aivis-shell-text);
   font-size: var(--aivis-font-size-body-sm);
 }
@@ -306,7 +306,7 @@
   width: var(--aivis-workbench-step-marker-size);
 }
 
-.aivis-evidence-path-list__card.ssq-card {
+.aivis-evidence-path-list__card.qhds-card {
   min-height: var(--aivis-space-10);
 }
 

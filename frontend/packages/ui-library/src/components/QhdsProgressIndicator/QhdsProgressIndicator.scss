@@ -1,27 +1,27 @@
-.ssq-progress {
+.qhds-progress {
   max-width: 18rem;
 }
 
-.ssq-progress__list {
-  counter-reset: ssq-progress-step;
+.qhds-progress__list {
+  counter-reset: qhds-progress-step;
   display: grid;
-  gap: var(--ssq-space-3);
+  gap: var(--qhds-space-3);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.ssq-progress__step {
-  counter-increment: ssq-progress-step;
+.qhds-progress__step {
+  counter-increment: qhds-progress-step;
   display: grid;
-  gap: var(--ssq-space-3);
+  gap: var(--qhds-space-3);
   grid-template-columns: 1.5rem minmax(0, 1fr);
 }
 
-.ssq-progress__marker {
+.qhds-progress__marker {
   align-items: center;
-  background: var(--ssq-color-surface);
-  border: 2px solid var(--ssq-color-border-strong);
+  background: var(--qhds-color-surface);
+  border: 2px solid var(--qhds-color-border-strong);
   border-radius: 999px;
   display: inline-flex;
   font-weight: 700;
@@ -30,23 +30,23 @@
   width: 1.5rem;
 }
 
-.ssq-progress__marker::before {
-  content: counter(ssq-progress-step);
+.qhds-progress__marker::before {
+  content: counter(qhds-progress-step);
   font-size: 0.8rem;
 }
 
-.ssq-progress__step--completed .ssq-progress__marker,
-.ssq-progress__step--current .ssq-progress__marker {
-  background: var(--ssq-color-action);
-  border-color: var(--ssq-color-action);
-  color: var(--ssq-color-action-text);
+.qhds-progress__step--completed .qhds-progress__marker,
+.qhds-progress__step--current .qhds-progress__marker {
+  background: var(--qhds-color-action);
+  border-color: var(--qhds-color-action);
+  color: var(--qhds-color-action-text);
 }
 
-.ssq-progress__step--completed .ssq-progress__marker::before {
+.qhds-progress__step--completed .qhds-progress__marker::before {
   content: "";
 }
 
-.ssq-progress__step--completed .ssq-progress__marker::after {
+.qhds-progress__step--completed .qhds-progress__marker::after {
   content: "";
   border-bottom: 2px solid currentColor;
   border-left: 2px solid currentColor;
@@ -55,16 +55,16 @@
   width: 0.7rem;
 }
 
-.ssq-progress__content {
+.qhds-progress__content {
   display: grid;
-  gap: var(--ssq-space-1);
+  gap: var(--qhds-space-1);
 }
 
-.ssq-progress__label {
+.qhds-progress__label {
   font-weight: 700;
 }
 
-.ssq-progress__description {
-  color: var(--ssq-color-muted);
+.qhds-progress__description {
+  color: var(--qhds-color-muted);
   font-size: 0.95rem;
 }

@@ -21,17 +21,17 @@ describe("QhdsPageAlert", () => {
     expect(html).toContain("qld__page-alerts");
     expect(html).toContain("qld__page-alerts--success");
     expect(html).toContain("qld__page-alerts--heading");
-    expect(html).toContain("ssq-page-alert--success");
+    expect(html).toContain("qhds-page-alert--success");
     expect(html).toContain("Saved");
     expect(html).toContain("Your draft was saved.");
   });
 
   it("pins readable feedback foreground tokens for light alert panels", () => {
-    expect(styles).toContain("--ssq-color-heading: var(--ssq-color-info-text)");
-    expect(styles).toContain("--ssq-color-heading: var(--ssq-color-success-text)");
-    expect(styles).toContain("--ssq-color-heading: var(--ssq-color-warning-text)");
-    expect(styles).toContain("color: var(--ssq-color-info-text)");
-    expect(styles).toContain("color: var(--ssq-color-success-text)");
-    expect(styles).toContain("color: var(--ssq-color-warning-text)");
+    expect(styles).toContain("--qhds-color-heading: var(--qhds-color-info-text)");
+    expect(styles).toContain("--qhds-color-heading: var(--qhds-color-success-text)");
+    expect(styles).toContain("--qhds-color-heading: var(--qhds-color-warning-text)");
+    expect(styles).toContain("color: var(--qhds-color-info-text)");
+    expect(styles).toContain("color: var(--qhds-color-success-text)");
+    expect(styles).toContain("color: var(--qhds-color-warning-text)");
   });
 });

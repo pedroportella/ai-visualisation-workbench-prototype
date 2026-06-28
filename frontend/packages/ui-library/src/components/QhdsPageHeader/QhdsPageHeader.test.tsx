@@ -16,7 +16,7 @@ describe("QhdsPageHeader", () => {
       />
     );
 
-    expect(html).toContain('class="ssq-page-header ssq-page-header--with-aside"');
+    expect(html).toContain('class="qhds-page-header qhds-page-header--with-aside"');
     expect(html).toContain('id="application-status-title"');
     expect(html).toContain("<h1");
     expect(html).toContain("qld__abstract");

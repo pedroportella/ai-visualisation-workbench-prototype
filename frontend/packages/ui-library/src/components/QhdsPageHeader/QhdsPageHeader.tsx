@@ -21,19 +21,19 @@ export function QhdsPageHeader({
   lead,
   ...props
 }: QhdsPageHeaderProps) {
-  const classes = ["ssq-page-header", aside ? "ssq-page-header--with-aside" : "", className].filter(Boolean).join(" ");
+  const classes = ["qhds-page-header", aside ? "qhds-page-header--with-aside" : "", className].filter(Boolean).join(" ");
 
   return (
     <header className={classes} {...props}>
-      <div className="ssq-page-header__content">
-        {contextLabel ? <p className="ssq-page-header__context">{contextLabel}</p> : null}
-        <h1 className="ssq-page-header__heading" id={headingId}>
+      <div className="qhds-page-header__content">
+        {contextLabel ? <p className="qhds-page-header__context">{contextLabel}</p> : null}
+        <h1 className="qhds-page-header__heading" id={headingId}>
           {heading}
         </h1>
-        {lead ? <p className="qld__abstract ssq-page-header__lead">{lead}</p> : null}
-        {children ? <div className="ssq-page-header__body">{children}</div> : null}
+        {lead ? <p className="qld__abstract qhds-page-header__lead">{lead}</p> : null}
+        {children ? <div className="qhds-page-header__body">{children}</div> : null}
       </div>
-      {aside ? <div className="ssq-page-header__aside">{aside}</div> : null}
+      {aside ? <div className="qhds-page-header__aside">{aside}</div> : null}
     </header>
   );
 }

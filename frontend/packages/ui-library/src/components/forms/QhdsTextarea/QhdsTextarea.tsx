@@ -28,9 +28,9 @@ export function QhdsTextarea({
   ...textareaProps
 }: QhdsTextareaProps) {
   const generatedId = useId();
-  const controlId = id ?? `ssq-textarea-${generatedId}`;
+  const controlId = id ?? `qhds-textarea-${generatedId}`;
   const fieldIds = getQhdsFieldIds({ controlId, describedBy: ariaDescribedBy, error, hint });
-  const classes = joinClassNames("qld__text-input", "qld__text-input--block", error ? "qld__text-input--error" : undefined, "ssq-textarea", className);
+  const classes = joinClassNames("qld__text-input", "qld__text-input--block", error ? "qld__text-input--error" : undefined, "qhds-textarea", className);
 
   return (
     <QhdsFormField

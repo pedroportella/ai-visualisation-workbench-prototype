@@ -1,15 +1,15 @@
-.ssq-input {
-  background: var(--ssq-color-surface);
-  border: 2px solid var(--ssq-color-border-strong);
-  border-radius: var(--ssq-radius-sm);
+.qhds-input {
+  background: var(--qhds-color-surface);
+  border: 2px solid var(--qhds-color-border-strong);
+  border-radius: var(--qhds-radius-sm);
   box-sizing: border-box;
-  color: var(--ssq-color-text);
+  color: var(--qhds-color-text);
   display: block;
   min-height: 2.75rem;
-  padding: var(--ssq-space-2) var(--ssq-space-3);
+  padding: var(--qhds-space-2) var(--qhds-space-3);
   width: min(100%, 32rem);
 }
 
-.ssq-form-field--invalid .ssq-input {
-  border-color: var(--ssq-color-invalid-border);
+.qhds-form-field--invalid .qhds-input {
+  border-color: var(--qhds-color-invalid-border);
 }

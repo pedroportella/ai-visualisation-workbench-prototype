@@ -71,7 +71,7 @@ export function QhdsSideNav({
       <>
         {item.icon ? <span className="qld__left-nav__item-icon">{item.icon}</span> : null}
         <span className="qld__left-nav__item-text">{item.label}</span>
-        {item.badge ? <span className="ssq-side-nav__badge">{item.badge}</span> : null}
+        {item.badge ? <span className="qhds-side-nav__badge">{item.badge}</span> : null}
       </>
     );
   }
@@ -93,7 +93,7 @@ export function QhdsSideNav({
     return (
       <li
         aria-current={current ? "page" : undefined}
-        className={[current ? "active" : undefined, hasChildren ? "has-child" : undefined, "ssq-side-nav__item"]
+        className={[current ? "active" : undefined, hasChildren ? "has-child" : undefined, "qhds-side-nav__item"]
           .filter(Boolean)
           .join(" ")}
         key={key}
@@ -128,8 +128,8 @@ export function QhdsSideNav({
       "qld__link-list",
       nested ? (expanded ? "qld__accordion--open" : "qld__accordion--closed") : undefined,
       nested ? "qld__accordion__body" : undefined,
-      "ssq-side-nav__list",
-      nested ? "ssq-side-nav__list--nested" : undefined
+      "qhds-side-nav__list",
+      nested ? "qhds-side-nav__list--nested" : undefined
     ]
       .filter(Boolean)
       .join(" ");
@@ -147,9 +147,9 @@ export function QhdsSideNav({
       : items;
 
   return (
-    <div className="qld__left-nav ssq-side-nav" id={id}>
-      <nav aria-label={ariaLabel} className="qld__left-nav__content ssq-side-nav__content" id={navId}>
-        {heading && !headingHref ? <h2 className="ssq-side-nav__heading">{heading}</h2> : null}
+    <div className="qld__left-nav qhds-side-nav" id={id}>
+      <nav aria-label={ariaLabel} className="qld__left-nav__content qhds-side-nav__content" id={navId}>
+        {heading && !headingHref ? <h2 className="qhds-side-nav__heading">{heading}</h2> : null}
         {renderItems(navItems)}
       </nav>
     </div>

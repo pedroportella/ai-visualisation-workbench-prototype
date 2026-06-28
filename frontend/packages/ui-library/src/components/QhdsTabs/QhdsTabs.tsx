@@ -54,11 +54,11 @@ export function QhdsTabs({ defaultSelectedId, items, label }: QhdsTabsProps) {
   }
 
   return (
-    <div className="qld__tab-container qld__tab-container__fixed ssq-tabs">
-      <div aria-label={label} className="qld__tabs ssq-tabs__list" role="tablist">
+    <div className="qld__tab-container qld__tab-container__fixed qhds-tabs">
+      <div aria-label={label} className="qld__tabs qhds-tabs__list" role="tablist">
         {items.map((item, index) => {
           const isSelected = item.id === selectedId;
-          const className = ["qld__tab-button", isSelected ? "qld__tab-button--active" : "", "ssq-tabs__tab"].filter(Boolean).join(" ");
+          const className = ["qld__tab-button", isSelected ? "qld__tab-button--active" : "", "qhds-tabs__tab"].filter(Boolean).join(" ");
 
           return (
             <button
@@ -84,7 +84,7 @@ export function QhdsTabs({ defaultSelectedId, items, label }: QhdsTabsProps) {
         return (
           <div
             aria-labelledby={`${item.id}-tab`}
-            className="qld__tab-panel qld__tab_panel ssq-tabs__panel"
+            className="qld__tab-panel qld__tab_panel qhds-tabs__panel"
             hidden={!isSelected}
             id={`${item.id}-tabpanel`}
             key={item.id}

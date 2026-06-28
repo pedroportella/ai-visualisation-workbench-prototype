@@ -35,7 +35,7 @@ describe("QhdsCard", () => {
       </QhdsCard>
     );
 
-    expect(html).toContain('<article class="qld__card ssq-card" aria-current="true" data-panel-state="selected" id="source-card">');
-    expect(html).toContain('<h3 class="qld__card__title ssq-card__heading" id="source-heading">Evidence source</h3>');
+    expect(html).toContain('<article class="qld__card qhds-card" aria-current="true" data-panel-state="selected" id="source-card">');
+    expect(html).toContain('<h3 class="qld__card__title qhds-card__heading" id="source-heading">Evidence source</h3>');
   });
 });

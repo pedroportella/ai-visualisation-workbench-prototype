@@ -31,11 +31,11 @@ export interface QhdsRadioGroupProps extends Omit<FieldsetHTMLAttributes<HTMLFie
 
 function renderRequirement(required: boolean, optional: boolean) {
   if (required) {
-    return <span className="ssq-form-field__requirement">required</span>;
+    return <span className="qhds-form-field__requirement">required</span>;
   }
 
   if (optional) {
-    return <span className="qld__label--optional ssq-form-field__requirement">optional</span>;
+    return <span className="qld__label--optional qhds-form-field__requirement">optional</span>;
   }
 
   return null;
@@ -59,7 +59,7 @@ export function QhdsRadioGroup({
   ...fieldsetProps
 }: QhdsRadioGroupProps) {
   const generatedId = useId();
-  const controlId = id ?? `ssq-radio-group-${generatedId}`;
+  const controlId = id ?? `qhds-radio-group-${generatedId}`;
   const fieldIds = getQhdsFieldIds({ controlId, describedBy: ariaDescribedBy, error, hint });
   const groupName = name ?? controlId;
   const requiredOptionIndex = disabled ? -1 : options.findIndex((option) => !option.disabled);
@@ -73,30 +73,30 @@ export function QhdsRadioGroup({
       className={joinClassNames(
         "qld__form-group",
         "qld__radio-buttons",
-        "ssq-radio-group",
-        disabled && "ssq-radio-group--disabled",
-        error ? "ssq-radio-group--invalid" : undefined,
+        "qhds-radio-group",
+        disabled && "qhds-radio-group--disabled",
+        error ? "qhds-radio-group--invalid" : undefined,
         className
       )}
       disabled={disabled}
       id={controlId}
       role="radiogroup"
     >
-      <legend className="qld__fieldset__legend ssq-radio-group__legend" id={`${controlId}-legend`}>
+      <legend className="qld__fieldset__legend qhds-radio-group__legend" id={`${controlId}-legend`}>
         {legend}
         {renderRequirement(required, optional)}
       </legend>
       {hint ? (
-        <span className="qld__hint-text ssq-form-field__hint ssq-radio-group__hint" id={fieldIds.hintId}>
+        <span className="qld__hint-text qhds-form-field__hint qhds-radio-group__hint" id={fieldIds.hintId}>
           {hint}
         </span>
       ) : null}
       {error ? (
-        <span aria-live="polite" className="qld__input--error ssq-form-field__error ssq-radio-group__error" id={fieldIds.errorId} role="status">
+        <span aria-live="polite" className="qld__input--error qhds-form-field__error qhds-radio-group__error" id={fieldIds.errorId} role="status">
           {error}
         </span>
       ) : null}
-      <div className="qld__control-group ssq-radio-group__options">
+      <div className="qld__control-group qhds-radio-group__options">
         {options.map((option, index) => {
           const optionId = option.id ?? `${controlId}-${toSafeControlId(option.value) || `option-${index + 1}`}`;
           const optionHintId = option.hint ? `${optionId}-hint` : undefined;
@@ -105,12 +105,12 @@ export function QhdsRadioGroup({
           const optionDisabled = disabled || option.disabled;
 
           return (
-            <div className="qld__control-input qld__control-input--block ssq-radio" key={optionId}>
+            <div className="qld__control-input qld__control-input--block qhds-radio" key={optionId}>
               <input
                 {...checkedProps}
                 aria-describedby={describedBy}
                 aria-invalid={error ? true : undefined}
-                className={joinClassNames("qld__control-input__input", error ? "qld__input--error" : undefined, "ssq-radio__input")}
+                className={joinClassNames("qld__control-input__input", error ? "qld__input--error" : undefined, "qhds-radio__input")}
                 disabled={optionDisabled}
                 id={optionId}
                 name={groupName}
@@ -120,11 +120,11 @@ export function QhdsRadioGroup({
                 type="radio"
                 value={option.value}
               />
-              <label className="qld__control-input__text ssq-radio__label" htmlFor={optionId}>
+              <label className="qld__control-input__text qhds-radio__label" htmlFor={optionId}>
                 {option.label}
               </label>
               {option.hint ? (
-                <span className="qld__hint-text ssq-radio__hint" id={optionHintId}>
+                <span className="qld__hint-text qhds-radio__hint" id={optionHintId}>
                   {option.hint}
                 </span>
               ) : null}

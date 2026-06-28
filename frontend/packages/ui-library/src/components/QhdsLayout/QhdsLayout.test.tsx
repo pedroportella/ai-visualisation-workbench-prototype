@@ -18,14 +18,14 @@ describe("QhdsLayout", () => {
     );
 
     expect(html).toContain("qld__grid");
-    expect(html).toContain("ssq-layout");
-    expect(html).toContain("ssq-layout--app");
+    expect(html).toContain("qhds-layout");
+    expect(html).toContain("qhds-layout--app");
     expect(html).toContain('aria-label="skip links"');
     expect(html).toContain('href="#content"');
-    expect(html).toContain('<main class="main ssq-layout__main" tabindex="-1">');
-    expect(html).toContain('<section class="qld__body ssq-layout__body">');
-    expect(html).toContain('class="container-fluid ssq-layout__container"');
-    expect(html).toContain('class="col-xs-12 col-lg-12 col-xl-12 ssq-layout__content ssq-layout__content--full" id="content"');
+    expect(html).toContain('<main class="main qhds-layout__main" tabindex="-1">');
+    expect(html).toContain('<section class="qld__body qhds-layout__body">');
+    expect(html).toContain('class="container-fluid qhds-layout__container"');
+    expect(html).toContain('class="col-xs-12 col-lg-12 col-xl-12 qhds-layout__content qhds-layout__content--full" id="content"');
     expect(html).toContain("Header");
     expect(html).toContain("Body");
     expect(html).toContain("Footer");
@@ -39,13 +39,13 @@ describe("QhdsLayout", () => {
     );
 
     expect(html).toContain("vertical-nav");
-    expect(html).toContain("ssq-layout--has-left-nav");
+    expect(html).toContain("qhds-layout--has-left-nav");
     expect(html).toContain('href="#section-navigation"');
-    expect(html).toContain('class="ssq-layout__left-nav" id="section-navigation"');
-    expect(html).toContain('class="qld__body--left-nav ssq-layout__left-nav-content"');
-    expect(html).toContain('class="col-xs-12 col-lg-12 col-xl-12 ssq-layout__content ssq-layout__content--full" id="content"');
+    expect(html).toContain('class="qhds-layout__left-nav" id="section-navigation"');
+    expect(html).toContain('class="qld__body--left-nav qhds-layout__left-nav-content"');
+    expect(html).toContain('class="col-xs-12 col-lg-12 col-xl-12 qhds-layout__content qhds-layout__content--full" id="content"');
     expect(html).toContain('<nav aria-label="Account sections">Navigation</nav>');
-    expect(html).not.toContain("ssq-layout__sidebar");
+    expect(html).not.toContain("qhds-layout__sidebar");
   });
 
   it("hides section navigation in focus mode", () => {
@@ -55,10 +55,10 @@ describe("QhdsLayout", () => {
       </QhdsLayout>
     );
 
-    expect(html).toContain("ssq-layout--focus");
-    expect(html).toContain("ssq-layout__content--task");
+    expect(html).toContain("qhds-layout--focus");
+    expect(html).toContain("qhds-layout__content--task");
     expect(html).not.toContain("vertical-nav");
-    expect(html).not.toContain("ssq-layout__left-nav");
+    expect(html).not.toContain("qhds-layout__left-nav");
   });
 
   it("supports contained body-width content while preserving the stable content target", () => {
@@ -68,27 +68,27 @@ describe("QhdsLayout", () => {
       </QhdsLayout>
     );
 
-    expect(html).toContain("ssq-layout--contained");
-    expect(html).toContain("ssq-layout__content--body");
+    expect(html).toContain("qhds-layout--contained");
+    expect(html).toContain("qhds-layout__content--body");
     expect(html).toContain('aria-labelledby="page-title"');
     expect(html).toContain('id="content"');
-    expect(styles).toContain(".ssq-layout--app .ssq-layout__container");
+    expect(styles).toContain(".qhds-layout--app .qhds-layout__container");
     expect(styles).toContain("max-width: none");
     expect(styles).toContain("padding-left: 2rem");
-    expect(styles).toContain(".ssq-layout--contained .ssq-layout__container");
+    expect(styles).toContain(".qhds-layout--contained .qhds-layout__container");
     expect(styles).toContain("max-width: var(--qld-grid-container-max-width)");
-    expect(styles).toContain(".ssq-layout__content--task");
+    expect(styles).toContain(".qhds-layout__content--task");
     expect(styles).toContain("max-width: 76rem");
-    expect(styles).toContain(".ssq-layout--has-left-nav .ssq-layout__main");
-    expect(styles).toContain(".ssq-layout__left-nav");
-    expect(styles).toContain("background-color: var(--ssq-color-left-nav-background)");
-    expect(styles).toContain("border-right: var(--QLD-border-width-default) solid var(--ssq-color-left-nav-border)");
-    expect(styles).toContain(".ssq-layout__left-nav > .qld__left-nav.ssq-side-nav");
+    expect(styles).toContain(".qhds-layout--has-left-nav .qhds-layout__main");
+    expect(styles).toContain(".qhds-layout__left-nav");
+    expect(styles).toContain("background-color: var(--qhds-color-left-nav-background)");
+    expect(styles).toContain("border-right: var(--QLD-border-width-default) solid var(--qhds-color-left-nav-border)");
+    expect(styles).toContain(".qhds-layout__left-nav > .qld__left-nav.qhds-side-nav");
     expect(styles).toContain("background-color: transparent");
     expect(styles).toContain("border-right: 0");
-    expect(styles).toContain(".ssq-layout--app.ssq-layout--has-left-nav .qld__body--left-nav .ssq-layout__container");
+    expect(styles).toContain(".qhds-layout--app.qhds-layout--has-left-nav .qld__body--left-nav .qhds-layout__container");
     expect(styles).toContain("padding-left: clamp(3rem, 5vw, 8rem)");
-    expect(styles).toContain("padding-right: var(--ssq-space-10)");
+    expect(styles).toContain("padding-right: var(--qhds-space-10)");
   });
 
   it("keeps skip-link ownership in the layout when composed with QhdsHeader", () => {
@@ -98,7 +98,7 @@ describe("QhdsLayout", () => {
       </QhdsLayout>
     );
 
-    expect((html.match(/class="qld__skip-link ssq-layout__skip-links"/g) ?? []).length).toBe(1);
+    expect((html.match(/class="qld__skip-link qhds-layout__skip-links"/g) ?? []).length).toBe(1);
     expect((html.match(/role="banner"/g) ?? []).length).toBe(1);
   });
 });

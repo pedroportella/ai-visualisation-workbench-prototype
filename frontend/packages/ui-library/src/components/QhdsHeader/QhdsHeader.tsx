@@ -65,13 +65,13 @@ export function QhdsHeader({
     };
   }
 
-  const headerClassName = ["qld__header", "ssq-header", `ssq-header--${width}`].join(" ");
+  const headerClassName = ["qld__header", "qhds-header", `qhds-header--${width}`].join(" ");
   const safeAccountName = typeof accountName === "string" && accountName.trim() ? accountName.trim() : undefined;
   const accountItems: QhdsHeaderCtaItem[] =
     showAccountControls && safeAccountName
       ? [
-          { href: accountHref, icon: <QhdsIcon className="ssq-header__cta-svg" symbol="profile" />, label: safeAccountName },
-          { href: logoutHref, icon: <QhdsIcon className="ssq-header__cta-svg" symbol="log-out" />, label: logoutLabel }
+          { href: accountHref, icon: <QhdsIcon className="qhds-header__cta-svg" symbol="profile" />, label: safeAccountName },
+          { href: logoutHref, icon: <QhdsIcon className="qhds-header__cta-svg" symbol="log-out" />, label: logoutLabel }
         ]
       : [];
   const preHeaderCtaItems = [...accountItems, ...ctaItems];
@@ -79,32 +79,32 @@ export function QhdsHeader({
 
   return (
     <header className={headerClassName} role="banner">
-      <div className="qld__header__pre-header qld__header__pre-header--dark-alt ssq-header__pre-header">
+      <div className="qld__header__pre-header qld__header__pre-header--dark-alt qhds-header__pre-header">
         <div className="container-fluid">
           <div className="row">
-            <div className="col-xs-12 ssq-header__pre-header-content">
+            <div className="col-xs-12 qhds-header__pre-header-content">
               <a
-                className="qld__header__pre-header-url ssq-header__pre-header-url"
+                className="qld__header__pre-header-url qhds-header__pre-header-url"
                 href={baseUrlHref}
                 {...getNavigationProps(baseUrlHref)}
               >
                 {baseUrlText}
               </a>
               {hasPreHeaderActions ? (
-                <div className="qld__header__cta-wrapper ssq-header__actions">
+                <div className="qld__header__cta-wrapper qhds-header__actions">
                   {preHeaderCtaItems.map((item) => (
                     <a
-                      className="qld__header__cta-link ssq-header__cta-link"
+                      className="qld__header__cta-link qhds-header__cta-link"
                       href={item.href}
                       key={`${item.href}-${item.label}`}
                       {...getNavigationProps(item.href)}
                     >
                       {item.icon ? (
-                        <span aria-hidden="true" className="qld__header__cta-link-icon ssq-header__cta-link-icon">
+                        <span aria-hidden="true" className="qld__header__cta-link-icon qhds-header__cta-link-icon">
                           {item.icon}
                         </span>
                       ) : null}
-                      <span className="qld__header__cta-link-text ssq-header__cta-link-text">{item.label}</span>
+                      <span className="qld__header__cta-link-text qhds-header__cta-link-text">{item.label}</span>
                     </a>
                   ))}
                   {actions}
@@ -114,25 +114,25 @@ export function QhdsHeader({
           </div>
         </div>
       </div>
-      <div className="qld__header__main qld__header__main--dark ssq-header__main">
+      <div className="qld__header__main qld__header__main--dark qhds-header__main">
         <div className="container-fluid">
           <div className="row">
-            <div className="col-xs-12 ssq-header__main-content">
-              <a className="qld__header__brand ssq-header__brand" href={brandHref} {...getNavigationProps(brandHref)}>
-                <span className="ssq-header__qg-lockup" aria-label="Queensland Government">
-                  <img alt="Queensland Government" className="ssq-header__qg-logo" src={qgovLogoUrlBrand} />
+            <div className="col-xs-12 qhds-header__main-content">
+              <a className="qld__header__brand qhds-header__brand" href={brandHref} {...getNavigationProps(brandHref)}>
+                <span className="qhds-header__qg-lockup" aria-label="Queensland Government">
+                  <img alt="Queensland Government" className="qhds-header__qg-logo" src={qgovLogoUrlBrand} />
                 </span>
-                <span className="qld__header__site-name ssq-header__site-name">
-                  <span className="qld__header__heading ssq-header__heading">{serviceName}</span>
-                  <span className="qld__header__subline ssq-header__subline">{serviceDescription}</span>
+                <span className="qld__header__site-name qhds-header__site-name">
+                  <span className="qld__header__heading qhds-header__heading">{serviceName}</span>
+                  <span className="qld__header__subline qhds-header__subline">{serviceDescription}</span>
                 </span>
               </a>
               {navItems.length > 0 ? (
-                <nav aria-label="Primary" className="qld__main-nav ssq-header__nav" id="qld-header-main-nav">
-                  <ul className="qld__link-list ssq-header__nav-list">
+                <nav aria-label="Primary" className="qld__main-nav qhds-header__nav" id="qld-header-main-nav">
+                  <ul className="qld__link-list qhds-header__nav-list">
                     {navItems.map((item) => (
-                      <li className="ssq-header__nav-item" key={item.href}>
-                        <a className="qld__main-nav__item-link ssq-header__link" href={item.href} {...getNavigationProps(item.href)}>
+                      <li className="qhds-header__nav-item" key={item.href}>
+                        <a className="qld__main-nav__item-link qhds-header__link" href={item.href} {...getNavigationProps(item.href)}>
                           {item.label}
                         </a>
                       </li>

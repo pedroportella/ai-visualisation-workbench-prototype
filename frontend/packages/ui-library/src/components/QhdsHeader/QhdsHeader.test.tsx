@@ -42,7 +42,7 @@ describe("QhdsHeader", () => {
       <QhdsHeader navItems={[{ href: "/status", label: "Status" }]} serviceName="Header service" />
     );
 
-    expect(html).toContain('class="qld__header ssq-header ssq-header--app"');
+    expect(html).toContain('class="qld__header qhds-header qhds-header--app"');
     expect(html).toContain('role="banner"');
     expect(html).toContain("qld__header__pre-header");
     expect(html).toContain("qld__header__main");
@@ -55,7 +55,7 @@ describe("QhdsHeader", () => {
     expect(html).toContain("Logout");
     expect(html).toContain("QLD-icons.svg#profile");
     expect(html).toContain("QLD-icons.svg#log-out");
-    expect(html).toContain('class="qld__icon ssq-header__cta-svg"');
+    expect(html).toContain('class="qld__icon qhds-header__cta-svg"');
     expect(html).toContain('href="/status"');
     expect(html).toContain('id="qld-header-main-nav"');
     expect(html).toContain('aria-label="Primary"');
@@ -77,13 +77,13 @@ describe("QhdsHeader", () => {
       />
     );
 
-    expect(html).toContain('class="qld__header__pre-header-url ssq-header__pre-header-url"');
+    expect(html).toContain('class="qld__header__pre-header-url qhds-header__pre-header-url"');
     expect(html).toContain('href="/queensland-government"');
     expect(html).toContain("Queensland Government");
-    expect(html).toContain('class="qld__header__cta-wrapper ssq-header__actions"');
-    expect(html).toContain('class="qld__header__cta-link ssq-header__cta-link"');
-    expect(html).toContain('class="qld__header__cta-link-icon ssq-header__cta-link-icon"');
-    expect(html).toContain('class="qld__header__cta-link-text ssq-header__cta-link-text"');
+    expect(html).toContain('class="qld__header__cta-wrapper qhds-header__actions"');
+    expect(html).toContain('class="qld__header__cta-link qhds-header__cta-link"');
+    expect(html).toContain('class="qld__header__cta-link-icon qhds-header__cta-link-icon"');
+    expect(html).toContain('class="qld__header__cta-link-text qhds-header__cta-link-text"');
     expect(html).toContain("Avery Taylor");
     expect(html).toContain("Logout");
     expect(html).toContain('href="/help"');
@@ -104,13 +104,13 @@ describe("QhdsHeader", () => {
   it("supports contained width mode without changing the default app-shell mode", () => {
     const html = renderToStaticMarkup(<QhdsHeader width="contained" />);
 
-    expect(html).toContain('class="qld__header ssq-header ssq-header--contained"');
-    expect(styles).toContain(".ssq-header--app .container-fluid");
+    expect(html).toContain('class="qld__header qhds-header qhds-header--contained"');
+    expect(styles).toContain(".qhds-header--app .container-fluid");
     expect(styles).toContain("padding-left: 2rem");
-    expect(styles).toContain(".ssq-header--contained .container-fluid");
+    expect(styles).toContain(".qhds-header--contained .container-fluid");
     expect(styles).toContain("max-width: var(--qld-grid-container-max-width)");
     expect(styles).toContain("height: 1.25rem");
-    expect(styles).toContain(".ssq-header__cta-svg");
+    expect(styles).toContain(".qhds-header__cta-svg");
     expect(styles).toContain("color: var(--QLD-color-dark__action--secondary)");
     expect(styles).toContain("fill: var(--QLD-color-dark__action--secondary)");
     expect(styles).toContain("color: var(--QLD-color-dark__action--secondary-hover)");
@@ -165,8 +165,8 @@ describe("QhdsHeader", () => {
   });
 
   it("keeps header links readable after visited state is applied", () => {
-    expect(styles).toContain("--ssq-color-link: var(--ssq-color-header-text)");
-    expect(styles).toContain("--ssq-color-link-decoration: var(--ssq-color-header-text)");
-    expect(styles).toContain("--ssq-color-link-visited: var(--ssq-color-header-text)");
+    expect(styles).toContain("--qhds-color-link: var(--qhds-color-header-text)");
+    expect(styles).toContain("--qhds-color-link-decoration: var(--qhds-color-header-text)");
+    expect(styles).toContain("--qhds-color-link-visited: var(--qhds-color-header-text)");
   });
 });
