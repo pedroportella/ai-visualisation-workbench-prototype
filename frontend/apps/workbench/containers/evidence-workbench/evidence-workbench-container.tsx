@@ -8,68 +8,39 @@ import {
   QhdsCol,
   QhdsContentSection,
   QhdsPageAlert,
-  QhdsPageHeader,
-  QhdsRow,
-  QhdsSummaryList
+  QhdsRow
 } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 import { AnswerMarkdown } from "./answer-markdown";
 import { SourceTracePanel } from "./source-trace-panel";
+import { WorkbenchCaseBar } from "./workbench-case-bar";
 
 export default function EvidenceWorkbenchContainer({
   data
 }: Readonly<{ data: EvidenceWorkbenchViewModel }>) {
+  const summary = summaryMap(data);
+
   return (
     <section
       aria-labelledby="evidence-workbench-title"
-      className="evidence-workbench"
+      className="qld__body qld__body--light evidence-workbench"
     >
-      <QhdsPageHeader
-        aside={
-          <QhdsSummaryList
-            ariaLabel="Workbench status"
-            items={data.summary.map((item) => ({
-              description: item.value,
-              term: item.label
-            }))}
-          />
-        }
-        heading="Evidence Workbench"
-        headingId="evidence-workbench-title"
-        lead="Review a synthetic transport-service guidance answer, its source trace and the blockers that keep it in review."
+      <WorkbenchCaseBar
+        blockerCount={data.review.blockedByWarningIds.length}
+        caseTitle={data.context.title}
+        dataSource={summary.get("Data source") ?? data.fetchState.source}
+        fixtureMode={summary.get("Fixture mode") ?? "Synthetic fixture"}
+        generatedAt={data.answer.generatedAt}
+        runtimeMode={summary.get("Runtime") ?? "Local fixture"}
+        status={data.review.status}
       />
-
-      <QhdsPageAlert heading="Synthetic fixture review data" tone="info">
-        <p>
-          This workbench separates public context anchors from synthetic evidence sources so the draft answer can stay in review until source blockers are resolved.
-        </p>
-      </QhdsPageAlert>
 
       {data.fetchState.message ? (
         <QhdsPageAlert heading={data.fetchState.message} tone="warning">
           <p>Review can continue against the fallback fixture state.</p>
         </QhdsPageAlert>
       ) : null}
-
-      <QhdsContentSection
-        className="evidence-workbench-context-section"
-        heading={data.context.title}
-        headingId="scenario-title"
-        lead="Local review case"
-      >
-        <AivisEvidenceContextAnchors
-          anchorSummary="Place labels only; they are not treated as evidence sources."
-          anchors={data.context.anchors.map((anchor) => ({
-            description: anchor.supportingText,
-            id: anchor.id,
-            label: anchor.label,
-            meta: "Context only"
-          }))}
-          dateLabel={`Planned fixture travel date: ${data.context.plannedTravelDate}`}
-          summary={data.context.question}
-        />
-      </QhdsContentSection>
 
       <QhdsRow className="evidence-workbench-grid">
         <QhdsCol lg={12} xl={6}>
@@ -135,6 +106,27 @@ export default function EvidenceWorkbenchContainer({
 
         <QhdsCol xs={12}>
           <QhdsContentSection
+            className="evidence-workbench-panel evidence-workbench-context-section"
+            heading={data.context.title}
+            headingId="scenario-title"
+            lead="Local review case"
+          >
+            <AivisEvidenceContextAnchors
+              anchorSummary="Place labels only; they are not treated as evidence sources."
+              anchors={data.context.anchors.map((anchor) => ({
+                description: anchor.supportingText,
+                id: anchor.id,
+                label: anchor.label,
+                meta: "Context only"
+              }))}
+              dateLabel={`Planned fixture travel date: ${data.context.plannedTravelDate}`}
+              summary={data.context.question}
+            />
+          </QhdsContentSection>
+        </QhdsCol>
+
+        <QhdsCol xs={12}>
+          <QhdsContentSection
             className="evidence-workbench-panel"
             heading="Evidence path"
             headingId="review-title"
@@ -168,6 +160,10 @@ export default function EvidenceWorkbenchContainer({
       </QhdsRow>
     </section>
   );
+}
+
+function summaryMap(data: EvidenceWorkbenchViewModel): Map<string, string> {
+  return new Map(data.summary.map((item) => [item.label, item.value]));
 }
 
 function statusTone(status: string): AivisEvidenceTone {

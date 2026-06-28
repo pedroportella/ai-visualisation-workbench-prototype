@@ -1,21 +1,19 @@
-import { QhdsPageHeader, QhdsSummaryList } from "@aivis/ui-library";
+import { WorkbenchCaseBar } from "../../containers/evidence-workbench/workbench-case-bar";
 
 export default function EvidenceWorkbenchLoading() {
   return (
     <section
       aria-labelledby="evidence-workbench-title"
-      className="evidence-workbench"
+      className="qld__body qld__body--light evidence-workbench"
     >
-      <QhdsPageHeader
-        aside={
-          <QhdsSummaryList
-            ariaLabel="Workbench status"
-            items={[{ description: "Loading fixture", term: "Data source" }]}
-          />
-        }
-        heading="Evidence Workbench"
-        headingId="evidence-workbench-title"
-        lead="Loading local fixture evidence for review."
+      <WorkbenchCaseBar
+        blockerCount={0}
+        caseTitle="Loading local fixture evidence for review"
+        dataSource="Loading fixture"
+        fixtureMode="Synthetic fixture"
+        generatedAt="Loading"
+        runtimeMode="Local fixture"
+        status="Loading"
       />
     </section>
   );
