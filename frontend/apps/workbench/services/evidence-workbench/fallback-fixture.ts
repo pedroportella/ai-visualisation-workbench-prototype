@@ -3,11 +3,33 @@ import type { EvidenceWorkbenchViewModel } from "./types";
 export const fallbackEvidenceWorkbenchData: EvidenceWorkbenchViewModel = {
   answer: {
     generatedAt: "Bundled fallback",
+    markdown: `# Reviewer answer preview
+
+**Review status:** Needs review. Do not approve as written.
+
+The bundled fallback keeps the answer panel visible when the local fixture API
+is unavailable. It preserves the same synthetic review posture without making
+new source claims.
+
+## Review blockers
+
+- Boarding-point evidence still needs a freshness check.
+- Step-free wording remains conditional.
+- Dispatch confirmation is represented by a missing-source placeholder.
+
+## Fallback evidence summary
+
+| Claim | Current answer posture | Evidence state |
+| --- | --- | --- |
+| \`Claim 1\` | Access change summary | Stale source |
+| \`Claim 2\` | Temporary boarding point | Weak support |
+| \`Claim 3\` | Step-free transfer assurance | Missing evidence |`,
     status: "Needs review",
     summary:
       "The draft guidance can describe a temporary step-free transfer, but it should stay blocked until stale and missing fixture evidence is resolved.",
     title: "Reviewer answer preview"
   },
+  citations: [],
   context: {
     anchors: [
       {
@@ -60,6 +82,7 @@ export const fallbackEvidenceWorkbenchData: EvidenceWorkbenchViewModel = {
     activeWarningCount: 3,
     blockedByWarningIds: ["WARN-FALLBACK-001", "WARN-FALLBACK-002", "WARN-FALLBACK-003"],
     copyState: "disabled",
+    selectedClaimId: "Claim 3",
     status: "Needs review"
   },
   reviewClaims: [

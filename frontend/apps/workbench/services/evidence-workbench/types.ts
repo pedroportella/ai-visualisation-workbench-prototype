@@ -25,6 +25,16 @@ export interface EvidenceWorkbenchSource {
   status: string;
 }
 
+export interface EvidenceWorkbenchCitation {
+  id: string;
+  claimId: string;
+  marker: string;
+  sourceId: string;
+  sourceLabel: string;
+  status: string;
+  warningIds: string[];
+}
+
 export interface EvidenceWorkbenchWarning {
   id: string;
   message: string;
@@ -44,10 +54,12 @@ export interface EvidenceWorkbenchFetchState {
 export interface EvidenceWorkbenchViewModel {
   answer: {
     generatedAt: string;
+    markdown: string;
     status: string;
     summary: string;
     title: string;
   };
+  citations: EvidenceWorkbenchCitation[];
   context: {
     anchors: EvidenceWorkbenchContextAnchor[];
     plannedTravelDate: string;
@@ -63,6 +75,7 @@ export interface EvidenceWorkbenchViewModel {
     activeWarningCount: number;
     blockedByWarningIds: string[];
     copyState: string;
+    selectedClaimId: string;
     status: string;
   };
   reviewClaims: EvidenceWorkbenchClaim[];

@@ -1,4 +1,5 @@
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
+import { AnswerMarkdown } from "./answer-markdown";
 
 export default function EvidenceWorkbenchContainer({
   data
@@ -69,12 +70,25 @@ export default function EvidenceWorkbenchContainer({
           <p className="evidence-workbench-answer-meta">
             Fixture timestamp: {data.answer.generatedAt}
           </p>
+          <AnswerMarkdown
+            citations={data.citations}
+            markdown={data.answer.markdown}
+            selectedClaimId={data.review.selectedClaimId}
+          />
           <div className="evidence-workbench-claim-stack" aria-label="Claims requiring review">
             {data.reviewClaims.map((claim) => (
-              <article className="evidence-workbench-claim" key={claim.id}>
-                <div>
+              <article
+                aria-current={claim.id === data.review.selectedClaimId ? "true" : undefined}
+                className={claimClassName(claim.id === data.review.selectedClaimId)}
+                id={`claim-${claim.id}`}
+                key={claim.id}
+              >
+                <div className="evidence-workbench-claim-heading">
                   <span>{claim.id}</span>
                   <strong>{claim.title}</strong>
+                  {claim.id === data.review.selectedClaimId ? (
+                    <span className="evidence-workbench-status">Selected claim</span>
+                  ) : null}
                 </div>
                 <p>{claim.text}</p>
                 <span className={statusClassName(claim.status)}>{claim.status}</span>
@@ -91,7 +105,7 @@ export default function EvidenceWorkbenchContainer({
           <h2 id="sources-title">Evidence sources</h2>
           <ul className="evidence-workbench-source-list">
             {data.sourceItems.map((source) => (
-              <li key={source.id}>
+              <li id={`source-${source.id}`} key={source.id}>
                 <strong>{source.title}</strong>
                 <span>{source.meta}</span>
                 <p>{source.preview}</p>
@@ -134,6 +148,12 @@ export default function EvidenceWorkbenchContainer({
       </div>
     </main>
   );
+}
+
+function claimClassName(isSelected: boolean): string {
+  return ["evidence-workbench-claim", isSelected ? "evidence-workbench-claim-selected" : ""]
+    .filter(Boolean)
+    .join(" ");
 }
 
 function statusClassName(status: string): string {

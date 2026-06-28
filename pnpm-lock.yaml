@@ -41,6 +41,9 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.0)(happy-dom@20.10.6)(sass@1.100.0)
 
   frontend/packages/services:
     dependencies:

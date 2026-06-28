@@ -26,7 +26,9 @@ interface PublicContextAnchor {
 }
 
 interface AnswerFixture {
+  defaultSelectedClaimId: string;
   generatedAt: string;
+  markdown: string;
   status?: string;
   displayStatusLabel: string;
   summary: string;
@@ -55,6 +57,16 @@ interface SourceWarningFixture {
   severity: string;
 }
 
+interface CitationFixture {
+  claimId: string;
+  confidenceLabel: string;
+  id: string;
+  marker: string;
+  sourceId: string;
+  sourceLocationLabel: string;
+  warningIds: string[];
+}
+
 interface SourceFixture {
   citationCount: number;
   freshness: string;
@@ -79,6 +91,7 @@ interface EvidenceGraphStepFixture {
 interface AnswerFixtureResponse extends FixtureMetadata {
   answer: AnswerFixture;
   answerClaims: AnswerClaimFixture[];
+  citations: CitationFixture[];
   promptContext: PromptContext;
   publicContextAnchors: PublicContextAnchor[];
   reviewState: ReviewStateFixture;
@@ -148,10 +161,20 @@ function buildEvidenceWorkbenchViewModel(
   return {
     answer: {
       generatedAt: answerResponse.answer.generatedAt,
+      markdown: answerResponse.answer.markdown,
       status: answerResponse.answer.displayStatusLabel,
       summary: answerResponse.answer.summary,
       title: answerResponse.answer.title
     },
+    citations: answerResponse.citations.map((citation) => ({
+      claimId: citation.claimId,
+      id: citation.id,
+      marker: citation.marker,
+      sourceId: citation.sourceId,
+      sourceLabel: citation.sourceLocationLabel,
+      status: formatLabel(citation.confidenceLabel),
+      warningIds: citation.warningIds
+    })),
     context: {
       anchors: answerResponse.publicContextAnchors.map((anchor) => ({
         id: anchor.id,
@@ -179,6 +202,7 @@ function buildEvidenceWorkbenchViewModel(
       activeWarningCount: answerResponse.reviewState.activeWarningIds.length,
       blockedByWarningIds: answerResponse.reviewState.approvalBlockedByWarningIds,
       copyState: answerResponse.reviewState.copyState,
+      selectedClaimId: answerResponse.answer.defaultSelectedClaimId,
       status: answerResponse.reviewState.statusLabel
     },
     reviewClaims: answerResponse.answerClaims
