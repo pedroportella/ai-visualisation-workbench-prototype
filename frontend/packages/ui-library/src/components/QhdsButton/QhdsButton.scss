@@ -199,7 +199,7 @@ a.qhds-button--tertiary:visited:focus {
   text-decoration: none;
 }
 
-a.qhds-button[aria-disabled="true"],
+.qhds-button[aria-disabled="true"],
 .qhds-button:disabled {
   background: var(--qhds-button-disabled-background);
   border-color: var(--qhds-button-disabled-border);

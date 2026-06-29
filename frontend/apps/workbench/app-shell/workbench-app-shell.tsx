@@ -17,34 +17,39 @@ function WorkbenchSideNav() {
       headingIcon={<QhdsIcon size="md" symbol="home" />}
       items={[
         {
-          expanded: true,
-          href: "#answer-title",
-          icon: <QhdsIcon size="md" symbol="document" />,
-          items: [
-            { href: "#answer-title", label: "Draft answer" },
-            { href: "#selected-claim", label: "Selected claim" }
-          ],
-          label: "Answer review"
+          href: "#review-decision-title",
+          icon: <QhdsIcon size="md" symbol="clock" />,
+          label: "Review actions"
         },
         {
-          expanded: true,
+          href: "#answer-title",
+          icon: <QhdsIcon size="md" symbol="document" />,
+          label: "Draft answer"
+        },
+        {
+          href: "#source-inspector-title",
+          icon: <QhdsIcon size="md" symbol="document" />,
+          label: "Source inspector"
+        },
+        {
+          href: "#process-map-title",
+          icon: <QhdsIcon size="md" symbol="location" />,
+          label: "Process map"
+        },
+        {
           href: "#sources-title",
           icon: <QhdsIcon size="md" symbol="document" />,
-          items: [
-            { href: "#selected-claim-sources", label: "Selected claim sources" },
-            { href: "#source-inventory", label: "Source inventory" }
-          ],
-          label: "Source trace"
+          label: "Source inventory"
+        },
+        {
+          href: "#audit-summary",
+          icon: <QhdsIcon size="md" symbol="clock" />,
+          label: "Audit summary"
         },
         {
           href: "#scenario-title",
           icon: <QhdsIcon size="md" symbol="location" />,
           label: "Scenario context"
-        },
-        {
-          href: "#review-title",
-          icon: <QhdsIcon size="md" symbol="clock" />,
-          label: "Review lane"
         }
       ]}
     />

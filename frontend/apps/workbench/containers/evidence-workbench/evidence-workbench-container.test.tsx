@@ -15,6 +15,7 @@ describe("EvidenceWorkbenchContainer", () => {
       <EvidenceWorkbenchContainer data={fallbackEvidenceWorkbenchData} />
     );
     const caseBarIndex = html.indexOf("evidence-workbench-case-bar");
+    const mobileNavIndex = html.indexOf("evidence-workbench-mobile-nav");
     const decisionIndex = html.indexOf("review-decision-title");
     const answerIndex = html.indexOf('id="answer-title"');
     const inspectorIndex = html.indexOf('id="source-inspector-title"');
@@ -34,11 +35,16 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("Request source update");
     expect(html).toContain("Mark unsafe to use");
     expect(html).toContain("Mark reviewed remains disabled in this fixture");
+    expect(html).toContain('aria-disabled="true"');
     expect(html).toContain("Copy approved answer");
     expect(html).toContain("Local review state is seeded from the loaded fixture.");
+    expect(html).toContain('aria-label="Evidence Workbench mobile sections"');
+    expect(html).toContain('href="#process-map-title"');
+    expect(html).toContain('href="#audit-summary"');
     expect(html).not.toContain("qhds-page-header");
     expect(html).not.toContain("qhds-page-header__context");
     expect(caseBarIndex).toBeGreaterThanOrEqual(0);
+    expect(mobileNavIndex).toBeGreaterThan(caseBarIndex);
     expect(decisionIndex).toBeGreaterThan(caseBarIndex);
     expect(answerIndex).toBeGreaterThan(decisionIndex);
     expect(inspectorIndex).toBeGreaterThan(answerIndex);
@@ -54,7 +60,13 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("Evidence process map");
     expect(html).toContain("React Flow graph");
     expect(html).toContain("evidence-workbench-process-map");
+    expect(html).toContain('role="region"');
+    expect(html).toContain('aria-describedby="process-map-text-fallback"');
     expect(html).toContain("Text process map");
+    expect(html).toContain('id="process-map-text-fallback"');
+    expect(html).toContain('tabindex="0"');
+    expect(html).toContain("Audit summary");
+    expect(html).toContain('id="audit-summary"');
     expect(html).toContain("selected-claim-sources");
     expect(html).toContain("View full source inventory");
     expect(html).toContain("qld__card");
@@ -70,7 +82,11 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain(".evidence-workbench .qhds-content-section");
     expect(styles).toContain(".evidence-workbench-answer-markdown");
     expect(styles).toContain(".evidence-workbench-review-actions");
+    expect(styles).toContain(".evidence-workbench-mobile-nav");
+    expect(styles).toContain("@media (max-width: 61.9375rem)");
     expect(styles).toContain(".evidence-workbench-process-map__viewport");
+    expect(styles).toContain(".evidence-workbench-process-map__fallback:focus-visible");
+    expect(styles).toContain(".evidence-workbench-audit-summary:focus-visible");
     expect(styles).toContain("data-node-tone=\"warning\"");
     expect(styles).not.toMatch(/#[0-9a-fA-F]{3,8}|rgb\(|rgba\(/);
   });

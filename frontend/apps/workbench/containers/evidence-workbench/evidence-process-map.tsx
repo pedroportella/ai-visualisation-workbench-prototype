@@ -146,6 +146,7 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
         >
           {model.filters.map((filter) => (
             <button
+              aria-label={`Show ${filter.label.toLowerCase()} in the evidence process map`}
               aria-pressed={filter.id === filterId}
               className="evidence-workbench-process-map__filter"
               key={filter.id}
@@ -165,10 +166,11 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
 
       <ReactFlowProvider>
         <div
+          aria-describedby="process-map-text-fallback"
           aria-label="Interactive evidence process map"
           className="evidence-workbench-process-map__viewport"
           data-small-viewport-fallback={graph.smallViewportFallback}
-          role="application"
+          role="region"
         >
           <ReactFlow<EvidenceFlowNode, EvidenceFlowEdge>
             colorMode="light"
@@ -192,8 +194,14 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
 
       <div className="evidence-workbench-process-map__details">
         {selectedNode ? <SelectedNodeDetail node={selectedNode} /> : null}
-        <div className="evidence-workbench-process-map__fallback" id="process-map-text-fallback">
-          <h3>Text process map</h3>
+        <div
+          aria-labelledby="process-map-text-fallback-title"
+          className="evidence-workbench-process-map__fallback"
+          id="process-map-text-fallback"
+          role="region"
+          tabIndex={0}
+        >
+          <h3 id="process-map-text-fallback-title">Text process map</h3>
           <p>{graph.accessibleSummary}</p>
           <ol>
             {graph.fallbackSteps.map((step) => (
@@ -218,6 +226,13 @@ function EvidenceFlowNodeComponent({
 }: NodeProps<EvidenceFlowNode>) {
   return (
     <button
+      aria-label={[
+        data.graphNode.label,
+        data.typeLabel,
+        formatGraphStatus(data.graphNode.status),
+        data.warningLabel,
+        data.isSelectedNode || selected ? "Selected node" : "Select node for detail"
+      ].join(". ")}
       aria-pressed={data.isSelectedNode || selected}
       className={[
         "evidence-workbench-process-map__node",
@@ -253,10 +268,18 @@ function ProcessMapCanvasControls() {
 
   return (
     <Panel className="evidence-workbench-process-map__canvas-controls" position="top-right">
-      <button onClick={() => fitView({ duration: 240, padding: 0.16 })} type="button">
+      <button
+        aria-label="Fit evidence process map to the visible nodes"
+        onClick={() => fitView({ duration: 240, padding: 0.16 })}
+        type="button"
+      >
         Fit
       </button>
-      <button onClick={() => setViewport({ x: 0, y: 0, zoom: 0.82 }, { duration: 240 })} type="button">
+      <button
+        aria-label="Reset evidence process map viewport"
+        onClick={() => setViewport({ x: 0, y: 0, zoom: 0.82 }, { duration: 240 })}
+        type="button"
+      >
         Reset
       </button>
     </Panel>

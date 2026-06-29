@@ -17,6 +17,22 @@
   margin-top: 0;
 }
 
+#review-decision-title,
+#answer-title,
+#source-inspector-title,
+#process-map-title,
+#sources-title,
+#audit-summary,
+#scenario-title,
+#source-inventory,
+#selected-claim-sources {
+  scroll-margin-top: var(--aivis-space-4);
+}
+
+.evidence-workbench :where(h1, h2, h3, h4, p, dd, dt, strong, small, span, code, a) {
+  overflow-wrap: anywhere;
+}
+
 .evidence-workbench-case-bar {
   align-items: start;
   background: var(--aivis-color-accent-surface);
@@ -67,6 +83,61 @@
   gap: var(--aivis-space-4);
   min-width: 0;
   padding: var(--aivis-workbench-card-padding);
+}
+
+.evidence-workbench-mobile-nav {
+  background: var(--aivis-color-card-surface);
+  border: var(--aivis-border-width-thin) solid var(--aivis-color-card-border);
+  border-radius: var(--aivis-radius-sm);
+  display: none;
+  min-width: 0;
+  padding: var(--aivis-space-2);
+}
+
+.evidence-workbench-mobile-nav__list {
+  display: grid;
+  gap: var(--aivis-space-2);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.evidence-workbench-mobile-nav__link {
+  background: var(--aivis-shell-surface-muted);
+  border: var(--aivis-border-width-thin) solid var(--aivis-shell-border-muted);
+  border-radius: var(--aivis-radius-sm);
+  color: var(--aivis-shell-text);
+  display: grid;
+  gap: var(--aivis-space-1);
+  line-height: var(--aivis-line-height-short);
+  min-height: var(--aivis-space-10);
+  min-width: 0;
+  padding: var(--aivis-space-2);
+  text-decoration: none;
+}
+
+.evidence-workbench-mobile-nav__link:hover,
+.evidence-workbench-mobile-nav__link:focus {
+  background: var(--aivis-color-accent-surface);
+  color: var(--aivis-shell-accent);
+  text-decoration: underline;
+}
+
+.evidence-workbench-mobile-nav__link:focus-visible,
+.evidence-workbench-audit-summary:focus-visible,
+.evidence-workbench-process-map__fallback:focus-visible {
+  outline: var(--aivis-focus-width) solid var(--aivis-shell-focus);
+  outline-offset: var(--aivis-focus-offset);
+}
+
+.evidence-workbench-mobile-nav__link span {
+  font-weight: var(--aivis-font-weight-bold);
+}
+
+.evidence-workbench-mobile-nav__link small {
+  color: var(--aivis-shell-muted);
+  line-height: var(--aivis-line-height-caption);
 }
 
 .evidence-workbench-review-actions__heading,
@@ -204,6 +275,28 @@
 
 .evidence-workbench-review-note {
   max-width: var(--aivis-workbench-copy-max-width);
+}
+
+.evidence-workbench-audit-summary {
+  background: var(--aivis-color-accent-surface);
+  border: var(--aivis-border-width-thin) solid var(--aivis-color-accent-border);
+  border-left: var(--aivis-border-width-accent) solid var(--aivis-shell-accent);
+  border-radius: var(--aivis-radius-sm);
+  display: grid;
+  gap: var(--aivis-workbench-copy-gap);
+  max-width: var(--aivis-workbench-copy-max-width);
+  padding: var(--aivis-workbench-list-item-padding);
+}
+
+.evidence-workbench-audit-summary h3,
+.evidence-workbench-audit-summary p {
+  margin: 0;
+}
+
+.evidence-workbench-audit-summary h3 {
+  color: var(--aivis-shell-text);
+  font-size: var(--aivis-font-size-body-sm);
+  line-height: var(--aivis-line-height-heading);
 }
 
 .evidence-workbench-process-map {
@@ -808,6 +901,12 @@
   }
 }
 
+@media (max-width: 61.9375rem) {
+  .evidence-workbench-mobile-nav {
+    display: block;
+  }
+}
+
 @media (max-width: 72rem) {
   .evidence-workbench-source-inventory__summary {
     grid-template-columns: minmax(0, 1.2fr) minmax(10rem, 0.8fr);
@@ -815,6 +914,59 @@
 }
 
 @media (max-width: 44rem) {
+  .evidence-workbench {
+    gap: var(--aivis-space-4);
+    padding: var(--aivis-space-3);
+  }
+
+  .evidence-workbench-case-bar,
+  .evidence-workbench-review-actions {
+    padding: var(--aivis-space-3);
+  }
+
+  .evidence-workbench-case-bar__meta {
+    gap: var(--aivis-space-2);
+    grid-template-columns: 1fr;
+  }
+
+  .evidence-workbench-case-bar__meta div {
+    grid-template-columns: minmax(6rem, 0.35fr) minmax(0, 1fr);
+  }
+
+  .evidence-workbench-mobile-nav {
+    margin-left: calc(var(--aivis-space-1) * -1);
+    margin-right: calc(var(--aivis-space-1) * -1);
+    overflow-x: auto;
+  }
+
+  .evidence-workbench-mobile-nav__list {
+    grid-auto-columns: minmax(8.5rem, 1fr);
+    grid-auto-flow: column;
+    grid-template-columns: none;
+  }
+
+  .evidence-workbench-review-actions__button-grid,
+  .evidence-workbench-process-map__filters,
+  .evidence-workbench-process-map__canvas-controls {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .evidence-workbench-review-actions__action {
+    border-left: 0;
+    border-top: var(--aivis-border-width-thin) solid var(--aivis-shell-border-muted);
+    padding-left: 0;
+    padding-top: var(--aivis-space-3);
+  }
+
+  .evidence-workbench-review-actions__button-grid .qhds-button,
+  .evidence-workbench-review-actions__footer .qhds-button,
+  .evidence-workbench-source-inspector__inventory-link.qld__btn,
+  .evidence-workbench-process-map__filter {
+    justify-content: center;
+    width: 100%;
+  }
+
   .evidence-workbench-process-map__viewport {
     display: none;
   }

@@ -26,6 +26,7 @@ describe("QhdsLayout", () => {
     expect(html).toContain('<section class="qld__body qhds-layout__body">');
     expect(html).toContain('class="container-fluid qhds-layout__container"');
     expect(html).toContain('class="col-xs-12 col-lg-12 col-xl-12 qhds-layout__content qhds-layout__content--full" id="content"');
+    expect(html).toContain('id="content" tabindex="-1"');
     expect(html).toContain("Header");
     expect(html).toContain("Body");
     expect(html).toContain("Footer");
@@ -41,6 +42,7 @@ describe("QhdsLayout", () => {
     expect(html).toContain("vertical-nav");
     expect(html).toContain("qhds-layout--has-left-nav");
     expect(html).toContain('href="#section-navigation"');
+    expect(html).toContain("qhds-layout__skip-link--section-nav");
     expect(html).toContain('class="qhds-layout__left-nav" id="section-navigation"');
     expect(html).toContain('class="qld__body--left-nav qhds-layout__left-nav-content"');
     expect(html).toContain('class="col-xs-12 col-lg-12 col-xl-12 qhds-layout__content qhds-layout__content--full" id="content"');
@@ -89,6 +91,10 @@ describe("QhdsLayout", () => {
     expect(styles).toContain(".qhds-layout--app.qhds-layout--has-left-nav .qld__body--left-nav .qhds-layout__container");
     expect(styles).toContain("padding-left: clamp(3rem, 5vw, 8rem)");
     expect(styles).toContain("padding-right: var(--qhds-space-10)");
+    expect(styles).toContain(".qhds-layout__skip-link--section-nav");
+    expect(styles).toContain("display: none");
+    expect(styles).toContain(".qhds-layout__content:focus");
+    expect(styles).toContain("outline: 3px solid var(--qhds-color-focus)");
   });
 
   it("keeps skip-link ownership in the layout when composed with QhdsHeader", () => {

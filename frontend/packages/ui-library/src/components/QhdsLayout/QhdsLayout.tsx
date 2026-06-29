@@ -55,7 +55,7 @@ export function QhdsLayout({
     <section className="qld__body qhds-layout__body">
       <div className="container-fluid qhds-layout__container">
         <div className="row">
-          <div aria-labelledby={contentLabelledBy} className={contentClasses.filter(Boolean).join(" ")} id={mainId}>
+          <div aria-labelledby={contentLabelledBy} className={contentClasses.filter(Boolean).join(" ")} id={mainId} tabIndex={-1}>
             {children}
           </div>
         </div>
@@ -70,7 +70,7 @@ export function QhdsLayout({
           {skipLinkLabel}
         </a>
         {hasSideNav ? (
-          <a className="qld__skip-link__link qhds-layout__skip-link" href="#section-navigation">
+          <a className="qld__skip-link__link qhds-layout__skip-link qhds-layout__skip-link--section-nav" href="#section-navigation">
             Skip to section navigation
           </a>
         ) : null}

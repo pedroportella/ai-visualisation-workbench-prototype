@@ -27,6 +27,9 @@ describe("WorkbenchAppShell", () => {
     expect(html).toContain("qld__left-nav");
     expect(html).toContain("Skip to section navigation");
     expect(html).toContain('id="section-navigation"');
+    expect(html).toContain('href="#review-decision-title"');
+    expect(html).toContain('href="#audit-summary"');
+    expect(html).not.toContain("qld__left-nav__item-toggle");
     expect(html).toContain('href="https://www.qld.gov.au/contact-us"');
     expect(html).toContain("Contact us");
     expect(html).not.toContain("Local fixture");

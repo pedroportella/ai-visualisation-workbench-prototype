@@ -124,8 +124,8 @@ export function ReviewDecisionBar({
       <div className="evidence-workbench-review-actions__footer">
         <div className="evidence-workbench-review-actions__copy-state">
           <QhdsButton
+            aria-disabled={copyDisabled ? "true" : undefined}
             aria-describedby={copyReasonId}
-            disabled={copyDisabled}
             type="button"
             variant="secondary"
           >
@@ -165,9 +165,16 @@ function ReviewActionButton({
       data-action-tone={action.uiTone}
     >
       <QhdsButton
+        aria-disabled={availability.disabled ? "true" : undefined}
         aria-describedby={reasonId}
-        disabled={availability.disabled}
-        onClick={() => onApplyAction(action.id, reviewerNote)}
+        onClick={(event) => {
+          if (availability.disabled) {
+            event.preventDefault();
+            return;
+          }
+
+          onApplyAction(action.id, reviewerNote);
+        }}
         type="button"
         variant={action.uiTone === "primary" ? "primary" : "secondary"}
       >

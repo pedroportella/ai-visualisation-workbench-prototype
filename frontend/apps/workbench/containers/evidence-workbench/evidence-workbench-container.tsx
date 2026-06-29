@@ -29,6 +29,29 @@ import {
 import { SourceTracePanel } from "./source-trace-panel";
 import { WorkbenchCaseBar } from "./workbench-case-bar";
 
+const mobileSectionLinks = [
+  {
+    description: "Actions and draft",
+    href: "#review-decision-title",
+    label: "Review"
+  },
+  {
+    description: "Inventory",
+    href: "#sources-title",
+    label: "Sources"
+  },
+  {
+    description: "Process path",
+    href: "#process-map-title",
+    label: "Map"
+  },
+  {
+    description: "Local events",
+    href: "#audit-summary",
+    label: "Audit"
+  }
+];
+
 export default function EvidenceWorkbenchContainer({
   data
 }: Readonly<{ data: EvidenceWorkbenchViewModel }>) {
@@ -67,6 +90,8 @@ export default function EvidenceWorkbenchContainer({
           <p>Review can continue against the fallback fixture state.</p>
         </QhdsPageAlert>
       ) : null}
+
+      <WorkbenchMobileSectionNav />
 
       <ReviewDecisionBar
         onApplyAction={(actionId, reviewerNote) =>
@@ -167,13 +192,21 @@ export default function EvidenceWorkbenchContainer({
               status="Local fixture"
             />
             <EvidenceProcessMap graph={data.graph} />
-            <p className="evidence-workbench-review-note">
-              Copy state is {review.copyState}. Approval remains blocked by{" "}
-              {review.blockedByWarningIds.join(", ")} with{" "}
-              {review.activeWarningCount} active fixture warnings. Audit{" "}
-              {decisionState.audit.id} last action is{" "}
-              {decisionState.audit.lastReviewActionId ?? "none"}.
-            </p>
+            <aside
+              aria-labelledby="audit-summary-title"
+              className="evidence-workbench-audit-summary"
+              id="audit-summary"
+              tabIndex={0}
+            >
+              <h3 id="audit-summary-title">Audit summary</h3>
+              <p className="evidence-workbench-review-note">
+                Copy state is {review.copyState}. Approval remains blocked by{" "}
+                {review.blockedByWarningIds.join(", ")} with{" "}
+                {review.activeWarningCount} active fixture warnings. Audit{" "}
+                {decisionState.audit.id} last action is{" "}
+                {decisionState.audit.lastReviewActionId ?? "none"}.
+              </p>
+            </aside>
             <AivisEvidenceWarningList
               ariaLabel="Active fixture warnings"
               warnings={decisionState.warnings.map((warning) => ({
@@ -226,6 +259,30 @@ export default function EvidenceWorkbenchContainer({
         </QhdsCol>
       </QhdsRow>
     </section>
+  );
+}
+
+function WorkbenchMobileSectionNav() {
+  return (
+    <nav
+      aria-label="Evidence Workbench mobile sections"
+      className="evidence-workbench-mobile-nav"
+    >
+      <ul className="evidence-workbench-mobile-nav__list">
+        {mobileSectionLinks.map((link) => (
+          <li key={link.href}>
+            <a
+              aria-label={`Jump to ${link.label.toLowerCase()} section: ${link.description}`}
+              className="evidence-workbench-mobile-nav__link"
+              href={link.href}
+            >
+              <span>{link.label}</span>
+              <small>{link.description}</small>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
 

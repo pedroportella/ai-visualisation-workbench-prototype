@@ -49,13 +49,17 @@
   min-width: 0;
 }
 
-.qhds-layout__main:focus,
-.qhds-layout__content:focus {
+.qhds-layout__main:focus {
   outline: none;
 }
 
 .qhds-layout__content {
   min-width: 0;
+}
+
+.qhds-layout__content:focus {
+  outline: 3px solid var(--qhds-color-focus);
+  outline-offset: 2px;
 }
 
 .qhds-layout__content--body {
@@ -76,6 +80,12 @@
 @media (max-width: 48rem) {
   .qhds-layout__body {
     padding: var(--qhds-section-padding-mobile) 0;
+  }
+}
+
+@media (max-width: 991px) {
+  .qhds-layout__skip-link--section-nav {
+    display: none;
   }
 }
 

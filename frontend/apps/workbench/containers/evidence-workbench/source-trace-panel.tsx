@@ -84,7 +84,10 @@ export function SourceTracePanel({
                 id={`source-${source.id}`}
                 open={expandedByDefault}
               >
-                <summary className="evidence-workbench-source-inventory__summary">
+                <summary
+                  aria-label={`${source.id}: ${source.title}. ${issueSummary.label}. Press Enter to toggle source details.`}
+                  className="evidence-workbench-source-inventory__summary"
+                >
                   <span className="evidence-workbench-source-inventory__source">
                     <span className="evidence-workbench-source-inventory__cell-label">
                       Source

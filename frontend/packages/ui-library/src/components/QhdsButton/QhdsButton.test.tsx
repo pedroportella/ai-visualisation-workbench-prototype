@@ -117,6 +117,9 @@ describe("QhdsButton", () => {
     expect(anchorHtml).toContain('aria-disabled="true"');
     expect(anchorHtml).toContain('tabindex="-1"');
     expect(anchorHtml).toContain("qhds-button--disabled");
+    expect(readFileSync("src/components/QhdsButton/QhdsButton.scss", "utf8")).toContain(
+      '.qhds-button[aria-disabled="true"]'
+    );
   });
 
   it("suppresses disabled anchor clicks", () => {

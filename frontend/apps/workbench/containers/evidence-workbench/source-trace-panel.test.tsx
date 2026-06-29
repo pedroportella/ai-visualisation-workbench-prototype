@@ -212,6 +212,7 @@ describe("SourceTracePanel", () => {
     expect(html).toContain("Owner");
     expect(html).toContain("Citations");
     expect(html).toContain("Issue");
+    expect(html).toContain("Press Enter to toggle source details.");
     expect(html).toContain("SRC-002");
     expect(html).toContain("Interchange Operations");
     expect(html).toContain("WARN-001 blocks approval");
