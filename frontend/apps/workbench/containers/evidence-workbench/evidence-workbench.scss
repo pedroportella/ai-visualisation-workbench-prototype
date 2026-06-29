@@ -24,6 +24,7 @@
 #sources-title,
 #audit-summary,
 #scenario-title,
+#supporting-workspaces-title,
 #source-inventory,
 #selected-claim-sources {
   scroll-margin-top: var(--aivis-space-4);
@@ -118,7 +119,8 @@
 }
 
 .evidence-workbench-mobile-nav__link:hover,
-.evidence-workbench-mobile-nav__link:focus {
+.evidence-workbench-mobile-nav__link:focus,
+.evidence-workbench-mobile-nav__link[aria-current="page"] {
   background: var(--aivis-color-accent-surface);
   color: var(--aivis-shell-accent);
   text-decoration: underline;
@@ -330,12 +332,12 @@
   padding: var(--aivis-workbench-list-item-padding);
 }
 
-.evidence-workbench-audit-summary h3,
+.evidence-workbench-audit-summary .qhds-card__heading,
 .evidence-workbench-audit-summary p {
   margin: 0;
 }
 
-.evidence-workbench-audit-summary h3 {
+.evidence-workbench-audit-summary .qhds-card__heading {
   color: var(--aivis-shell-text);
   font-size: var(--aivis-font-size-body-sm);
   line-height: var(--aivis-line-height-heading);
@@ -499,7 +501,7 @@
   overflow: auto;
 }
 
-.evidence-workbench-process-map__selected-node h3,
+.evidence-workbench-process-map__selected-node .qhds-card__heading,
 .evidence-workbench-process-map__fallback h3,
 .evidence-workbench-process-map__fallback h4,
 .evidence-workbench-process-map__fallback p,
@@ -508,7 +510,7 @@
   margin: 0;
 }
 
-.evidence-workbench-process-map__selected-node h3,
+.evidence-workbench-process-map__selected-node .qhds-card__heading,
 .evidence-workbench-process-map__fallback h3,
 .evidence-workbench-process-map__fallback h4 {
   color: var(--aivis-shell-text);
@@ -545,6 +547,7 @@
 }
 
 .evidence-workbench-claim-stack,
+.evidence-workbench-route-list,
 .evidence-workbench-source-inspector__source-list {
   display: grid;
   gap: var(--aivis-workbench-copy-gap);
@@ -556,6 +559,32 @@
 .evidence-workbench-claims-section .evidence-workbench-claim-stack {
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
   margin-top: 0;
+}
+
+.evidence-workbench-route-list {
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+
+.evidence-workbench-route-card .qhds-card__content-body,
+.evidence-workbench-process-map__selected-node .qhds-card__content-body,
+.evidence-workbench-source-inspector__claim .qhds-card__content-body,
+.evidence-workbench-source-inspector__source .qhds-card__content-body,
+.evidence-workbench-source-inventory-summary .qhds-card__content-body,
+.evidence-workbench-audit-summary .qhds-card__content-body {
+  display: grid;
+  gap: var(--aivis-workbench-copy-gap);
+  min-width: 0;
+}
+
+.evidence-workbench-route-card.qhds-card {
+  background: var(--aivis-color-card-surface);
+  border-color: var(--aivis-color-card-border);
+}
+
+.evidence-workbench-route-card p {
+  color: var(--aivis-shell-muted);
+  line-height: var(--aivis-line-height-note);
+  margin: 0;
 }
 
 .evidence-workbench-source-inspector__source-list {

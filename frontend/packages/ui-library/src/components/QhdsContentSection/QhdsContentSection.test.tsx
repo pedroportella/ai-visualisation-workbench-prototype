@@ -18,4 +18,21 @@ describe("QhdsContentSection", () => {
     expect(html).toContain("qld__abstract");
     expect(html).toContain("Reference SC-2026-0001");
   });
+
+  it("renders compact dense-section leads without qld abstract styling", () => {
+    const html = renderToStaticMarkup(
+      <QhdsContentSection
+        heading="Source inspector"
+        headingLevel={3}
+        lead="Focused source evidence for the selected claim."
+        leadDensity="compact"
+      >
+        <p>Selected source detail.</p>
+      </QhdsContentSection>
+    );
+
+    expect(html).toContain("<h3");
+    expect(html).toContain("qhds-content-section__lead--compact");
+    expect(html).not.toContain("qld__abstract");
+  });
 });

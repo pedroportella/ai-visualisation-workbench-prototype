@@ -1,2 +1,7 @@
 export { QhdsCard } from "./QhdsCard";
-export type { QhdsCardProps } from "./QhdsCard";
+export type {
+  QhdsCardActionMode,
+  QhdsCardDensity,
+  QhdsCardProps,
+  QhdsCardVariant
+} from "./QhdsCard";

@@ -6,6 +6,7 @@ import {
   AivisEvidencePanelHeader,
   AivisEvidenceStatus,
   AivisEvidenceTokenList,
+  QhdsCard,
   type AivisEvidenceTone
 } from "@aivis/ui-library";
 
@@ -32,12 +33,17 @@ export function SourceTracePanel({
 
   return (
     <div className="evidence-workbench-source-trace">
-      <section
+      <QhdsCard
+        actionMode="none"
         aria-label="Compact source inventory priority"
         className="evidence-workbench-source-inventory-summary"
+        density="compact"
+        heading="Compact source inventory"
+        headingLevel={3}
+        variant="workbench"
       >
         <AivisEvidencePanelHeader
-          label="Compact source inventory"
+          label="Source priority"
           status={`${sources.length} source${sources.length === 1 ? "" : "s"}`}
         />
         <p>
@@ -54,7 +60,7 @@ export function SourceTracePanel({
             label: source.id
           }))}
         />
-      </section>
+      </QhdsCard>
 
       <AivisEvidenceFilterNav
         ariaLabel="Source inventory groups"

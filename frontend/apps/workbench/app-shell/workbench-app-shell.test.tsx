@@ -2,13 +2,22 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { WorkbenchAppShell } from "./workbench-app-shell";
 
 const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "workbench-app-shell.scss"), "utf8");
+const mockUsePathname = vi.hoisted(() => vi.fn(() => "/evidence-workbench"));
+
+vi.mock("next/navigation", () => ({
+  usePathname: mockUsePathname
+}));
 
 describe("WorkbenchAppShell", () => {
+  beforeEach(() => {
+    mockUsePathname.mockReturnValue("/evidence-workbench");
+  });
+
   it("renders the QGDS-style header, pre-header, crest lockup and side navigation", () => {
     const html = renderToStaticMarkup(
       <WorkbenchAppShell>
@@ -27,8 +36,13 @@ describe("WorkbenchAppShell", () => {
     expect(html).toContain("qld__left-nav");
     expect(html).toContain("Skip to section navigation");
     expect(html).toContain('id="section-navigation"');
-    expect(html).toContain('href="#review-decision-title"');
-    expect(html).toContain('href="#audit-summary"');
+    expect(html).toContain("Decision overview");
+    expect(html).toContain('href="/evidence-workbench/sources"');
+    expect(html).toContain('href="/evidence-workbench/process"');
+    expect(html).toContain('href="/evidence-workbench/audit"');
+    expect(html).toContain('aria-current="page"');
+    expect(html).not.toContain('href="#review-decision-title"');
+    expect(html).not.toContain('href="#audit-summary"');
     expect(html).not.toContain("qld__left-nav__item-toggle");
     expect(html).toContain('href="https://www.qld.gov.au/contact-us"');
     expect(html).toContain("Contact us");

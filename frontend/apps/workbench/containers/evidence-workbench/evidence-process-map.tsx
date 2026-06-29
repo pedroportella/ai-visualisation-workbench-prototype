@@ -14,6 +14,7 @@ import {
   type Node,
   type NodeProps
 } from "@xyflow/react";
+import { QhdsCard } from "@aivis/ui-library";
 
 import type {
   EvidenceWorkbenchGraphPosition,
@@ -288,11 +289,15 @@ function ProcessMapCanvasControls() {
 
 function SelectedNodeDetail({ node }: { node: EvidenceProcessMapNodeModel }) {
   return (
-    <section
-      aria-labelledby="process-map-selected-node-title"
+    <QhdsCard
+      actionMode="none"
       className="evidence-workbench-process-map__selected-node"
+      density="compact"
+      heading="Selected graph node"
+      headingId="process-map-selected-node-title"
+      headingLevel={3}
+      variant="workbench"
     >
-      <h3 id="process-map-selected-node-title">Selected graph node</h3>
       <dl>
         <div>
           <dt>Node</dt>
@@ -315,7 +320,7 @@ function SelectedNodeDetail({ node }: { node: EvidenceProcessMapNodeModel }) {
           <dd>{node.warningLabel}</dd>
         </div>
       </dl>
-    </section>
+    </QhdsCard>
   );
 }
 

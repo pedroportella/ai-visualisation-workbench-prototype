@@ -15,6 +15,12 @@
   color: var(--qhds-color-muted);
 }
 
+.qhds-content-section__lead--compact {
+  font-size: var(--aivis-font-size-body-sm, var(--qhds-font-size-md));
+  line-height: var(--aivis-line-height-note, var(--qhds-line-height-body));
+  max-width: var(--aivis-workbench-copy-max-width, none);
+}
+
 .qhds-content-section__body {
   min-width: 0;
 }

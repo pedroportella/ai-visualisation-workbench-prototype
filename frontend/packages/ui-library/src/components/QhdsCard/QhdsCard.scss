@@ -24,6 +24,24 @@
   margin: 0 0 var(--qhds-space-2);
 }
 
+.qhds-card--density-compact {
+  gap: var(--qhds-space-3);
+  padding: var(--aivis-workbench-card-padding, var(--qhds-space-4));
+}
+
+.qhds-card--variant-workbench {
+  border-radius: var(--aivis-radius-sm, var(--qhds-radius-md));
+  margin-block: 0;
+}
+
+.qhds-card--variant-workbench .qhds-card__heading {
+  font-size: var(--aivis-font-size-body-sm, var(--qhds-font-size-md));
+}
+
+.qhds-card__heading-link {
+  color: inherit;
+}
+
 .qhds-card__content-body > :first-child {
   margin-top: 0;
 }

@@ -131,9 +131,12 @@ export function AivisEvidenceContextAnchors({
         <p className="aivis-evidence-context__date">{dateLabel}</p>
       </div>
       <QhdsCard
+        actionMode="none"
         className="aivis-evidence-card aivis-evidence-context__anchors"
+        density="compact"
         heading="Public context anchors"
         headingLevel={3}
+        variant="workbench"
       >
         <p>{anchorSummary}</p>
         <ul aria-label={ariaLabel} className="aivis-evidence-anchor-list">
@@ -174,6 +177,7 @@ export function AivisEvidenceClaimCard({
   return (
     <QhdsCard
       {...props}
+      actionMode="none"
       aria-current={selected ? "true" : props["aria-current"]}
       className={[
         "aivis-evidence-card",
@@ -185,8 +189,10 @@ export function AivisEvidenceClaimCard({
         .filter(Boolean)
         .join(" ")}
       data-selected-claim={selected ? "true" : undefined}
+      density="compact"
       heading={title}
       headingLevel={3}
+      variant="workbench"
     >
       <div className="aivis-evidence-card__meta">
         <span className="aivis-evidence-card__id">{claimId}</span>
@@ -226,6 +232,7 @@ export function AivisEvidenceSourceCard({
   return (
     <QhdsCard
       {...props}
+      actionMode="none"
       aria-current={selected ? "true" : props["aria-current"]}
       className={[
         "aivis-evidence-card",
@@ -236,8 +243,10 @@ export function AivisEvidenceSourceCard({
       ]
         .filter(Boolean)
         .join(" ")}
+      density="compact"
       heading={title}
       headingLevel={3}
+      variant="workbench"
     >
       <div className="aivis-evidence-source-card__header">
         <span className="aivis-evidence-card__id">{sourceId}</span>
@@ -275,9 +284,12 @@ export function AivisEvidencePathList({
       {items.map((item, index) => (
         <li key={index}>
           <QhdsCard
+            actionMode="none"
             className="aivis-evidence-card aivis-evidence-path-list__card"
+            density="compact"
             heading={item.heading}
             headingLevel={3}
+            variant="workbench"
           >
             <span>{item.summary}</span>
           </QhdsCard>

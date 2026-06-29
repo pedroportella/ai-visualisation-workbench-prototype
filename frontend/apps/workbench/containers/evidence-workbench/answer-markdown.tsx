@@ -13,6 +13,7 @@ interface AnswerMarkdownProps {
   citations: EvidenceWorkbenchCitation[];
   markdown: string;
   selectedClaimId: string;
+  sourceInventoryPath?: string;
 }
 
 type MarkdownBlock =
@@ -28,7 +29,8 @@ const CITATION_MARKER_PATTERN = /^\[CIT-\d{3}-[A-Z]\]$/;
 export function AnswerMarkdown({
   citations,
   markdown,
-  selectedClaimId
+  selectedClaimId,
+  sourceInventoryPath = ""
 }: Readonly<AnswerMarkdownProps>): ReactElement {
   const citationsById = new Map(citations.map((citation) => [citation.id, citation]));
   const blocks = parseMarkdown(markdown);
@@ -39,7 +41,8 @@ export function AnswerMarkdown({
         renderBlock(block, {
           citationsById,
           keyPrefix: `answer-markdown-${index}`,
-          selectedClaimId
+          selectedClaimId,
+          sourceInventoryPath
         })
       )}
     </div>
@@ -137,6 +140,7 @@ interface RenderInlineContext {
   citationsById: Map<string, EvidenceWorkbenchCitation>;
   keyPrefix: string;
   selectedClaimId: string;
+  sourceInventoryPath: string;
 }
 
 function renderInlineContent(text: string, context: RenderInlineContext): ReactNode[] {
@@ -195,7 +199,7 @@ function renderCitationMarker(
       aria-current={isSelectedClaim ? "true" : undefined}
       aria-label={citationAriaLabel(citation)}
       className={citationClassName(citation, isSelectedClaim)}
-      href={`#source-${citation.sourceId}`}
+      href={`${context.sourceInventoryPath}#source-${citation.sourceId}`}
       key={key}
     >
       {citation.marker}

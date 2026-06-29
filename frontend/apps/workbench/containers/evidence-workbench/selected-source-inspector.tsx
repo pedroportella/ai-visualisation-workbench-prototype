@@ -5,7 +5,8 @@ import {
   AivisEvidencePanelHeader,
   AivisEvidenceStatus,
   AivisEvidenceWarningGroup,
-  QhdsButton
+  QhdsButton,
+  QhdsCard
 } from "@aivis/ui-library";
 
 import type {
@@ -17,12 +18,14 @@ import type {
 interface SelectedSourceInspectorProps {
   selectedClaim?: EvidenceWorkbenchClaim;
   selectedClaimId: string;
+  sourceInventoryPath?: string;
   sources: EvidenceWorkbenchSource[];
 }
 
 export function SelectedSourceInspector({
   selectedClaim,
   selectedClaimId,
+  sourceInventoryPath = "",
   sources
 }: Readonly<SelectedSourceInspectorProps>): ReactElement {
   const focusedSources = sources.filter((source) => source.isSelectedClaimSource);
@@ -38,19 +41,23 @@ export function SelectedSourceInspector({
         statusTone={focusedSources.some((source) => sourceStatusTone(source.status) === "warning") ? "warning" : "success"}
       />
 
-      <section
+      <QhdsCard
+        actionMode="none"
         aria-label={`Selected claim ${selectedClaimId}`}
         className="evidence-workbench-source-inspector__claim"
+        density="compact"
+        heading={selectedClaimId}
+        headingLevel={3}
+        variant="workbench"
       >
         <p className="evidence-workbench-source-inspector__eyebrow">Selected claim</p>
-        <h3>{selectedClaimId}</h3>
         {selectedClaim ? <p>{selectedClaim.text}</p> : null}
         {selectedClaim?.status ? (
           <AivisEvidenceStatus tone={/missing|stale|weak|partial/i.test(selectedClaim.status) ? "warning" : "success"}>
             {selectedClaim.status}
           </AivisEvidenceStatus>
         ) : null}
-      </section>
+      </QhdsCard>
 
       <section
         aria-labelledby="selected-claim-linked-sources-title"
@@ -63,7 +70,7 @@ export function SelectedSourceInspector({
               <li key={source.id}>
                 <a
                   aria-label={`${source.id}, ${source.status}. Jump to full source inventory record.`}
-                  href={`#source-${source.id}`}
+                  href={sourceHref(sourceInventoryPath, source.id)}
                 >
                   {source.id}
                 </a>
@@ -96,14 +103,20 @@ export function SelectedSourceInspector({
       >
         {focusedSources.map((source) => (
           <li key={source.id}>
-            <article className="evidence-workbench-source-inspector__source">
+            <QhdsCard
+              actionMode="none"
+              className="evidence-workbench-source-inspector__source"
+              density="compact"
+              heading={source.title}
+              headingLevel={4}
+              variant="workbench"
+            >
               <div className="evidence-workbench-source-inspector__source-heading">
-                <a href={`#source-${source.id}`}>{source.id}</a>
+                <a href={sourceHref(sourceInventoryPath, source.id)}>{source.id}</a>
                 <AivisEvidenceStatus tone={sourceStatusTone(source.status)}>
                   {source.status}
                 </AivisEvidenceStatus>
               </div>
-              <h4>{source.title}</h4>
               <dl
                 aria-label={`${source.id} selected source details`}
                 className="evidence-workbench-source-inspector__source-meta"
@@ -142,14 +155,14 @@ export function SelectedSourceInspector({
                   warnings={source.relationshipWarnings.map(inspectorWarning)}
                 />
               </details>
-            </article>
+            </QhdsCard>
           </li>
         ))}
       </ul>
 
       <QhdsButton
         className="evidence-workbench-source-inspector__inventory-link"
-        href="#source-inventory"
+        href={`${sourceInventoryPath}#source-inventory`}
         variant="secondary"
       >
         View full source inventory
@@ -169,6 +182,10 @@ export function selectedSourceWarnings(
 
 function sourceStatusTone(status: string) {
   return /missing|stale|conditional|weak|partial/i.test(status) ? "warning" : "success";
+}
+
+function sourceHref(sourceInventoryPath: string, sourceId: string): string {
+  return `${sourceInventoryPath}#source-${sourceId}`;
 }
 
 function inspectorWarning(warning: EvidenceWorkbenchSourceWarning) {

@@ -2,59 +2,9 @@ import type { ReactNode } from "react";
 import {
   QhdsFooter,
   QhdsHeader,
-  QhdsIcon,
-  QhdsLayout,
-  QhdsSideNav
+  QhdsLayout
 } from "@aivis/ui-library";
-
-function WorkbenchSideNav() {
-  return (
-    <QhdsSideNav
-      activeHref="/evidence-workbench"
-      ariaLabel="Evidence Workbench navigation"
-      heading="Evidence Workbench"
-      headingHref="/evidence-workbench"
-      headingIcon={<QhdsIcon size="md" symbol="home" />}
-      items={[
-        {
-          href: "#answer-title",
-          icon: <QhdsIcon size="md" symbol="document" />,
-          label: "Draft answer"
-        },
-        {
-          href: "#source-inspector-title",
-          icon: <QhdsIcon size="md" symbol="document" />,
-          label: "Source inspector"
-        },
-        {
-          href: "#review-decision-title",
-          icon: <QhdsIcon size="md" symbol="clock" />,
-          label: "Review actions"
-        },
-        {
-          href: "#process-map-title",
-          icon: <QhdsIcon size="md" symbol="location" />,
-          label: "Process map"
-        },
-        {
-          href: "#sources-title",
-          icon: <QhdsIcon size="md" symbol="document" />,
-          label: "Source inventory"
-        },
-        {
-          href: "#audit-summary",
-          icon: <QhdsIcon size="md" symbol="clock" />,
-          label: "Audit summary"
-        },
-        {
-          href: "#scenario-title",
-          icon: <QhdsIcon size="md" symbol="location" />,
-          label: "Scenario context"
-        }
-      ]}
-    />
-  );
-}
+import { WorkbenchSideNav } from "./workbench-side-nav";
 
 export function WorkbenchAppShell({ children }: Readonly<{ children: ReactNode }>) {
   return (
