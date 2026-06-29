@@ -89,8 +89,40 @@ export interface EvidenceWorkbenchWarning {
 }
 
 export interface EvidenceWorkbenchGraphStep {
+  includeIds: string[];
+  step: number;
   heading: string;
   summary: string;
+}
+
+export interface EvidenceWorkbenchGraphPosition {
+  column: number;
+  row: number;
+}
+
+export interface EvidenceWorkbenchGraphNode {
+  displayOrder: number;
+  graphId: string;
+  id: string;
+  label: string;
+  positionHint: EvidenceWorkbenchGraphPosition;
+  refObjectId: string;
+  refObjectType: string;
+  status: string;
+  type: string;
+  warningIds: string[];
+}
+
+export interface EvidenceWorkbenchGraphEdge {
+  fromNodeId: string;
+  graphId: string;
+  id: string;
+  label: string;
+  refObjectId: string;
+  refObjectType: string;
+  toNodeId: string;
+  type: string;
+  warningIds: string[];
 }
 
 export interface EvidenceWorkbenchFetchState {
@@ -116,7 +148,16 @@ export interface EvidenceWorkbenchViewModel {
   fetchState: EvidenceWorkbenchFetchState;
   graph: {
     accessibleSummary: string;
+    defaultFocusedSourceIds: string[];
+    defaultFocusedWarningIds: string[];
+    defaultSelectedClaimId: string;
+    defaultSelectedNodeId: string;
+    edges: EvidenceWorkbenchGraphEdge[];
     fallbackSteps: EvidenceWorkbenchGraphStep[];
+    id: string;
+    layoutHint: string;
+    nodes: EvidenceWorkbenchGraphNode[];
+    smallViewportFallback: string;
   };
   review: {
     activeWarningCount: number;

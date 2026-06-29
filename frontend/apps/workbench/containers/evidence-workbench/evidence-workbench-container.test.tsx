@@ -17,6 +17,7 @@ describe("EvidenceWorkbenchContainer", () => {
     const caseBarIndex = html.indexOf("evidence-workbench-case-bar");
     const answerIndex = html.indexOf('id="answer-title"');
     const inspectorIndex = html.indexOf('id="source-inspector-title"');
+    const processMapIndex = html.indexOf('id="process-map-title"');
     const inventoryIndex = html.indexOf('id="sources-title"');
     const scenarioIndex = html.indexOf('id="scenario-title"');
 
@@ -33,7 +34,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(caseBarIndex).toBeGreaterThanOrEqual(0);
     expect(answerIndex).toBeGreaterThan(caseBarIndex);
     expect(inspectorIndex).toBeGreaterThan(answerIndex);
-    expect(inventoryIndex).toBeGreaterThan(inspectorIndex);
+    expect(processMapIndex).toBeGreaterThan(inspectorIndex);
+    expect(inventoryIndex).toBeGreaterThan(processMapIndex);
     expect(scenarioIndex).toBeGreaterThan(inventoryIndex);
     expect(html).toContain("row evidence-workbench-grid");
     expect(html).toContain("evidence-workbench-primary-frame");
@@ -41,11 +43,14 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("col-xs-12 col-lg-5 col-xl-5");
     expect(html).toContain("qhds-content-section");
     expect(html).toContain("Source inspector");
+    expect(html).toContain("Evidence process map");
+    expect(html).toContain("React Flow graph");
+    expect(html).toContain("evidence-workbench-process-map");
+    expect(html).toContain("Text process map");
     expect(html).toContain("selected-claim-sources");
     expect(html).toContain("View full source inventory");
     expect(html).toContain("qld__card");
     expect(html).toContain("aivis-evidence-claim-card");
-    expect(html).toContain("aivis-evidence-path-list");
     expect(html).toContain("qld__table__wrapper");
     expect(html).toContain("qld__callout");
     expect(html).not.toContain("evidence-workbench-panel-wide");
@@ -56,6 +61,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain("background: var(--aivis-color-panel-surface);");
     expect(styles).toContain(".evidence-workbench .qhds-content-section");
     expect(styles).toContain(".evidence-workbench-answer-markdown");
+    expect(styles).toContain(".evidence-workbench-process-map__viewport");
+    expect(styles).toContain("data-node-tone=\"warning\"");
     expect(styles).not.toMatch(/#[0-9a-fA-F]{3,8}|rgb\(|rgba\(/);
   });
 });

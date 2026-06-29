@@ -4,6 +4,9 @@ import { fallbackEvidenceWorkbenchData } from "./fallback-fixture";
 import type {
   EvidenceWorkbenchCitation,
   EvidenceWorkbenchContextAnchor,
+  EvidenceWorkbenchGraphEdge,
+  EvidenceWorkbenchGraphNode,
+  EvidenceWorkbenchGraphPosition,
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter,
   EvidenceWorkbenchSourceWarning,
@@ -112,10 +115,48 @@ interface SourceFixture {
 
 interface EvidenceGraphFixture {
   accessibleSummary: string;
+  defaultFocusedSourceIds: string[];
+  defaultFocusedWarningIds: string[];
+  defaultSelectedClaimId: string;
+  defaultSelectedNodeId: string;
+  id: string;
+  layoutHint: string;
+  smallViewportFallback: string;
+}
+
+interface EvidenceGraphPositionFixture {
+  column: number;
+  row: number;
+}
+
+interface EvidenceGraphNodeFixture {
+  displayOrder: number;
+  graphId: string;
+  id: string;
+  label: string;
+  positionHint: EvidenceGraphPositionFixture;
+  refObjectId: string;
+  refObjectType: string;
+  status: string;
+  type: string;
+  warningIds: string[];
+}
+
+interface EvidenceGraphEdgeFixture {
+  fromNodeId: string;
+  graphId: string;
+  id: string;
+  label: string;
+  refObjectId: string;
+  refObjectType: string;
+  toNodeId: string;
+  type: string;
+  warningIds: string[];
 }
 
 interface EvidenceGraphStepFixture {
   heading: string;
+  includeIds: string[];
   step: number;
   summary: string;
 }
@@ -137,7 +178,9 @@ interface SourceInventoryResponse extends FixtureMetadata {
 }
 
 interface EvidenceGraphResponse extends FixtureMetadata {
+  evidenceEdges: EvidenceGraphEdgeFixture[];
   evidenceGraph: EvidenceGraphFixture;
+  evidenceNodes: EvidenceGraphNodeFixture[];
   smallViewportFallbackSteps: EvidenceGraphStepFixture[];
 }
 
@@ -234,13 +277,27 @@ function buildEvidenceWorkbenchViewModel(
     },
     graph: {
       accessibleSummary: graphResponse.evidenceGraph.accessibleSummary,
+      defaultFocusedSourceIds: graphResponse.evidenceGraph.defaultFocusedSourceIds,
+      defaultFocusedWarningIds: graphResponse.evidenceGraph.defaultFocusedWarningIds,
+      defaultSelectedClaimId: graphResponse.evidenceGraph.defaultSelectedClaimId,
+      defaultSelectedNodeId: graphResponse.evidenceGraph.defaultSelectedNodeId,
+      edges: graphResponse.evidenceEdges.map(mapGraphEdge),
       fallbackSteps: graphResponse.smallViewportFallbackSteps
         .slice()
         .sort((left, right) => left.step - right.step)
         .map((step) => ({
+          includeIds: step.includeIds,
+          step: step.step,
           heading: step.heading,
           summary: step.summary
-        }))
+        })),
+      id: graphResponse.evidenceGraph.id,
+      layoutHint: graphResponse.evidenceGraph.layoutHint,
+      nodes: graphResponse.evidenceNodes
+        .slice()
+        .sort((left, right) => left.displayOrder - right.displayOrder)
+        .map(mapGraphNode),
+      smallViewportFallback: graphResponse.evidenceGraph.smallViewportFallback
     },
     review: {
       activeWarningCount: answerResponse.reviewState.activeWarningIds.length,
@@ -285,6 +342,42 @@ function buildEvidenceWorkbenchViewModel(
       message: warning.message,
       severity: formatLabel(warning.severity)
     }))
+  };
+}
+
+function mapGraphNode(node: EvidenceGraphNodeFixture): EvidenceWorkbenchGraphNode {
+  return {
+    displayOrder: node.displayOrder,
+    graphId: node.graphId,
+    id: node.id,
+    label: node.label,
+    positionHint: mapGraphPosition(node.positionHint),
+    refObjectId: node.refObjectId,
+    refObjectType: node.refObjectType,
+    status: node.status,
+    type: node.type,
+    warningIds: node.warningIds
+  };
+}
+
+function mapGraphEdge(edge: EvidenceGraphEdgeFixture): EvidenceWorkbenchGraphEdge {
+  return {
+    fromNodeId: edge.fromNodeId,
+    graphId: edge.graphId,
+    id: edge.id,
+    label: edge.label,
+    refObjectId: edge.refObjectId,
+    refObjectType: edge.refObjectType,
+    toNodeId: edge.toNodeId,
+    type: edge.type,
+    warningIds: edge.warningIds
+  };
+}
+
+function mapGraphPosition(position: EvidenceGraphPositionFixture): EvidenceWorkbenchGraphPosition {
+  return {
+    column: position.column,
+    row: position.row
   };
 }
 

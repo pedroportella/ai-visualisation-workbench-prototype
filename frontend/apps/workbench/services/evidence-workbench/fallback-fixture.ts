@@ -1,5 +1,7 @@
 import type {
   EvidenceWorkbenchContextAnchor,
+  EvidenceWorkbenchGraphEdge,
+  EvidenceWorkbenchGraphNode,
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter,
   EvidenceWorkbenchViewModel
@@ -156,6 +158,143 @@ const fallbackSourceFilters: EvidenceWorkbenchSourceFilter[] = [
   )
 ];
 
+const fallbackGraphNodes: EvidenceWorkbenchGraphNode[] = [
+  graphNode("NODE-FALLBACK-Q", "question", "Fallback review question", "PromptContext", "CTX-FALLBACK", "question", 1, 1, 1),
+  graphNode("NODE-FALLBACK-CONTEXT", "prompt_context", "Bundled fixture context", "PromptContext", "CTX-FALLBACK", "missing_context", 2, 2, 1, [
+    "WARN-FALLBACK-002"
+  ]),
+  graphNode(
+    "NODE-FALLBACK-PCA-001",
+    "public_context_anchor",
+    "South Brisbane station",
+    "PublicContextAnchor",
+    "PCA-FALLBACK-001",
+    "context_only",
+    3,
+    2,
+    2
+  ),
+  graphNode(
+    "NODE-FALLBACK-SRC-002",
+    "source_warning",
+    "Synthetic wayfinding map extract",
+    "Source",
+    "SRC-FALLBACK-002",
+    "stale_blocker",
+    4,
+    3,
+    2,
+    ["WARN-FALLBACK-001", "WARN-FALLBACK-002"]
+  ),
+  graphNode(
+    "NODE-FALLBACK-SRC-003",
+    "missing_source",
+    "Dispatch confirmation placeholder",
+    "Source",
+    "SRC-FALLBACK-003",
+    "missing_blocker",
+    5,
+    3,
+    3,
+    ["WARN-FALLBACK-003"]
+  ),
+  graphNode(
+    "NODE-FALLBACK-CLAIM-003",
+    "answer_claim_warning",
+    "Step-free transfer assurance",
+    "AnswerClaim",
+    "Claim 3",
+    "requires_review",
+    6,
+    4,
+    2,
+    ["WARN-FALLBACK-002", "WARN-FALLBACK-003"]
+  ),
+  graphNode(
+    "NODE-FALLBACK-ACT-REQUEST-SOURCE-UPDATE",
+    "review_action",
+    "Request source update",
+    "ReviewAction",
+    "ACT-FALLBACK-REQUEST-SOURCE-UPDATE",
+    "primary_action_available",
+    7,
+    5,
+    2,
+    ["WARN-FALLBACK-001", "WARN-FALLBACK-003"]
+  )
+];
+
+const fallbackGraphEdges: EvidenceWorkbenchGraphEdge[] = [
+  graphEdge(
+    "EDGE-FALLBACK-Q-CONTEXT",
+    "NODE-FALLBACK-Q",
+    "NODE-FALLBACK-CONTEXT",
+    "frames",
+    "frames fallback context",
+    "PromptContext",
+    "CTX-FALLBACK"
+  ),
+  graphEdge(
+    "EDGE-FALLBACK-CONTEXT-PCA001",
+    "NODE-FALLBACK-CONTEXT",
+    "NODE-FALLBACK-PCA-001",
+    "uses_place_anchor",
+    "context anchor only",
+    "PublicContextAnchor",
+    "PCA-FALLBACK-001"
+  ),
+  graphEdge(
+    "EDGE-FALLBACK-CONTEXT-SRC002",
+    "NODE-FALLBACK-CONTEXT",
+    "NODE-FALLBACK-SRC-002",
+    "retrieves",
+    "retrieves stale fallback source",
+    "Source",
+    "SRC-FALLBACK-002",
+    ["WARN-FALLBACK-001"]
+  ),
+  graphEdge(
+    "EDGE-FALLBACK-CONTEXT-SRC003",
+    "NODE-FALLBACK-CONTEXT",
+    "NODE-FALLBACK-SRC-003",
+    "retrieves",
+    "expects missing fallback confirmation",
+    "Source",
+    "SRC-FALLBACK-003",
+    ["WARN-FALLBACK-003"]
+  ),
+  graphEdge(
+    "EDGE-FALLBACK-SRC002-CLAIM003",
+    "NODE-FALLBACK-SRC-002",
+    "NODE-FALLBACK-CLAIM-003",
+    "partial_support",
+    "fallback support remains conditional",
+    "Citation",
+    "CIT-FALLBACK-003-A",
+    ["WARN-FALLBACK-002"]
+  ),
+  graphEdge(
+    "EDGE-FALLBACK-SRC003-CLAIM003",
+    "NODE-FALLBACK-SRC-003",
+    "NODE-FALLBACK-CLAIM-003",
+    "missing_evidence",
+    "fallback confirmation missing",
+    "Citation",
+    "CIT-FALLBACK-003-B",
+    ["WARN-FALLBACK-003"]
+  ),
+  graphEdge(
+    "EDGE-FALLBACK-CLAIM003-ACT",
+    "NODE-FALLBACK-CLAIM-003",
+    "NODE-FALLBACK-ACT-REQUEST-SOURCE-UPDATE",
+    "requires_review",
+    "fallback source update required",
+    "SourceWarning",
+    "WARN-FALLBACK-003",
+    ["WARN-FALLBACK-002", "WARN-FALLBACK-003"]
+  )
+];
+
 function sourceFilter(
   id: string,
   label: string,
@@ -168,6 +307,58 @@ function sourceFilter(
     id,
     label,
     sourceIds: sources.map((source) => source.id)
+  };
+}
+
+function graphNode(
+  id: string,
+  type: string,
+  label: string,
+  refObjectType: string,
+  refObjectId: string,
+  status: string,
+  displayOrder: number,
+  column: number,
+  row: number,
+  warningIds: string[] = []
+): EvidenceWorkbenchGraphNode {
+  return {
+    displayOrder,
+    graphId: "GRAPH-FALLBACK",
+    id,
+    label,
+    positionHint: {
+      column,
+      row
+    },
+    refObjectId,
+    refObjectType,
+    status,
+    type,
+    warningIds
+  };
+}
+
+function graphEdge(
+  id: string,
+  fromNodeId: string,
+  toNodeId: string,
+  type: string,
+  label: string,
+  refObjectType: string,
+  refObjectId: string,
+  warningIds: string[] = []
+): EvidenceWorkbenchGraphEdge {
+  return {
+    fromNodeId,
+    graphId: "GRAPH-FALLBACK",
+    id,
+    label,
+    refObjectId,
+    refObjectType,
+    toNodeId,
+    type,
+    warningIds
   };
 }
 
@@ -214,24 +405,41 @@ new source claims.
   graph: {
     accessibleSummary:
       "Fallback review path: context anchor, draft answer, citation check and needs-review state.",
+    defaultFocusedSourceIds: ["SRC-FALLBACK-002", "SRC-FALLBACK-003"],
+    defaultFocusedWarningIds: ["WARN-FALLBACK-002", "WARN-FALLBACK-003"],
+    defaultSelectedClaimId: "Claim 3",
+    defaultSelectedNodeId: "NODE-FALLBACK-CLAIM-003",
+    edges: fallbackGraphEdges,
     fallbackSteps: [
       {
+        includeIds: ["NODE-FALLBACK-PCA-001"],
+        step: 1,
         heading: "Context anchor",
         summary: "Place labels remain context only in the fallback view."
       },
       {
+        includeIds: ["NODE-FALLBACK-CLAIM-003"],
+        step: 2,
         heading: "Draft answer",
         summary: "The fallback answer remains blocked for review."
       },
       {
+        includeIds: ["NODE-FALLBACK-SRC-002", "NODE-FALLBACK-SRC-003"],
+        step: 3,
         heading: "Citation check",
         summary: "Stale, weak-support and missing-evidence states remain visible."
       },
       {
+        includeIds: ["NODE-FALLBACK-ACT-REQUEST-SOURCE-UPDATE"],
+        step: 4,
         heading: "Needs review",
         summary: "Copy and approval remain unavailable."
       }
-    ]
+    ],
+    id: "GRAPH-FALLBACK",
+    layoutHint: "left_to_right_review_flow",
+    nodes: fallbackGraphNodes,
+    smallViewportFallback: "step_list"
   },
   review: {
     activeWarningCount: 3,

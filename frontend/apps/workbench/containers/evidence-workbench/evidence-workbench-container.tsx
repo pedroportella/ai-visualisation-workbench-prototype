@@ -3,7 +3,6 @@ import {
   AivisEvidenceClaimCard,
   AivisEvidenceContextAnchors,
   AivisEvidencePanelHeader,
-  AivisEvidencePathList,
   AivisEvidenceWarningList,
   type AivisEvidenceTone,
   QhdsCol,
@@ -14,6 +13,7 @@ import {
 
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 import { AnswerMarkdown } from "./answer-markdown";
+import { EvidenceProcessMap } from "./evidence-process-map";
 import {
   SelectedSourceInspector,
   selectedSourceWarnings
@@ -131,6 +131,34 @@ export default function EvidenceWorkbenchContainer({
       <QhdsRow className="evidence-workbench-grid evidence-workbench-lower-workspace">
         <QhdsCol xs={12}>
           <QhdsContentSection
+            className="evidence-workbench-panel evidence-workbench-process-map-section"
+            heading="Evidence process map"
+            headingId="process-map-title"
+            lead="Interactive graph view of the selected evidence gap, warning path and review action."
+          >
+            <AivisEvidencePanelHeader
+              label="React Flow graph"
+              status="Local fixture"
+            />
+            <EvidenceProcessMap graph={data.graph} />
+            <p className="evidence-workbench-review-note">
+              Copy state is {data.review.copyState}. Approval remains blocked by{" "}
+              {data.review.blockedByWarningIds.join(", ")} with{" "}
+              {data.review.activeWarningCount} active fixture warnings.
+            </p>
+            <AivisEvidenceWarningList
+              ariaLabel="Active fixture warnings"
+              warnings={data.warnings.map((warning) => ({
+                id: warning.id,
+                message: warning.message,
+                severity: warning.severity
+              }))}
+            />
+          </QhdsContentSection>
+        </QhdsCol>
+
+        <QhdsCol xs={12}>
+          <QhdsContentSection
             className="evidence-workbench-panel"
             heading="Source inventory"
             headingId="sources-title"
@@ -165,39 +193,6 @@ export default function EvidenceWorkbenchContainer({
               }))}
               dateLabel={`Planned fixture travel date: ${data.context.plannedTravelDate}`}
               summary={data.context.question}
-            />
-          </QhdsContentSection>
-        </QhdsCol>
-
-        <QhdsCol xs={12}>
-          <QhdsContentSection
-            className="evidence-workbench-panel"
-            heading="Evidence path"
-            headingId="review-title"
-            lead={data.graph.accessibleSummary}
-          >
-            <AivisEvidencePanelHeader
-              label="Review lane"
-              status="Local fixture"
-            />
-            <AivisEvidencePathList
-              items={data.graph.fallbackSteps.map((step) => ({
-                heading: step.heading,
-                summary: step.summary
-              }))}
-            />
-            <p className="evidence-workbench-review-note">
-              Copy state is {data.review.copyState}. Approval remains blocked by{" "}
-              {data.review.blockedByWarningIds.join(", ")} with{" "}
-              {data.review.activeWarningCount} active fixture warnings.
-            </p>
-            <AivisEvidenceWarningList
-              ariaLabel="Active fixture warnings"
-              warnings={data.warnings.map((warning) => ({
-                id: warning.id,
-                message: warning.message,
-                severity: warning.severity
-              }))}
             />
           </QhdsContentSection>
         </QhdsCol>
