@@ -593,6 +593,8 @@ def test_answer_fixture_returns_contract_shape_and_markdown() -> None:
 
     markdown = answer["markdown"]
     assert isinstance(markdown, str)
+    assert "```aivis-diagram" in markdown
+    assert "copy_state: disabled" in markdown
     for citation in citations:
         assert citation["marker"] in markdown
 

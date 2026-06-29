@@ -18,13 +18,39 @@ interface AnswerMarkdownProps {
 
 type MarkdownBlock =
   | { kind: "blockquote"; text: string }
+  | { code: string; kind: "code"; language: string }
+  | { diagram: GeneratedDiagram; kind: "diagram" }
   | { kind: "heading"; depth: 1 | 2; text: string }
-  | { kind: "list"; items: string[] }
+  | { kind: "list"; items: string[]; ordered: boolean }
   | { kind: "paragraph"; text: string }
   | { headers: string[]; kind: "table"; rows: string[][] };
 
-const INLINE_TOKEN_PATTERN = /(\*\*[^*]+\*\*|`[^`]+`|\[CIT-\d{3}-[A-Z]\])/g;
+interface GeneratedDiagram {
+  nodes: GeneratedDiagramNode[];
+  summary: string;
+  title: string;
+}
+
+interface GeneratedDiagramNode {
+  description: string;
+  label: string;
+  tone: GeneratedDiagramTone;
+}
+
+type GeneratedDiagramTone = "context" | "evidence" | "neutral" | "review" | "warning";
+
+const INLINE_TOKEN_PATTERN = /(\[[^\]\n]{1,120}\]\([^) \n]{1,300}\)|\*\*[^*\n]+\*\*|`[^`\n]+`|\[CIT-\d{3}-[A-Z]\])/g;
 const CITATION_MARKER_PATTERN = /^\[CIT-\d{3}-[A-Z]\]$/;
+const FENCE_START_PATTERN = /^```([A-Za-z0-9_-]+)?\s*$/;
+const FENCE_END_PATTERN = /^```\s*$/;
+const GENERATED_DIAGRAM_LANGUAGE = "aivis-diagram";
+const GENERATED_DIAGRAM_TONES = new Set<GeneratedDiagramTone>([
+  "context",
+  "evidence",
+  "neutral",
+  "review",
+  "warning"
+]);
 
 export function AnswerMarkdown({
   citations,
@@ -64,8 +90,23 @@ function renderBlock(
           </blockquote>
         </AivisEvidenceCallout>
       );
+    case "code":
+      return renderCodeBlock(block, context);
+    case "diagram":
+      return renderGeneratedDiagram(block, context);
     case "list":
-      return (
+      return block.ordered ? (
+        <ol key={context.keyPrefix}>
+          {block.items.map((item, index) => (
+            <li key={`${context.keyPrefix}-item-${index}`}>
+              {renderInlineContent(item, {
+                ...context,
+                keyPrefix: `${context.keyPrefix}-item-${index}`
+              })}
+            </li>
+          ))}
+        </ol>
+      ) : (
         <ul key={context.keyPrefix}>
           {block.items.map((item, index) => (
             <li key={`${context.keyPrefix}-item-${index}`}>
@@ -86,6 +127,71 @@ function renderBlock(
         </p>
       );
   }
+}
+
+function renderCodeBlock(
+  block: Extract<MarkdownBlock, { kind: "code" }>,
+  context: RenderInlineContext
+): ReactElement {
+  const languageLabel = block.language ? `${block.language} code block` : "Code block";
+
+  return (
+    <pre
+      aria-label={languageLabel}
+      className="evidence-workbench-code-block"
+      key={context.keyPrefix}
+    >
+      <code data-language={block.language || undefined}>{block.code}</code>
+    </pre>
+  );
+}
+
+function renderGeneratedDiagram(
+  block: Extract<MarkdownBlock, { kind: "diagram" }>,
+  context: RenderInlineContext
+): ReactElement {
+  const headingId = `${context.keyPrefix}-diagram-title`;
+  const summaryId = `${context.keyPrefix}-diagram-summary`;
+
+  return (
+    <figure
+      aria-describedby={summaryId}
+      aria-labelledby={headingId}
+      className="evidence-workbench-generated-diagram"
+      key={context.keyPrefix}
+      role="group"
+    >
+      <figcaption id={headingId}>{block.diagram.title}</figcaption>
+      <p className="evidence-workbench-generated-diagram__summary" id={summaryId}>
+        {block.diagram.summary}
+      </p>
+      <ol className="evidence-workbench-generated-diagram__steps">
+        {block.diagram.nodes.map((node, index) => (
+          <li
+            className="evidence-workbench-generated-diagram__step"
+            data-diagram-tone={node.tone}
+            key={`${context.keyPrefix}-diagram-node-${index}`}
+          >
+            <span className="evidence-workbench-generated-diagram__step-count">
+              Step {index + 1}
+            </span>
+            <strong>{node.label}</strong>
+            <span>{node.description}</span>
+          </li>
+        ))}
+      </ol>
+      <details className="evidence-workbench-generated-diagram__fallback">
+        <summary>Diagram text fallback</summary>
+        <ol>
+          {block.diagram.nodes.map((node, index) => (
+            <li key={`${context.keyPrefix}-diagram-fallback-${index}`}>
+              {node.label}: {node.description}
+            </li>
+          ))}
+        </ol>
+      </details>
+    </figure>
+  );
 }
 
 function renderTable(
@@ -145,7 +251,6 @@ interface RenderInlineContext {
 
 function renderInlineContent(text: string, context: RenderInlineContext): ReactNode[] {
   const nodes: ReactNode[] = [];
-  const tokenPattern = new RegExp(INLINE_TOKEN_PATTERN);
   let cursor = 0;
   let tokenIndex = 0;
 
@@ -165,8 +270,8 @@ function renderInlineContent(text: string, context: RenderInlineContext): ReactN
       nodes.push(<code key={key}>{token.slice(1, -1)}</code>);
     } else if (CITATION_MARKER_PATTERN.test(token)) {
       nodes.push(renderCitationMarker(token, key, context));
-    } else if (tokenPattern.test(token)) {
-      nodes.push(token);
+    } else {
+      nodes.push(renderMarkdownLink(token, key));
     }
 
     cursor = matchIndex + token.length;
@@ -178,6 +283,57 @@ function renderInlineContent(text: string, context: RenderInlineContext): ReactN
   }
 
   return nodes;
+}
+
+function renderMarkdownLink(token: string, key: string): ReactNode {
+  const link = /^\[([^\]\n]{1,120})\]\(([^) \n]{1,300})\)$/.exec(token);
+
+  if (!link) {
+    return token;
+  }
+
+  const label = link[1];
+  const href = safeMarkdownHref(link[2]);
+
+  if (!href) {
+    return `${label} (${link[2]})`;
+  }
+
+  return (
+    <a
+      href={href}
+      key={key}
+      rel={isExternalHttpHref(href) ? "noreferrer" : undefined}
+    >
+      {label}
+    </a>
+  );
+}
+
+function safeMarkdownHref(rawHref: string): string | null {
+  const href = rawHref.trim();
+
+  if (/^#[A-Za-z][A-Za-z0-9_.:-]*$/.test(href)) {
+    return href;
+  }
+
+  if (/^\/[A-Za-z0-9/_#?=&%.-]*$/.test(href)) {
+    return href;
+  }
+
+  try {
+    const parsedHref = new URL(href);
+
+    return parsedHref.protocol === "https:" || parsedHref.protocol === "http:"
+      ? href
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function isExternalHttpHref(href: string): boolean {
+  return /^https?:\/\//i.test(href);
 }
 
 function renderCitationMarker(
@@ -248,6 +404,14 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
     }
 
     const heading = /^(#{1,2})\s+(.+)$/.exec(trimmedLine);
+    const fence = FENCE_START_PATTERN.exec(trimmedLine);
+
+    if (fence) {
+      const codeFence = parseCodeFence(lines, index, fence[1] ?? "");
+      blocks.push(codeFence.block);
+      index = codeFence.nextIndex;
+      continue;
+    }
 
     if (heading) {
       blocks.push({
@@ -309,7 +473,43 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
 
       blocks.push({
         items: listItems,
-        kind: "list"
+        kind: "list",
+        ordered: false
+      });
+      continue;
+    }
+
+    if (isOrderedListStart(trimmedLine)) {
+      const listItems: string[] = [];
+
+      while (index < lines.length) {
+        const itemLine = lines[index]?.trim() ?? "";
+
+        if (!itemLine || !isOrderedListStart(itemLine)) {
+          break;
+        }
+
+        const itemLines = [itemLine.replace(/^\d+\.\s+/, "")];
+        index += 1;
+
+        while (index < lines.length) {
+          const continuation = lines[index]?.trim() ?? "";
+
+          if (!continuation || isBlockStart(lines, index)) {
+            break;
+          }
+
+          itemLines.push(continuation);
+          index += 1;
+        }
+
+        listItems.push(joinMarkdownLines(itemLines));
+      }
+
+      blocks.push({
+        items: listItems,
+        kind: "list",
+        ordered: true
       });
       continue;
     }
@@ -348,10 +548,113 @@ function isBlockStart(lines: string[], index: number): boolean {
 
   return (
     /^(#{1,2})\s+/.test(trimmedLine) ||
+    FENCE_START_PATTERN.test(trimmedLine) ||
     trimmedLine.startsWith(">") ||
     trimmedLine.startsWith("- ") ||
+    isOrderedListStart(trimmedLine) ||
     isTableStart(lines, index)
   );
+}
+
+function isOrderedListStart(line: string): boolean {
+  return /^\d+\.\s+/.test(line);
+}
+
+function parseCodeFence(
+  lines: string[],
+  startIndex: number,
+  language: string
+): { block: MarkdownBlock; nextIndex: number } {
+  const codeLines: string[] = [];
+  let index = startIndex + 1;
+
+  while (index < lines.length) {
+    const line = lines[index] ?? "";
+
+    if (FENCE_END_PATTERN.test(line.trim())) {
+      index += 1;
+      break;
+    }
+
+    codeLines.push(line);
+    index += 1;
+  }
+
+  const normalizedLanguage = language.trim().toLowerCase();
+  const code = codeLines.join("\n").replace(/\n+$/, "");
+
+  if (normalizedLanguage === GENERATED_DIAGRAM_LANGUAGE) {
+    return {
+      block: {
+        diagram: parseGeneratedDiagram(code),
+        kind: "diagram"
+      },
+      nextIndex: index
+    };
+  }
+
+  return {
+    block: {
+      code,
+      kind: "code",
+      language: normalizedLanguage
+    },
+    nextIndex: index
+  };
+}
+
+function parseGeneratedDiagram(code: string): GeneratedDiagram {
+  const lines = code.split("\n").map((line) => line.trim()).filter(Boolean);
+  const nodes: GeneratedDiagramNode[] = [];
+  let title = "Generated evidence diagram";
+  let summary = "Static diagram generated from the markdown fixture.";
+
+  for (const line of lines) {
+    if (line.toLowerCase().startsWith("title:")) {
+      title = line.slice(line.indexOf(":") + 1).trim() || title;
+      continue;
+    }
+
+    if (line.toLowerCase().startsWith("summary:")) {
+      summary = line.slice(line.indexOf(":") + 1).trim() || summary;
+      continue;
+    }
+
+    if (line.startsWith("- ")) {
+      const [label, description = "", tone = "neutral"] = line
+        .slice(2)
+        .split("|")
+        .map((part) => part.trim());
+
+      if (label) {
+        nodes.push({
+          description,
+          label,
+          tone: generatedDiagramTone(tone)
+        });
+      }
+    }
+  }
+
+  if (nodes.length === 0) {
+    nodes.push({
+      description: lines.join(" "),
+      label: "Generated diagram content",
+      tone: "neutral"
+    });
+  }
+
+  return {
+    nodes,
+    summary,
+    title
+  };
+}
+
+function generatedDiagramTone(value: string): GeneratedDiagramTone {
+  return GENERATED_DIAGRAM_TONES.has(value as GeneratedDiagramTone)
+    ? (value as GeneratedDiagramTone)
+    : "neutral";
 }
 
 function isTableStart(lines: string[], index: number): boolean {

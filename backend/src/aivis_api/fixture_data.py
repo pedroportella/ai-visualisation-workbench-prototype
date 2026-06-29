@@ -31,22 +31,38 @@ unavailable in this synthetic fixture. [CIT-001-A]
 > step-free support, and `WARN-003` missing day-of-service dispatch
 > confirmation.
 
+## Generated evidence review path
+
+```aivis-diagram
+title: Generated evidence review path
+summary: Static diagram generated from the synthetic answer fixture; place anchors remain context only.
+- Prompt context | Customer need and place labels frame the review question | context
+- Source checks | Boarding map freshness and shuttle allocation evidence are checked | evidence
+- Claim review | Step-free guarantee remains blocked by weak and missing evidence | warning
+- Reviewer action | Request source update before approving or copying advice | review
+```
+
 ## What staff can say now
 
-- Explain that the fixture points to a temporary boarding point on Grey Street
+1. Explain that the fixture points to a temporary boarding point on Grey Street
   near QPAC, but the map is past its review date. Confirm the boarding point
   before giving final directions. [CIT-002-A]
-- Do not promise that the replacement shuttle is step-free from this draft
+2. Do not promise that the replacement shuttle is step-free from this draft
   alone. The accessible-vehicle guidance only supports a conditional planning
   intent, and the day-of-service dispatch confirmation is missing.
   [CIT-003-A] [CIT-003-B]
-- Ask for the customer's expected travel time and any assistance constraints
+3. Ask for the customer's expected travel time and any assistance constraints
   before confirming final advice. `WARN-004`
-- If the customer cannot reach the temporary boarding point, arrange an
+4. If the customer cannot reach the temporary boarding point, arrange an
   assistance callback or alternate boarding check before closing the enquiry.
   [CIT-004-A]
-- Record the advice given, the evidence checked and any source-update request.
+5. Record the advice given, the evidence checked and any source-update request.
   [CIT-005-A]
+
+```text
+copy_state: disabled
+required_review_action: request_source_update
+```
 
 ## Evidence summary
 

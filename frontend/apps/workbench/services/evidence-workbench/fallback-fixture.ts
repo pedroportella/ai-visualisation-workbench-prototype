@@ -380,6 +380,22 @@ new source claims.
 - Step-free wording remains conditional.
 - Dispatch confirmation is represented by a missing-source placeholder.
 
+## Generated fallback diagram
+
+\`\`\`aivis-diagram
+title: Generated fallback review path
+summary: Static diagram generated from bundled fallback content.
+- Fallback context | Bundled fixture keeps the review case visible | context
+- Source checks | Stale and missing placeholder sources remain visible | evidence
+- Claim review | Step-free transfer assurance stays blocked | warning
+- Reviewer action | Request source update or mark unsafe before copying | review
+\`\`\`
+
+\`\`\`text
+copy_state: disabled
+source_mode: bundled_fallback
+\`\`\`
+
 ## Fallback evidence summary
 
 | Claim | Current answer posture | Evidence state |

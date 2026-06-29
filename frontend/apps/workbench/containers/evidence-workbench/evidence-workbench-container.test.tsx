@@ -63,6 +63,10 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("qld__card-list evidence-workbench-claim-stack");
     expect(html).toContain("qld__table__wrapper");
     expect(html).toContain("qld__callout");
+    expect(html).toContain("evidence-workbench-generated-diagram");
+    expect(html).toContain("Generated fallback review path");
+    expect(html).toContain("Diagram text fallback");
+    expect(html).toContain("evidence-workbench-code-block");
     expect(html).not.toContain('id="process-map-title"');
     expect(html).not.toContain('id="sources-title"');
     expect(html).not.toContain('id="audit-summary"');
