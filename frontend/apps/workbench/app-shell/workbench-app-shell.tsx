@@ -17,11 +17,6 @@ function WorkbenchSideNav() {
       headingIcon={<QhdsIcon size="md" symbol="home" />}
       items={[
         {
-          href: "#review-decision-title",
-          icon: <QhdsIcon size="md" symbol="clock" />,
-          label: "Review actions"
-        },
-        {
           href: "#answer-title",
           icon: <QhdsIcon size="md" symbol="document" />,
           label: "Draft answer"
@@ -30,6 +25,11 @@ function WorkbenchSideNav() {
           href: "#source-inspector-title",
           icon: <QhdsIcon size="md" symbol="document" />,
           label: "Source inspector"
+        },
+        {
+          href: "#review-decision-title",
+          icon: <QhdsIcon size="md" symbol="clock" />,
+          label: "Review actions"
         },
         {
           href: "#process-map-title",

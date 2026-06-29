@@ -71,18 +71,16 @@ export function SourceTracePanel({
         {orderedSources.map((source, index) => {
           const issueSummary = sourceIssueSummary(source);
           const warnings = sourceWarnings(source);
-          const expandedByDefault = source.isSelectedClaimSource || hasApprovalBlocker(source);
 
           return (
             <li className="evidence-workbench-source-inventory__item" key={source.id}>
               <details
                 className="evidence-workbench-source-inventory__details"
                 data-source-filter-state={source.trustState}
-                data-source-expanded-default={expandedByDefault ? "true" : "false"}
+                data-source-expanded-default="false"
                 data-source-priority={sourcePriority(source)}
                 data-source-row-order={index + 1}
                 id={`source-${source.id}`}
-                open={expandedByDefault}
               >
                 <summary
                   aria-label={`${source.id}: ${source.title}. ${issueSummary.label}. Press Enter to toggle source details.`}

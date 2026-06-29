@@ -82,24 +82,35 @@ export function ReviewDecisionBar({
         </div>
       </div>
 
-      <div className="evidence-workbench-review-actions__summary">
-        <p>{state.feedback}</p>
-        <p>Selected warning path: {actionPath}</p>
-        <p>
-          Audit {state.audit.id}: {state.audit.reviewEventIds.length} fixture events;
-          last action {state.audit.lastReviewActionId ?? "none"}.
-        </p>
-        <p>
-          {state.localStateLabel}; reset returns this panel to the loaded fixture seed.
-        </p>
-      </div>
+      <dl className="evidence-workbench-review-actions__summary">
+        <div>
+          <dt>Feedback</dt>
+          <dd>{state.feedback}</dd>
+        </div>
+        <div>
+          <dt>Warning path</dt>
+          <dd>{actionPath}</dd>
+        </div>
+        <div>
+          <dt>Audit</dt>
+          <dd>
+            {state.audit.id}: {state.audit.reviewEventIds.length} fixture events;
+            last action {state.audit.lastReviewActionId ?? "none"}.
+          </dd>
+        </div>
+        <div>
+          <dt>Local state</dt>
+          <dd>{state.localStateLabel}; reset returns this panel to the loaded fixture seed.</dd>
+        </div>
+      </dl>
 
       <div className="evidence-workbench-review-actions__controls">
         <QhdsTextarea
+          className="evidence-workbench-review-actions__note-input"
           hint="Stored only in this local prototype state."
           label="Reviewer note"
           onChange={handleNoteChange}
-          rows={4}
+          rows={3}
           value={reviewerNote}
         />
 

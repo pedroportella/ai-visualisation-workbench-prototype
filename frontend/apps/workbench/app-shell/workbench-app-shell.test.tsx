@@ -35,7 +35,13 @@ describe("WorkbenchAppShell", () => {
     expect(html).not.toContain("Local fixture");
   });
 
-  it("leaves left-nav content gutters owned by the shared layout adapter", () => {
-    expect(styles).not.toContain(".qld__body--left-nav .qhds-layout__container");
+  it("scopes constrained left-nav gutters to the workbench app shell", () => {
+    expect(styles).toContain("@media (max-width: 75rem)");
+    expect(styles).toContain(
+      ".aivis-app-shell.qhds-layout--app.qhds-layout--has-left-nav .qld__body--left-nav .qhds-layout__container"
+    );
+    expect(styles).not.toContain(
+      "\n.qld__body--left-nav .qhds-layout__container"
+    );
   });
 });

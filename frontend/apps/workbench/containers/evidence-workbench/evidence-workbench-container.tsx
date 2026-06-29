@@ -31,9 +31,14 @@ import { WorkbenchCaseBar } from "./workbench-case-bar";
 
 const mobileSectionLinks = [
   {
-    description: "Actions and draft",
-    href: "#review-decision-title",
+    description: "Draft and inspector",
+    href: "#answer-title",
     label: "Review"
+  },
+  {
+    description: "Local decisions",
+    href: "#review-decision-title",
+    label: "Actions"
   },
   {
     description: "Inventory",
@@ -93,18 +98,6 @@ export default function EvidenceWorkbenchContainer({
 
       <WorkbenchMobileSectionNav />
 
-      <ReviewDecisionBar
-        onApplyAction={(actionId, reviewerNote) =>
-          dispatchReviewDecision({
-            actionId,
-            reviewerNote,
-            type: "apply-action"
-          })
-        }
-        onReset={() => dispatchReviewDecision({ type: "reset" })}
-        state={decisionState}
-      />
-
       <QhdsRow className="evidence-workbench-grid evidence-workbench-primary-frame">
         <QhdsCol lg={7} xl={7}>
           <QhdsContentSection
@@ -140,25 +133,6 @@ export default function EvidenceWorkbenchContainer({
                 </p>
               </AivisEvidenceCallout>
             ) : null}
-            <div
-              className="evidence-workbench-claim-stack"
-              id="selected-claim"
-              aria-label="Claims requiring review"
-            >
-              {data.reviewClaims.map((claim) => (
-                <AivisEvidenceClaimCard
-                  claimId={claim.id}
-                  id={`claim-${claim.id}`}
-                  key={claim.id}
-                  selected={claim.id === review.selectedClaimId}
-                  selectedLabel="Selected claim"
-                  status={claim.status}
-                  statusTone={statusTone(claim.status)}
-                  text={claim.text}
-                  title={claim.title}
-                />
-              ))}
-            </div>
           </QhdsContentSection>
         </QhdsCol>
 
@@ -178,6 +152,45 @@ export default function EvidenceWorkbenchContainer({
         </QhdsCol>
 
       </QhdsRow>
+
+      <ReviewDecisionBar
+        onApplyAction={(actionId, reviewerNote) =>
+          dispatchReviewDecision({
+            actionId,
+            reviewerNote,
+            type: "apply-action"
+          })
+        }
+        onReset={() => dispatchReviewDecision({ type: "reset" })}
+        state={decisionState}
+      />
+
+      <QhdsContentSection
+        className="evidence-workbench-panel evidence-workbench-claims-section"
+        heading="Claims requiring review"
+        headingId="claims-title"
+        lead="Selected claim states and evidence posture."
+      >
+        <div
+          className="evidence-workbench-claim-stack"
+          id="selected-claim"
+          aria-label="Claims requiring review"
+        >
+          {data.reviewClaims.map((claim) => (
+            <AivisEvidenceClaimCard
+              claimId={claim.id}
+              id={`claim-${claim.id}`}
+              key={claim.id}
+              selected={claim.id === review.selectedClaimId}
+              selectedLabel="Selected claim"
+              status={claim.status}
+              statusTone={statusTone(claim.status)}
+              text={claim.text}
+              title={claim.title}
+            />
+          ))}
+        </div>
+      </QhdsContentSection>
 
       <QhdsRow className="evidence-workbench-grid evidence-workbench-lower-workspace">
         <QhdsCol xs={12}>

@@ -16,7 +16,7 @@ describe("EvidenceWorkbenchContainer", () => {
     );
     const caseBarIndex = html.indexOf("evidence-workbench-case-bar");
     const mobileNavIndex = html.indexOf("evidence-workbench-mobile-nav");
-    const decisionIndex = html.indexOf("review-decision-title");
+    const decisionIndex = html.indexOf('id="review-decision-title"');
     const answerIndex = html.indexOf('id="answer-title"');
     const inspectorIndex = html.indexOf('id="source-inspector-title"');
     const processMapIndex = html.indexOf('id="process-map-title"');
@@ -45,10 +45,10 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).not.toContain("qhds-page-header__context");
     expect(caseBarIndex).toBeGreaterThanOrEqual(0);
     expect(mobileNavIndex).toBeGreaterThan(caseBarIndex);
-    expect(decisionIndex).toBeGreaterThan(caseBarIndex);
-    expect(answerIndex).toBeGreaterThan(decisionIndex);
+    expect(answerIndex).toBeGreaterThan(caseBarIndex);
     expect(inspectorIndex).toBeGreaterThan(answerIndex);
-    expect(processMapIndex).toBeGreaterThan(inspectorIndex);
+    expect(decisionIndex).toBeGreaterThan(inspectorIndex);
+    expect(processMapIndex).toBeGreaterThan(decisionIndex);
     expect(inventoryIndex).toBeGreaterThan(processMapIndex);
     expect(scenarioIndex).toBeGreaterThan(inventoryIndex);
     expect(html).toContain("row evidence-workbench-grid");
@@ -83,6 +83,7 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain(".evidence-workbench-answer-markdown");
     expect(styles).toContain(".evidence-workbench-review-actions");
     expect(styles).toContain(".evidence-workbench-mobile-nav");
+    expect(styles).toContain("@media (max-width: 75rem)");
     expect(styles).toContain("@media (max-width: 61.9375rem)");
     expect(styles).toContain(".evidence-workbench-process-map__viewport");
     expect(styles).toContain(".evidence-workbench-process-map__fallback:focus-visible");

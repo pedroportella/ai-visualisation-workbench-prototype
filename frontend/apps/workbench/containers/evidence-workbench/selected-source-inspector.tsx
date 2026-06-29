@@ -2,10 +2,8 @@ import type { ReactElement } from "react";
 
 import {
   AivisEvidenceCallout,
-  AivisEvidenceMetadata,
   AivisEvidencePanelHeader,
   AivisEvidenceStatus,
-  AivisEvidenceTokenList,
   AivisEvidenceWarningGroup,
   QhdsButton
 } from "@aivis/ui-library";
@@ -54,17 +52,31 @@ export function SelectedSourceInspector({
         ) : null}
       </section>
 
-      <AivisEvidenceTokenList
-        ariaLabel={`Sources linked to ${selectedClaimId}`}
-        emptyMessage="No source is linked to the selected claim."
-        items={focusedSources.map((source) => ({
-          ariaLabel: `${source.id}, ${source.status}. Jump to full source inventory record.`,
-          description: source.status,
-          href: `#source-${source.id}`,
-          id: source.id,
-          label: source.id
-        }))}
-      />
+      <section
+        aria-labelledby="selected-claim-linked-sources-title"
+        className="evidence-workbench-source-inspector__linked-sources"
+      >
+        <h4 id="selected-claim-linked-sources-title">Linked sources</h4>
+        {focusedSources.length > 0 ? (
+          <ul aria-label={`Sources linked to ${selectedClaimId}`}>
+            {focusedSources.map((source) => (
+              <li key={source.id}>
+                <a
+                  aria-label={`${source.id}, ${source.status}. Jump to full source inventory record.`}
+                  href={`#source-${source.id}`}
+                >
+                  {source.id}
+                </a>
+                <AivisEvidenceStatus tone={sourceStatusTone(source.status)}>
+                  {source.status}
+                </AivisEvidenceStatus>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No source is linked to the selected claim.</p>
+        )}
+      </section>
 
       {topWarning ? (
         <AivisEvidenceCallout
@@ -92,24 +104,44 @@ export function SelectedSourceInspector({
                 </AivisEvidenceStatus>
               </div>
               <h4>{source.title}</h4>
-              <AivisEvidenceMetadata
-                ariaLabel={`${source.id} selected source details`}
-                items={[
-                  { description: source.ownerLabel, term: "Owner" },
-                  { description: source.freshness, term: "Freshness" },
-                  { description: source.citationCount, term: "Citations" },
-                  { description: source.sourceType, term: "Type" }
-                ]}
-              />
+              <dl
+                aria-label={`${source.id} selected source details`}
+                className="evidence-workbench-source-inspector__source-meta"
+              >
+                <div>
+                  <dt>Owner</dt>
+                  <dd>{source.ownerLabel}</dd>
+                </div>
+                <div>
+                  <dt>Freshness</dt>
+                  <dd>{source.freshness}</dd>
+                </div>
+                <div>
+                  <dt>Citations</dt>
+                  <dd>{source.citationCount}</dd>
+                </div>
+                <div>
+                  <dt>Type</dt>
+                  <dd>{source.sourceType}</dd>
+                </div>
+              </dl>
               <p>{source.preview}</p>
-              <AivisEvidenceWarningGroup
-                label="Direct source warning"
-                warnings={source.directWarnings.map(inspectorWarning)}
-              />
-              <AivisEvidenceWarningGroup
-                label="Citation or claim warning"
-                warnings={source.relationshipWarnings.map(inspectorWarning)}
-              />
+              <details className="evidence-workbench-source-inspector__warning-details">
+                <summary>
+                  {source.directWarnings.length + source.relationshipWarnings.length} source warning
+                  {source.directWarnings.length + source.relationshipWarnings.length === 1
+                    ? ""
+                    : "s"}
+                </summary>
+                <AivisEvidenceWarningGroup
+                  label="Direct source warning"
+                  warnings={source.directWarnings.map(inspectorWarning)}
+                />
+                <AivisEvidenceWarningGroup
+                  label="Citation or claim warning"
+                  warnings={source.relationshipWarnings.map(inspectorWarning)}
+                />
+              </details>
             </article>
           </li>
         ))}

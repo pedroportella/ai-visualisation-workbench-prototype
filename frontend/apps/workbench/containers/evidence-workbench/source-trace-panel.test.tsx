@@ -235,19 +235,18 @@ describe("SourceTracePanel", () => {
     expect(html).toContain('data-source-priority="inventory_source"');
   });
 
-  it("opens selected and approval-blocking sources by default", () => {
+  it("keeps source summaries collapsed by default and toggleable", () => {
     const html = renderPanel();
     const openSourceIds = sourceIdsWithAttribute(html, "open");
-    const defaultExpandedSourceIds = sourceIdsWithAttribute(
+    const defaultCollapsedSourceIds = sourceIdsWithAttribute(
       html,
-      'data-source-expanded-default="true"'
+      'data-source-expanded-default="false"'
     );
 
-    expect(openSourceIds).toEqual(["SRC-003", "SRC-006", "SRC-002"]);
-    expect(defaultExpandedSourceIds).toEqual(["SRC-003", "SRC-006", "SRC-002"]);
-    expect(sourceHasAttribute(html, "SRC-005", 'data-source-expanded-default="false"')).toBe(
-      true
-    );
+    expect(openSourceIds).toEqual([]);
+    expect(defaultCollapsedSourceIds).toEqual(["SRC-003", "SRC-006", "SRC-002", "SRC-005"]);
+    expect(sourceHasAttribute(html, "SRC-003", 'data-source-expanded-default="false"')).toBe(true);
+    expect(html).toContain("Press Enter to toggle source details.");
   });
 
   it("keeps warnings reachable while reducing repeated callout rendering", () => {
