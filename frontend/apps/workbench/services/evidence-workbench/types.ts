@@ -83,9 +83,38 @@ export interface EvidenceWorkbenchCitation {
 }
 
 export interface EvidenceWorkbenchWarning {
+  blocksApproval?: boolean;
+  code?: string;
+  evidenceImpact?: string;
   id: string;
+  introducedByActionId?: string;
   message: string;
   severity: string;
+}
+
+export interface EvidenceWorkbenchReviewAction {
+  addsWarningIds: string[];
+  allowedFromStatuses: string[];
+  auditEventType: string;
+  clearsWarningIds: string[];
+  description: string;
+  id: string;
+  label: string;
+  requiresNote: boolean;
+  statusAfter: string;
+  targetObjectIds: string[];
+  type: string;
+  uiTone: "caution" | "destructive" | "primary" | "secondary";
+}
+
+export interface EvidenceWorkbenchAuditMetadata {
+  boundaryNoteForDocs?: string;
+  contractMode: string;
+  id: string;
+  lastReviewActionId: string | null;
+  modelLabel: string;
+  reviewEventIds: string[];
+  runtimeModeLabel: string;
 }
 
 export interface EvidenceWorkbenchGraphStep {
@@ -160,12 +189,23 @@ export interface EvidenceWorkbenchViewModel {
     smallViewportFallback: string;
   };
   review: {
+    actions: EvidenceWorkbenchReviewAction[];
     activeWarningCount: number;
+    activeWarningIds: string[];
+    availableActionIds: string[];
     blockedByWarningIds: string[];
+    completedActionIds: string[];
     copyState: string;
+    id: string;
+    lastActionId: string | null;
+    reviewerIdLabel: string;
+    reviewerNote: string | null;
     selectedClaimId: string;
     status: string;
+    statusId: string;
+    updatedAt: string;
   };
+  audit: EvidenceWorkbenchAuditMetadata;
   reviewClaims: EvidenceWorkbenchClaim[];
   sourceFilters: EvidenceWorkbenchSourceFilter[];
   sourceItems: EvidenceWorkbenchSource[];

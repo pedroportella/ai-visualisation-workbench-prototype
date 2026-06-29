@@ -6,6 +6,7 @@ import type {
   EvidenceWorkbenchSourceFilter,
   EvidenceWorkbenchViewModel
 } from "./types";
+import { REVIEW_ACTION_RECORDS } from "./review-action-fixture";
 
 const fallbackContextAnchors: EvidenceWorkbenchContextAnchor[] = [
   {
@@ -442,11 +443,36 @@ new source claims.
     smallViewportFallback: "step_list"
   },
   review: {
+    actions: REVIEW_ACTION_RECORDS,
     activeWarningCount: 3,
+    activeWarningIds: ["WARN-FALLBACK-001", "WARN-FALLBACK-002", "WARN-FALLBACK-003"],
+    availableActionIds: [
+      "ACT-REQUEST-SOURCE-UPDATE",
+      "ACT-ADD-REVIEW-NOTE",
+      "ACT-ESCALATE-SOURCE-OWNER",
+      "ACT-MARK-UNSAFE"
+    ],
     blockedByWarningIds: ["WARN-FALLBACK-001", "WARN-FALLBACK-002", "WARN-FALLBACK-003"],
+    completedActionIds: [],
     copyState: "disabled",
+    id: "REV-FALLBACK-001",
+    lastActionId: null,
+    reviewerIdLabel: "reviewer-fixture-01",
+    reviewerNote: null,
     selectedClaimId: "Claim 3",
-    status: "Needs review"
+    status: "Needs review",
+    statusId: "needs_review",
+    updatedAt: "Bundled fallback"
+  },
+  audit: {
+    boundaryNoteForDocs:
+      "Real Brisbane place names are context anchors. Operational events, source freshness, warnings and reviewer actions are synthetic fixture content.",
+    contractMode: "synthetic_fixture",
+    id: "AUDIT-FALLBACK-001",
+    lastReviewActionId: null,
+    modelLabel: "simulated_answer_fixture",
+    reviewEventIds: ["AUDIT-FALLBACK-EVT-001", "AUDIT-FALLBACK-EVT-002"],
+    runtimeModeLabel: "local_fixture"
   },
   reviewClaims: [
     {

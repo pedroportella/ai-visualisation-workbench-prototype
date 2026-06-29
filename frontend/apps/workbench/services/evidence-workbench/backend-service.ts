@@ -1,15 +1,19 @@
 import "server-only";
 
 import { fallbackEvidenceWorkbenchData } from "./fallback-fixture";
+import { REVIEW_ACTION_RECORDS } from "./review-action-fixture";
 import type {
+  EvidenceWorkbenchAuditMetadata,
   EvidenceWorkbenchCitation,
   EvidenceWorkbenchContextAnchor,
   EvidenceWorkbenchGraphEdge,
   EvidenceWorkbenchGraphNode,
   EvidenceWorkbenchGraphPosition,
+  EvidenceWorkbenchReviewAction,
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter,
   EvidenceWorkbenchSourceWarning,
+  EvidenceWorkbenchWarning,
   EvidenceWorkbenchViewModel
 } from "./types";
 
@@ -63,8 +67,28 @@ interface AnswerClaimFixture {
 interface ReviewStateFixture {
   activeWarningIds: string[];
   approvalBlockedByWarningIds: string[];
+  answerId: string;
+  auditMetadataId: string;
+  availableActionIds: string[];
+  completedActionIds: string[];
   copyState: string;
+  id: string;
+  lastActionId: string | null;
+  reviewerIdLabel: string;
+  reviewerNote: string | null;
+  status: string;
   statusLabel: string;
+  updatedAt: string;
+}
+
+interface AuditMetadataFixture {
+  boundaryNoteForDocs?: string;
+  contractMode: string;
+  id: string;
+  lastReviewActionId: string | null;
+  modelLabel: string;
+  reviewEventIds: string[];
+  runtimeModeLabel: string;
 }
 
 interface SourceWarningFixture {
@@ -164,9 +188,11 @@ interface EvidenceGraphStepFixture {
 interface AnswerFixtureResponse extends FixtureMetadata {
   answer: AnswerFixture;
   answerClaims: AnswerClaimFixture[];
+  auditMetadata: AuditMetadataFixture;
   citations: CitationFixture[];
   promptContext: PromptContext;
   publicContextAnchors: PublicContextAnchor[];
+  reviewActions?: EvidenceWorkbenchReviewAction[];
   reviewState: ReviewStateFixture;
   sourceWarnings: SourceWarningFixture[];
 }
@@ -300,12 +326,23 @@ function buildEvidenceWorkbenchViewModel(
       smallViewportFallback: graphResponse.evidenceGraph.smallViewportFallback
     },
     review: {
+      actions: answerResponse.reviewActions ?? REVIEW_ACTION_RECORDS,
       activeWarningCount: answerResponse.reviewState.activeWarningIds.length,
+      activeWarningIds: answerResponse.reviewState.activeWarningIds,
+      availableActionIds: answerResponse.reviewState.availableActionIds,
       blockedByWarningIds: answerResponse.reviewState.approvalBlockedByWarningIds,
+      completedActionIds: answerResponse.reviewState.completedActionIds,
       copyState: answerResponse.reviewState.copyState,
+      id: answerResponse.reviewState.id,
+      lastActionId: answerResponse.reviewState.lastActionId,
+      reviewerIdLabel: answerResponse.reviewState.reviewerIdLabel,
+      reviewerNote: answerResponse.reviewState.reviewerNote,
       selectedClaimId: answerResponse.answer.defaultSelectedClaimId,
-      status: answerResponse.reviewState.statusLabel
+      status: answerResponse.reviewState.statusLabel,
+      statusId: answerResponse.reviewState.status,
+      updatedAt: answerResponse.reviewState.updatedAt
     },
+    audit: mapAuditMetadata(answerResponse.auditMetadata),
     reviewClaims: answerResponse.answerClaims
       .slice()
       .sort((left, right) => left.displayOrder - right.displayOrder)
@@ -337,11 +374,7 @@ function buildEvidenceWorkbenchViewModel(
         value: answerResponse.reviewState.statusLabel
       }
     ],
-    warnings: activeWarnings.map((warning) => ({
-      id: warning.id,
-      message: warning.message,
-      severity: formatLabel(warning.severity)
-    }))
+    warnings: activeWarnings.map(mapWarning)
   };
 }
 
@@ -470,6 +503,29 @@ function mapSourceWarning(warning: SourceWarningFixture): EvidenceWorkbenchSourc
     id: warning.id,
     message: warning.message,
     severity: formatLabel(warning.severity)
+  };
+}
+
+function mapWarning(warning: SourceWarningFixture): EvidenceWorkbenchWarning {
+  return {
+    blocksApproval: Boolean(warning.blocksApproval),
+    code: formatLabel(warning.code),
+    evidenceImpact: warning.evidenceImpact,
+    id: warning.id,
+    message: warning.message,
+    severity: formatLabel(warning.severity)
+  };
+}
+
+function mapAuditMetadata(metadata: AuditMetadataFixture): EvidenceWorkbenchAuditMetadata {
+  return {
+    boundaryNoteForDocs: metadata.boundaryNoteForDocs,
+    contractMode: metadata.contractMode,
+    id: metadata.id,
+    lastReviewActionId: metadata.lastReviewActionId,
+    modelLabel: metadata.modelLabel,
+    reviewEventIds: metadata.reviewEventIds,
+    runtimeModeLabel: metadata.runtimeModeLabel
   };
 }
 

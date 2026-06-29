@@ -1,3 +1,6 @@
+"use client";
+
+import { useMemo, useReducer } from "react";
 import {
   AivisEvidenceCallout,
   AivisEvidenceClaimCard,
@@ -14,6 +17,11 @@ import {
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 import { AnswerMarkdown } from "./answer-markdown";
 import { EvidenceProcessMap } from "./evidence-process-map";
+import { ReviewDecisionBar } from "./review-decision-bar";
+import {
+  createInitialReviewDecisionState,
+  reviewDecisionReducer
+} from "./review-action-state";
 import {
   SelectedSourceInspector,
   selectedSourceWarnings
@@ -25,8 +33,14 @@ export default function EvidenceWorkbenchContainer({
   data
 }: Readonly<{ data: EvidenceWorkbenchViewModel }>) {
   const summary = summaryMap(data);
+  const initialDecisionState = useMemo(() => createInitialReviewDecisionState(data), [data]);
+  const [decisionState, dispatchReviewDecision] = useReducer(
+    reviewDecisionReducer,
+    initialDecisionState
+  );
+  const review = decisionState.review;
   const selectedClaim = data.reviewClaims.find(
-    (claim) => claim.id === data.review.selectedClaimId
+    (claim) => claim.id === review.selectedClaimId
   );
   const selectedSources = data.sourceItems.filter((source) => source.isSelectedClaimSource);
   const selectedClaimTopWarning = selectedSourceWarnings(selectedSources).find(
@@ -39,13 +53,13 @@ export default function EvidenceWorkbenchContainer({
       className="qld__body qld__body--light evidence-workbench"
     >
       <WorkbenchCaseBar
-        blockerCount={data.review.blockedByWarningIds.length}
+        blockerCount={review.blockedByWarningIds.length}
         caseTitle={data.context.title}
         dataSource={summary.get("Data source") ?? data.fetchState.source}
         fixtureMode={summary.get("Fixture mode") ?? "Synthetic fixture"}
         generatedAt={data.answer.generatedAt}
         runtimeMode={summary.get("Runtime") ?? "Local fixture"}
-        status={data.review.status}
+        status={review.status}
       />
 
       {data.fetchState.message ? (
@@ -53,6 +67,18 @@ export default function EvidenceWorkbenchContainer({
           <p>Review can continue against the fallback fixture state.</p>
         </QhdsPageAlert>
       ) : null}
+
+      <ReviewDecisionBar
+        onApplyAction={(actionId, reviewerNote) =>
+          dispatchReviewDecision({
+            actionId,
+            reviewerNote,
+            type: "apply-action"
+          })
+        }
+        onReset={() => dispatchReviewDecision({ type: "reset" })}
+        state={decisionState}
+      />
 
       <QhdsRow className="evidence-workbench-grid evidence-workbench-primary-frame">
         <QhdsCol lg={7} xl={7}>
@@ -73,12 +99,12 @@ export default function EvidenceWorkbenchContainer({
             <AnswerMarkdown
               citations={data.citations}
               markdown={data.answer.markdown}
-              selectedClaimId={data.review.selectedClaimId}
+              selectedClaimId={review.selectedClaimId}
             />
             {selectedClaimTopWarning ? (
               <AivisEvidenceCallout
                 className="evidence-workbench-selected-claim-warning"
-                heading={`${data.review.selectedClaimId} selected blocker`}
+                heading={`${review.selectedClaimId} selected blocker`}
                 tone="warning"
               >
                 <p>{selectedClaimTopWarning.message}</p>
@@ -99,7 +125,7 @@ export default function EvidenceWorkbenchContainer({
                   claimId={claim.id}
                   id={`claim-${claim.id}`}
                   key={claim.id}
-                  selected={claim.id === data.review.selectedClaimId}
+                  selected={claim.id === review.selectedClaimId}
                   selectedLabel="Selected claim"
                   status={claim.status}
                   statusTone={statusTone(claim.status)}
@@ -120,7 +146,7 @@ export default function EvidenceWorkbenchContainer({
           >
             <SelectedSourceInspector
               selectedClaim={selectedClaim}
-              selectedClaimId={data.review.selectedClaimId}
+              selectedClaimId={review.selectedClaimId}
               sources={data.sourceItems}
             />
           </QhdsContentSection>
@@ -142,13 +168,15 @@ export default function EvidenceWorkbenchContainer({
             />
             <EvidenceProcessMap graph={data.graph} />
             <p className="evidence-workbench-review-note">
-              Copy state is {data.review.copyState}. Approval remains blocked by{" "}
-              {data.review.blockedByWarningIds.join(", ")} with{" "}
-              {data.review.activeWarningCount} active fixture warnings.
+              Copy state is {review.copyState}. Approval remains blocked by{" "}
+              {review.blockedByWarningIds.join(", ")} with{" "}
+              {review.activeWarningCount} active fixture warnings. Audit{" "}
+              {decisionState.audit.id} last action is{" "}
+              {decisionState.audit.lastReviewActionId ?? "none"}.
             </p>
             <AivisEvidenceWarningList
               ariaLabel="Active fixture warnings"
-              warnings={data.warnings.map((warning) => ({
+              warnings={decisionState.warnings.map((warning) => ({
                 id: warning.id,
                 message: warning.message,
                 severity: warning.severity
@@ -170,7 +198,7 @@ export default function EvidenceWorkbenchContainer({
             />
             <SourceTracePanel
               filters={data.sourceFilters}
-              selectedClaimId={data.review.selectedClaimId}
+              selectedClaimId={review.selectedClaimId}
               sources={data.sourceItems}
             />
           </QhdsContentSection>

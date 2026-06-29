@@ -15,6 +15,7 @@ describe("EvidenceWorkbenchContainer", () => {
       <EvidenceWorkbenchContainer data={fallbackEvidenceWorkbenchData} />
     );
     const caseBarIndex = html.indexOf("evidence-workbench-case-bar");
+    const decisionIndex = html.indexOf("review-decision-title");
     const answerIndex = html.indexOf('id="answer-title"');
     const inspectorIndex = html.indexOf('id="source-inspector-title"');
     const processMapIndex = html.indexOf('id="process-map-title"');
@@ -29,10 +30,17 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("Step-free transfer guidance needs evidence review");
     expect(html).toContain("3 approval blockers");
     expect(html).toContain("Bundled fallback");
+    expect(html).toContain("Action and audit flow");
+    expect(html).toContain("Request source update");
+    expect(html).toContain("Mark unsafe to use");
+    expect(html).toContain("Mark reviewed remains disabled in this fixture");
+    expect(html).toContain("Copy approved answer");
+    expect(html).toContain("Local review state is seeded from the loaded fixture.");
     expect(html).not.toContain("qhds-page-header");
     expect(html).not.toContain("qhds-page-header__context");
     expect(caseBarIndex).toBeGreaterThanOrEqual(0);
-    expect(answerIndex).toBeGreaterThan(caseBarIndex);
+    expect(decisionIndex).toBeGreaterThan(caseBarIndex);
+    expect(answerIndex).toBeGreaterThan(decisionIndex);
     expect(inspectorIndex).toBeGreaterThan(answerIndex);
     expect(processMapIndex).toBeGreaterThan(inspectorIndex);
     expect(inventoryIndex).toBeGreaterThan(processMapIndex);
@@ -61,6 +69,7 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain("background: var(--aivis-color-panel-surface);");
     expect(styles).toContain(".evidence-workbench .qhds-content-section");
     expect(styles).toContain(".evidence-workbench-answer-markdown");
+    expect(styles).toContain(".evidence-workbench-review-actions");
     expect(styles).toContain(".evidence-workbench-process-map__viewport");
     expect(styles).toContain("data-node-tone=\"warning\"");
     expect(styles).not.toMatch(/#[0-9a-fA-F]{3,8}|rgb\(|rgba\(/);

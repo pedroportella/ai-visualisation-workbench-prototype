@@ -55,5 +55,7 @@ export function WorkbenchCaseBar({
 }
 
 function statusTone(status: string): AivisEvidenceTone {
-  return /needs|blocked|review|loading/i.test(status) ? "warning" : "success";
+  return /needs|blocked|review|loading|update|unsafe|escalat/i.test(status)
+    ? "warning"
+    : "success";
 }
