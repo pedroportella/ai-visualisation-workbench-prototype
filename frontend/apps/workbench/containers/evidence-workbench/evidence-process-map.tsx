@@ -14,7 +14,7 @@ import {
   type Node,
   type NodeProps
 } from "@xyflow/react";
-import { QhdsCard } from "@aivis/ui-library";
+import { QhdsButton, QhdsCard, QhdsSummaryList } from "@aivis/ui-library";
 
 import type {
   EvidenceWorkbenchGraphPosition,
@@ -105,7 +105,7 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
           label: edge.edge.label,
           labelBgPadding: [8, 4],
           labelBgStyle: {
-            fill: "var(--aivis-color-card-surface)"
+            fill: "var(--qhds-color-surface)"
           },
           labelShowBg: true,
           labelStyle: {
@@ -118,8 +118,8 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
           source: edge.edge.fromNodeId,
           style: {
             stroke: edge.isSelectedPath
-              ? "var(--aivis-shell-accent)"
-              : "var(--aivis-shell-border-muted)",
+              ? "var(--qhds-color-action)"
+              : "var(--qhds-color-border)",
             strokeWidth: edge.isSelectedPath ? 3 : 2
           },
           target: edge.edge.toNodeId,
@@ -146,16 +146,17 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
           role="group"
         >
           {model.filters.map((filter) => (
-            <button
+            <QhdsButton
               aria-label={`Show ${filter.label.toLowerCase()} in the evidence process map`}
               aria-pressed={filter.id === filterId}
               className="evidence-workbench-process-map__filter"
               key={filter.id}
               onClick={() => setFilterId(filter.id)}
               type="button"
+              variant={filter.id === filterId ? "primary" : "secondary"}
             >
               {filter.label}
-            </button>
+            </QhdsButton>
           ))}
         </div>
         {selectedFilter ? (
@@ -269,20 +270,22 @@ function ProcessMapCanvasControls() {
 
   return (
     <Panel className="evidence-workbench-process-map__canvas-controls" position="top-right">
-      <button
+      <QhdsButton
         aria-label="Fit evidence process map to the visible nodes"
         onClick={() => fitView({ duration: 240, padding: 0.16 })}
         type="button"
+        variant="secondary"
       >
         Fit
-      </button>
-      <button
+      </QhdsButton>
+      <QhdsButton
         aria-label="Reset evidence process map viewport"
         onClick={() => setViewport({ x: 0, y: 0, zoom: 0.82 }, { duration: 240 })}
         type="button"
+        variant="secondary"
       >
         Reset
-      </button>
+      </QhdsButton>
     </Panel>
   );
 }
@@ -298,28 +301,16 @@ function SelectedNodeDetail({ node }: { node: EvidenceProcessMapNodeModel }) {
       headingLevel={3}
       variant="workbench"
     >
-      <dl>
-        <div>
-          <dt>Node</dt>
-          <dd>{node.graphNode.label}</dd>
-        </div>
-        <div>
-          <dt>Type</dt>
-          <dd>{node.typeLabel}</dd>
-        </div>
-        <div>
-          <dt>Reference</dt>
-          <dd>{node.refLabel}</dd>
-        </div>
-        <div>
-          <dt>Status</dt>
-          <dd>{formatGraphStatus(node.graphNode.status)}</dd>
-        </div>
-        <div>
-          <dt>Warnings</dt>
-          <dd>{node.warningLabel}</dd>
-        </div>
-      </dl>
+      <QhdsSummaryList
+        ariaLabel="Selected graph node metadata"
+        items={[
+          { description: node.graphNode.label, term: "Node" },
+          { description: node.typeLabel, term: "Type" },
+          { description: node.refLabel, term: "Reference" },
+          { description: formatGraphStatus(node.graphNode.status), term: "Status" },
+          { description: node.warningLabel, term: "Warnings" }
+        ]}
+      />
     </QhdsCard>
   );
 }

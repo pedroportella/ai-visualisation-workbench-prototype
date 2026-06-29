@@ -4,6 +4,7 @@ import { useId, useState, type ChangeEvent } from "react";
 import {
   AivisEvidenceStatus,
   QhdsButton,
+  QhdsSummaryList,
   QhdsTextarea,
   type AivisEvidenceTone
 } from "@aivis/ui-library";
@@ -82,27 +83,22 @@ export function ReviewDecisionBar({
         </div>
       </div>
 
-      <dl className="evidence-workbench-review-actions__summary">
-        <div>
-          <dt>Feedback</dt>
-          <dd>{state.feedback}</dd>
-        </div>
-        <div>
-          <dt>Warning path</dt>
-          <dd>{actionPath}</dd>
-        </div>
-        <div>
-          <dt>Audit</dt>
-          <dd>
-            {state.audit.id}: {state.audit.reviewEventIds.length} fixture events;
-            last action {state.audit.lastReviewActionId ?? "none"}.
-          </dd>
-        </div>
-        <div>
-          <dt>Local state</dt>
-          <dd>{state.localStateLabel}; reset returns this panel to the loaded fixture seed.</dd>
-        </div>
-      </dl>
+      <QhdsSummaryList
+        ariaLabel="Review action metadata"
+        className="evidence-workbench-review-actions__summary"
+        items={[
+          { description: state.feedback, term: "Feedback" },
+          { description: actionPath, term: "Warning path" },
+          {
+            description: `${state.audit.id}: ${state.audit.reviewEventIds.length} fixture events; last action ${state.audit.lastReviewActionId ?? "none"}.`,
+            term: "Audit"
+          },
+          {
+            description: `${state.localStateLabel}; reset returns this panel to the loaded fixture seed.`,
+            term: "Local state"
+          }
+        ]}
+      />
 
       <div className="evidence-workbench-review-actions__controls">
         <QhdsTextarea

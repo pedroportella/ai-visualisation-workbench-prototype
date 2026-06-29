@@ -2,12 +2,16 @@ import type { ReactElement } from "react";
 
 import {
   AivisEvidenceAnchorChipList,
+  AivisEvidenceCallout,
   AivisEvidenceFilterNav,
   AivisEvidencePanelHeader,
   AivisEvidenceStatus,
   AivisEvidenceTokenList,
   QhdsCard,
-  type AivisEvidenceTone
+  QhdsTable,
+  type AivisEvidenceTone,
+  type QhdsTableColumn,
+  type QhdsTableRow
 } from "@aivis/ui-library";
 
 import type {
@@ -73,6 +77,8 @@ export function SourceTracePanel({
         }))}
       />
 
+      <SourceInventoryTable sources={orderedSources} />
+
       <ol className="evidence-workbench-source-inventory" id="source-inventory">
         {orderedSources.map((source, index) => {
           const issueSummary = sourceIssueSummary(source);
@@ -106,36 +112,6 @@ export function SourceTracePanel({
                         <AivisEvidenceStatus tone="warning">Approval blocker</AivisEvidenceStatus>
                       ) : null}
                     </span>
-                  </span>
-
-                  <span className="evidence-workbench-source-inventory__cell">
-                    <span className="evidence-workbench-source-inventory__cell-label">
-                      Status
-                    </span>
-                    <AivisEvidenceStatus tone={sourceStatusTone(source.status)}>
-                      {source.status}
-                    </AivisEvidenceStatus>
-                  </span>
-
-                  <span className="evidence-workbench-source-inventory__cell">
-                    <span className="evidence-workbench-source-inventory__cell-label">
-                      Freshness
-                    </span>
-                    <strong>{source.freshness}</strong>
-                  </span>
-
-                  <span className="evidence-workbench-source-inventory__cell">
-                    <span className="evidence-workbench-source-inventory__cell-label">
-                      Owner
-                    </span>
-                    <strong>{source.ownerLabel}</strong>
-                  </span>
-
-                  <span className="evidence-workbench-source-inventory__cell">
-                    <span className="evidence-workbench-source-inventory__cell-label">
-                      Citations
-                    </span>
-                    <strong>{source.citationCount}</strong>
                   </span>
 
                   <span className="evidence-workbench-source-inventory__issue">
@@ -217,11 +193,12 @@ function SourceWarningSummary({
   }
 
   return (
-    <section
-      aria-label={`${source.id} warning summary`}
+    <AivisEvidenceCallout
       className="evidence-workbench-source-inventory__warning-summary"
+      heading="Warning summary"
+      headingLevel={3}
+      tone="warning"
     >
-      <h3>Warning summary</h3>
       <ul>
         {warnings.map((warning) => (
           <li key={warning.id}>
@@ -232,8 +209,62 @@ function SourceWarningSummary({
           </li>
         ))}
       </ul>
-    </section>
+    </AivisEvidenceCallout>
   );
+}
+
+function SourceInventoryTable({
+  sources
+}: Readonly<{ sources: EvidenceWorkbenchSource[] }>): ReactElement {
+  const columns: QhdsTableColumn[] = [
+    { dataLabel: "Source", header: "Source", key: "source" },
+    { dataLabel: "Status", header: "Status", key: "status" },
+    { dataLabel: "Freshness", header: "Freshness", key: "freshness" },
+    { dataLabel: "Owner", header: "Owner", key: "owner" },
+    { dataLabel: "Citations", header: "Citations", key: "citations" },
+    { dataLabel: "Issue", header: "Issue", key: "issue" }
+  ];
+  const rows = sources.map(sourceInventoryTableRow);
+
+  return (
+    <div className="evidence-workbench-source-inventory-table">
+      <QhdsTable
+        caption="Source inventory table"
+        captionDescription="Dense source status, freshness, owner and issue summary."
+        columns={columns}
+        rows={rows}
+        striped
+      />
+    </div>
+  );
+}
+
+function sourceInventoryTableRow(source: EvidenceWorkbenchSource): QhdsTableRow {
+  const issueSummary = sourceIssueSummary(source);
+
+  return {
+    citations: source.citationCount,
+    freshness: source.freshness,
+    id: source.id,
+    issue: (
+      <span className="evidence-workbench-source-inventory-table__issue">
+        <strong>{issueSummary.label}</strong>
+        <span>{issueSummary.description}</span>
+      </span>
+    ),
+    owner: source.ownerLabel,
+    source: (
+      <span className="evidence-workbench-source-inventory-table__source">
+        <a href={`#source-${source.id}`}>{source.id}</a>
+        <span>{source.title}</span>
+      </span>
+    ),
+    status: (
+      <AivisEvidenceStatus tone={sourceStatusTone(source.status)}>
+        {source.status}
+      </AivisEvidenceStatus>
+    )
+  };
 }
 
 function sourceStatusTone(status: string): AivisEvidenceTone {

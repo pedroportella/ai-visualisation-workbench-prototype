@@ -206,6 +206,8 @@ describe("SourceTracePanel", () => {
     expect(html).toContain("All sources");
     expect(html).toContain("Needs owner action");
     expect(html).toContain('aria-label="Needs owner action: 2 sources.');
+    expect(html).toContain("Source inventory table");
+    expect(html).toContain("qld__table__wrapper");
     expect(html).toContain("evidence-workbench-source-inventory");
     expect(html).toContain("Status");
     expect(html).toContain("Freshness");
@@ -249,14 +251,14 @@ describe("SourceTracePanel", () => {
     expect(html).toContain("Press Enter to toggle source details.");
   });
 
-  it("keeps warnings reachable while reducing repeated callout rendering", () => {
+  it("keeps warnings reachable through QHDS callouts without repeated source cards", () => {
     const html = renderPanel();
 
     expect(html).toContain('data-source-filter-state="stale_blocker"');
     expect(html).toContain('data-source-filter-state="current_conditional_support"');
     expect(html).not.toContain("aivis-evidence-source-card");
     expect(html).not.toContain("aivis-evidence-warning-group");
-    expect(html).not.toContain("qld__callout");
+    expect(html).toContain("qld__callout");
     expect(html).toContain("Warning summary");
     expect(html).toContain("WARN-001");
     expect(html).toContain("WARN-002");

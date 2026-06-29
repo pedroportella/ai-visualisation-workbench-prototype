@@ -1,4 +1,8 @@
-import { AivisEvidenceStatus, type AivisEvidenceTone } from "@aivis/ui-library";
+import {
+  AivisEvidenceStatus,
+  QhdsSummaryList,
+  type AivisEvidenceTone
+} from "@aivis/ui-library";
 
 export interface WorkbenchCaseBarProps {
   blockerCount: number;
@@ -36,20 +40,15 @@ export function WorkbenchCaseBar({
         </AivisEvidenceStatus>
       </div>
 
-      <dl aria-label="Case metadata" className="evidence-workbench-case-bar__meta">
-        <div>
-          <dt>Generated</dt>
-          <dd>{generatedAt}</dd>
-        </div>
-        <div>
-          <dt>Fixture mode</dt>
-          <dd>{fixtureMode} / {dataSource}</dd>
-        </div>
-        <div>
-          <dt>Runtime</dt>
-          <dd>{runtimeMode}</dd>
-        </div>
-      </dl>
+      <QhdsSummaryList
+        ariaLabel="Case metadata"
+        className="evidence-workbench-case-bar__meta"
+        items={[
+          { description: generatedAt, term: "Generated" },
+          { description: `${fixtureMode} / ${dataSource}`, term: "Fixture mode" },
+          { description: runtimeMode, term: "Runtime" }
+        ]}
+      />
     </header>
   );
 }

@@ -1,6 +1,6 @@
 .aivis-evidence-panel-header {
   align-items: start;
-  border-bottom: var(--aivis-border-width-thin) solid var(--aivis-shell-border-muted);
+  border-bottom: var(--aivis-border-width-thin) solid var(--qhds-color-border);
   display: flex;
   flex-wrap: wrap;
   gap: var(--aivis-workbench-copy-gap);
@@ -21,13 +21,13 @@
 }
 
 .aivis-evidence-panel-header__label {
-  color: var(--aivis-shell-accent);
+  color: var(--qhds-color-link);
 }
 
 .aivis-evidence-status.qld__tag {
   align-items: center;
-  border: var(--aivis-border-width-thin) solid var(--aivis-shell-chip-border);
-  border-radius: var(--aivis-radius-pill);
+  border: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  border-radius: var(--QLD-border-radius-xs);
   display: inline-flex;
   font-size: var(--aivis-font-size-small);
   font-weight: var(--aivis-font-weight-bold);
@@ -38,20 +38,20 @@
 }
 
 .aivis-evidence-status--neutral {
-  background: var(--aivis-shell-chip-background);
-  color: var(--aivis-shell-accent);
+  background: var(--qhds-color-surface);
+  color: var(--qhds-color-link);
 }
 
 .aivis-evidence-status--success {
-  background: var(--aivis-color-success-background);
-  border-color: var(--aivis-color-success-border);
-  color: var(--aivis-color-success-text);
+  background: var(--qhds-color-success-background);
+  border-color: var(--qhds-color-success-border);
+  color: var(--qhds-color-success-text);
 }
 
 .aivis-evidence-status--warning {
-  background: var(--aivis-color-warning-background-strong);
-  border-color: var(--aivis-color-warning-border-strong);
-  color: var(--aivis-color-warning-text);
+  background: var(--qhds-color-warning-background);
+  border-color: var(--qhds-color-warning-border);
+  color: var(--qhds-color-warning-text);
 }
 
 .aivis-evidence-context {
@@ -90,22 +90,22 @@
 }
 
 .aivis-evidence-card.qhds-card {
-  background: var(--aivis-color-card-surface);
-  border-color: var(--aivis-color-card-border);
-  border-radius: var(--aivis-radius-sm);
+  background: var(--qhds-color-surface);
+  border-color: var(--qhds-color-border);
+  border-radius: var(--QLD-border-radius-xs);
   margin-block: 0;
   padding: var(--aivis-workbench-card-padding);
 }
 
 .aivis-evidence-card--warning.qhds-card {
-  border-left: var(--aivis-border-width-accent) solid var(--aivis-color-warning-text);
+  border-left: var(--aivis-border-width-accent) solid var(--qhds-color-warning-border);
 }
 
 .aivis-evidence-card--selected.qhds-card,
 .aivis-evidence-source-card:target {
-  background: var(--aivis-color-accent-surface);
-  border-color: var(--aivis-shell-accent);
-  box-shadow: inset 0 0 0 var(--aivis-border-width-thin) var(--aivis-shell-accent);
+  background: var(--qhds-color-surface-alt);
+  border-color: var(--qhds-color-action);
+  box-shadow: inset 0 0 0 var(--aivis-border-width-thin) var(--qhds-color-action);
 }
 
 .aivis-evidence-card .qhds-card__heading {
@@ -147,9 +147,9 @@
 
 .aivis-evidence-anchor-list li,
 .aivis-evidence-anchor-chip-list li {
-  background: var(--aivis-color-context-background);
-  border: var(--aivis-border-width-thin) dashed var(--aivis-color-context-border);
-  border-radius: var(--aivis-radius-sm);
+  background: var(--qhds-color-surface);
+  border: var(--aivis-border-width-thin) dashed var(--qhds-color-border);
+  border-radius: var(--QLD-border-radius-xs);
   color: var(--aivis-shell-text);
   display: grid;
   gap: var(--aivis-space-1);
@@ -171,7 +171,7 @@
 }
 
 .aivis-evidence-metadata.qhds-summary-list {
-  border-top: var(--aivis-border-width-thin) solid var(--aivis-shell-border-muted);
+  border-top: var(--aivis-border-width-thin) solid var(--qhds-color-border);
   margin-top: var(--aivis-space-3);
 }
 
@@ -186,11 +186,11 @@
 }
 
 .aivis-evidence-callout.qld__callout {
-  background: var(--aivis-color-warning-background);
-  border: var(--aivis-border-width-thin) solid var(--aivis-color-warning-border);
-  border-left: var(--aivis-border-width-accent) solid var(--aivis-color-warning-border-strong);
-  border-radius: var(--aivis-radius-sm);
-  color: var(--aivis-color-warning-text-strong);
+  background: var(--qhds-color-warning-background);
+  border: var(--aivis-border-width-thin) solid var(--qhds-color-warning-border);
+  border-left: var(--aivis-border-width-accent) solid var(--qhds-color-warning-border);
+  border-radius: var(--QLD-border-radius-xs);
+  color: var(--qhds-color-warning-text);
   display: grid;
   gap: var(--aivis-workbench-copy-gap);
   padding: var(--aivis-workbench-list-item-padding);
@@ -198,10 +198,10 @@
 
 .aivis-evidence-callout--neutral.qld__callout,
 .aivis-evidence-callout--success.qld__callout {
-  background: var(--aivis-color-accent-surface);
-  border-color: var(--aivis-color-accent-border);
-  border-left-color: var(--aivis-shell-accent);
-  color: var(--aivis-shell-text);
+  background: var(--qhds-color-info-background);
+  border-color: var(--qhds-color-info-border);
+  border-left-color: var(--qhds-color-info-border);
+  color: var(--qhds-color-info-text);
 }
 
 .aivis-evidence-callout__heading,
@@ -231,8 +231,8 @@
 }
 
 .aivis-evidence-filter-nav__list {
-  border: var(--aivis-border-width-thin) solid var(--aivis-shell-border-muted);
-  border-radius: var(--aivis-radius-sm);
+  border: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  border-radius: var(--QLD-border-radius-xs);
   display: grid;
   gap: 0;
   grid-template-columns: var(--aivis-workbench-summary-columns);
@@ -242,8 +242,8 @@
 .aivis-evidence-filter-nav__link.qld__btn,
 .aivis-evidence-token-list__link.qld__btn {
   align-items: center;
-  background: var(--aivis-color-panel-surface);
-  border-color: var(--aivis-shell-border-muted);
+  background: var(--qhds-color-surface);
+  border-color: var(--qhds-color-border);
   border-radius: 0;
   color: var(--aivis-shell-text);
   display: grid;
@@ -260,7 +260,7 @@
 
 .aivis-evidence-filter-nav__link strong,
 .aivis-evidence-token-list__link strong {
-  color: var(--aivis-shell-accent);
+  color: var(--qhds-color-link);
 }
 
 .aivis-evidence-token-list {
@@ -270,7 +270,7 @@
 }
 
 .aivis-evidence-token-list__link.qld__btn {
-  border-radius: var(--aivis-radius-pill);
+  border-radius: var(--QLD-border-radius-xs);
   display: inline-flex;
   min-height: var(--aivis-workbench-status-min-block-size);
   width: auto;
@@ -294,9 +294,9 @@
 
 .aivis-evidence-path-list li::before {
   align-items: center;
-  background: var(--aivis-shell-accent-strong);
-  border-radius: var(--aivis-radius-pill);
-  color: var(--aivis-shell-on-accent);
+  background: var(--qhds-color-action);
+  border-radius: var(--QLD-border-radius-xs);
+  color: var(--qhds-color-action-text);
   content: counter(evidence-step);
   counter-increment: evidence-step;
   display: inline-flex;
@@ -315,9 +315,9 @@
 }
 
 .aivis-evidence-source-card__owner code {
-  background: var(--aivis-shell-surface-muted);
-  border: var(--aivis-border-width-thin) solid var(--aivis-shell-border-muted);
-  border-radius: var(--aivis-radius-sm);
+  background: var(--qhds-color-surface-alt);
+  border: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  border-radius: var(--QLD-border-radius-xs);
   color: var(--aivis-shell-text);
   font-size: var(--aivis-font-size-small);
   padding: 0 var(--aivis-space-1);

@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 
 import {
   AivisEvidenceCallout,
+  AivisEvidenceMetadata,
   AivisEvidencePanelHeader,
   AivisEvidenceStatus,
   AivisEvidenceWarningGroup,
@@ -117,27 +118,16 @@ export function SelectedSourceInspector({
                   {source.status}
                 </AivisEvidenceStatus>
               </div>
-              <dl
-                aria-label={`${source.id} selected source details`}
+              <AivisEvidenceMetadata
+                ariaLabel={`${source.id} selected source details`}
                 className="evidence-workbench-source-inspector__source-meta"
-              >
-                <div>
-                  <dt>Owner</dt>
-                  <dd>{source.ownerLabel}</dd>
-                </div>
-                <div>
-                  <dt>Freshness</dt>
-                  <dd>{source.freshness}</dd>
-                </div>
-                <div>
-                  <dt>Citations</dt>
-                  <dd>{source.citationCount}</dd>
-                </div>
-                <div>
-                  <dt>Type</dt>
-                  <dd>{source.sourceType}</dd>
-                </div>
-              </dl>
+                items={[
+                  { description: source.ownerLabel, term: "Owner" },
+                  { description: source.freshness, term: "Freshness" },
+                  { description: source.citationCount, term: "Citations" },
+                  { description: source.sourceType, term: "Type" }
+                ]}
+              />
               <p>{source.preview}</p>
               <details className="evidence-workbench-source-inspector__warning-details">
                 <summary>
