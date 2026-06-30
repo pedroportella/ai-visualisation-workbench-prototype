@@ -10,42 +10,95 @@ import EvidenceWorkbenchContainer from "./evidence-workbench-container";
 const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "evidence-workbench.scss"), "utf8");
 
 describe("EvidenceWorkbenchContainer", () => {
-  it("uses the decision route for the compact primary review task", () => {
+  it("uses the overview route as a compact welcome and task launcher", () => {
     const html = renderToStaticMarkup(
       <EvidenceWorkbenchContainer data={fallbackEvidenceWorkbenchData} />
     );
-    const caseBarIndex = html.indexOf("evidence-workbench-case-bar");
+    const introIndex = html.indexOf("evidence-workbench-page-intro");
+    const mobileNavIndex = html.indexOf("evidence-workbench-mobile-nav");
+    const overviewIndex = html.indexOf('id="overview-title"');
+    const launcherIndex = html.indexOf('id="task-launcher-title"');
+
+    expect(html).toContain('data-workbench-view="overview"');
+    expect(html).toContain('class="qld__body qld__body--light evidence-workbench"');
+    expect(html).not.toContain("qld__global-alert");
+    expect(html).toContain(
+      '<h1 class="evidence-workbench-page-intro__heading" id="evidence-workbench-title">Evidence Workbench</h1>'
+    );
+    expect(html).toContain("AIVIS is a simulated evidence workbench");
+    expect(html).toContain("Step-free transfer guidance needs evidence review");
+    expect(html).toContain("3 approval blockers");
+    expect(html).toContain("Bundled fallback");
+    expect(html).toContain("Current review task");
+    expect(html).toContain("The current synthetic case shows the review state");
+    expect(html).toContain("Available next actions");
+    expect(html).toContain("Request source update");
+    expect(html).toContain("Add review note");
+    expect(html).toContain("Escalate to source owner");
+    expect(html).toContain("Mark unsafe to use");
+    expect(html).toContain("Source blockers");
+    expect(html).toContain("Temporary boarding map needs a freshness check.");
+    expect(html).toContain("Dispatch confirmation is missing.");
+    expect(html).toContain("Choose the next task");
+    expect(html).toContain('href="/evidence-workbench/review"');
+    expect(html).toContain(">Start review<");
+    expect(html).toContain(">Review source blockers<");
+    expect(html).toContain(">Open evidence map<");
+    expect(html).toContain(">View audit state<");
+    expect(html).toContain("Local review state is seeded from the loaded fixture.");
+    expect(html).toContain('aria-label="Evidence Workbench views"');
+    expect(html).toContain('aria-current="page"');
+    expect(html).toContain(">Overview<");
+    expect(html).toContain(">Review<");
+    expect(html).toContain('href="/evidence-workbench/sources"');
+    expect(html).toContain('href="/evidence-workbench/process"');
+    expect(html).toContain('href="/evidence-workbench/audit"');
+    expect(html).not.toContain('id="answer-title"');
+    expect(html).not.toContain('id="review-decision-title"');
+    expect(html).not.toContain('id="source-inspector-title"');
+    expect(html).not.toContain("evidence-workbench-generated-diagram");
+    expect(html).not.toContain("qld__abstract");
+    expect(introIndex).toBeGreaterThanOrEqual(0);
+    expect(mobileNavIndex).toBeGreaterThan(introIndex);
+    expect(overviewIndex).toBeGreaterThan(mobileNavIndex);
+    expect(launcherIndex).toBeGreaterThan(overviewIndex);
+  });
+
+  it("uses the review route for the compact primary review task", () => {
+    const html = renderToStaticMarkup(
+      <EvidenceWorkbenchContainer
+        activeView="review"
+        data={fallbackEvidenceWorkbenchData}
+      />
+    );
+    const introIndex = html.indexOf("evidence-workbench-page-intro");
     const mobileNavIndex = html.indexOf("evidence-workbench-mobile-nav");
     const decisionIndex = html.indexOf('id="review-decision-title"');
     const answerIndex = html.indexOf('id="answer-title"');
     const inspectorIndex = html.indexOf('id="source-inspector-title"');
 
-    expect(html).toContain('data-workbench-view="decision"');
-    expect(html).toContain('class="qld__body qld__body--light evidence-workbench"');
-    expect(html).toContain("evidence-workbench-case-bar");
+    expect(html).toContain('data-workbench-view="review"');
     expect(html).toContain(
-      '<h1 class="evidence-workbench-case-bar__heading" id="evidence-workbench-title">Evidence Workbench</h1>'
+      '<h1 class="evidence-workbench-page-intro__heading" id="evidence-workbench-title">Review answer</h1>'
     );
-    expect(html).toContain("Step-free transfer guidance needs evidence review");
-    expect(html).toContain("3 approval blockers");
-    expect(html).toContain("Bundled fallback");
     expect(html).toContain("Action and audit flow");
     expect(html).toContain("Request source update");
     expect(html).toContain("Mark unsafe to use");
     expect(html).toContain("Mark reviewed remains disabled in this fixture");
     expect(html).toContain('aria-disabled="true"');
     expect(html).toContain("Copy approved answer");
-    expect(html).toContain("Local review state is seeded from the loaded fixture.");
     expect(html).toContain('aria-label="Evidence Workbench views"');
+    expect(html).toContain('href="/evidence-workbench"');
+    expect(html).toContain('href="/evidence-workbench/review"');
     expect(html).toContain('href="/evidence-workbench/sources"');
     expect(html).toContain('href="/evidence-workbench/process"');
     expect(html).toContain('href="/evidence-workbench/audit"');
     expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-003"');
     expect(html).not.toContain("qhds-page-header");
     expect(html).not.toContain("qhds-page-header__context");
-    expect(caseBarIndex).toBeGreaterThanOrEqual(0);
-    expect(mobileNavIndex).toBeGreaterThan(caseBarIndex);
-    expect(answerIndex).toBeGreaterThan(caseBarIndex);
+    expect(introIndex).toBeGreaterThanOrEqual(0);
+    expect(mobileNavIndex).toBeGreaterThan(introIndex);
+    expect(answerIndex).toBeGreaterThan(mobileNavIndex);
     expect(inspectorIndex).toBeGreaterThan(answerIndex);
     expect(decisionIndex).toBeGreaterThan(inspectorIndex);
     expect(html).toContain("row evidence-workbench-grid");
@@ -67,6 +120,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("Generated fallback review path");
     expect(html).toContain("Diagram text fallback");
     expect(html).toContain("evidence-workbench-code-block");
+    expect(html).not.toContain('id="overview-title"');
+    expect(html).not.toContain('id="task-launcher-title"');
     expect(html).not.toContain('id="process-map-title"');
     expect(html).not.toContain('id="sources-title"');
     expect(html).not.toContain('id="audit-summary"');
@@ -143,7 +198,10 @@ describe("EvidenceWorkbenchContainer", () => {
   it("scopes answer content to a readable tokenized work surface", () => {
     expect(styles).toContain("background: var(--aivis-color-panel-surface);");
     expect(styles).toContain(".evidence-workbench .qhds-content-section");
+    expect(styles).toContain(".evidence-workbench-page-intro");
     expect(styles).toContain(".evidence-workbench-answer-markdown");
+    expect(styles).toContain(".evidence-workbench-overview");
+    expect(styles).toContain(".evidence-workbench-task-launcher");
     expect(styles).toContain(".evidence-workbench-review-actions");
     expect(styles).toContain(".evidence-workbench-mobile-nav");
     expect(styles).toContain("@media (max-width: 75rem)");

@@ -30,6 +30,25 @@ describe("QhdsLayout", () => {
     expect(html).toContain("Header");
     expect(html).toContain("Body");
     expect(html).toContain("Footer");
+    expect(html).not.toContain("// global alert here");
+  });
+
+  it("places a global alert strip between the header and main content", () => {
+    const html = renderToStaticMarkup(
+      <QhdsLayout
+        globalAlert={<div className="qld__global_alert_include">Global alert</div>}
+        header={<header>Header</header>}
+      >
+        <h1>Body</h1>
+      </QhdsLayout>
+    );
+    const headerIndex = html.indexOf("<header>Header</header>");
+    const alertIndex = html.indexOf("qld__global_alert_include");
+    const mainIndex = html.indexOf('<main class="main qhds-layout__main"');
+
+    expect(alertIndex).toBeGreaterThan(headerIndex);
+    expect(mainIndex).toBeGreaterThan(alertIndex);
+    expect(html).toContain("Global alert");
   });
 
   it("renders optional left navigation as a QHDS vertical-nav shell", () => {

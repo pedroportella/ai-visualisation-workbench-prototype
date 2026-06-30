@@ -6,7 +6,13 @@ import {
 } from "@aivis/ui-library";
 import { WorkbenchSideNav } from "./workbench-side-nav";
 
-export function WorkbenchAppShell({ children }: Readonly<{ children: ReactNode }>) {
+export function WorkbenchAppShell({
+  children,
+  globalAlert
+}: Readonly<{
+  children: ReactNode;
+  globalAlert?: ReactNode;
+}>) {
   return (
     <QhdsLayout
       className="aivis-app-shell"
@@ -16,6 +22,7 @@ export function WorkbenchAppShell({ children }: Readonly<{ children: ReactNode }
           <p>Evidence Workbench uses synthetic fixture evidence and local review state only.</p>
         </QhdsFooter>
       }
+      globalAlert={globalAlert}
       header={
         <QhdsHeader
           accountHref="#review-title"

@@ -7,22 +7,27 @@ const routeItems = [
   {
     href: "/evidence-workbench",
     icon: <QhdsIcon size="md" symbol="document" />,
-    label: "Decision overview"
+    label: "Overview"
+  },
+  {
+    href: "/evidence-workbench/review",
+    icon: <QhdsIcon size="md" symbol="document" />,
+    label: "Review answer"
   },
   {
     href: "/evidence-workbench/sources",
     icon: <QhdsIcon size="md" symbol="document" />,
-    label: "Source inventory"
+    label: "Source blockers"
   },
   {
     href: "/evidence-workbench/process",
     icon: <QhdsIcon size="md" symbol="location" />,
-    label: "Process map"
+    label: "Evidence map"
   },
   {
     href: "/evidence-workbench/audit",
     icon: <QhdsIcon size="md" symbol="clock" />,
-    label: "Audit flow"
+    label: "Audit state"
   }
 ];
 

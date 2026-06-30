@@ -6,13 +6,15 @@ import {
   AivisEvidenceClaimCard,
   AivisEvidenceContextAnchors,
   AivisEvidencePanelHeader,
+  AivisEvidenceStatus,
   AivisEvidenceWarningList,
   type AivisEvidenceTone,
+  QhdsButton,
   QhdsCard,
   QhdsCol,
   QhdsContentSection,
-  QhdsPageAlert,
-  QhdsRow
+  QhdsRow,
+  QhdsSummaryList
 } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
@@ -29,10 +31,11 @@ import {
   selectedSourceWarnings
 } from "./selected-source-inspector";
 import { SourceTracePanel } from "./source-trace-panel";
-import { WorkbenchCaseBar } from "./workbench-case-bar";
 
-export type EvidenceWorkbenchView = "decision" | "sources" | "process" | "audit";
+export type EvidenceWorkbenchView = "overview" | "review" | "sources" | "process" | "audit";
 
+const OVERVIEW_ROUTE = "/evidence-workbench";
+const REVIEW_ROUTE = "/evidence-workbench/review";
 const SOURCE_INVENTORY_ROUTE = "/evidence-workbench/sources";
 const PROCESS_ROUTE = "/evidence-workbench/process";
 const AUDIT_ROUTE = "/evidence-workbench/audit";
@@ -44,33 +47,39 @@ const workbenchRouteLinks: Array<{
   view: EvidenceWorkbenchView;
 }> = [
   {
-    description: "Draft, inspector and local review decision",
-    href: "/evidence-workbench",
-    label: "Decision",
-    view: "decision"
+    description: "Welcome, case state and task launcher",
+    href: OVERVIEW_ROUTE,
+    label: "Overview",
+    view: "overview"
   },
   {
-    description: "Full inventory and citation relationships",
+    description: "Draft answer, inspector and local actions",
+    href: REVIEW_ROUTE,
+    label: "Review",
+    view: "review"
+  },
+  {
+    description: "Blockers and citation relationships",
     href: SOURCE_INVENTORY_ROUTE,
-    label: "Sources",
+    label: "Source blockers",
     view: "sources"
   },
   {
     description: "Graph and text fallback path",
     href: PROCESS_ROUTE,
-    label: "Process",
+    label: "Evidence map",
     view: "process"
   },
   {
     description: "Local audit state and warnings",
     href: AUDIT_ROUTE,
-    label: "Audit",
+    label: "Audit state",
     view: "audit"
   }
 ];
 
 export default function EvidenceWorkbenchContainer({
-  activeView = "decision",
+  activeView = "overview",
   data
 }: Readonly<{
   activeView?: EvidenceWorkbenchView;
@@ -97,25 +106,19 @@ export default function EvidenceWorkbenchContainer({
       className="qld__body qld__body--light evidence-workbench"
       data-workbench-view={activeView}
     >
-      <WorkbenchCaseBar
-        blockerCount={review.blockedByWarningIds.length}
-        caseTitle={data.context.title}
-        dataSource={summary.get("Data source") ?? data.fetchState.source}
-        fixtureMode={summary.get("Fixture mode") ?? "Synthetic fixture"}
-        generatedAt={data.answer.generatedAt}
-        runtimeMode={summary.get("Runtime") ?? "Local fixture"}
-        status={review.status}
-      />
-
-      {data.fetchState.message ? (
-        <QhdsPageAlert heading={data.fetchState.message} tone="warning">
-          <p>Review can continue against the fallback fixture state.</p>
-        </QhdsPageAlert>
-      ) : null}
+      <WorkbenchViewIntro activeView={activeView} data={data} review={review} />
 
       <WorkbenchMobileSectionNav activeView={activeView} />
 
-      {activeView === "decision" ? (
+      {activeView === "overview" ? (
+        <WorkbenchOverview
+          data={data}
+          decisionState={decisionState}
+          summary={summary}
+        />
+      ) : null}
+
+      {activeView === "review" ? (
         <>
           <QhdsRow className="evidence-workbench-grid evidence-workbench-primary-frame">
             <QhdsCol lg={7} xl={7}>
@@ -265,6 +268,221 @@ export default function EvidenceWorkbenchContainer({
   );
 }
 
+function WorkbenchViewIntro({
+  activeView,
+  data,
+  review
+}: Readonly<{
+  activeView: EvidenceWorkbenchView;
+  data: EvidenceWorkbenchViewModel;
+  review: EvidenceWorkbenchViewModel["review"];
+}>) {
+  const intro = {
+    audit: {
+      description:
+        "Check the current local action state, copy availability and fixture audit trail.",
+      title: "Audit state"
+    },
+    overview: {
+      description:
+        "AIVIS is a simulated evidence workbench for reviewing source-backed AI guidance before it is used.",
+      title: "Evidence Workbench"
+    },
+    process: {
+      description:
+        "Trace the synthetic question, source evidence, selected claim and review action path.",
+      title: "Evidence map"
+    },
+    review: {
+      description:
+        "Inspect the draft answer, selected source issue and local review actions for the current synthetic case.",
+      title: "Review answer"
+    },
+    sources: {
+      description:
+        "Review the source records, warning relationships and approval blockers for the current answer.",
+      title: "Source blockers"
+    }
+  } satisfies Record<EvidenceWorkbenchView, { description: string; title: string }>;
+  const routeIntro = intro[activeView];
+  const blockerCount = review.blockedByWarningIds.length;
+
+  return (
+    <header className="evidence-workbench-page-intro">
+      <p className="evidence-workbench-page-intro__label">{data.context.title}</p>
+      <h1 className="evidence-workbench-page-intro__heading" id="evidence-workbench-title">
+        {routeIntro.title}
+      </h1>
+      <p className="evidence-workbench-page-intro__description">{routeIntro.description}</p>
+      <p className="evidence-workbench-page-intro__state">
+        {review.status} with {blockerCount} approval{" "}
+        {blockerCount === 1 ? "blocker" : "blockers"}.
+      </p>
+    </header>
+  );
+}
+
+function WorkbenchOverview({
+  data,
+  decisionState,
+  summary
+}: Readonly<{
+  data: EvidenceWorkbenchViewModel;
+  decisionState: ReviewDecisionState;
+  summary: ReadonlyMap<string, string>;
+}>) {
+  const review = decisionState.review;
+  const selectedClaim = data.reviewClaims.find(
+    (claim) => claim.id === review.selectedClaimId
+  );
+  const blockerWarnings = decisionState.warnings.filter((warning) =>
+    review.blockedByWarningIds.includes(warning.id)
+  );
+  const availableActions = decisionState.actions.filter((action) =>
+    review.availableActionIds.includes(action.id)
+  );
+  const fixtureMode = summary.get("Fixture mode") ?? "Synthetic fixture";
+  const dataSource = summary.get("Data source") ?? data.fetchState.source;
+
+  return (
+    <>
+      <QhdsContentSection
+        className="evidence-workbench-panel evidence-workbench-overview-section"
+        heading="Current review task"
+        headingId="overview-title"
+        lead="The current synthetic case shows the review state, source blockers and available local actions."
+        leadDensity="compact"
+      >
+        <div className="evidence-workbench-overview">
+          <QhdsCard
+            actionMode="none"
+            className="evidence-workbench-overview-card evidence-workbench-overview-card--case"
+            density="compact"
+            heading={data.context.title}
+            headingLevel={3}
+            variant="workbench"
+          >
+            <p>{data.context.question}</p>
+            <div
+              aria-label="Current review state"
+              className="evidence-workbench-overview__status"
+            >
+              <AivisEvidenceStatus tone={statusTone(review.status)}>
+                {review.status}
+              </AivisEvidenceStatus>
+              <AivisEvidenceStatus
+                tone={review.blockedByWarningIds.length > 0 ? "warning" : "success"}
+              >
+                {review.blockedByWarningIds.length} approval blockers
+              </AivisEvidenceStatus>
+              <AivisEvidenceStatus tone={review.copyState === "enabled" ? "success" : "warning"}>
+                Copy {formatStateLabel(review.copyState)}
+              </AivisEvidenceStatus>
+            </div>
+            <QhdsSummaryList
+              ariaLabel="Synthetic review case summary"
+              className="evidence-workbench-overview__summary"
+              items={[
+                {
+                  description: selectedClaim
+                    ? `${selectedClaim.id}: ${selectedClaim.title}`
+                    : review.selectedClaimId,
+                  term: "Selected claim"
+                },
+                {
+                  description: `${fixtureMode} / ${dataSource}`,
+                  term: "Fixture source"
+                },
+                {
+                  description: decisionState.feedback,
+                  term: "Feedback"
+                },
+                {
+                  description: decisionState.localStateLabel,
+                  term: "State model"
+                },
+                {
+                  description: data.audit.boundaryNoteForDocs ?? "Synthetic fixture evidence only.",
+                  term: "Boundary"
+                }
+              ]}
+            />
+          </QhdsCard>
+
+          <QhdsCard
+            actionMode="none"
+            className="evidence-workbench-overview-card"
+            density="compact"
+            heading="Available next actions"
+            headingLevel={3}
+            variant="workbench"
+          >
+            <p>
+              Reviewers inspect the draft answer and linked source blockers, then
+              record a local action before any approved answer can be copied.
+            </p>
+            <ul className="evidence-workbench-overview__action-list">
+              {availableActions.map((action) => (
+                <li key={action.id}>
+                  <strong>{action.label}</strong>
+                  <span>{action.description}</span>
+                </li>
+              ))}
+            </ul>
+          </QhdsCard>
+
+          <QhdsCard
+            actionMode="none"
+            className="evidence-workbench-overview-card evidence-workbench-overview-card--blockers"
+            density="compact"
+            heading="Source blockers"
+            headingLevel={3}
+            variant="workbench"
+          >
+            {blockerWarnings.length > 0 ? (
+              <AivisEvidenceWarningList
+                ariaLabel="Approval blockers for this review case"
+                warnings={blockerWarnings.map((warning) => ({
+                  id: warning.id,
+                  impact: warning.evidenceImpact,
+                  message: warning.message,
+                  severity: warning.severity
+                }))}
+              />
+            ) : (
+              <p>No approval blockers are active in the current local review state.</p>
+            )}
+          </QhdsCard>
+        </div>
+      </QhdsContentSection>
+
+      <QhdsContentSection
+        className="evidence-workbench-panel evidence-workbench-task-launcher-section"
+        heading="Choose the next task"
+        headingId="task-launcher-title"
+        lead="Start with the full review workspace or jump to the source, map and audit views."
+        leadDensity="compact"
+      >
+        <div
+          aria-label="Evidence Workbench task launcher"
+          className="evidence-workbench-task-launcher"
+        >
+          <QhdsButton href={REVIEW_ROUTE}>Start review</QhdsButton>
+          <QhdsButton href={SOURCE_INVENTORY_ROUTE} variant="secondary">
+            Review source blockers
+          </QhdsButton>
+          <QhdsButton href={PROCESS_ROUTE} variant="secondary">
+            Open evidence map
+          </QhdsButton>
+          <QhdsButton href={AUDIT_ROUTE} variant="secondary">
+            View audit state
+          </QhdsButton>
+        </div>
+      </QhdsContentSection>
+    </>
+  );
+}
+
 function WorkbenchMobileSectionNav({
   activeView
 }: Readonly<{ activeView: EvidenceWorkbenchView }>) {
@@ -332,7 +550,7 @@ function ClaimsReviewSection({
 }
 
 function WorkbenchRouteCards() {
-  const supportingRoutes = workbenchRouteLinks.filter((link) => link.view !== "decision");
+  const supportingRoutes = workbenchRouteLinks.filter((link) => link.view !== "review");
 
   return (
     <QhdsContentSection
@@ -421,7 +639,15 @@ function summaryMap(data: EvidenceWorkbenchViewModel): Map<string, string> {
 }
 
 function statusTone(status: string): AivisEvidenceTone {
-  const isWarning = /missing|stale|weak|partial/i.test(status);
+  const isWarning = /blocked|escalat|missing|needs|partial|review|stale|unsafe|update|weak/i.test(status);
 
   return isWarning ? "warning" : "success";
+}
+
+function formatStateLabel(value: string): string {
+  return value
+    .split("_")
+    .filter(Boolean)
+    .map((word) => `${word[0]?.toUpperCase() ?? ""}${word.slice(1)}`)
+    .join(" ");
 }

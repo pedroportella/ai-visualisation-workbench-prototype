@@ -12,6 +12,7 @@ export interface QhdsLayoutProps {
   contentWidth?: QhdsLayoutContentWidth;
   focusMode?: boolean;
   footer?: ReactNode;
+  globalAlert?: ReactNode;
   header?: ReactNode;
   mainId?: string;
   mainLabel?: string;
@@ -27,6 +28,7 @@ export function QhdsLayout({
   contentWidth,
   focusMode = false,
   footer,
+  globalAlert,
   header,
   mainId = "content",
   mainLabel,
@@ -76,6 +78,7 @@ export function QhdsLayout({
         ) : null}
       </nav>
       {header}
+      {globalAlert}
       <main aria-label={mainLabel} className="main qhds-layout__main" tabIndex={-1}>
         {hasSideNav ? <div className="qhds-layout__left-nav" id="section-navigation">{sideNav}</div> : null}
         {hasSideNav ? <div className="qld__body--left-nav qhds-layout__left-nav-content">{bodyContent}</div> : bodyContent}

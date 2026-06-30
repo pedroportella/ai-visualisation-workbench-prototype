@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { WorkbenchAppShell } from "../app-shell/workbench-app-shell";
 import "@aivis/ui-library/theme.scss";
 import "@xyflow/react/dist/style.css";
 import "./workbench.scss";
@@ -16,9 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-AU">
-      <body>
-        <WorkbenchAppShell>{children}</WorkbenchAppShell>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

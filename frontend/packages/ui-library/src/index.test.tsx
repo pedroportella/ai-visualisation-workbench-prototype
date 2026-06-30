@@ -10,6 +10,7 @@ import {
   QhdsDirectionLink,
   QhdsFooter,
   QhdsFormField,
+  QhdsGlobalAlert,
   QhdsCol,
   QhdsContainer,
   QhdsRow,
@@ -34,6 +35,7 @@ describe("ui-library public exports", () => {
     expect(QhdsContentSection).toBeTypeOf("function");
     expect(QhdsDirectionLink).toBeTypeOf("function");
     expect(QhdsFooter).toBeTypeOf("function");
+    expect(QhdsGlobalAlert).toBeTypeOf("function");
     expect(QhdsCol).toBeTypeOf("function");
     expect(QhdsContainer).toBeTypeOf("function");
     expect(QhdsHeader).toBeTypeOf("function");
