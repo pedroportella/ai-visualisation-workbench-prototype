@@ -17,18 +17,25 @@ import {
 import type { EvidenceWorkbenchReviewAction } from "../../services/evidence-workbench/types";
 import {
   getReviewActionAvailability,
+  type ReviewActionTarget,
   type ReviewDecisionState
 } from "./review-action-state";
 
 export interface ReviewDecisionBarProps {
-  onApplyAction: (actionId: string, reviewerNote: string) => void;
+  onApplyAction: (
+    actionId: string,
+    reviewerNote: string,
+    targetIssue: ReviewActionTarget | null
+  ) => void;
   onReset: () => void;
+  selectedIssue: ReviewActionTarget | null;
   state: ReviewDecisionState;
 }
 
 export function ReviewDecisionBar({
   onApplyAction,
   onReset,
+  selectedIssue,
   state
 }: ReviewDecisionBarProps) {
   const baseId = useId();
@@ -42,9 +49,14 @@ export function ReviewDecisionBar({
       ? `Copy stays disabled because ${formatList(state.review.blockedByWarningIds)} still block approval.`
       : "Copy can be enabled once the review state is marked reviewed.";
   const actionPath =
-    state.review.blockedByWarningIds.length > 0
-      ? `${state.review.selectedClaimId} -> ${formatList(state.review.blockedByWarningIds)} -> ${PRIMARY_REVIEW_ACTION_ID}`
+    selectedIssue
+      ? `${selectedIssue.sourceId} -> ${selectedIssue.warningId} -> ${PRIMARY_REVIEW_ACTION_ID}`
+      : state.review.blockedByWarningIds.length > 0
+        ? `${state.review.selectedClaimId} -> ${formatList(state.review.blockedByWarningIds)} -> ${PRIMARY_REVIEW_ACTION_ID}`
       : `${state.review.selectedClaimId} has no active approval blockers.`;
+  const selectedIssueLabel = selectedIssue
+    ? `${selectedIssue.warningId}: ${selectedIssue.warningMessage} (${selectedIssue.sourceId}, ${selectedIssue.ownerLabel})`
+    : "No source blocker issue selected.";
 
   const handleNoteChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setReviewerNote(event.target.value);
@@ -87,8 +99,13 @@ export function ReviewDecisionBar({
         ariaLabel="Review action metadata"
         className="evidence-workbench-review-actions__summary"
         items={[
+          { description: selectedIssueLabel, term: "Selected source issue" },
           { description: state.feedback, term: "Feedback" },
           { description: actionPath, term: "Warning path" },
+          {
+            description: lastActionTargetLabel(state.lastActionTarget),
+            term: "Last local action target"
+          },
           {
             description: `${state.audit.id}: ${state.audit.reviewEventIds.length} fixture events; last action ${state.audit.lastReviewActionId ?? "none"}.`,
             term: "Audit"
@@ -122,6 +139,7 @@ export function ReviewDecisionBar({
               key={action.id}
               onApplyAction={onApplyAction}
               reviewerNote={reviewerNote}
+              selectedIssue={selectedIssue}
               state={state}
             />
           ))}
@@ -153,17 +171,26 @@ function ReviewActionButton({
   baseId,
   onApplyAction,
   reviewerNote,
+  selectedIssue,
   state
 }: {
   action: EvidenceWorkbenchReviewAction;
   baseId: string;
-  onApplyAction: (actionId: string, reviewerNote: string) => void;
+  onApplyAction: (
+    actionId: string,
+    reviewerNote: string,
+    targetIssue: ReviewActionTarget | null
+  ) => void;
   reviewerNote: string;
+  selectedIssue: ReviewActionTarget | null;
   state: ReviewDecisionState;
 }) {
   const availability = getReviewActionAvailability(state.review, action, reviewerNote);
   const reasonId = `${baseId}-${action.id.toLowerCase()}-reason`;
-  const reason = availability.reason ?? action.description;
+  const targetReason = selectedIssue
+    ? ` Target: ${selectedIssue.warningId} on ${selectedIssue.sourceId}.`
+    : "";
+  const reason = availability.reason ?? `${action.description}${targetReason}`;
 
   return (
     <div
@@ -180,7 +207,7 @@ function ReviewActionButton({
             return;
           }
 
-          onApplyAction(action.id, reviewerNote);
+          onApplyAction(action.id, reviewerNote, selectedIssue);
         }}
         type="button"
         variant={action.uiTone === "primary" ? "primary" : "secondary"}
@@ -214,4 +241,12 @@ function formatList(values: string[]): string {
   }
 
   return `${values.slice(0, -1).join(", ")} and ${values[values.length - 1]}`;
+}
+
+function lastActionTargetLabel(target: ReviewActionTarget | null): string {
+  if (!target) {
+    return "No local action target recorded.";
+  }
+
+  return `${target.warningId} on ${target.sourceId}: ${target.warningMessage}`;
 }

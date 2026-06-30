@@ -76,12 +76,24 @@ describe("EvidenceWorkbenchContainer", () => {
     const decisionIndex = html.indexOf('id="review-decision-title"');
     const answerIndex = html.indexOf('id="answer-title"');
     const inspectorIndex = html.indexOf('id="source-inspector-title"');
+    const sourceIssueIndex = html.indexOf('id="source-issue-review-title"');
 
     expect(html).toContain('data-workbench-view="review"');
     expect(html).toContain(
       '<h1 class="evidence-workbench-page-intro__heading" id="evidence-workbench-title">Review answer</h1>'
     );
     expect(html).toContain("Action and audit flow");
+    expect(html).toContain("Source issue review");
+    expect(html).toContain("Inspect the blocker that the next local action will target.");
+    expect(html).toContain("3 blocker issues");
+    expect(html).toContain("Selected source issue");
+    expect(html).toContain("WARN-FALLBACK-001: Temporary boarding map needs a freshness check.");
+    expect(html).toContain("WARN-FALLBACK-002 on SRC-FALLBACK-002");
+    expect(html).toContain("WARN-FALLBACK-003 on SRC-FALLBACK-003");
+    expect(html).toContain("Selected for action");
+    expect(html).toContain("Target: WARN-FALLBACK-001 on SRC-FALLBACK-002.");
+    expect(html).toContain("Last local action target");
+    expect(html).toContain("No local action target recorded.");
     expect(html).toContain("Request source update");
     expect(html).toContain("Mark unsafe to use");
     expect(html).toContain("Mark reviewed remains disabled in this fixture");
@@ -100,7 +112,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(mobileNavIndex).toBeGreaterThan(introIndex);
     expect(answerIndex).toBeGreaterThan(mobileNavIndex);
     expect(inspectorIndex).toBeGreaterThan(answerIndex);
-    expect(decisionIndex).toBeGreaterThan(inspectorIndex);
+    expect(sourceIssueIndex).toBeGreaterThan(inspectorIndex);
+    expect(decisionIndex).toBeGreaterThan(sourceIssueIndex);
     expect(html).toContain("row evidence-workbench-grid");
     expect(html).toContain("evidence-workbench-primary-frame");
     expect(html).toContain("col-xs-12 col-lg-7 col-xl-7");
@@ -142,6 +155,10 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain('aria-current="page"');
     expect(html).toContain('id="sources-title"');
     expect(html).toContain("Compact source inventory");
+    expect(html).toContain("Blocker action target");
+    expect(html).toContain("Choose a blocker to inspect");
+    expect(html).toContain("Continue to review actions");
+    expect(html).toContain('href="/evidence-workbench/review"');
     expect(html).toContain("evidence-workbench-source-inventory");
     expect(html).toContain('id="source-SRC-FALLBACK-002"');
     expect(html).toContain('data-source-expanded-default="false"');
@@ -203,6 +220,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain(".evidence-workbench-overview");
     expect(styles).toContain(".evidence-workbench-task-launcher");
     expect(styles).toContain(".evidence-workbench-review-actions");
+    expect(styles).toContain(".evidence-workbench-source-review");
+    expect(styles).toContain(".evidence-workbench-source-review__selected-summary");
     expect(styles).toContain(".evidence-workbench-mobile-nav");
     expect(styles).toContain("@media (max-width: 75rem)");
     expect(styles).toContain("@media (max-width: 61.9375rem)");

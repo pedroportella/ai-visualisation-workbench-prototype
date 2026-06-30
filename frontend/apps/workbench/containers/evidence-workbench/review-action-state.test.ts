@@ -67,6 +67,16 @@ const backendLikeData: EvidenceWorkbenchViewModel = {
   ]
 };
 
+const actionTarget = {
+  evidenceImpact: "The step-free shuttle claim needs a missing dispatch confirmation source.",
+  ownerLabel: "Operations Control",
+  reviewOwnerQueue: "operations-control-dispatch-confirmation",
+  sourceId: "SRC-006",
+  sourceTitle: "Day-Of-Service Shuttle Dispatch Confirmation",
+  warningId: "WARN-003",
+  warningMessage: "Missing dispatch confirmation."
+};
+
 describe("review action state", () => {
   it("keeps mark reviewed disabled while approval blockers remain", () => {
     const state = createInitialReviewDecisionState(backendLikeData);
@@ -95,6 +105,7 @@ describe("review action state", () => {
     const nextState = reviewDecisionReducer(state, {
       actionId: PRIMARY_REVIEW_ACTION_ID,
       reviewerNote: PRIMARY_REVIEWER_NOTE,
+      targetIssue: actionTarget,
       type: "apply-action"
     });
 
@@ -108,6 +119,7 @@ describe("review action state", () => {
     expect(nextState.review.completedActionIds).toContain(PRIMARY_REVIEW_ACTION_ID);
     expect(nextState.review.availableActionIds).not.toContain(PRIMARY_REVIEW_ACTION_ID);
     expect(nextState.audit.lastReviewActionId).toBe(PRIMARY_REVIEW_ACTION_ID);
+    expect(nextState.lastActionTarget).toEqual(actionTarget);
     expect(nextState.audit.reviewEventIds).toEqual([
       "AUDIT-EVT-001",
       "AUDIT-EVT-002",
@@ -116,6 +128,7 @@ describe("review action state", () => {
     ]);
     expect(nextState.warnings.map((warning) => warning.id)).toContain("WARN-007");
     expect(nextState.feedback).toContain("recorded in local UI state");
+    expect(nextState.feedback).toContain("Targeted WARN-003 on SRC-006");
   });
 
   it("keeps add-note as a status-preserving local action", () => {
@@ -139,6 +152,7 @@ describe("review action state", () => {
     const changedState = reviewDecisionReducer(state, {
       actionId: PRIMARY_REVIEW_ACTION_ID,
       reviewerNote: PRIMARY_REVIEWER_NOTE,
+      targetIssue: actionTarget,
       type: "apply-action"
     });
     const resetState = reviewDecisionReducer(changedState, { type: "reset" });
@@ -148,6 +162,7 @@ describe("review action state", () => {
     expect(resetState.review.activeWarningIds).toContain("WARN-005");
     expect(resetState.review.activeWarningIds).not.toContain("WARN-007");
     expect(resetState.audit.lastReviewActionId).toBeNull();
+    expect(resetState.lastActionTarget).toBeNull();
     expect(resetState.feedback).toBe("Local review state reset to the loaded fixture seed.");
   });
 });

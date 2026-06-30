@@ -18,6 +18,16 @@ export interface ReviewActionAvailability {
   reason: string | null;
 }
 
+export interface ReviewActionTarget {
+  evidenceImpact: string;
+  ownerLabel: string;
+  reviewOwnerQueue: string;
+  sourceId: string;
+  sourceTitle: string;
+  warningId: string;
+  warningMessage: string;
+}
+
 export interface ReviewDecisionState {
   actions: EvidenceWorkbenchReviewAction[];
   audit: EvidenceWorkbenchAuditMetadata;
@@ -25,6 +35,7 @@ export interface ReviewDecisionState {
   initialAudit: EvidenceWorkbenchAuditMetadata;
   initialReview: EvidenceWorkbenchViewModel["review"];
   isDirty: boolean;
+  lastActionTarget: ReviewActionTarget | null;
   localStateLabel: string;
   review: EvidenceWorkbenchViewModel["review"];
   warningCatalog: EvidenceWorkbenchWarning[];
@@ -35,6 +46,7 @@ export type ReviewDecisionReducerAction =
   | {
       actionId: string;
       reviewerNote: string;
+      targetIssue?: ReviewActionTarget | null;
       type: "apply-action";
     }
   | {
@@ -81,6 +93,7 @@ export function createInitialReviewDecisionState(
     initialAudit: cloneAudit(data.audit),
     initialReview: normalizeReview(data.review),
     isDirty: false,
+    lastActionTarget: null,
     localStateLabel: "Local UI state",
     review,
     warningCatalog,
@@ -100,6 +113,7 @@ export function reviewDecisionReducer(
       audit: cloneAudit(state.initialAudit),
       feedback: "Local review state reset to the loaded fixture seed.",
       isDirty: false,
+      lastActionTarget: null,
       review,
       warnings: warningsForIds(review.activeWarningIds, state.warningCatalog, review.blockedByWarningIds)
     };
@@ -163,8 +177,9 @@ export function reviewDecisionReducer(
   return {
     ...state,
     audit,
-    feedback: actionFeedback(reviewAction, review),
+    feedback: actionFeedback(reviewAction, review, action.targetIssue ?? null),
     isDirty: true,
+    lastActionTarget: action.targetIssue ?? null,
     review,
     warnings: warningsForIds(review.activeWarningIds, state.warningCatalog, review.blockedByWarningIds)
   };
@@ -325,14 +340,18 @@ function warningsForIds(
 
 function actionFeedback(
   action: EvidenceWorkbenchReviewAction,
-  review: EvidenceWorkbenchViewModel["review"]
+  review: EvidenceWorkbenchViewModel["review"],
+  targetIssue: ReviewActionTarget | null
 ): string {
   const approvalState =
     review.blockedByWarningIds.length > 0
       ? `Approval remains blocked by ${review.blockedByWarningIds.join(", ")}.`
       : "Approval blockers are clear.";
+  const targetState = targetIssue
+    ? ` Targeted ${targetIssue.warningId} on ${targetIssue.sourceId}.`
+    : "";
 
-  return `${action.label} recorded in local UI state. ${approvalState}`;
+  return `${action.label} recorded in local UI state.${targetState} ${approvalState}`;
 }
 
 function uniqueWarnings(warnings: EvidenceWorkbenchWarning[]): EvidenceWorkbenchWarning[] {

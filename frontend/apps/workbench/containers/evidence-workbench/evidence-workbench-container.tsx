@@ -1,6 +1,7 @@
+// frontend/apps/workbench/containers/evidence-workbench/evidence-workbench-container.tsx
 "use client";
 
-import { useMemo, useReducer } from "react";
+import { useMemo, useReducer, useState } from "react";
 import {
   AivisEvidenceCallout,
   AivisEvidenceClaimCard,
@@ -30,6 +31,11 @@ import {
   SelectedSourceInspector,
   selectedSourceWarnings
 } from "./selected-source-inspector";
+import {
+  SourceBlockerReview,
+  buildSourceBlockerIssues,
+  selectedSourceIssue
+} from "./source-blocker-review";
 import { SourceTracePanel } from "./source-trace-panel";
 
 export type EvidenceWorkbenchView = "overview" | "review" | "sources" | "process" | "audit";
@@ -92,6 +98,13 @@ export default function EvidenceWorkbenchContainer({
     initialDecisionState
   );
   const review = decisionState.review;
+  const sourceBlockerIssues = useMemo(
+    () => buildSourceBlockerIssues(data.sourceItems),
+    [data.sourceItems]
+  );
+  const initialSourceIssueId = sourceBlockerIssues[0]?.id ?? null;
+  const [selectedSourceIssueId, setSelectedSourceIssueId] = useState(initialSourceIssueId);
+  const selectedIssue = selectedSourceIssue(sourceBlockerIssues, selectedSourceIssueId);
   const selectedClaim = data.reviewClaims.find(
     (claim) => claim.id === review.selectedClaimId
   );
@@ -178,15 +191,35 @@ export default function EvidenceWorkbenchContainer({
             </QhdsCol>
           </QhdsRow>
 
+          <QhdsContentSection
+            className="evidence-workbench-panel evidence-workbench-source-review-section"
+            heading="Source issue review"
+            headingId="source-issue-review-title"
+            lead="Inspect the blocker that the next local action will target."
+            leadDensity="compact"
+          >
+            <SourceBlockerReview
+              issues={sourceBlockerIssues}
+              onSelectIssue={setSelectedSourceIssueId}
+              selectedIssueId={selectedIssue?.id ?? null}
+              sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
+            />
+          </QhdsContentSection>
+
           <ReviewDecisionBar
             onApplyAction={(actionId, reviewerNote) =>
               dispatchReviewDecision({
                 actionId,
                 reviewerNote,
+                targetIssue: selectedIssue,
                 type: "apply-action"
               })
             }
-            onReset={() => dispatchReviewDecision({ type: "reset" })}
+            onReset={() => {
+              dispatchReviewDecision({ type: "reset" });
+              setSelectedSourceIssueId(initialSourceIssueId);
+            }}
+            selectedIssue={selectedIssue}
             state={decisionState}
           />
 
@@ -212,6 +245,23 @@ export default function EvidenceWorkbenchContainer({
             selectedClaimId={review.selectedClaimId}
             sources={data.sourceItems}
           />
+          <QhdsContentSection
+            className="evidence-workbench-panel evidence-workbench-source-review-section"
+            heading="Blocker action target"
+            headingId="source-action-target-title"
+            headingLevel={3}
+            lead="Choose a blocker to inspect, then continue to the review route to record the local action."
+            leadDensity="compact"
+          >
+            <SourceBlockerReview
+              actionMode="inspect"
+              issues={sourceBlockerIssues}
+              onSelectIssue={setSelectedSourceIssueId}
+              reviewActionPath={REVIEW_ROUTE}
+              selectedIssueId={selectedIssue?.id ?? null}
+              sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
+            />
+          </QhdsContentSection>
           <ScenarioContextSection data={data} />
         </QhdsContentSection>
       ) : null}
@@ -247,10 +297,15 @@ export default function EvidenceWorkbenchContainer({
               dispatchReviewDecision({
                 actionId,
                 reviewerNote,
+                targetIssue: selectedIssue,
                 type: "apply-action"
               })
             }
-            onReset={() => dispatchReviewDecision({ type: "reset" })}
+            onReset={() => {
+              dispatchReviewDecision({ type: "reset" });
+              setSelectedSourceIssueId(initialSourceIssueId);
+            }}
+            selectedIssue={selectedIssue}
             state={decisionState}
           />
           <AuditSummary decisionState={decisionState} />
@@ -612,6 +667,7 @@ function AuditSummary({
   decisionState
 }: Readonly<{ decisionState: ReviewDecisionState }>) {
   const review = decisionState.review;
+  const actionTarget = decisionState.lastActionTarget;
 
   return (
     <QhdsCard
@@ -630,6 +686,28 @@ function AuditSummary({
         active fixture warnings. Audit {decisionState.audit.id} last action is{" "}
         {decisionState.audit.lastReviewActionId ?? "none"}.
       </p>
+      <QhdsSummaryList
+        ariaLabel="Local audit target summary"
+        className="evidence-workbench-audit-summary__metadata"
+        items={[
+          {
+            description: actionTarget
+              ? `${actionTarget.warningId} on ${actionTarget.sourceId}: ${actionTarget.warningMessage}`
+              : "No local action target recorded.",
+            term: "Action target"
+          },
+          {
+            description: decisionState.feedback,
+            term: "Feedback"
+          },
+          {
+            description: decisionState.isDirty
+              ? "Local state has changed from the loaded fixture seed."
+              : "Local state is at the loaded fixture seed.",
+            term: "Reset state"
+          }
+        ]}
+      />
     </QhdsCard>
   );
 }
