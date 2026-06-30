@@ -7,9 +7,8 @@ import {
   AivisEvidencePanelHeader,
   AivisEvidenceStatus,
   AivisEvidenceTokenList,
-  QhdsCard,
+  QhdsPageAlert,
   QhdsTable,
-  type AivisEvidenceTone,
   type QhdsTableColumn,
   type QhdsTableRow
 } from "@aivis/ui-library";
@@ -37,34 +36,31 @@ export function SourceTracePanel({
 
   return (
     <div className="evidence-workbench-source-trace">
-      <QhdsCard
-        actionMode="none"
-        aria-label="Compact source inventory priority"
-        className="evidence-workbench-source-inventory-summary"
-        density="compact"
-        heading="Compact source inventory"
-        headingLevel={3}
-        variant="workbench"
-      >
-        <AivisEvidencePanelHeader
-          label="Source priority"
-          status={`${sources.length} source${sources.length === 1 ? "" : "s"}`}
-        />
-        <p>
-          {selectedClaimId} is aligned to {focusedSources.length} selected source
-          {focusedSources.length === 1 ? "" : "s"}. {blockerSources.length} source
-          {blockerSources.length === 1 ? "" : "s"} currently block approval.
-        </p>
-        <AivisEvidenceTokenList
-          ariaLabel={`Sources linked to ${selectedClaimId}`}
-          items={focusedSources.map((source) => ({
-            description: source.status,
-            href: `#source-${source.id}`,
-            id: source.id,
-            label: source.id
-          }))}
-        />
-      </QhdsCard>
+      <div className="evidence-workbench-source-inventory-summary">
+        <QhdsPageAlert
+          heading="Compact source inventory"
+          tone={blockerSources.length > 0 ? "warning" : "info"}
+        >
+          <AivisEvidencePanelHeader
+            label="Source priority"
+            status={`${sources.length} source${sources.length === 1 ? "" : "s"}`}
+          />
+          <p>
+            {selectedClaimId} is aligned to {focusedSources.length} selected source
+            {focusedSources.length === 1 ? "" : "s"}. {blockerSources.length} source
+            {blockerSources.length === 1 ? "" : "s"} currently block approval.
+          </p>
+          <AivisEvidenceTokenList
+            ariaLabel={`Sources linked to ${selectedClaimId}`}
+            items={focusedSources.map((source) => ({
+              description: source.status,
+              href: `#source-${source.id}`,
+              id: source.id,
+              label: source.id
+            }))}
+          />
+        </QhdsPageAlert>
+      </div>
 
       <AivisEvidenceFilterNav
         ariaLabel="Source inventory groups"
@@ -259,16 +255,8 @@ function sourceInventoryTableRow(source: EvidenceWorkbenchSource): QhdsTableRow 
         <span>{source.title}</span>
       </span>
     ),
-    status: (
-      <AivisEvidenceStatus tone={sourceStatusTone(source.status)}>
-        {source.status}
-      </AivisEvidenceStatus>
-    )
+    status: source.status
   };
-}
-
-function sourceStatusTone(status: string): AivisEvidenceTone {
-  return /missing|stale|conditional|weak|partial/i.test(status) ? "warning" : "success";
 }
 
 function warningSeverityLabel(warning: EvidenceWorkbenchSourceWarning): string {

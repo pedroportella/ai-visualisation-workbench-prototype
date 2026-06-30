@@ -97,7 +97,7 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("Request source update");
     expect(html).toContain("Mark unsafe to use");
     expect(html).toContain("Mark reviewed remains disabled in this fixture");
-    expect(html).toContain('aria-disabled="true"');
+    expect(html).toContain('disabled="" type="button">Mark reviewed</button>');
     expect(html).toContain("Copy approved answer");
     expect(html).toContain('aria-label="Evidence Workbench views"');
     expect(html).toContain('href="/evidence-workbench"');
@@ -229,6 +229,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain(".evidence-workbench-process-map__fallback:focus-visible");
     expect(styles).toContain(".evidence-workbench-audit-summary:focus-visible");
     expect(styles).toContain("data-node-tone=\"warning\"");
+    expect(styles).not.toContain("border-left");
+    expect(styles).not.toContain("border-inline-start");
     expect(styles).not.toMatch(/#[0-9a-fA-F]{3,8}|rgb\(|rgba\(/);
   });
 });

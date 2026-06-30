@@ -2,9 +2,13 @@ import type { ReactElement } from "react";
 
 import {
   AivisEvidencePanelHeader,
-  AivisEvidenceStatus,
   QhdsButton,
-  QhdsSummaryList
+  QhdsPageAlert,
+  QhdsRadioGroup,
+  QhdsSummaryList,
+  QhdsTable,
+  type QhdsTableColumn,
+  type QhdsTableRow
 } from "@aivis/ui-library";
 
 import type {
@@ -46,8 +50,9 @@ export function SourceBlockerReview({
   if (issues.length === 0) {
     return (
       <div className="evidence-workbench-source-review" data-selected-source-issue-id="">
-        <AivisEvidencePanelHeader label="Source blockers" status="No blockers" statusTone="success" />
-        <p>No source blocker issues are active in this local fixture state.</p>
+        <QhdsPageAlert heading="No source blockers" tone="success">
+          <p>No source blocker issues are active in this local fixture state.</p>
+        </QhdsPageAlert>
       </div>
     );
   }
@@ -62,122 +67,139 @@ export function SourceBlockerReview({
         status={`${issues.length} blocker issue${issues.length === 1 ? "" : "s"}`}
         statusTone="warning"
       />
-      <p>
-        {selectsActionTarget
-          ? "Select the source issue the local action is about. The action buttons use this selected issue as their local audit target."
-          : "Inspect source issues here, then continue to the review route to choose the local action target."}
-      </p>
+
+      <QhdsPageAlert heading="Source blockers need review" tone="warning">
+        <p>
+          {selectsActionTarget
+            ? "Choose the source issue the local action is about. The action buttons use this selected issue as their local audit target."
+            : "Inspect source issues here, then continue to the review route to choose the local action target."}
+        </p>
+      </QhdsPageAlert>
+
+      <QhdsRadioGroup
+        className="evidence-workbench-source-review__issue-selector"
+        hint="The selected blocker determines the source, warning and owner queue recorded in the local audit state."
+        legend={
+          selectsActionTarget
+            ? "Choose source issue for local action"
+            : "Choose source issue to inspect"
+        }
+        name="evidence-workbench-source-issue"
+        onChange={(issueId) => onSelectIssue(issueId)}
+        options={issues.map((issue) => ({
+          hint: `${issue.warningMessage} ${issue.sourceFreshness}; ${issue.ownerLabel}.`,
+          label: issueLabel(issue),
+          value: issue.id
+        }))}
+        value={selectedIssue?.id ?? undefined}
+      />
 
       {selectedIssue ? (
-        <QhdsSummaryList
-          ariaLabel={
-            selectsActionTarget
-              ? "Selected source issue for local action"
-              : "Focused source issue"
-          }
+        <section
+          aria-labelledby="selected-source-issue-title"
           className="evidence-workbench-source-review__selected-summary"
-          items={[
-            {
-              description: `${selectedIssue.warningId}: ${selectedIssue.warningMessage}`,
-              term: selectsActionTarget ? "Selected issue" : "Focused issue"
-            },
-            {
-              description: `${selectedIssue.sourceId}: ${selectedIssue.sourceTitle}`,
-              term: "Source record"
-            },
-            {
-              description: selectedIssue.ownerLabel,
-              term: "Synthetic owner"
+        >
+          <h3 id="selected-source-issue-title">
+            {selectsActionTarget ? "Selected source issue" : "Focused source issue"}
+          </h3>
+          <QhdsSummaryList
+            ariaLabel={
+              selectsActionTarget
+                ? "Selected source issue for local action"
+                : "Focused source issue"
             }
-          ]}
-        />
+            className="evidence-workbench-source-review__metadata"
+            items={[
+              {
+                description: `${selectedIssue.warningId}: ${selectedIssue.warningMessage}`,
+                term: selectsActionTarget ? "Selected issue" : "Focused issue"
+              },
+              {
+                description: `${selectedIssue.sourceId}: ${selectedIssue.sourceTitle}`,
+                term: "Source record"
+              },
+              {
+                description: selectedIssue.sourceStatus,
+                term: "Source status"
+              },
+              {
+                description: selectedIssue.sourceFreshness,
+                term: "Freshness"
+              },
+              {
+                description: selectedIssue.ownerLabel,
+                term: "Synthetic owner"
+              },
+              {
+                description: selectedIssue.reviewOwnerQueue,
+                term: "Owner queue"
+              }
+            ]}
+          />
+          <p>{selectedIssue.evidenceImpact}</p>
+          <div className="evidence-workbench-source-review__actions">
+            <QhdsButton
+              href={`${sourceInventoryPath}#source-${selectedIssue.sourceId}`}
+              variant="secondary"
+            >
+              Open source record
+            </QhdsButton>
+            {reviewActionPath ? (
+              <QhdsButton href={reviewActionPath} variant="secondary">
+                Continue to review actions
+              </QhdsButton>
+            ) : null}
+          </div>
+        </section>
       ) : null}
 
-      <ol
-        aria-label="Source blocker issues available for action"
-        className="evidence-workbench-source-review__issue-list"
-      >
-        {issues.map((issue) => {
-          const selected = issue.id === selectedIssue?.id;
+      <SourceBlockerIssueTable issues={issues} selectedIssueId={selectedIssue?.id ?? null} />
+    </div>
+  );
+}
 
-          return (
-            <li
-              className="evidence-workbench-source-review__issue"
-              data-source-issue-selected={selected ? "true" : "false"}
-              key={issue.id}
-            >
-              <details
-                className="evidence-workbench-source-review__details"
-                data-source-filter-state={issue.trustState}
-                open={selected}
-              >
-                <summary className="evidence-workbench-source-review__summary">
-                  <span>
-                    <strong>{issueLabel(issue)}</strong>
-                    <span>{issue.warningMessage}</span>
-                  </span>
-                  <AivisEvidenceStatus tone="warning">
-                    {issue.severity} blocker
-                  </AivisEvidenceStatus>
-                </summary>
+function SourceBlockerIssueTable({
+  issues,
+  selectedIssueId
+}: Readonly<{
+  issues: SourceBlockerIssue[];
+  selectedIssueId: string | null;
+}>): ReactElement {
+  const columns: QhdsTableColumn[] = [
+    { dataLabel: "Issue", header: "Issue", key: "issue" },
+    { dataLabel: "Source", header: "Source", key: "source" },
+    { dataLabel: "Freshness", header: "Freshness", key: "freshness" },
+    { dataLabel: "Owner", header: "Owner", key: "owner" },
+    { dataLabel: "Selection", header: "Selection", key: "selection" }
+  ];
+  const rows: QhdsTableRow[] = issues.map((issue) => ({
+    freshness: issue.sourceFreshness,
+    id: issue.id,
+    issue: (
+      <span className="evidence-workbench-source-review__table-cell">
+        <strong>{issueLabel(issue)}</strong>
+        <span>{issue.warningMessage}</span>
+      </span>
+    ),
+    owner: issue.ownerLabel,
+    selection: issue.id === selectedIssueId ? "Selected for action" : "Available",
+    source: (
+      <span className="evidence-workbench-source-review__table-cell">
+        <strong>{issue.sourceId}</strong>
+        <span>{issue.sourceTitle}</span>
+      </span>
+    )
+  }));
 
-                <div className="evidence-workbench-source-review__detail-panel">
-                  <QhdsSummaryList
-                    ariaLabel={`${issue.warningId} source issue details`}
-                    className="evidence-workbench-source-review__metadata"
-                    items={[
-                      {
-                        description: `${issue.sourceId}: ${issue.sourceTitle}`,
-                        term: "Source"
-                      },
-                      {
-                        description: issue.sourceStatus,
-                        term: "Status"
-                      },
-                      {
-                        description: issue.sourceFreshness,
-                        term: "Freshness"
-                      },
-                      {
-                        description: issue.reviewOwnerQueue,
-                        term: "Owner queue"
-                      }
-                    ]}
-                  />
-                  <p>{issue.evidenceImpact}</p>
-                  <div className="evidence-workbench-source-review__actions">
-                    <QhdsButton
-                      aria-pressed={selected ? "true" : "false"}
-                      onClick={() => onSelectIssue(issue.id)}
-                      type="button"
-                      variant={selected ? "secondary" : "primary"}
-                    >
-                      {selected
-                        ? selectsActionTarget
-                          ? "Selected for action"
-                          : "Focused issue"
-                        : selectsActionTarget
-                          ? "Select for action"
-                          : "Focus issue"}
-                    </QhdsButton>
-                    <QhdsButton
-                      href={`${sourceInventoryPath}#source-${issue.sourceId}`}
-                      variant="tertiary"
-                    >
-                      Open source record
-                    </QhdsButton>
-                    {reviewActionPath ? (
-                      <QhdsButton href={reviewActionPath} variant="tertiary">
-                        Continue to review actions
-                      </QhdsButton>
-                    ) : null}
-                  </div>
-                </div>
-              </details>
-            </li>
-          );
-        })}
-      </ol>
+  return (
+    <div className="evidence-workbench-source-review__issue-table">
+      <QhdsTable
+        caption="Source blocker issues"
+        captionDescription="Source issue, source record, freshness and local action selection."
+        columns={columns}
+        rows={rows}
+        striped
+      />
     </div>
   );
 }

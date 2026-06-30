@@ -4,6 +4,7 @@ import { useId, useState, type ChangeEvent } from "react";
 import {
   AivisEvidenceStatus,
   QhdsButton,
+  QhdsPageAlert,
   QhdsSummaryList,
   QhdsTextarea,
   type AivisEvidenceTone
@@ -117,6 +118,13 @@ export function ReviewDecisionBar({
         ]}
       />
 
+      <QhdsPageAlert
+        heading={copyDisabled ? "Copy remains unavailable" : "Copy can be reviewed"}
+        tone={copyDisabled ? "warning" : "success"}
+      >
+        <p id={copyReasonId}>{copyReason}</p>
+      </QhdsPageAlert>
+
       <div className="evidence-workbench-review-actions__controls">
         <QhdsTextarea
           className="evidence-workbench-review-actions__note-input"
@@ -127,11 +135,13 @@ export function ReviewDecisionBar({
           value={reviewerNote}
         />
 
-        <div
+        <fieldset
           aria-label="Review actions"
           className="evidence-workbench-review-actions__button-grid"
-          role="group"
         >
+          <legend className="evidence-workbench-review-actions__legend">
+            Review actions
+          </legend>
           {state.actions.map((action) => (
             <ReviewActionButton
               action={action}
@@ -143,20 +153,19 @@ export function ReviewDecisionBar({
               state={state}
             />
           ))}
-        </div>
+        </fieldset>
       </div>
 
       <div className="evidence-workbench-review-actions__footer">
         <div className="evidence-workbench-review-actions__copy-state">
           <QhdsButton
-            aria-disabled={copyDisabled ? "true" : undefined}
             aria-describedby={copyReasonId}
+            disabled={copyDisabled}
             type="button"
             variant="secondary"
           >
             Copy approved answer
           </QhdsButton>
-          <p id={copyReasonId}>{copyReason}</p>
         </div>
         <QhdsButton onClick={handleReset} type="button" variant="tertiary">
           Reset local review state
@@ -199,14 +208,9 @@ function ReviewActionButton({
       data-action-tone={action.uiTone}
     >
       <QhdsButton
-        aria-disabled={availability.disabled ? "true" : undefined}
         aria-describedby={reasonId}
+        disabled={availability.disabled}
         onClick={(event) => {
-          if (availability.disabled) {
-            event.preventDefault();
-            return;
-          }
-
           onApplyAction(action.id, reviewerNote, selectedIssue);
         }}
         type="button"

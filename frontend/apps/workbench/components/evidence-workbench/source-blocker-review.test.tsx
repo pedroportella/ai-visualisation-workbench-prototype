@@ -45,8 +45,10 @@ describe("SourceBlockerReview", () => {
     expect(html).toContain("WARN-FALLBACK-002: Step-free shuttle wording is stronger than the evidence.");
     expect(html).toContain("SRC-FALLBACK-002: Synthetic wayfinding map extract");
     expect(html).toContain("Synthetic owner");
-    expect(html).toContain('data-source-issue-selected="true"');
-    expect(html).toContain('aria-pressed="true"');
+    expect(html).toContain("qld__radio-buttons");
+    expect(html).toContain("Choose source issue for local action");
+    expect(html).toContain('checked="" value="SRC-FALLBACK-002-WARN-FALLBACK-002"');
+    expect(html).toContain("Source blocker issues");
     expect(html).toContain("Selected for action");
     expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-002"');
     expect(html).toContain("Open source record");
