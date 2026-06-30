@@ -1,4 +1,4 @@
-import EvidenceWorkbenchContainer from "../../../containers/evidence-workbench/evidence-workbench-container";
+import EvidenceWorkbenchContainer from "../../../components/evidence-workbench/evidence-workbench-container";
 import { getEvidenceWorkbenchData } from "../../../services/evidence-workbench/backend-service";
 
 export const dynamic = "force-dynamic";

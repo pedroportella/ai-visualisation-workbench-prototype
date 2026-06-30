@@ -1,5 +1,5 @@
 @use "../app-shell/workbench-app-shell";
-@use "../containers/evidence-workbench/evidence-workbench";
+@use "../components/evidence-workbench/evidence-workbench";
 
 html {
   color-scheme: var(--aivis-color-scheme);

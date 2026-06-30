@@ -14,11 +14,11 @@ If the backend fixture API is unavailable, the route renders a bundled fallback
 state and labels it as fallback data. Do not expose backend origin settings
 through `NEXT_PUBLIC_*` variables.
 
-The route follows the workbench app-shell and container split:
+The route follows an app-shell plus app-owned component split:
 
 ```text
 app-shell/
-containers/evidence-workbench/
+components/evidence-workbench/
 ```
 
 App and route styles use SCSS entrypoints. Reusable theme styling comes from
