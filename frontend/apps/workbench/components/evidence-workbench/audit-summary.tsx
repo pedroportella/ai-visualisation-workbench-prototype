@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 
 import {
+  AivisEvidenceCallout,
   QhdsContentSection,
-  QhdsPageAlert,
   QhdsSummaryList
 } from "@aivis/ui-library";
 
@@ -20,8 +20,9 @@ export function AuditSummary({
       heading="Audit summary"
       headingId="audit-summary"
       tabIndex={0}
+      withBodyClass={false}
     >
-      <QhdsPageAlert
+      <AivisEvidenceCallout
         heading={review.copyState === "enabled" ? "Copy can be reviewed" : "Copy remains unavailable"}
         tone={review.copyState === "enabled" ? "success" : "warning"}
       >
@@ -31,7 +32,7 @@ export function AuditSummary({
           active fixture warnings. Audit {decisionState.audit.id} last action is{" "}
           {decisionState.audit.lastReviewActionId ?? "none"}.
         </p>
-      </QhdsPageAlert>
+      </AivisEvidenceCallout>
       <QhdsSummaryList
         ariaLabel="Local audit target summary"
         className="evidence-workbench-audit-summary__metadata"

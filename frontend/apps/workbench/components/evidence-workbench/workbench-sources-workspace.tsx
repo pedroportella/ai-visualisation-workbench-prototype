@@ -38,6 +38,7 @@ export function WorkbenchSourcesWorkspace({
         headingId="sources-title"
         lead="Full source inventory, citation relationships and blocker state."
         leadDensity="compact"
+        withBodyClass={false}
       >
         <AivisEvidencePanelHeader
           label="Source trace"
@@ -56,6 +57,7 @@ export function WorkbenchSourcesWorkspace({
         headingId="source-action-target-title"
         lead="Choose a blocker to inspect, then continue to the review route to record the local action."
         leadDensity="compact"
+        withBodyClass={false}
       >
         <SourceBlockerReview
           actionMode="inspect"

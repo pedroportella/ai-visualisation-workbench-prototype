@@ -569,7 +569,8 @@
 .evidence-workbench-overview-card .qhds-card__content-body,
 .evidence-workbench-process-map__selected-node .qhds-card__content-body,
 .evidence-workbench-source-inspector__claim .qhds-card__content-body,
-.evidence-workbench-source-inspector__source .qhds-card__content-body {
+.evidence-workbench-source-inspector__source .qhds-card__content-body,
+.evidence-workbench-source-inventory-summary .qhds-card__content-body {
   display: grid;
   gap: var(--aivis-workbench-copy-gap);
   min-width: 0;

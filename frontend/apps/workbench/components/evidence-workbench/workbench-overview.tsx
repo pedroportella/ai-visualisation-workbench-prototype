@@ -6,7 +6,6 @@ import {
   QhdsButton,
   QhdsCard,
   QhdsContentSection,
-  QhdsPageAlert,
   QhdsSummaryList
 } from "@aivis/ui-library";
 
@@ -52,6 +51,7 @@ export function WorkbenchOverview({
         headingId="overview-title"
         lead="The current synthetic case shows the review state, source blockers and available local actions."
         leadDensity="compact"
+        withBodyClass={false}
       >
         <div className="evidence-workbench-overview">
           <QhdsCard
@@ -131,8 +131,15 @@ export function WorkbenchOverview({
             </ul>
           </QhdsCard>
 
-          {blockerWarnings.length > 0 ? (
-            <QhdsPageAlert heading="Source blockers prevent approval" tone="warning">
+          <QhdsCard
+            actionMode="none"
+            className="evidence-workbench-overview-card evidence-workbench-overview-card--blockers"
+            density="compact"
+            heading="Source blockers"
+            headingLevel={3}
+            variant="workbench"
+          >
+            {blockerWarnings.length > 0 ? (
               <AivisEvidenceWarningList
                 ariaLabel="Approval blockers for this review case"
                 warnings={blockerWarnings.map((warning) => ({
@@ -142,12 +149,10 @@ export function WorkbenchOverview({
                   severity: warning.severity
                 }))}
               />
-            </QhdsPageAlert>
-          ) : (
-            <QhdsPageAlert heading="No approval blockers" tone="success">
+            ) : (
               <p>No approval blockers are active in the current local review state.</p>
-            </QhdsPageAlert>
-          )}
+            )}
+          </QhdsCard>
         </div>
       </QhdsContentSection>
 
@@ -157,6 +162,7 @@ export function WorkbenchOverview({
         headingId="task-launcher-title"
         lead="Start with the full review workspace or jump to the source, map and audit views."
         leadDensity="compact"
+        withBodyClass={false}
       >
         <div
           aria-label="Evidence Workbench task launcher"

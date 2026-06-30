@@ -1,10 +1,10 @@
 import type { ReactElement } from "react";
 
 import {
+  AivisEvidenceCallout,
   AivisEvidencePanelHeader,
   QhdsCol,
   QhdsContentSection,
-  QhdsPageAlert,
   QhdsRow
 } from "@aivis/ui-library";
 
@@ -61,6 +61,7 @@ export function WorkbenchReviewWorkspace({
             headingId="answer-title"
             lead={data.answer.summary}
             leadDensity="compact"
+            withBodyClass={false}
           >
             <AivisEvidencePanelHeader
               label="Draft answer"
@@ -77,7 +78,8 @@ export function WorkbenchReviewWorkspace({
               sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
             />
             {selectedClaimTopWarning ? (
-              <QhdsPageAlert
+              <AivisEvidenceCallout
+                className="evidence-workbench-selected-claim-warning"
                 heading={`${review.selectedClaimId} selected blocker`}
                 tone="warning"
               >
@@ -87,7 +89,7 @@ export function WorkbenchReviewWorkspace({
                     Review the selected source inspector for linked evidence.
                   </a>
                 </p>
-              </QhdsPageAlert>
+              </AivisEvidenceCallout>
             ) : null}
           </QhdsContentSection>
         </QhdsCol>
@@ -99,6 +101,7 @@ export function WorkbenchReviewWorkspace({
             headingId="source-inspector-title"
             lead="Focused source evidence for the selected claim."
             leadDensity="compact"
+            withBodyClass={false}
           >
             <SelectedSourceInspector
               selectedClaim={selectedClaim}
@@ -116,6 +119,7 @@ export function WorkbenchReviewWorkspace({
         headingId="source-issue-review-title"
         lead="Inspect the blocker that the next local action will target."
         leadDensity="compact"
+        withBodyClass={false}
       >
         <SourceBlockerReview
           issues={sourceBlockerIssues}

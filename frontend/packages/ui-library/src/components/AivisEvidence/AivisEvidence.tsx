@@ -84,7 +84,6 @@ export function AivisEvidenceCallout({
 }: AivisEvidenceCalloutProps) {
   const calloutClassName = [
     "qld__callout",
-    tone === "warning" ? "qld__callout--light" : "",
     "aivis-evidence-callout",
     `aivis-evidence-callout--${tone}`,
     className
@@ -95,10 +94,10 @@ export function AivisEvidenceCallout({
   const HeadingTag = headingLevel === 4 ? "h4" : "h3";
 
   return (
-    <aside className={calloutClassName} role={tone === "warning" ? "status" : undefined}>
+    <div className={calloutClassName}>
       <HeadingTag className={headingClassName}>{heading}</HeadingTag>
       <div className="aivis-evidence-callout__content">{children}</div>
-    </aside>
+    </div>
   );
 }
 

@@ -186,22 +186,15 @@
 }
 
 .aivis-evidence-callout.qld__callout {
-  background: var(--qhds-color-warning-background);
-  border: var(--aivis-border-width-thin) solid var(--qhds-color-warning-border);
-  border-left: var(--aivis-border-width-accent) solid var(--qhds-color-warning-border);
-  border-radius: var(--QLD-border-radius-xs);
-  color: var(--qhds-color-warning-text);
+  background: var(--qhds-primitive-color-neutral-50);
+  border: 0;
+  border-left: var(--QLD-border-width-thick) solid var(--QLD-color-light__design-accent);
+  color: var(--QLD-color-light__text);
   display: grid;
   gap: var(--aivis-workbench-copy-gap);
-  padding: var(--aivis-workbench-list-item-padding);
-}
-
-.aivis-evidence-callout--neutral.qld__callout,
-.aivis-evidence-callout--success.qld__callout {
-  background: var(--qhds-color-info-background);
-  border-color: var(--qhds-color-info-border);
-  border-left-color: var(--qhds-color-info-border);
-  color: var(--qhds-color-info-text);
+  max-width: 80ch;
+  padding: var(--qhds-space-6) var(--qhds-space-4) var(--qhds-space-6) var(--qhds-space-6);
+  word-wrap: break-word;
 }
 
 .aivis-evidence-callout__heading,

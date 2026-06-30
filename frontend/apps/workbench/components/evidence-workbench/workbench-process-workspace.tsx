@@ -26,6 +26,7 @@ export function WorkbenchProcessWorkspace({
       headingId="process-map-title"
       lead="Interactive graph view of the selected evidence gap, warning path and review action."
       leadDensity="compact"
+      withBodyClass={false}
     >
       <AivisEvidencePanelHeader
         label="React Flow graph"

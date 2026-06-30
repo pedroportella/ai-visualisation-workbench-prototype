@@ -21,6 +21,7 @@ describe("EvidenceWorkbenchContainer", () => {
 
     expect(html).toContain('data-workbench-view="overview"');
     expect(html).toContain('class="qld__body qld__body--light evidence-workbench"');
+    expect(html).not.toContain('class="qld__body qhds-content-section evidence-workbench-panel');
     expect(html).not.toContain("qld__global-alert");
     expect(html).toContain(
       '<h1 class="evidence-workbench-page-intro__heading" id="evidence-workbench-title">Evidence Workbench</h1>'

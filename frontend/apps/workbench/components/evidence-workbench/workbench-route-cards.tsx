@@ -14,6 +14,7 @@ export function WorkbenchRouteCards(): ReactElement {
       headingId="supporting-workspaces-title"
       lead="Focused views for source evidence, process trace and local audit state."
       leadDensity="compact"
+      withBodyClass={false}
     >
       <ul className="qld__card-list evidence-workbench-route-list">
         {supportingRoutes.map((link) => (

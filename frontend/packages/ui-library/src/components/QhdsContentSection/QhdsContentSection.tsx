@@ -12,6 +12,7 @@ export interface QhdsContentSectionProps extends HTMLAttributes<HTMLElement> {
   headingLevel?: QhdsContentSectionHeadingLevel;
   lead?: ReactNode;
   leadDensity?: QhdsContentSectionLeadDensity;
+  withBodyClass?: boolean;
 }
 
 export function QhdsContentSection({
@@ -22,6 +23,7 @@ export function QhdsContentSection({
   headingLevel = 2,
   lead,
   leadDensity = "abstract",
+  withBodyClass = true,
   ...props
 }: QhdsContentSectionProps) {
   const generatedHeadingId =
@@ -29,7 +31,7 @@ export function QhdsContentSection({
       ? `${heading.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}-section`
       : undefined;
   const resolvedHeadingId = headingId ?? generatedHeadingId;
-  const classes = ["qld__body", "qhds-content-section", className].filter(Boolean).join(" ");
+  const classes = [withBodyClass ? "qld__body" : undefined, "qhds-content-section", className].filter(Boolean).join(" ");
   const sectionProps = heading && resolvedHeadingId ? { "aria-labelledby": resolvedHeadingId, ...props } : props;
 
   return (

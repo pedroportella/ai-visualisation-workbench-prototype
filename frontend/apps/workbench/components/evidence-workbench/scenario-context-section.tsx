@@ -18,6 +18,7 @@ export function ScenarioContextSection({
       headingLevel={3}
       lead="Local review case"
       leadDensity="compact"
+      withBodyClass={false}
     >
       <AivisEvidenceContextAnchors
         anchorSummary="Place labels only; they are not treated as evidence sources."

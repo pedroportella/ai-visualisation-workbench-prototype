@@ -1,3 +1,7 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
@@ -10,6 +14,8 @@ import {
   AivisEvidenceSourceCard,
   AivisEvidenceWarningGroup
 } from "./AivisEvidence";
+
+const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "AivisEvidence.scss"), "utf8");
 
 describe("AivisEvidence adapters", () => {
   it("composes selected claim cards from the government card and tag classes", () => {
@@ -116,7 +122,7 @@ describe("AivisEvidence adapters", () => {
     expect(html).toContain("qld__btn");
   });
 
-  it("renders callouts with QHDS callout classes", () => {
+  it("renders callouts with QHDS callout classes without alert semantics", () => {
     const html = renderToStaticMarkup(
       <AivisEvidenceCallout heading="Review note" tone="warning">
         <p>Keep the answer in review.</p>
@@ -124,7 +130,21 @@ describe("AivisEvidence adapters", () => {
     );
 
     expect(html).toContain("qld__callout");
-    expect(html).toContain('role="status"');
+    expect(html).toContain("qld__callout__heading");
+    expect(html).not.toContain("qld__callout--light");
+    expect(html).not.toContain('role="status"');
     expect(html).toContain("Keep the answer in review.");
+  });
+
+  it("keeps the callout adapter aligned to the QHDS callout anatomy", () => {
+    const calloutBlock = styles.match(/\.aivis-evidence-callout\.qld__callout \{(?<block>[\s\S]*?)\n\}/)
+      ?.groups?.block;
+
+    expect(calloutBlock).toContain("background: var(--qhds-primitive-color-neutral-50)");
+    expect(calloutBlock).toContain("border-left: var(--QLD-border-width-thick) solid var(--QLD-color-light__design-accent)");
+    expect(calloutBlock).toContain("max-width: 80ch");
+    expect(calloutBlock).toContain("padding: var(--qhds-space-6) var(--qhds-space-4) var(--qhds-space-6) var(--qhds-space-6)");
+    expect(calloutBlock).not.toContain("qhds-color-warning-background");
+    expect(calloutBlock).not.toContain("border-radius");
   });
 });

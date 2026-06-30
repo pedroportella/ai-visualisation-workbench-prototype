@@ -3,7 +3,6 @@ import type { ReactElement } from "react";
 import {
   AivisEvidencePanelHeader,
   QhdsButton,
-  QhdsPageAlert,
   QhdsRadioGroup,
   QhdsSummaryList,
   QhdsTable,
@@ -50,9 +49,7 @@ export function SourceBlockerReview({
   if (issues.length === 0) {
     return (
       <div className="evidence-workbench-source-review" data-selected-source-issue-id="">
-        <QhdsPageAlert heading="No source blockers" tone="success">
-          <p>No source blocker issues are active in this local fixture state.</p>
-        </QhdsPageAlert>
+        <p>No source blocker issues are active in this local fixture state.</p>
       </div>
     );
   }
@@ -68,13 +65,11 @@ export function SourceBlockerReview({
         statusTone="warning"
       />
 
-      <QhdsPageAlert heading="Source blockers need review" tone="warning">
-        <p>
-          {selectsActionTarget
-            ? "Choose the source issue the local action is about. The action buttons use this selected issue as their local audit target."
-            : "Inspect source issues here, then continue to the review route to choose the local action target."}
-        </p>
-      </QhdsPageAlert>
+      <p className="evidence-workbench-source-review__description">
+        {selectsActionTarget
+          ? "Choose the source issue the local action is about. The action buttons use this selected issue as their local audit target."
+          : "Inspect source issues here, then continue to the review route to choose the local action target."}
+      </p>
 
       <QhdsRadioGroup
         className="evidence-workbench-source-review__issue-selector"

@@ -35,4 +35,19 @@ describe("QhdsContentSection", () => {
     expect(html).toContain("qhds-content-section__lead--compact");
     expect(html).not.toContain("qld__abstract");
   });
+
+  it("can omit the qld body class for nested app-owned sections", () => {
+    const html = renderToStaticMarkup(
+      <QhdsContentSection
+        className="evidence-workbench-panel"
+        heading="Nested panel"
+        withBodyClass={false}
+      >
+        <p>Panel content.</p>
+      </QhdsContentSection>
+    );
+
+    expect(html).toContain("qhds-content-section evidence-workbench-panel");
+    expect(html).not.toContain("qld__body");
+  });
 });

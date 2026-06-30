@@ -24,6 +24,7 @@ export function ClaimsReviewSection({
       headingId="claims-title"
       lead="Selected claim states and evidence posture."
       leadDensity="compact"
+      withBodyClass={false}
     >
       <ul
         aria-label="Claims requiring review"

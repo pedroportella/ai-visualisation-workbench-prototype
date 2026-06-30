@@ -4,7 +4,6 @@ import { useId, useState, type ChangeEvent } from "react";
 import {
   AivisEvidenceStatus,
   QhdsButton,
-  QhdsPageAlert,
   QhdsSummaryList,
   QhdsTextarea,
   type AivisEvidenceTone
@@ -118,13 +117,6 @@ export function ReviewDecisionBar({
         ]}
       />
 
-      <QhdsPageAlert
-        heading={copyDisabled ? "Copy remains unavailable" : "Copy can be reviewed"}
-        tone={copyDisabled ? "warning" : "success"}
-      >
-        <p id={copyReasonId}>{copyReason}</p>
-      </QhdsPageAlert>
-
       <div className="evidence-workbench-review-actions__controls">
         <QhdsTextarea
           className="evidence-workbench-review-actions__note-input"
@@ -166,6 +158,7 @@ export function ReviewDecisionBar({
           >
             Copy approved answer
           </QhdsButton>
+          <p id={copyReasonId}>{copyReason}</p>
         </div>
         <QhdsButton onClick={handleReset} type="button" variant="tertiary">
           Reset local review state
