@@ -1,0 +1,102 @@
+# AWS Release Readiness
+
+This note describes how the AIVIS prototype should be prepared for a short,
+review-only AWS release. It is readiness documentation only.
+
+No live AWS deployment has been run for this repository, and this document is
+not evidence that AWS infrastructure, production platform operation, live
+retrieval or production AI services exist.
+
+## Current Release Anchors
+
+The current prototype can support a future review release with these local
+anchors:
+
+- a FastAPI backend with health, readiness, metadata and deterministic fixture
+  endpoints;
+- a backend Docker image for local container smoke checks;
+- a Next.js Evidence Workbench app with server-only backend origin handling;
+- deterministic fallback fixture behaviour if the backend is unavailable;
+- local review-action state that resets with the running process;
+- public-safe docs that state the synthetic-data and non-official-system
+  boundary.
+
+## Required Local Gates
+
+Before any AWS account action, run the local checks that match the release
+scope:
+
+```text
+python -m pytest
+backend/.venv/bin/python scripts/local-backend-smoke.py
+docker build -f backend/Dockerfile -t aivis-backend:local backend
+backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.0.1:8080
+pnpm --filter @aivis/workbench check
+pnpm --filter @aivis/ui-library check
+pnpm check
+git diff --check
+```
+
+Use no-screenshot route checks while the screenshot pause is active:
+
+```text
+/evidence-workbench
+/evidence-workbench/review
+/evidence-workbench/sources
+/evidence-workbench/process
+/evidence-workbench/audit
+```
+
+## Future Review Release Shape
+
+The first live review release should be short-lived and explicitly approved
+before any AWS account action.
+
+The likely release shape is:
+
+- one backend API runtime exposing the health, metadata and fixture endpoints;
+- one web runtime serving the Evidence Workbench routes;
+- server-only backend origin configuration for the web runtime;
+- redacted logs and smoke results captured before teardown;
+- a public-safe release note that explains what passed and what was not
+  claimed.
+
+The exact AWS service choices, routing, secrets, budget controls and teardown
+steps are still pending. They must be decided before live deployment.
+
+## Evidence Model
+
+Public-safe release evidence should include:
+
+- smoke timeline with timestamps and pass/fail status;
+- local verification summary;
+- backend health, readiness and metadata summary;
+- Evidence Workbench route summary;
+- fixture API and review-action behaviour summary;
+- redacted runtime log snippets only where useful;
+- teardown confirmation after the review window.
+
+Private evidence may include exact commands, internal URLs, account-specific
+resource identifiers and image digests. Do not publish those values.
+
+## Not Claimed
+
+The AWS release path must not claim:
+
+- real TMR data;
+- official TMR or Queensland Government system status;
+- QChat integration;
+- production RAG, GraphRAG, Bedrock, Neo4j or live retrieval;
+- production platform operation, high availability or formal assurance;
+- source-system writeback;
+- production audit logging;
+- live operational transport events.
+
+The prototype remains a simulated evidence workbench for reviewing
+source-backed AI guidance before it is used.
+
+## Teardown Boundary
+
+The review release should be destroyed after proof and any short reviewer
+window. Public evidence can record a redacted teardown summary, but should not
+publish raw account ids, hostnames, secret names or resource identifiers.

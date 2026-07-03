@@ -37,3 +37,9 @@ This is a pnpm monorepo.
 4. Build the Evidence Workbench route.
 5. Add rich markdown, citations, source traceability and evidence/process
    visualisation.
+
+## Release Readiness
+
+See [AWS release readiness](docs/aws-release-readiness.md) for the planned
+short review-release boundary. No live AWS deployment has been run for this
+repository.
