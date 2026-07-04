@@ -14,3 +14,6 @@ Current docs:
 - [Principal software developer release orchestration decision](release-orchestration-decision.md):
   why the monorepo uses private backend and frontend pnpm release manifests
   while keeping native package files as source of truth.
+
+Current local evidence commands are documented from the repository root in
+`README.md` and `scripts/README.md`.

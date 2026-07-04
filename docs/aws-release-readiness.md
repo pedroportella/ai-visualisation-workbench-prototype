@@ -31,6 +31,7 @@ Before any AWS account action, run the local checks that match the release
 scope:
 
 ```text
+pnpm guard
 pnpm --filter @aivis/backend release:preflight
 backend/.venv/bin/python scripts/local-backend-smoke.py
 docker build -f backend/Dockerfile -t aivis-backend:local backend
@@ -38,16 +39,22 @@ backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.
 pnpm --filter @aivis/workbench check
 pnpm --filter @aivis/ui-library check
 pnpm --filter @aivis/frontend release:preflight
+pnpm test:e2e:mock
+pnpm test:visual
+pnpm test:reviewer-evidence
 pnpm docker:config
 pnpm docker:build
 pnpm docker:up
 pnpm docker:smoke
 pnpm docker:down
+pnpm test:e2e:real
+pnpm guard:browser-bundles
 pnpm check
 git diff --check
 ```
 
-Use no-screenshot route checks while the screenshot pause is active:
+Use no-screenshot route checks while screenshot capture is not part of the
+current evidence set:
 
 ```text
 /evidence-workbench
@@ -56,6 +63,10 @@ Use no-screenshot route checks while the screenshot pause is active:
 /evidence-workbench/process
 /evidence-workbench/audit
 ```
+
+`pnpm test:e2e:real` owns a separate local compose run for the browser check,
+executes `pnpm docker:smoke` before Playwright and tears the stack down before
+the command exits.
 
 ## Monorepo Release Tracks
 

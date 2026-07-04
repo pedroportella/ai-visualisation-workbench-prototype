@@ -43,3 +43,22 @@ This is a pnpm monorepo.
 See [AWS release readiness](docs/aws-release-readiness.md) for the planned
 short review-release boundary. No live AWS deployment has been run for this
 repository.
+
+## Local Verification
+
+Use the root verification commands for public-safe local evidence:
+
+```text
+pnpm guard
+pnpm check
+pnpm test:e2e:mock
+pnpm test:visual
+pnpm test:reviewer-evidence
+pnpm docker:build
+pnpm test:e2e:real
+pnpm guard:browser-bundles
+```
+
+The mock browser checks use bundled fallback fixture mode. The Docker-backed
+browser check owns its local compose runtime, runs the Docker smoke first and
+tears the stack down before it exits.
