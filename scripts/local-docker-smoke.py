@@ -4,10 +4,13 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
+import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from collections.abc import Iterable
 from typing import Any
@@ -24,19 +27,73 @@ PRIMARY_REVIEWER_NOTE = (
 )
 
 ROUTE_CHECKS = [
-    ("/evidence-workbench", ("Evidence Workbench", "Choose the next task")),
-    ("/evidence-workbench/review", ("Review answer", "Action and audit flow")),
-    ("/evidence-workbench/sources", ("Source blockers", "Source inventory")),
-    ("/evidence-workbench/process", ("Evidence map", "Evidence process map")),
-    ("/evidence-workbench/audit", ("Audit state", "Audit summary")),
+    (
+        "/evidence-workbench",
+        ("Evidence Workbench", "Choose the next task"),
+        ("Backend fixture", "CLAIM-003: Step-free shuttle wording"),
+    ),
+    (
+        "/evidence-workbench/review",
+        ("Review answer", "Action and audit flow"),
+        (
+            "South Brisbane lift outage and PA Hospital accessible shuttle advice",
+            "CIT-003-A",
+            "SRC-006",
+        ),
+    ),
+    (
+        "/evidence-workbench/sources",
+        ("Source blockers", "Source inventory"),
+        (
+            "SRC-006",
+            "Day-Of-Service Shuttle Dispatch Confirmation",
+            "operations-control-dispatch-confirmation",
+        ),
+    ),
+    (
+        "/evidence-workbench/process",
+        ("Evidence map", "Evidence process map"),
+        ("GRAPH-001", "NODE-SRC-006", "Selected evidence gap"),
+    ),
+    (
+        "/evidence-workbench/audit",
+        ("Audit state", "Audit summary"),
+        ("AUDIT-001", "ACT-REQUEST-SOURCE-UPDATE"),
+    ),
 ]
 
 FORBIDDEN_FRONTEND_MARKERS = (
     "AIVIS_BACKEND_ORIGIN",
+    "NEXT_PUBLIC_AIVIS_BACKEND_ORIGIN",
     "127.0.0.1:8080",
     "localhost:8080",
     "backend:8000",
     "SRC-FALLBACK",
+    "WARN-FALLBACK",
+    "GRAPH-FALLBACK",
+    "Backend fixture unavailable. Showing bundled fallback data.",
+    "Bundled fallback",
+    "bundled_fallback",
+    "/Users/pedroportella",
+    "ai-notes",
+    "deep-end",
+    "delivery lane",
+    "-----BEGIN PRIVATE KEY-----",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_ACCESS_KEY_ID",
+)
+
+FORBIDDEN_FRONTEND_PATTERNS = (
+    ("public backend env", re.compile(r"NEXT_PUBLIC_[A-Z0-9_]*BACKEND")),
+    (
+        "private planning label",
+        re.compile(r"\b(?:[BCIQR][0-9]{2}[A-Z]?|F(?:0[0-9]|1[3-9]|2[0-9])[A-Z]?)\b"),
+    ),
+    ("AWS access key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
+)
+
+STATIC_ASSET_PATTERN = re.compile(
+    r"""(?:(?:href|src)=["'](?P<attr>[^"']*/_next/static/[^"']+)["']|(?P<path>/_next/static/[^\s"'<>]+))"""
 )
 
 
@@ -110,8 +167,8 @@ def request_json(
     return status, decoded
 
 
-def request_text(url: str, *, timeout: float) -> tuple[int, str]:
-    request = urllib.request.Request(url, headers={"Accept": "text/html"})
+def request_text(url: str, *, timeout: float, accept: str = "text/html") -> tuple[int, str]:
+    request = urllib.request.Request(url, headers={"Accept": accept})
 
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
@@ -185,6 +242,63 @@ def require_contains(label: str, values: Iterable[str], body: str) -> None:
     missing = [value for value in values if value not in body]
     if missing:
         raise SmokeFailure(f"{label} missing expected rendered text: {', '.join(missing)}")
+
+
+def require_no_forbidden_frontend_markers(label: str, body: str) -> None:
+    forbidden = [marker for marker in FORBIDDEN_FRONTEND_MARKERS if marker in body]
+    forbidden.extend(
+        pattern_label
+        for pattern_label, pattern in FORBIDDEN_FRONTEND_PATTERNS
+        if pattern.search(body)
+    )
+    if forbidden:
+        raise SmokeFailure(f"{label} exposed forbidden marker(s): {', '.join(forbidden)}")
+
+
+def collect_static_asset_paths(route_bodies: Iterable[str]) -> list[str]:
+    asset_paths: set[str] = set()
+
+    for body in route_bodies:
+        for match in STATIC_ASSET_PATTERN.finditer(body):
+            raw_path = html.unescape(match.group("attr") or match.group("path") or "")
+            parsed = urllib.parse.urlparse(raw_path)
+            if parsed.scheme and parsed.netloc:
+                path = parsed.path
+            else:
+                marker_start = raw_path.find("/_next/static/")
+                if marker_start == -1:
+                    continue
+                path = raw_path[marker_start:]
+
+            if parsed.query:
+                path = f"{path}?{parsed.query}"
+            asset_paths.add(path)
+
+    return sorted(asset_paths)
+
+
+def run_static_asset_smoke(
+    base_url: str,
+    route_bodies: Iterable[str],
+    *,
+    timeout: float,
+) -> None:
+    asset_paths = collect_static_asset_paths(route_bodies)
+    if not asset_paths:
+        raise SmokeFailure("frontend route HTML did not reference any /_next/static assets.")
+
+    for asset_path in asset_paths:
+        asset_url = urllib.parse.urljoin(f"{base_url}/", asset_path.lstrip("/"))
+        status, body = request_text(asset_url, timeout=timeout, accept="*/*")
+        if status != 200:
+            raise SmokeFailure(f"GET {asset_path} returned HTTP {status}.")
+        require_no_forbidden_frontend_markers(f"GET {asset_path}", body)
+
+    print(
+        f"GET /_next/static assets -> checked={len(asset_paths)}; "
+        "no backend-origin, fallback-data, private-label or secret-like marker",
+        flush=True,
+    )
 
 
 def run_backend_smoke(base_url: str, *, timeout: float, wait_seconds: float) -> None:
@@ -292,19 +406,23 @@ def run_frontend_smoke(base_url: str, *, timeout: float, wait_seconds: float) ->
 
     wait_for_text(f"{base_url}/evidence-workbench", timeout=timeout, wait_seconds=wait_seconds)
 
-    for path, expected_text in ROUTE_CHECKS:
+    route_bodies: list[str] = []
+
+    for path, expected_text, backend_markers in ROUTE_CHECKS:
         status, body = request_text(f"{base_url}{path}", timeout=timeout)
         if status != 200:
             raise SmokeFailure(f"GET {path} returned HTTP {status}.")
         require_contains(path, expected_text, body)
-        forbidden = [marker for marker in FORBIDDEN_FRONTEND_MARKERS if marker in body]
-        if forbidden:
-            raise SmokeFailure(f"GET {path} exposed forbidden marker(s): {', '.join(forbidden)}")
+        require_contains(f"{path} backend-backed markers", backend_markers, body)
+        require_no_forbidden_frontend_markers(f"GET {path}", body)
+        route_bodies.append(body)
         print(
             f"GET {path} -> HTTP 200; rendered={', '.join(expected_text)}; "
-            "no backend-origin or fallback marker",
+            "backend-backed; no backend-origin, fallback-data, private-label or secret-like marker",
             flush=True,
         )
+
+    run_static_asset_smoke(base_url, route_bodies, timeout=timeout)
 
 
 def main() -> int:

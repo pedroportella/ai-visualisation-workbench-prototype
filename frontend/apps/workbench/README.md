@@ -44,4 +44,6 @@ pnpm docker:down
 ```
 
 The container uses Next.js standalone output and reads
-`AIVIS_BACKEND_ORIGIN` server-side.
+`AIVIS_BACKEND_ORIGIN` server-side. The Docker smoke checks that rendered HTML
+and browser-visible static assets stay free of backend origins, private labels,
+local paths and fallback-only fixture markers.

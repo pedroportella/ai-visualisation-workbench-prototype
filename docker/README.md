@@ -4,6 +4,10 @@ Docker support is for local release-runtime rehearsal only. It does not create
 cloud resources, deployment infrastructure, secrets, auth, a database or a
 production platform.
 
+The compose rehearsal keeps the web runtime's backend origin server-side. It
+uses explicit host ports, health-gated startup, no privileged mode, no host
+networking and no bind-mounted source tree.
+
 ## Backend Image
 
 Build the backend image from the repo root:
@@ -58,8 +62,10 @@ pnpm docker:smoke
 ```
 
 The full smoke checks backend health, fixture endpoints, local review-action
-state, all five Evidence Workbench routes and that rendered HTML does not leak
-the backend origin or fallback fixture marker.
+state, all five Evidence Workbench routes, backend-backed rendered markers and
+browser-visible `/_next/static` assets. It fails if the frontend silently falls
+back to bundled fixture data or leaks backend origins, private planning labels,
+local machine paths or common secret-like markers.
 
 Stop the local containers:
 
