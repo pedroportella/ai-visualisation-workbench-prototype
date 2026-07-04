@@ -135,6 +135,23 @@ python3 -m venv .venv
 python -m pip install -e ".[dev]"
 ```
 
+## Backend Release Manifest
+
+`pyproject.toml` remains the backend package source of truth for the Python
+package name, version and dependencies.
+
+`backend/package.json` is a private release orchestration manifest. It does not
+replace Python packaging and does not make the backend a Node.js service. It
+gives backend-scoped release checks one stable pnpm command surface:
+
+```text
+pnpm --filter @aivis/backend release:preflight
+```
+
+Use `release:smoke` after starting the local backend runtime. Use
+`release:container:build` and `release:container:smoke` for the backend
+container path.
+
 ## Development Commands
 
 From this `backend/` directory:

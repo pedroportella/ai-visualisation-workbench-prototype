@@ -8,6 +8,8 @@ importers:
 
   .: {}
 
+  backend: {}
+
   frontend: {}
 
   frontend/apps/workbench:

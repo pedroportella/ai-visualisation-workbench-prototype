@@ -15,7 +15,9 @@ anchors:
 - a FastAPI backend with health, readiness, metadata and deterministic fixture
   endpoints;
 - a backend Docker image for local container smoke checks;
+- a private backend release orchestration manifest for backend-scoped checks;
 - a Next.js Evidence Workbench app with server-only backend origin handling;
+- a private frontend release manifest for frontend-scoped checks;
 - deterministic fallback fixture behaviour if the backend is unavailable;
 - local review-action state that resets with the running process;
 - public-safe docs that state the synthetic-data and non-official-system
@@ -27,7 +29,7 @@ Before any AWS account action, run the local checks that match the release
 scope:
 
 ```text
-python -m pytest
+pnpm --filter @aivis/backend release:preflight
 backend/.venv/bin/python scripts/local-backend-smoke.py
 docker build -f backend/Dockerfile -t aivis-backend:local backend
 backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.0.1:8080
@@ -77,6 +79,11 @@ Backend-only releases should prove the API contract remains compatible with the
 target web runtime. Frontend-only releases should record the backend release or
 review runtime they were checked against. Contract, fixture or backend-origin
 changes should be treated as coordinated releases.
+
+The backend folder has a private release orchestration manifest at
+`backend/package.json`. Use `pnpm --filter @aivis/backend release:preflight` for
+backend-scoped release rehearsal. The backend Python package name, version and
+dependencies remain owned by `backend/pyproject.toml`.
 
 The frontend folder has a private release manifest at `frontend/package.json`.
 Use `pnpm --filter @aivis/frontend release:preflight` for frontend-scoped release

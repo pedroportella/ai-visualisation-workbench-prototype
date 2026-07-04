@@ -11,3 +11,6 @@ Current docs:
 - [AWS release readiness](aws-release-readiness.md): planned short AWS review
   release boundary, local gates, evidence model and teardown posture. This is
   readiness documentation only, not live AWS proof.
+- [Principal software developer release orchestration decision](release-orchestration-decision.md):
+  why the monorepo uses private backend and frontend pnpm release manifests
+  while keeping native package files as source of truth.

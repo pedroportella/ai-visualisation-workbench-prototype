@@ -1,0 +1,14 @@
+{
+  "name": "@aivis/backend",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Backend release orchestration manifest for the AI Visualisation Workbench prototype.",
+  "type": "module",
+  "scripts": {
+    "release:container:build": "cd .. && docker build -f backend/Dockerfile -t aivis-backend:local backend",
+    "release:container:smoke": ".venv/bin/python ../scripts/local-backend-smoke.py --base-url http://127.0.0.1:8080",
+    "release:preflight": "pnpm release:test",
+    "release:smoke": ".venv/bin/python ../scripts/local-backend-smoke.py",
+    "release:test": ".venv/bin/python -m pytest"
+  }
+}
