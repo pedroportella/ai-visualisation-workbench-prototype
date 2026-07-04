@@ -1,0 +1,14 @@
+{
+  "name": "@aivis/frontend",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Frontend release manifest for the AI Visualisation Workbench prototype.",
+  "type": "module",
+  "scripts": {
+    "release:build": "pnpm --dir .. --filter @aivis/workbench build",
+    "release:check": "pnpm --dir .. --filter @aivis/ui-assets check && pnpm --dir .. --filter @aivis/ui-tokens check && pnpm --dir .. --filter @aivis/utils check && pnpm --dir .. --filter @aivis/services check && pnpm --dir .. --filter @aivis/ui-library check && pnpm --dir .. --filter @aivis/workbench check",
+    "release:preflight": "pnpm release:check",
+    "release:test": "pnpm --dir .. --filter @aivis/ui-assets test && pnpm --dir .. --filter @aivis/ui-tokens test && pnpm --dir .. --filter @aivis/utils test && pnpm --dir .. --filter @aivis/services test && pnpm --dir .. --filter @aivis/ui-library test && pnpm --dir .. --filter @aivis/workbench test",
+    "release:typecheck": "pnpm --dir .. --filter @aivis/ui-assets typecheck && pnpm --dir .. --filter @aivis/ui-tokens typecheck && pnpm --dir .. --filter @aivis/utils typecheck && pnpm --dir .. --filter @aivis/services typecheck && pnpm --dir .. --filter @aivis/ui-library typecheck && pnpm --dir .. --filter @aivis/workbench typecheck"
+  }
+}

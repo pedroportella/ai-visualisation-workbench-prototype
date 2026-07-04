@@ -8,6 +8,8 @@ importers:
 
   .: {}
 
+  frontend: {}
+
   frontend/apps/workbench:
     dependencies:
       '@aivis/ui-library':
