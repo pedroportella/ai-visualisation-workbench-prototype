@@ -1,11 +1,63 @@
 # AI Visualisation Workbench Prototype
 
 This repository contains the prototype implementation for AIVIS, the AI
-Visualisation Workbench.
+Visualisation Workbench: a simulated evidence review workbench for inspecting
+source-backed AI guidance before it is used.
 
-The first product surface will be the Evidence Workbench: a staff/reviewer
-experience for inspecting a source-backed AI guidance answer, its citations,
-evidence path, warnings and review state.
+The primary product surface is the Evidence Workbench. It helps a staff
+reviewer decide whether an AI-generated service-guidance answer is safe to use
+by showing the answer, supporting sources, evidence gaps, process path,
+warnings and local review actions in one place.
+
+## Reviewer Problem
+
+AI-generated service guidance can sound confident even when the supporting
+evidence is stale, weak, missing or conflicting. This prototype focuses on the
+review gap between "the AI produced an answer" and "a reviewer understands why
+the answer was produced, what supports it, what is unsafe and what should
+happen next."
+
+The current synthetic scenario uses recognisable Brisbane/Queensland place
+anchors and simulated transport-service evidence. A reviewer inspects a draft
+answer about South Brisbane station access and an accessible shuttle path,
+checks source blockers and records a local action when the answer is not safe
+to approve as written.
+
+## Evidence Workbench Flow
+
+The app is organised around one review task:
+
+1. Arrive at `/evidence-workbench` and understand the current case.
+2. Start the review at `/evidence-workbench/review`.
+3. Inspect source blockers at `/evidence-workbench/sources`.
+4. Read the evidence/process map at `/evidence-workbench/process`.
+5. Record or reset local review state at `/evidence-workbench/audit`.
+
+The workbench lets the reviewer inspect source-backed markdown, citations,
+source records, warnings, a React Flow evidence/process map, action
+availability, disabled reasons and local audit feedback.
+
+## Implemented Technology Posture
+
+- Frontend: Next.js App Router, React, TypeScript, local `@aivis/*` packages
+  and local QHDS/QGDS-style adapters.
+- Visualisation: React Flow through `@xyflow/react` for the evidence/process
+  map, with a text fallback.
+- Content rendering: an app-local safe markdown renderer for the fixture answer
+  shape, including citations, lists, tables, code blocks and controlled
+  diagram fixtures.
+- State and data loading: server-only backend adapter configuration,
+  deterministic fixture endpoints and local React state for simulated review
+  actions.
+- Backend: FastAPI health, readiness, metadata, answer, source, graph and
+  review-action fixture endpoints.
+- Verification: Vitest package tests, backend pytest, Playwright route and
+  no-screenshot DOM/layout checks, local Docker smoke checks and public guard
+  scripts.
+
+The repository does not currently claim direct D3.js, Cytoscape.js, Mermaid,
+TanStack Query, app-owned Zustand, Redux, axe, Lighthouse, WAVE, Dependabot or
+Socket.dev automation.
 
 ## Prototype Boundary
 
@@ -16,6 +68,9 @@ evidence path, warnings and review state.
 - Is not QChat and does not claim QChat integration.
 - Does not claim production RAG, GraphRAG, AWS, SSO or platform operation until
   those capabilities are implemented and verified.
+- Does not implement production retrieval, graph database integration, cloud AI
+  provider integration, source-system writeback or persisted multi-user review
+  state.
 
 ## Repo Shape
 
@@ -29,14 +84,13 @@ scripts/   Repo-local verification and guard helpers.
 
 This is a pnpm monorepo.
 
-## First Build Direction
+## Current Build Direction
 
-1. Establish monorepo foundation and guardrails.
-2. Add a minimal backend/API spine.
-3. Adapt shared frontend packages.
-4. Build the Evidence Workbench route.
-5. Add rich markdown, citations, source traceability and evidence/process
-   visualisation.
+The current local baseline focuses on a complete reviewer-facing vertical
+slice: public-safe fixtures, backend contract endpoints, a front-door task
+launcher, focused workbench routes, rich markdown, source traceability,
+evidence/process visualisation, local review actions and no-screenshot
+verification.
 
 ## Release Readiness
 

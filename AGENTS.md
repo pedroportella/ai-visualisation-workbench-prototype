@@ -5,7 +5,8 @@ This repo contains the code for the AI Visualisation Workbench prototype.
 ## Current Product Direction
 
 - Product H1/title: `AI Visualisation Workbench`.
-- Primary product surface: `Evidence Workbench`.
+- Primary product surface: `Evidence Workbench`, a simulated review workbench
+  for source-backed AI guidance.
 - Content: transport-service-flavoured synthetic data only.
 - Prototype behaviour: locally stateful review actions and a minimal backend/API
   spine.
@@ -14,7 +15,8 @@ This repo contains the code for the AI Visualisation Workbench prototype.
 
 ## Product Guardrails
 
-- Keep the first experience focused on the Evidence Workbench.
+- Keep the first experience focused on the Evidence Workbench front door and
+  its current review task.
 - Prioritise answer review, source traceability, evidence/process
   visualisation and reviewer trust states.
 - Avoid turning the first screen into a marketing page, generic dashboard or
