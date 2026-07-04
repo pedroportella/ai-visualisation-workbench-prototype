@@ -386,13 +386,19 @@ function isNegativeGuardrailLine(line, lines = [], index = 0) {
     lines[index - 3],
     lines[index - 2],
     lines[index - 1],
-    line
+    line,
+    lines[index + 1],
+    lines[index + 2],
+    lines[index + 3],
+    lines[index + 4]
   ]
     .filter(Boolean)
     .join(" ");
 
-  return /\b(no|not|never|without|avoid|must not|does not|do not|is not|not evidence|not connected|not claim|must be decided before|not claimed)\b/i.test(
-    context
+  return (
+    /\b(no|not|never|without|avoid|must not|does not|do not|is not|not evidence|not connected|not claim|must be decided before|not claimed|not implemented)\b/i.test(
+      context
+    ) || /unsupported/i.test(context)
   );
 }
 

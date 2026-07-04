@@ -21,10 +21,35 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await expect(page.getByText("WARN-FALLBACK-003").first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Request source update" })).toBeVisible();
   await expectControlCanReceiveFocus(page, "button", "Request source update");
+  await page
+    .locator(".evidence-workbench-source-review__issue-selector")
+    .getByText("WARN-FALLBACK-003 on SRC-FALLBACK-003")
+    .click();
+  await expect(
+    page.getByRole("radio", { name: /WARN-FALLBACK-003 on SRC-FALLBACK-003/ })
+  ).toBeChecked();
+  await expect(
+    page.getByText("WARN-FALLBACK-003: Dispatch confirmation is missing.").first()
+  ).toBeVisible();
 
   await page.getByRole("button", { name: "Request source update" }).click();
-  await expect(page.getByText("Request source update recorded in local UI state.")).toBeVisible();
+  await expect(
+    page.getByText(
+      "Request source update recorded in local UI state. Targeted WARN-FALLBACK-003 on SRC-FALLBACK-003."
+    )
+  ).toBeVisible();
+  await expect(
+    page.getByText("WARN-FALLBACK-003 on SRC-FALLBACK-003: Dispatch confirmation is missing.")
+  ).toBeVisible();
   await expect(page.getByText("Copy Disabled").first()).toBeVisible();
+  await page.getByRole("button", { name: "Reset local review state" }).click();
+  await expect(page.getByText("Local review state reset to the loaded fixture seed.")).toBeVisible();
+  await expect(
+    page.getByText("No local action target recorded.")
+  ).toBeVisible();
+  await expect(
+    page.getByRole("radio", { name: /WARN-FALLBACK-001 on SRC-FALLBACK-002/ })
+  ).toBeChecked();
 
   await page.goto("/evidence-workbench/sources");
   await expect(page.getByRole("heading", { level: 1, name: "Source blockers" })).toBeVisible();
