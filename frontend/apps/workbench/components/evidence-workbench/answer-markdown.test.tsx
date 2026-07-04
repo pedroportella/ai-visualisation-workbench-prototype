@@ -103,14 +103,15 @@ describe("AnswerMarkdown", () => {
     expect(html).toContain("<h3");
     expect(html).toContain("<h4");
     expect(html).toContain("<strong>Review status:</strong>");
-    expect(html).toContain("<blockquote>");
+    expect(html).toContain("<blockquote class=");
+    expect(html).toContain("evidence-workbench-answer-markdown__blockquote");
     expect(html).toContain("<ol>");
     expect(html).not.toContain("<ul>");
     expect(html).toContain("<table class=");
     expect(html).toContain("qld__table__wrapper");
     expect(html).toContain("qld__table");
     expect(html).toContain("Answer evidence summary");
-    expect(html).toContain("qld__callout");
+    expect(html).not.toContain("qld__callout");
     expect(html).toContain("<code>WARN-001</code>");
     expect(html).toContain("<code>CLAIM-003</code>");
     expect(html).toContain("evidence-workbench-code-block");

@@ -1,11 +1,11 @@
 import type { ReactElement } from "react";
 
 import {
-  AivisEvidenceCallout,
   AivisEvidenceMetadata,
   AivisEvidencePanelHeader,
   AivisEvidenceStatus,
   AivisEvidenceWarningGroup,
+  AivisEvidenceWarningList,
   QhdsButton,
   QhdsCard
 } from "@aivis/ui-library";
@@ -87,15 +87,23 @@ export function SelectedSourceInspector({
       </section>
 
       {topWarning ? (
-        <AivisEvidenceCallout
+        <section
+          aria-label="Top selected-source blocker"
           className="evidence-workbench-source-inspector__top-warning"
-          heading="Top selected-source blocker"
-          tone="warning"
         >
-          <AivisEvidenceStatus tone="warning">{topWarning.id}</AivisEvidenceStatus>
-          <p>{topWarning.message}</p>
-          <small>{topWarning.evidenceImpact}</small>
-        </AivisEvidenceCallout>
+          <h4>Top selected-source blocker</h4>
+          <AivisEvidenceWarningList
+            ariaLabel="Top selected-source blocker detail"
+            warnings={[
+              {
+                id: topWarning.id,
+                impact: topWarning.evidenceImpact,
+                message: topWarning.message,
+                severity: warningSeverityLabel(topWarning)
+              }
+            ]}
+          />
+        </section>
       ) : null}
 
       <ul
@@ -183,6 +191,10 @@ function inspectorWarning(warning: EvidenceWorkbenchSourceWarning) {
     id: warning.id,
     impact: warning.evidenceImpact,
     message: warning.message,
-    severity: `${warning.severity}${warning.blocksApproval ? " approval blocker" : " review note"}`
+    severity: warningSeverityLabel(warning)
   };
+}
+
+function warningSeverityLabel(warning: EvidenceWorkbenchSourceWarning): string {
+  return `${warning.severity}${warning.blocksApproval ? " approval blocker" : " review note"}`;
 }

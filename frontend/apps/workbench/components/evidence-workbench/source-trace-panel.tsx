@@ -2,7 +2,6 @@ import type { ReactElement } from "react";
 
 import {
   AivisEvidenceAnchorChipList,
-  AivisEvidenceCallout,
   AivisEvidenceFilterNav,
   AivisEvidencePanelHeader,
   AivisEvidenceStatus,
@@ -192,23 +191,36 @@ function SourceWarningSummary({
   }
 
   return (
-    <AivisEvidenceCallout
+    <section
+      aria-label={`${source.id} warning summary`}
       className="evidence-workbench-source-inventory__warning-summary"
-      heading="Warning summary"
-      headingLevel={3}
-      tone="warning"
     >
+      <h3>Warning summary</h3>
       <ul>
         {warnings.map((warning) => (
           <li key={warning.id}>
-            <AivisEvidenceStatus tone="warning">{warningSeverityLabel(warning)}</AivisEvidenceStatus>
-            <strong>{warning.id}</strong>
-            <span>{warning.message}</span>
-            <small>{warning.evidenceImpact}</small>
+            <div className="evidence-workbench-source-inventory__warning-row-header">
+              <strong>{source.id}</strong>
+              <AivisEvidenceStatus tone="warning">{warningSeverityLabel(warning)}</AivisEvidenceStatus>
+            </div>
+            <dl className="evidence-workbench-source-inventory__warning-row">
+              <div>
+                <dt>Warning</dt>
+                <dd>{warning.id}</dd>
+              </div>
+              <div>
+                <dt>Message</dt>
+                <dd>{warning.message}</dd>
+              </div>
+              <div>
+                <dt>Evidence impact</dt>
+                <dd>{warning.evidenceImpact}</dd>
+              </div>
+            </dl>
           </li>
         ))}
       </ul>
-    </AivisEvidenceCallout>
+    </section>
   );
 }
 

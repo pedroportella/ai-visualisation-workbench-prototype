@@ -40,7 +40,7 @@ describe("AivisEvidence adapters", () => {
     expect(html).toContain("aivis-evidence-status--warning");
   });
 
-  it("renders source cards with summary-list metadata and warning callouts", () => {
+  it("renders source cards with summary-list metadata and warning issue rows", () => {
     const html = renderToStaticMarkup(
       <AivisEvidenceSourceCard
         data-source-filter-state="missing_blocker"
@@ -73,7 +73,9 @@ describe("AivisEvidence adapters", () => {
 
     expect(html).toContain('data-source-filter-state="missing_blocker"');
     expect(html).toContain("qld__summary-list");
-    expect(html).toContain("qld__callout");
+    expect(html).toContain("aivis-evidence-warning-group");
+    expect(html).toContain("aivis-evidence-warning-list__item");
+    expect(html).not.toContain("qld__callout");
     expect(html).toContain("Direct source warning");
     expect(html).toContain("WARN-003");
   });

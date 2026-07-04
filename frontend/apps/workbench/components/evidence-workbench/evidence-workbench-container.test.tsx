@@ -129,7 +129,9 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("aivis-evidence-claim-card");
     expect(html).toContain("qld__card-list evidence-workbench-claim-stack");
     expect(html).toContain("qld__table__wrapper");
-    expect(html).toContain("qld__callout");
+    expect(html).toContain("evidence-workbench-selected-claim-warning");
+    expect(html).toContain("aivis-evidence-warning-list__item");
+    expect(html).not.toContain("qld__callout");
     expect(html).toContain("evidence-workbench-generated-diagram");
     expect(html).toContain("Generated fallback review path");
     expect(html).toContain("Diagram text fallback");
@@ -207,7 +209,9 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("Audit summary");
     expect(html).toContain('id="audit-summary"');
     expect(html).toContain('tabindex="0"');
+    expect(html).toContain("evidence-workbench-audit-summary__state");
     expect(html).toContain("Active fixture warnings");
+    expect(html).not.toContain("qld__callout");
     expect(html).not.toContain('id="answer-title"');
     expect(html).not.toContain('id="sources-title"');
     expect(html).not.toContain("qld__abstract");

@@ -318,11 +318,14 @@ export function AivisEvidenceWarningList({
     <ul aria-label={ariaLabel} className="aivis-evidence-warning-list">
       {warnings.map((warning, index) => (
         <li key={index}>
-          <AivisEvidenceCallout heading={warning.id} headingLevel={4} tone="warning">
-            <AivisEvidenceStatus tone="warning">{warning.severity}</AivisEvidenceStatus>
+          <div className="aivis-evidence-warning-list__item">
+            <div className="aivis-evidence-warning-list__header">
+              <strong>{warning.id}</strong>
+              <AivisEvidenceStatus tone="warning">{warning.severity}</AivisEvidenceStatus>
+            </div>
             <p>{warning.message}</p>
             {warning.impact ? <small>{warning.impact}</small> : null}
-          </AivisEvidenceCallout>
+          </div>
         </li>
       ))}
     </ul>
@@ -447,9 +450,8 @@ export function AivisEvidenceWarningGroup({
 
   return (
     <section aria-label={typeof label === "string" ? label : undefined} className="aivis-evidence-warning-group">
-      <AivisEvidenceCallout heading={label} tone="warning">
-        <AivisEvidenceWarningList warnings={warnings} />
-      </AivisEvidenceCallout>
+      <p className="aivis-evidence-warning-group__heading">{label}</p>
+      <AivisEvidenceWarningList warnings={warnings} />
     </section>
   );
 }

@@ -251,14 +251,17 @@ describe("SourceTracePanel", () => {
     expect(html).toContain("Press Enter to toggle source details.");
   });
 
-  it("keeps warnings reachable through QHDS callouts without repeated source cards", () => {
+  it("keeps warnings reachable through issue summaries without repeated source cards", () => {
     const html = renderPanel();
 
     expect(html).toContain('data-source-filter-state="stale_blocker"');
     expect(html).toContain('data-source-filter-state="current_conditional_support"');
     expect(html).not.toContain("aivis-evidence-source-card");
     expect(html).not.toContain("aivis-evidence-warning-group");
-    expect(html).toContain("qld__callout");
+    expect(html).not.toContain("qld__callout");
+    expect(html).toContain("evidence-workbench-source-inventory__warning-row");
+    expect(html).toContain("Evidence impact");
+    expect(html).toContain("SRC-002");
     expect(html).toContain("Warning summary");
     expect(html).toContain("WARN-001");
     expect(html).toContain("WARN-002");

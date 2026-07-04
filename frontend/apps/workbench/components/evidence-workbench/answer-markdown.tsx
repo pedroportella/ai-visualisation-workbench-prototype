@@ -1,7 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
 
 import {
-  AivisEvidenceCallout,
   QhdsTable,
   type QhdsTableColumn,
   type QhdsTableRow
@@ -84,11 +83,12 @@ function renderBlock(
       return renderHeading(block, context);
     case "blockquote":
       return (
-        <AivisEvidenceCallout heading="Review note" key={context.keyPrefix} tone="warning">
-          <blockquote>
-            <p>{renderInlineContent(block.text, context)}</p>
-          </blockquote>
-        </AivisEvidenceCallout>
+        <blockquote
+          className="evidence-workbench-answer-markdown__blockquote"
+          key={context.keyPrefix}
+        >
+          <p>{renderInlineContent(block.text, context)}</p>
+        </blockquote>
       );
     case "code":
       return renderCodeBlock(block, context);

@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 
 import {
-  AivisEvidenceCallout,
   AivisEvidencePanelHeader,
+  AivisEvidenceWarningList,
   QhdsCol,
   QhdsContentSection,
   QhdsRow
@@ -78,18 +78,30 @@ export function WorkbenchReviewWorkspace({
               sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
             />
             {selectedClaimTopWarning ? (
-              <AivisEvidenceCallout
+              <section
+                aria-label={`${review.selectedClaimId} selected blocker`}
                 className="evidence-workbench-selected-claim-warning"
-                heading={`${review.selectedClaimId} selected blocker`}
-                tone="warning"
               >
-                <p>{selectedClaimTopWarning.message}</p>
+                <h3>{review.selectedClaimId} selected blocker</h3>
+                <AivisEvidenceWarningList
+                  ariaLabel={`${review.selectedClaimId} selected blocker detail`}
+                  warnings={[
+                    {
+                      id: selectedClaimTopWarning.id,
+                      impact: selectedClaimTopWarning.evidenceImpact,
+                      message: selectedClaimTopWarning.message,
+                      severity: `${selectedClaimTopWarning.severity}${
+                        selectedClaimTopWarning.blocksApproval ? " approval blocker" : " review note"
+                      }`
+                    }
+                  ]}
+                />
                 <p>
                   <a href="#selected-claim-sources">
                     Review the selected source inspector for linked evidence.
                   </a>
                 </p>
-              </AivisEvidenceCallout>
+              </section>
             ) : null}
           </QhdsContentSection>
         </QhdsCol>

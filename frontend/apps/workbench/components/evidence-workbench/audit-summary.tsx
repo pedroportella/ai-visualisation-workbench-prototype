@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 
 import {
-  AivisEvidenceCallout,
+  AivisEvidenceStatus,
   QhdsContentSection,
   QhdsSummaryList
 } from "@aivis/ui-library";
@@ -22,21 +22,40 @@ export function AuditSummary({
       tabIndex={0}
       withBodyClass={false}
     >
-      <AivisEvidenceCallout
-        heading={review.copyState === "enabled" ? "Copy can be reviewed" : "Copy remains unavailable"}
-        tone={review.copyState === "enabled" ? "success" : "warning"}
+      <div
+        className="evidence-workbench-audit-summary__state"
+        data-copy-state={review.copyState}
       >
+        <AivisEvidenceStatus tone={review.copyState === "enabled" ? "success" : "warning"}>
+          {review.copyState === "enabled" ? "Copy can be reviewed" : "Copy remains unavailable"}
+        </AivisEvidenceStatus>
         <p className="evidence-workbench-review-note">
           Copy state is {review.copyState}. Approval remains blocked by{" "}
           {review.blockedByWarningIds.join(", ")} with {review.activeWarningCount}{" "}
           active fixture warnings. Audit {decisionState.audit.id} last action is{" "}
           {decisionState.audit.lastReviewActionId ?? "none"}.
         </p>
-      </AivisEvidenceCallout>
+      </div>
       <QhdsSummaryList
         ariaLabel="Local audit target summary"
         className="evidence-workbench-audit-summary__metadata"
         items={[
+          {
+            description: review.copyState,
+            term: "Copy state"
+          },
+          {
+            description: review.blockedByWarningIds.join(", ") || "No approval blockers recorded.",
+            term: "Approval blockers"
+          },
+          {
+            description: review.activeWarningCount,
+            term: "Active warnings"
+          },
+          {
+            description: decisionState.audit.lastReviewActionId ?? "None",
+            term: "Last action"
+          },
           {
             description: actionTarget
               ? `${actionTarget.warningId} on ${actionTarget.sourceId}: ${actionTarget.warningMessage}`

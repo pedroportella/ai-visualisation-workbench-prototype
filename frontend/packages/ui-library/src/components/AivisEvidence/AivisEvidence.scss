@@ -163,6 +163,52 @@
   line-height: var(--aivis-line-height-caption);
 }
 
+.aivis-evidence-warning-list__item {
+  background: var(--qhds-color-warning-background);
+  border: var(--aivis-border-width-thin) solid var(--qhds-color-warning-border);
+  border-radius: var(--QLD-border-radius-xs);
+  display: grid;
+  gap: var(--aivis-space-2);
+  min-width: 0;
+  padding: var(--aivis-workbench-list-item-padding);
+}
+
+.aivis-evidence-warning-list__header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aivis-space-2);
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.aivis-evidence-warning-list__header strong {
+  color: var(--aivis-shell-text);
+  line-height: var(--aivis-line-height-heading);
+}
+
+.aivis-evidence-warning-list__header .aivis-evidence-status {
+  flex-shrink: 0;
+}
+
+.aivis-evidence-warning-list__item p {
+  margin: 0;
+}
+
+.aivis-evidence-warning-group {
+  display: grid;
+  gap: var(--aivis-space-2);
+  min-width: 0;
+}
+
+.aivis-evidence-warning-group__heading {
+  color: var(--aivis-shell-text);
+  font-size: var(--aivis-font-size-body-sm);
+  font-weight: var(--aivis-font-weight-bold);
+  line-height: var(--aivis-line-height-heading);
+  margin: 0;
+}
+
 .aivis-evidence-source-card__badges {
   align-items: center;
   display: flex;
@@ -199,7 +245,7 @@
 
 .aivis-evidence-callout__heading,
 .aivis-evidence-callout__content > :first-child,
-.aivis-evidence-warning-list .aivis-evidence-callout {
+.aivis-evidence-warning-list__item > :first-child {
   margin: 0;
 }
 
@@ -216,6 +262,7 @@
 }
 
 .aivis-evidence-callout__content > :last-child,
+.aivis-evidence-warning-list__item > :last-child,
 .aivis-evidence-card p,
 .aivis-evidence-source-card__owner,
 .aivis-evidence-token-list,

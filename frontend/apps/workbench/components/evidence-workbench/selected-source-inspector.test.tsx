@@ -43,10 +43,12 @@ describe("SelectedSourceInspector", () => {
     expect(html).toContain("Freshness");
     expect(html).toContain("Direct source warning");
     expect(html).toContain("Citation or claim warning");
+    expect(html).toContain("aivis-evidence-warning-list__item");
     expect(html).toContain("WARN-FALLBACK-001");
     expect(html).toContain("WARN-FALLBACK-002");
     expect(html).toContain("WARN-FALLBACK-003");
     expect(html).toContain("approval blocker");
+    expect(html).not.toContain("qld__callout");
   });
 });
 
