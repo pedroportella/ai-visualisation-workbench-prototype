@@ -17,6 +17,8 @@ anchors:
 - a backend Docker image for local container smoke checks;
 - a private backend release orchestration manifest for backend-scoped checks;
 - a Next.js Evidence Workbench app with server-only backend origin handling;
+- a frontend Docker image and local compose runtime for coordinated container
+  rehearsal;
 - a private frontend release manifest for frontend-scoped checks;
 - deterministic fallback fixture behaviour if the backend is unavailable;
 - local review-action state that resets with the running process;
@@ -36,6 +38,10 @@ backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.
 pnpm --filter @aivis/workbench check
 pnpm --filter @aivis/ui-library check
 pnpm --filter @aivis/frontend release:preflight
+pnpm docker:build
+pnpm docker:up
+pnpm docker:smoke
+pnpm docker:down
 pnpm check
 git diff --check
 ```

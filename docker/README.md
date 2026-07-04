@@ -1,6 +1,10 @@
 # Docker
 
-Docker support is limited to local backend container smoke checks.
+Docker support is for local release-runtime rehearsal only. It does not create
+cloud resources, deployment infrastructure, secrets, auth, a database or a
+production platform.
+
+## Backend Image
 
 Build the backend image from the repo root:
 
@@ -21,5 +25,40 @@ backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.
 ```
 
 The container uses the backend server settings `AIVIS_BACKEND_HOST` and
-`AIVIS_BACKEND_PORT`. No compose file, deployment script, cloud resource,
-secret, auth layer or database is implemented here.
+`AIVIS_BACKEND_PORT`.
+
+## Full Local Runtime
+
+Build and run both local containers from the repo root:
+
+```text
+pnpm docker:build
+pnpm docker:up
+```
+
+The compose runtime exposes:
+
+```text
+frontend: http://127.0.0.1:3200/evidence-workbench
+backend:  http://127.0.0.1:8080/health/live
+```
+
+The frontend container runs the production Next.js standalone server. Its
+server-only backend origin is set to `http://backend:8000` inside the compose
+network and must not be exposed through `NEXT_PUBLIC_*` variables.
+
+Smoke the full local runtime:
+
+```text
+pnpm docker:smoke
+```
+
+The full smoke checks backend health, fixture endpoints, local review-action
+state, all five Evidence Workbench routes and that rendered HTML does not leak
+the backend origin or fallback fixture marker.
+
+Stop the local containers:
+
+```text
+pnpm docker:down
+```

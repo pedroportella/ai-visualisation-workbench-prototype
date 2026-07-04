@@ -230,6 +230,11 @@ backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.
 ```
 
 These settings are backend process settings only. They do not add browser
-secrets, a compose file, cloud resources or deployment scripts. The image
-copies the backend package metadata and source only; local virtual environments,
-test caches and `.env` files are excluded from the build context.
+secrets, cloud resources or deployment scripts. The image copies the backend
+package metadata and source only; local virtual environments, test caches and
+`.env` files are excluded from the build context.
+
+The repo root also includes a local Docker Compose runtime for coordinated
+backend plus frontend rehearsal. Use `pnpm docker:up`, `pnpm docker:smoke` and
+`pnpm docker:down` from the repo root when you need to prove the production
+Next.js container against the backend container.

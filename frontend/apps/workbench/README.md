@@ -31,3 +31,16 @@ pnpm --filter @aivis/workbench dev
 pnpm --filter @aivis/workbench check
 pnpm --filter @aivis/workbench build
 ```
+
+The production workbench can also run in the local Docker Compose rehearsal
+runtime:
+
+```text
+pnpm docker:build
+pnpm docker:up
+pnpm docker:smoke
+pnpm docker:down
+```
+
+The container uses Next.js standalone output and reads
+`AIVIS_BACKEND_ORIGIN` server-side.

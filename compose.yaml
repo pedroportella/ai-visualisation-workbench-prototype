@@ -1,0 +1,41 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: aivis-backend:local
+    ports:
+      - "8080:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/live', timeout=2).read()"
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/apps/workbench/Dockerfile
+    image: aivis-workbench:local
+    environment:
+      AIVIS_BACKEND_ORIGIN: http://backend:8000
+      HOSTNAME: 0.0.0.0
+      PORT: "3200"
+    ports:
+      - "3200:3200"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3200/evidence-workbench').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      retries: 12
