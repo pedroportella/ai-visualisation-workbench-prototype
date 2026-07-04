@@ -22,6 +22,7 @@ from aivis_api.fixture_data import (
     get_evidence_graph_response,
     get_source_inventory_response,
 )
+from aivis_api.provider_boundary import get_ai_provider_boundary_metadata
 from aivis_api.review_state import (
     ReviewActionError,
     ReviewActionRequest,
@@ -45,7 +46,11 @@ APP_DESCRIPTION = (
     "PublicContextAnchor context labels. Operational events, source freshness, "
     "warnings and review actions are deterministic synthetic fixture content. "
     "This prototype is not connected to TMR systems, is not QChat and is not an "
-    "official Queensland Government service."
+    "official Queensland Government service.\n\n"
+    "AI provider boundary: fixture_provider is the only implemented provider. "
+    "retrieval_provider, generation_provider and graph_provider are reserved "
+    "boundary names for possible future adapters. Production RAG, GraphRAG, "
+    "Amazon Bedrock, Neo4j, MCP servers and agent runtime are not implemented."
 )
 OPENAPI_TAGS = [
     {
@@ -59,7 +64,7 @@ OPENAPI_TAGS = [
         "name": "metadata",
         "description": (
             "Runtime mode and contract labels shared by the Evidence Workbench "
-            "fixture endpoints."
+            "fixture endpoints, including fixture-only AI provider posture."
         ),
     },
     {
@@ -67,8 +72,8 @@ OPENAPI_TAGS = [
         "description": (
             "Deterministic synthetic fixture endpoints for answer review, "
             "source traceability, graph review and local review-action state. "
-            "These routes do not perform live retrieval, source-system "
-            "writeback or production audit logging."
+            "These routes use fixture_provider only and do not perform live "
+            "retrieval, source-system writeback or production audit logging."
         ),
     },
 ]
@@ -109,6 +114,7 @@ META_RESPONSE: dict[str, object] = {
     "sourceSetVersion": SOURCE_SET_VERSION,
     "publicContextSetVersion": PUBLIC_CONTEXT_SET_VERSION,
     "implementedCapabilities": ["health", "readiness", "mode_metadata"],
+    "aiProviderBoundary": get_ai_provider_boundary_metadata(),
 }
 
 CONTRACT_LABEL_EXAMPLE: dict[str, object] = {

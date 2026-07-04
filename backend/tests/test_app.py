@@ -16,6 +16,13 @@ from aivis_api.errors import (
     request_validation_exception_handler,
 )
 from aivis_api.main import app
+from aivis_api.provider_boundary import (
+    AI_PROVIDER_BOUNDARY_NAMES,
+    FIXTURE_PROVIDER_ID,
+    PROVIDER_MODE,
+    UNSUPPORTED_AI_CAPABILITY_IDS,
+    get_ai_provider_boundary_metadata,
+)
 from aivis_api.review_state import (
     PRIMARY_REVIEWER_NOTE,
     ReviewActionRequest,
@@ -307,11 +314,23 @@ def test_openapi_info_documents_contract_and_public_boundary() -> None:
     assert "not connected to TMR systems" in description
     assert "not QChat" in description
     assert "not an official Queensland Government service" in description
+    assert "fixture_provider is the only implemented provider" in description
+    assert "retrieval_provider" in description
+    assert "generation_provider" in description
+    assert "graph_provider" in description
+    assert "Production RAG, GraphRAG" in description
+    assert "Amazon Bedrock, Neo4j, MCP servers" in description
 
     assert set(tags_by_name) == {"health", "metadata", "evidence-workbench"}
     assert "fixture backend only" in str(tags_by_name["health"]["description"])
     assert "Runtime mode and contract labels" in str(tags_by_name["metadata"]["description"])
+    assert "fixture-only AI provider posture" in str(
+        tags_by_name["metadata"]["description"]
+    )
     assert "source-system writeback" in str(tags_by_name["evidence-workbench"]["description"])
+    assert "fixture_provider only" in str(
+        tags_by_name["evidence-workbench"]["description"]
+    )
 
 
 def test_openapi_documents_route_summaries_and_fixture_examples() -> None:
@@ -543,7 +562,34 @@ def test_meta_returns_mode_and_contract_version_labels() -> None:
         "sourceSetVersion": "synthetic-source-set-v1",
         "publicContextSetVersion": "public-context-anchor-set-v1",
         "implementedCapabilities": ["health", "readiness", "mode_metadata"],
+        "aiProviderBoundary": get_ai_provider_boundary_metadata(),
     }
+
+
+def test_ai_provider_boundary_metadata_keeps_fixture_provider_only() -> None:
+    boundary = get_ai_provider_boundary_metadata()
+    provider_boundaries = require_object_list(boundary, "providerBoundaries")
+
+    assert boundary["providerMode"] == PROVIDER_MODE
+    assert boundary["implementedProviderIds"] == [FIXTURE_PROVIDER_ID]
+    assert boundary["providerBoundaryNames"] == AI_PROVIDER_BOUNDARY_NAMES
+    assert boundary["unsupportedCapabilityIds"] == UNSUPPORTED_AI_CAPABILITY_IDS
+
+    assert [item["boundaryName"] for item in provider_boundaries] == [
+        "retrieval_provider",
+        "generation_provider",
+        "graph_provider",
+    ]
+    assert {
+        item["implementedProviderId"] for item in provider_boundaries
+    } == {FIXTURE_PROVIDER_ID}
+    assert {item["status"] for item in provider_boundaries} == {
+        "fixture_provider_only"
+    }
+    assert all(
+        "future implementation" in str(item["futureProviderRole"])
+        for item in provider_boundaries
+    )
 
 
 def test_answer_fixture_returns_contract_shape_and_markdown() -> None:

@@ -62,6 +62,24 @@ sourceSetVersion: synthetic-source-set-v1
 publicContextSetVersion: public-context-anchor-set-v1
 ```
 
+## AI Provider Boundary
+
+The backend defines placeholder provider boundaries without adding live AI
+integration. `fixture_provider` is the only implemented provider.
+
+Current boundary names:
+
+- `retrieval_provider`: currently serves deterministic source, citation and
+  warning fixture records.
+- `generation_provider`: currently serves the deterministic draft answer and
+  prompt-context fixture.
+- `graph_provider`: currently serves the deterministic evidence graph fixture
+  and fallback steps.
+
+The placeholder names are reserved for possible future adapters. Production
+RAG, GraphRAG, Amazon Bedrock, Neo4j, MCP servers, agent runtime, live
+retrieval and source-system writeback are not implemented by this backend.
+
 ## OpenAPI And Contract Docs
 
 FastAPI exposes the implemented API contract at:
