@@ -21,8 +21,7 @@ secret material that needs to be represented in a developer environment file.
 
 ## Decision
 
-Do not require `.env`, `.env.local` or any other local environment file for the
-current AIVIS runtime.
+Do not require local environment-file setup for the current AIVIS runtime.
 
 Keep local runtime defaults in code, scripts and Compose where they are already
 clear and safe:
@@ -35,13 +34,13 @@ clear and safe:
 - the frontend must not expose backend origins through `NEXT_PUBLIC_*`
   variables.
 
-Local `.env*` files remain ignored. If future local overrides become useful,
-add a committed `.env.example` with browser-safe, non-secret values only. Do
-not add a committed real `.env` or `.env.local`.
+Local environment files remain ignored. If future local overrides become
+useful, add a committed `.env.example` with browser-safe, non-secret values
+only. Do not commit a real `.env` or `.env.local` file.
 
 ## Options Considered
 
-Option 1: require `.env.local` for all local development.
+Option 1: require local environment-file setup for all local development.
 
 - Pros: familiar convention for many frontend projects.
 - Cons: adds a configuration file that the current runtime does not need;
@@ -84,4 +83,3 @@ process without improving runtime proof.
 - A future `.env.example` is acceptable only when it documents optional,
   non-secret local overrides and does not introduce browser-visible backend
   configuration.
-

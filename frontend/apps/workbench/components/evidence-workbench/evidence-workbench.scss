@@ -436,6 +436,11 @@
   gap: var(--aivis-space-2);
 }
 
+.evidence-workbench-process-map__node-shell {
+  min-width: 13.5rem;
+  position: relative;
+}
+
 .evidence-workbench-process-map__node {
   background: var(--qhds-color-surface);
   border: var(--aivis-border-width-thin) solid var(--qhds-color-border);
@@ -447,6 +452,14 @@
   min-width: 13.5rem;
   padding: var(--aivis-space-3);
   text-align: left;
+  width: 100%;
+}
+
+.evidence-workbench-process-map__handle.react-flow__handle {
+  background: var(--qhds-color-border);
+  border: var(--aivis-border-width-thin) solid var(--qhds-color-surface);
+  height: var(--aivis-space-2);
+  width: var(--aivis-space-2);
 }
 
 .evidence-workbench-process-map__node[data-node-tone="context"] {

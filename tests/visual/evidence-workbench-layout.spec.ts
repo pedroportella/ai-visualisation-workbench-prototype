@@ -1,11 +1,36 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const routes = [
-  { heading: "Evidence Workbench", path: "/evidence-workbench", ceiling: 12_000 },
-  { heading: "Review answer", path: "/evidence-workbench/review", ceiling: 16_000 },
-  { heading: "Source blockers", path: "/evidence-workbench/sources", ceiling: 18_000 },
-  { heading: "Evidence map", path: "/evidence-workbench/process", ceiling: 14_000 },
-  { heading: "Audit state", path: "/evidence-workbench/audit", ceiling: 12_000 }
+  {
+    ceiling: 12_000,
+    heading: "Evidence Workbench",
+    path: "/evidence-workbench",
+    readySelector: ".evidence-workbench-overview"
+  },
+  {
+    ceiling: 16_000,
+    heading: "Review answer",
+    path: "/evidence-workbench/review",
+    readySelector: ".evidence-workbench-primary-frame"
+  },
+  {
+    ceiling: 18_000,
+    heading: "Source blockers",
+    path: "/evidence-workbench/sources",
+    readySelector: ".evidence-workbench-source-inventory"
+  },
+  {
+    ceiling: 14_000,
+    heading: "Evidence map",
+    path: "/evidence-workbench/process",
+    readySelector: ".evidence-workbench-process-map"
+  },
+  {
+    ceiling: 12_000,
+    heading: "Audit state",
+    path: "/evidence-workbench/audit",
+    readySelector: ".evidence-workbench-audit-summary"
+  }
 ];
 const viewports = [
   { height: 900, label: "desktop", width: 1440 },
@@ -32,6 +57,7 @@ for (const viewport of viewports) {
           "data-workbench-view",
           /overview|review|sources|process|audit/
         );
+        await expect(page.locator(route.readySelector).first()).toBeVisible();
 
         await expectNoHorizontalOverflow(page);
         await expectMainRegionsHaveBoxes(page);

@@ -227,6 +227,7 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain("@media (max-width: 75rem)");
     expect(styles).toContain("@media (max-width: 61.9375rem)");
     expect(styles).toContain(".evidence-workbench-process-map__viewport");
+    expect(styles).toContain(".evidence-workbench-process-map__handle.react-flow__handle");
     expect(styles).toContain(".evidence-workbench-process-map__fallback:focus-visible");
     expect(styles).toContain(".evidence-workbench-audit-summary:focus-visible");
     expect(styles).toContain("data-node-tone=\"warning\"");
