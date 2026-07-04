@@ -1,3 +1,5 @@
+name: aivis-workbench-prototype
+
 services:
   backend:
     build:
@@ -5,7 +7,7 @@ services:
       dockerfile: Dockerfile
     image: aivis-backend:local
     ports:
-      - "8080:8000"
+      - "${AIVIS_BACKEND_HOST_PORT:-8080}:8000"
     healthcheck:
       test:
         - CMD
@@ -15,6 +17,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 12
+      start_period: 5s
 
   frontend:
     build:
@@ -26,7 +29,7 @@ services:
       HOSTNAME: 0.0.0.0
       PORT: "3200"
     ports:
-      - "3200:3200"
+      - "${AIVIS_WORKBENCH_HOST_PORT:-3200}:3200"
     depends_on:
       backend:
         condition: service_healthy
@@ -39,3 +42,4 @@ services:
       interval: 5s
       timeout: 3s
       retries: 12
+      start_period: 5s

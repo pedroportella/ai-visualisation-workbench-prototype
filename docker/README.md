@@ -32,6 +32,7 @@ The container uses the backend server settings `AIVIS_BACKEND_HOST` and
 Build and run both local containers from the repo root:
 
 ```text
+pnpm docker:config
 pnpm docker:build
 pnpm docker:up
 ```
@@ -42,6 +43,9 @@ The compose runtime exposes:
 frontend: http://127.0.0.1:3200/evidence-workbench
 backend:  http://127.0.0.1:8080/health/live
 ```
+
+The exposed host ports can be overridden with `AIVIS_BACKEND_HOST_PORT` and
+`AIVIS_WORKBENCH_HOST_PORT`; the smoke script defaults to `8080` and `3200`.
 
 The frontend container runs the production Next.js standalone server. Its
 server-only backend origin is set to `http://backend:8000` inside the compose

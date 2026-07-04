@@ -38,6 +38,7 @@ backend/.venv/bin/python scripts/local-backend-smoke.py --base-url http://127.0.
 pnpm --filter @aivis/workbench check
 pnpm --filter @aivis/ui-library check
 pnpm --filter @aivis/frontend release:preflight
+pnpm docker:config
 pnpm docker:build
 pnpm docker:up
 pnpm docker:smoke

@@ -8,6 +8,7 @@
     "build": "pnpm -r build",
     "check": "pnpm -r check",
     "docker:build": "docker compose build",
+    "docker:config": "docker compose config",
     "docker:down": "docker compose down",
     "docker:smoke": "backend/.venv/bin/python scripts/local-docker-smoke.py",
     "docker:up": "docker compose up --detach",

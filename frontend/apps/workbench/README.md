@@ -36,6 +36,7 @@ The production workbench can also run in the local Docker Compose rehearsal
 runtime:
 
 ```text
+pnpm docker:config
 pnpm docker:build
 pnpm docker:up
 pnpm docker:smoke

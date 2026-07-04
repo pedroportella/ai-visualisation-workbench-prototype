@@ -1,5 +1,6 @@
 .git
 .gitignore
+.DS_Store
 .env
 .env.*
 **/.next
@@ -8,6 +9,12 @@
 **/dist
 **/node_modules
 **/tsconfig.tsbuildinfo
+**/playwright-report
+**/test-results
+*.db
+*.log
+*.sqlite
+*.sqlite3
 backend/.venv
 backend/.pytest_cache
 backend/.ruff_cache
