@@ -149,13 +149,16 @@ describe("WorkbenchAppShell", () => {
     expect(html).toContain("Close alert");
   });
 
-  it("scopes constrained left-nav gutters to the workbench app shell", () => {
+  it("keeps mobile side-nav hiding local without reaching into layout gutters", () => {
     expect(styles).toContain("@media (max-width: 75rem)");
     expect(styles).toContain(
-      ".aivis-app-shell.qhds-layout--app.qhds-layout--has-left-nav .qld__body--left-nav .qhds-layout__container"
+      ".aivis-app-shell.qhds-layout--has-left-nav .qhds-layout__left-nav"
     );
     expect(styles).not.toContain(
-      "\n.qld__body--left-nav .qhds-layout__container"
+      ".qld__body--left-nav .qhds-layout__container"
+    );
+    expect(styles).not.toContain(
+      "qhds-layout__main-section-body"
     );
   });
 });

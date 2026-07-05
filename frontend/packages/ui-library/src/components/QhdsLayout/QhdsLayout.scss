@@ -4,14 +4,17 @@
   min-height: 100vh;
 }
 
-.qhds-layout--app .qhds-layout__container {
+.qhds-layout--app .qhds-layout__main-section-body {
   max-width: none;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: var(--qhds-space-10);
+  padding-right: var(--qhds-space-10);
 }
 
-.qhds-layout--contained .qhds-layout__container {
+.qhds-layout--contained .qhds-layout__main-section-body {
+  margin-left: auto;
+  margin-right: auto;
   max-width: var(--qld-grid-container-max-width);
+  width: 100%;
 }
 
 .qhds-layout__skip-link {
@@ -36,16 +39,18 @@
   transform: translateY(0);
 }
 
-.qhds-layout__body {
-  padding: var(--qhds-section-padding-desktop) 0;
+.qhds-layout__main-section-body {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--qhds-space-10) 0;
+  width: 100%;
 }
 
 .qhds-layout__main {
   min-width: 0;
 }
 
-.qhds-layout__left-nav,
-.qhds-layout__left-nav-content {
+.qhds-layout__left-nav {
   min-width: 0;
 }
 
@@ -53,32 +58,28 @@
   outline: none;
 }
 
-.qhds-layout__content {
-  min-width: 0;
-}
-
-.qhds-layout__content:focus {
+.qhds-layout__main-section-body:focus {
   outline: 3px solid var(--qhds-color-focus);
   outline-offset: 2px;
 }
 
-.qhds-layout__content--body {
+.qhds-layout__main-section-body--body {
   max-width: 64rem;
 }
 
-.qhds-layout__content--task {
+.qhds-layout__main-section-body--task {
   max-width: 76rem;
 }
 
 @media (max-width: 40rem) {
-  .qhds-layout--app .qhds-layout__container {
+  .qhds-layout--app .qhds-layout__main-section-body {
     padding-left: var(--qhds-space-4);
     padding-right: var(--qhds-space-4);
   }
 }
 
 @media (max-width: 48rem) {
-  .qhds-layout__body {
+  .qhds-layout__main-section-body {
     padding: var(--qhds-section-padding-mobile) 0;
   }
 }
@@ -111,12 +112,12 @@
     min-width: 100%;
   }
 
-  .qhds-layout__left-nav-content {
+  .qhds-layout--has-left-nav .qhds-layout__main-section-body {
     flex: 1 1 auto;
   }
 
-  .qhds-layout--app.qhds-layout--has-left-nav .qld__body--left-nav .qhds-layout__container {
-    padding-left: clamp(3rem, 5vw, 8rem);
+  .qhds-layout--app.qhds-layout--has-left-nav .qhds-layout__main-section-body {
+    padding-left: var(--qhds-space-10);
     padding-right: var(--qhds-space-10);
   }
 }

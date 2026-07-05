@@ -45,13 +45,13 @@ export function WorkbenchViewIntro({
   const blockerCount = review.blockedByWarningIds.length;
 
   return (
-    <header className="evidence-workbench-page-intro">
-      <p className="evidence-workbench-page-intro__label">{data.context.title}</p>
-      <h1 className="evidence-workbench-page-intro__heading" id="evidence-workbench-title">
+    <header className="workbench-view-intro">
+      <p className="workbench-view-intro__label">{data.context.title}</p>
+      <h1 className="workbench-view-intro__heading" id="evidence-workbench-title">
         {routeIntro.title}
       </h1>
-      <p className="evidence-workbench-page-intro__description">{routeIntro.description}</p>
-      <p className="evidence-workbench-page-intro__state">
+      <p className="workbench-view-intro__description">{routeIntro.description}</p>
+      <p className="workbench-view-intro__state">
         {review.status} with {blockerCount} approval{" "}
         {blockerCount === 1 ? "blocker" : "blockers"}.
       </p>

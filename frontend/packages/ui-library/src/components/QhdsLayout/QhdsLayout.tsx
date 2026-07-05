@@ -38,12 +38,6 @@ export function QhdsLayout({
 }: QhdsLayoutProps) {
   const hasSideNav = Boolean(sideNav) && !focusMode;
   const resolvedContentWidth = contentWidth ?? (focusMode ? "task" : "full");
-  const contentClasses = [
-    "col-xs-12",
-    "col-lg-12 col-xl-12",
-    "qhds-layout__content",
-    `qhds-layout__content--${resolvedContentWidth}`
-  ];
   const layoutClasses = [
     "qld__grid",
     hasSideNav ? "vertical-nav" : "",
@@ -53,15 +47,15 @@ export function QhdsLayout({
     focusMode ? "qhds-layout--focus" : "",
     className
   ];
-  const bodyContent = (
-    <section className="qld__body qhds-layout__body">
-      <div className="container-fluid qhds-layout__container">
-        <div className="row">
-          <div aria-labelledby={contentLabelledBy} className={contentClasses.filter(Boolean).join(" ")} id={mainId} tabIndex={-1}>
-            {children}
-          </div>
-        </div>
-      </div>
+  const bodyClasses = [
+    "qld__body",
+    hasSideNav ? "qld__body--left-nav" : "",
+    "qhds-layout__main-section-body",
+    `qhds-layout__main-section-body--${resolvedContentWidth}`
+  ];
+  const mainBody = (
+    <section aria-labelledby={contentLabelledBy} className={bodyClasses.filter(Boolean).join(" ")} id={mainId} tabIndex={-1}>
+      {children}
     </section>
   );
 
@@ -81,7 +75,7 @@ export function QhdsLayout({
       {globalAlert}
       <main aria-label={mainLabel} className="main qhds-layout__main" tabIndex={-1}>
         {hasSideNav ? <div className="qhds-layout__left-nav" id="section-navigation">{sideNav}</div> : null}
-        {hasSideNav ? <div className="qld__body--left-nav qhds-layout__left-nav-content">{bodyContent}</div> : bodyContent}
+        {mainBody}
       </main>
       {footer}
     </div>

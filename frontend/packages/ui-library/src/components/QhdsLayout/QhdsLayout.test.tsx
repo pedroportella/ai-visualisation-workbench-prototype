@@ -23,10 +23,10 @@ describe("QhdsLayout", () => {
     expect(html).toContain('aria-label="skip links"');
     expect(html).toContain('href="#content"');
     expect(html).toContain('<main class="main qhds-layout__main" tabindex="-1">');
-    expect(html).toContain('<section class="qld__body qhds-layout__body">');
-    expect(html).toContain('class="container-fluid qhds-layout__container"');
-    expect(html).toContain('class="col-xs-12 col-lg-12 col-xl-12 qhds-layout__content qhds-layout__content--full" id="content"');
+    expect(html).toContain('class="qld__body qhds-layout__main-section-body qhds-layout__main-section-body--full" id="content"');
     expect(html).toContain('id="content" tabindex="-1"');
+    expect(html).not.toContain("qhds-layout__container");
+    expect(html).not.toContain("qhds-layout__content");
     expect(html).toContain("Header");
     expect(html).toContain("Body");
     expect(html).toContain("Footer");
@@ -63,10 +63,10 @@ describe("QhdsLayout", () => {
     expect(html).toContain('href="#section-navigation"');
     expect(html).toContain("qhds-layout__skip-link--section-nav");
     expect(html).toContain('class="qhds-layout__left-nav" id="section-navigation"');
-    expect(html).toContain('class="qld__body--left-nav qhds-layout__left-nav-content"');
-    expect(html).toContain('class="col-xs-12 col-lg-12 col-xl-12 qhds-layout__content qhds-layout__content--full" id="content"');
+    expect(html).toContain('class="qld__body qld__body--left-nav qhds-layout__main-section-body qhds-layout__main-section-body--full" id="content"');
     expect(html).toContain('<nav aria-label="Account sections">Navigation</nav>');
     expect(html).not.toContain("qhds-layout__sidebar");
+    expect(html).not.toContain("qhds-layout__left-nav-content");
   });
 
   it("hides section navigation in focus mode", () => {
@@ -77,7 +77,7 @@ describe("QhdsLayout", () => {
     );
 
     expect(html).toContain("qhds-layout--focus");
-    expect(html).toContain("qhds-layout__content--task");
+    expect(html).toContain("qhds-layout__main-section-body--task");
     expect(html).not.toContain("vertical-nav");
     expect(html).not.toContain("qhds-layout__left-nav");
   });
@@ -90,15 +90,16 @@ describe("QhdsLayout", () => {
     );
 
     expect(html).toContain("qhds-layout--contained");
-    expect(html).toContain("qhds-layout__content--body");
+    expect(html).toContain("qhds-layout__main-section-body--body");
     expect(html).toContain('aria-labelledby="page-title"');
     expect(html).toContain('id="content"');
-    expect(styles).toContain(".qhds-layout--app .qhds-layout__container");
+    expect(styles).toContain(".qhds-layout--app .qhds-layout__main-section-body");
     expect(styles).toContain("max-width: none");
-    expect(styles).toContain("padding-left: 2rem");
-    expect(styles).toContain(".qhds-layout--contained .qhds-layout__container");
+    expect(styles).toContain("padding-left: var(--qhds-space-10)");
+    expect(styles).toContain(".qhds-layout--contained .qhds-layout__main-section-body");
     expect(styles).toContain("max-width: var(--qld-grid-container-max-width)");
-    expect(styles).toContain(".qhds-layout__content--task");
+    expect(styles).toContain("padding: var(--qhds-space-10) 0");
+    expect(styles).toContain(".qhds-layout__main-section-body--task");
     expect(styles).toContain("max-width: 76rem");
     expect(styles).toContain(".qhds-layout--has-left-nav .qhds-layout__main");
     expect(styles).toContain(".qhds-layout__left-nav");
@@ -107,13 +108,15 @@ describe("QhdsLayout", () => {
     expect(styles).toContain(".qhds-layout__left-nav > .qld__left-nav.qhds-side-nav");
     expect(styles).toContain("background-color: transparent");
     expect(styles).toContain("border-right: 0");
-    expect(styles).toContain(".qhds-layout--app.qhds-layout--has-left-nav .qld__body--left-nav .qhds-layout__container");
-    expect(styles).toContain("padding-left: clamp(3rem, 5vw, 8rem)");
+    expect(styles).toContain(".qhds-layout--app.qhds-layout--has-left-nav .qhds-layout__main-section-body");
+    expect(styles).toContain("padding-left: var(--qhds-space-10)");
     expect(styles).toContain("padding-right: var(--qhds-space-10)");
     expect(styles).toContain(".qhds-layout__skip-link--section-nav");
     expect(styles).toContain("display: none");
-    expect(styles).toContain(".qhds-layout__content:focus");
+    expect(styles).toContain(".qhds-layout__main-section-body:focus");
     expect(styles).toContain("outline: 3px solid var(--qhds-color-focus)");
+    expect(styles).not.toContain("qhds-layout__left-nav-content");
+    expect(styles).not.toContain("qhds-layout__container");
   });
 
   it("keeps skip-link ownership in the layout when composed with QhdsHeader", () => {

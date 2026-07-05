@@ -6,7 +6,6 @@ import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workben
 import { summaryMap } from "./evidence-workbench-formatters";
 import type { EvidenceWorkbenchView } from "./evidence-workbench-routes";
 import { WorkbenchAuditWorkspace } from "./workbench-audit-workspace";
-import { WorkbenchMobileSectionNav } from "./workbench-section-nav";
 import { WorkbenchOverview } from "./workbench-overview";
 import { WorkbenchProcessWorkspace } from "./workbench-process-workspace";
 import { WorkbenchReviewWorkspace } from "./workbench-review-workspace";
@@ -55,14 +54,8 @@ export default function EvidenceWorkbenchContainer({
   };
 
   return (
-    <section
-      aria-labelledby="evidence-workbench-title"
-      className="qld__body qld__body--light evidence-workbench"
-      data-workbench-view={activeView}
-    >
+    <>
       <WorkbenchViewIntro activeView={activeView} data={data} review={review} />
-
-      <WorkbenchMobileSectionNav activeView={activeView} />
 
       {activeView === "overview" ? (
         <WorkbenchOverview
@@ -106,6 +99,6 @@ export default function EvidenceWorkbenchContainer({
           selectedIssue={selectedIssue}
         />
       ) : null}
-    </section>
+    </>
   );
 }
