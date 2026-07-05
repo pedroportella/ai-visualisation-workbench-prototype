@@ -37,6 +37,12 @@ describe("WorkbenchAppShell", () => {
     expect(html).toContain("qld__left-nav");
     expect(html).toContain("Skip to section navigation");
     expect(html).toContain('id="section-navigation"');
+    expect(html).toContain('id="main-nav-mobile"');
+    expect(html).toContain('aria-controls="main-nav"');
+    expect(html).toContain("qld__main-nav qld__main-nav--mega qhds-header__main-nav");
+    expect(html).toContain("qld__main-nav__content");
+    expect(html).toContain("qld__main-nav__overlay");
+    expect(html).toContain("qld__main-nav__cta-wrapper");
     expect(html).not.toContain("qhds-side-nav__heading");
     expect(html).toContain("Overview");
     expect(html).toContain("Review answer");
@@ -55,6 +61,9 @@ describe("WorkbenchAppShell", () => {
     expect(html).toContain("qld__accordion--closed qld__accordion__body");
     expect(html).toContain('href="https://www.qld.gov.au/contact-us"');
     expect(html).toContain("Contact us");
+    expect(html).toContain("Fixture reviewer");
+    expect(html).toContain("Exit");
+    expect(html).not.toContain('id="qld-header-main-nav"');
     expect(html).not.toContain("Local fixture");
   });
 
@@ -68,8 +77,9 @@ describe("WorkbenchAppShell", () => {
         </section>
       </WorkbenchAppShell>
     );
-    const activeItemIndex = html.indexOf('aria-current="page" class="active has-child qhds-side-nav__item"');
-    const reviewLabelIndex = html.indexOf("Review answer");
+    const sideNavHtml = html.slice(html.indexOf('id="section-navigation"'));
+    const activeItemIndex = sideNavHtml.indexOf('aria-current="page" class="active has-child qhds-side-nav__item"');
+    const reviewLabelIndex = sideNavHtml.indexOf("Review answer");
 
     expect(activeItemIndex).toBeGreaterThanOrEqual(0);
     expect(reviewLabelIndex).toBeGreaterThan(activeItemIndex);
@@ -90,9 +100,10 @@ describe("WorkbenchAppShell", () => {
         </section>
       </WorkbenchAppShell>
     );
-    const openParentIndex = html.indexOf("qld__left-nav__item-link qld__left-nav__item-link--open");
-    const sourcesActiveIndex = html.indexOf('aria-current="page" class="active qhds-side-nav__item"');
-    const sourcesLabelIndex = html.indexOf("Source blockers");
+    const sideNavHtml = html.slice(html.indexOf('id="section-navigation"'));
+    const openParentIndex = sideNavHtml.indexOf("qld__left-nav__item-link qld__left-nav__item-link--open");
+    const sourcesActiveIndex = sideNavHtml.indexOf('aria-current="page" class="active qhds-side-nav__item"');
+    const sourcesLabelIndex = sideNavHtml.indexOf("Source blockers");
 
     expect(openParentIndex).toBeGreaterThanOrEqual(0);
     expect(sourcesActiveIndex).toBeGreaterThan(openParentIndex);

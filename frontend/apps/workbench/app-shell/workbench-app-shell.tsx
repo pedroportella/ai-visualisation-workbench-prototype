@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import {
   QhdsFooter,
-  QhdsHeader,
   QhdsLayout
 } from "@aivis/ui-library";
+import { WorkbenchHeader } from "./workbench-header";
 import { WorkbenchSideNav } from "./workbench-side-nav";
 
 export function WorkbenchAppShell({
@@ -23,17 +23,7 @@ export function WorkbenchAppShell({
         </QhdsFooter>
       }
       globalAlert={globalAlert}
-      header={
-        <QhdsHeader
-          accountHref="#review-title"
-          accountName="Fixture reviewer"
-          brandHref="/evidence-workbench"
-          logoutHref="/evidence-workbench"
-          logoutLabel="Exit"
-          serviceDescription="Evidence Workbench"
-          serviceName="AI Visualisation Workbench"
-        />
-      }
+      header={<WorkbenchHeader />}
       mainId="aivis-main"
       mainLabel="Evidence Workbench"
       sideNav={<WorkbenchSideNav />}
