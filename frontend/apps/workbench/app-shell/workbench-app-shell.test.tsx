@@ -37,6 +37,7 @@ describe("WorkbenchAppShell", () => {
     expect(html).toContain("qld__left-nav");
     expect(html).toContain("Skip to section navigation");
     expect(html).toContain('id="section-navigation"');
+    expect(html).not.toContain("qhds-side-nav__heading");
     expect(html).toContain("Overview");
     expect(html).toContain("Review answer");
     expect(html).toContain("Source blockers");
@@ -49,7 +50,9 @@ describe("WorkbenchAppShell", () => {
     expect(html).toContain('aria-current="page"');
     expect(html).not.toContain('href="#review-decision-title"');
     expect(html).not.toContain('href="#audit-summary"');
-    expect(html).not.toContain("qld__left-nav__item-toggle");
+    expect(html).toContain("qld__left-nav__item-toggle qld__accordion--closed");
+    expect(html).toContain('aria-expanded="false"');
+    expect(html).toContain("qld__accordion--closed qld__accordion__body");
     expect(html).toContain('href="https://www.qld.gov.au/contact-us"');
     expect(html).toContain("Contact us");
     expect(html).not.toContain("Local fixture");
@@ -65,13 +68,39 @@ describe("WorkbenchAppShell", () => {
         </section>
       </WorkbenchAppShell>
     );
-    const activeItemIndex = html.indexOf('aria-current="page" class="active qhds-side-nav__item"');
+    const activeItemIndex = html.indexOf('aria-current="page" class="active has-child qhds-side-nav__item"');
     const reviewLabelIndex = html.indexOf("Review answer");
 
     expect(activeItemIndex).toBeGreaterThanOrEqual(0);
     expect(reviewLabelIndex).toBeGreaterThan(activeItemIndex);
     expect(html).toContain('href="/evidence-workbench"');
     expect(html).not.toContain('href="/evidence-workbench/review"');
+    expect(html).toContain("qld__left-nav__item-link--open");
+    expect(html).toContain("qld__left-nav__item-toggle qld__accordion--open");
+    expect(html).toContain('aria-expanded="true"');
+  });
+
+  it("keeps the review branch open when a nested workbench route is active", () => {
+    mockUsePathname.mockReturnValue("/evidence-workbench/sources");
+
+    const html = renderToStaticMarkup(
+      <WorkbenchAppShell>
+        <section aria-labelledby="evidence-workbench-title">
+          <h1 id="evidence-workbench-title">AI Visualisation Workbench</h1>
+        </section>
+      </WorkbenchAppShell>
+    );
+    const openParentIndex = html.indexOf("qld__left-nav__item-link qld__left-nav__item-link--open");
+    const sourcesActiveIndex = html.indexOf('aria-current="page" class="active qhds-side-nav__item"');
+    const sourcesLabelIndex = html.indexOf("Source blockers");
+
+    expect(openParentIndex).toBeGreaterThanOrEqual(0);
+    expect(sourcesActiveIndex).toBeGreaterThan(openParentIndex);
+    expect(sourcesLabelIndex).toBeGreaterThan(sourcesActiveIndex);
+    expect(html).toContain('href="/evidence-workbench/review"');
+    expect(html).not.toContain('href="/evidence-workbench/sources"');
+    expect(html).toContain("qld__left-nav__item-toggle qld__accordion--open");
+    expect(html).toContain("qld__accordion--open qld__accordion__body");
   });
 
   it("renders a supplied global alert under the header before the workbench body", () => {

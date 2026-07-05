@@ -1,4 +1,6 @@
-import type { MouseEvent, ReactNode } from "react";
+"use client";
+
+import { useEffect, useMemo, useState, type MouseEvent, type ReactNode } from "react";
 
 import { QhdsIcon } from "../QhdsIcon";
 
@@ -42,6 +44,39 @@ function slugify(value: string): string {
   return value.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "item";
 }
 
+function getItemId(item: QhdsSideNavItem, index: number, parentKey: string): string {
+  const source = item.id ?? item.href ?? getPlainLabel(item.label, `${parentKey}-${index}`);
+
+  return `${parentKey}-${index}-${slugify(source)}`;
+}
+
+function collectExpandableItemIds(items: QhdsSideNavItem[], parentKey: string): string[] {
+  return items.flatMap((item, index) => {
+    const itemId = getItemId(item, index, parentKey);
+    const childItems = item.items ?? [];
+    const childIds = collectExpandableItemIds(childItems, itemId);
+
+    return childItems.length > 0 ? [itemId, ...childIds] : childIds;
+  });
+}
+
+function collectOpenItemIds(items: QhdsSideNavItem[], activeHref: string | undefined, parentKey: string): string[] {
+  return items.flatMap((item, index) => {
+    const itemId = getItemId(item, index, parentKey);
+    const childItems = item.items ?? [];
+    const childOpenIds = collectOpenItemIds(childItems, activeHref, itemId);
+    const current = Boolean(activeHref && item.href === activeHref);
+    const childIsActive = childItems.some((child) => containsActiveItem(child, activeHref));
+    const shouldOpen = childItems.length > 0 && Boolean(item.expanded || current || childIsActive);
+
+    return shouldOpen ? [itemId, ...childOpenIds] : childOpenIds;
+  });
+}
+
+function arraysEqual(first: string[], second: string[]): boolean {
+  return first.length === second.length && first.every((value, index) => value === second[index]);
+}
+
 export function QhdsSideNav({
   activeHref,
   ariaLabel = "left navigation",
@@ -53,6 +88,29 @@ export function QhdsSideNav({
   navId = "left-nav",
   onNavigate
 }: QhdsSideNavProps) {
+  const navItems = useMemo(
+    () => (heading && headingHref ? [{ href: headingHref, icon: headingIcon, id: "home", label: heading }, ...items] : items),
+    [heading, headingHref, headingIcon, items]
+  );
+  const expandableItemIds = useMemo(() => collectExpandableItemIds(navItems, navId), [navItems, navId]);
+  const openItemIds = useMemo(() => collectOpenItemIds(navItems, activeHref, navId), [activeHref, navItems, navId]);
+  const [expandedItemIds, setExpandedItemIds] = useState<string[]>(openItemIds);
+
+  useEffect(() => {
+    setExpandedItemIds((currentExpandedItemIds) => {
+      const knownIds = new Set(expandableItemIds);
+      const nextExpandedItemIds = currentExpandedItemIds.filter((itemId) => knownIds.has(itemId));
+
+      for (const itemId of openItemIds) {
+        if (!nextExpandedItemIds.includes(itemId)) {
+          nextExpandedItemIds.push(itemId);
+        }
+      }
+
+      return arraysEqual(currentExpandedItemIds, nextExpandedItemIds) ? currentExpandedItemIds : nextExpandedItemIds;
+    });
+  }, [expandableItemIds, openItemIds]);
+
   function getNavigationProps(href: string) {
     if (!onNavigate) {
       return {};
@@ -76,14 +134,21 @@ export function QhdsSideNav({
     );
   }
 
+  function toggleItem(itemId: string) {
+    setExpandedItemIds((currentExpandedItemIds) =>
+      currentExpandedItemIds.includes(itemId)
+        ? currentExpandedItemIds.filter((expandedItemId) => expandedItemId !== itemId)
+        : [...currentExpandedItemIds, itemId]
+    );
+  }
+
   function renderItem(item: QhdsSideNavItem, index: number, parentKey: string) {
     const childItems = item.items ?? [];
     const hasChildren = childItems.length > 0;
     const current = Boolean(activeHref && item.href === activeHref);
-    const childIsActive = childItems.some((child) => containsActiveItem(child, activeHref));
-    const expanded = hasChildren ? item.expanded ?? (current || childIsActive) : false;
+    const itemId = getItemId(item, index, parentKey);
+    const expanded = hasChildren ? expandedItemIds.includes(itemId) : false;
     const key = item.id ?? item.href;
-    const itemId = `${navId}-${slugify(item.id ?? item.href ?? `${parentKey}-${index}`)}`;
     const childListId = `${itemId}-children`;
     const linkClasses = ["qld__left-nav__item-link", hasChildren && expanded ? "qld__left-nav__item-link--open" : undefined]
       .filter(Boolean)
@@ -110,8 +175,10 @@ export function QhdsSideNav({
             <button
               aria-controls={childListId}
               aria-expanded={expanded ? "true" : "false"}
+              aria-selected={expanded ? "true" : "false"}
               aria-label={`Toggle navigation, ${labelText}`}
               className={["qld__left-nav__item-toggle", expanded ? "qld__accordion--open" : "qld__accordion--closed"].join(" ")}
+              onClick={() => toggleItem(itemId)}
               type="button"
             >
               <QhdsIcon size="sm" symbol="chevron-up" />
@@ -123,7 +190,7 @@ export function QhdsSideNav({
     );
   }
 
-  function renderItems(navItems: QhdsSideNavItem[], nested = false, parentKey = "item", listId?: string, expanded = true) {
+  function renderItems(navItems: QhdsSideNavItem[], nested = false, parentKey = navId, listId?: string, expanded = true) {
     const classes = [
       "qld__link-list",
       nested ? (expanded ? "qld__accordion--open" : "qld__accordion--closed") : undefined,
@@ -135,21 +202,15 @@ export function QhdsSideNav({
       .join(" ");
 
     return (
-      <ul className={classes} id={listId}>
+      <ul className={classes} hidden={nested ? !expanded : undefined} id={listId}>
         {navItems.map((item, index) => renderItem(item, index, parentKey))}
       </ul>
     );
   }
 
-  const navItems =
-    heading && headingHref
-      ? [{ href: headingHref, icon: headingIcon, id: "home", label: heading }, ...items]
-      : items;
-
   return (
     <div className="qld__left-nav qhds-side-nav" id={id}>
       <nav aria-label={ariaLabel} className="qld__left-nav__content qhds-side-nav__content" id={navId}>
-        {heading && !headingHref ? <h2 className="qhds-side-nav__heading">{heading}</h2> : null}
         {renderItems(navItems)}
       </nav>
     </div>
