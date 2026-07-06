@@ -1,0 +1,95 @@
+name: Frontend quality
+
+"on":
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/frontend-ci.yml"
+      - "frontend/**"
+      - "docs/**"
+      - "scripts/**"
+      - "tests/**"
+      - "README.md"
+      - "AGENTS.md"
+      - "package.json"
+      - "playwright.config.ts"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/frontend-ci.yml"
+      - "frontend/**"
+      - "docs/**"
+      - "scripts/**"
+      - "tests/**"
+      - "README.md"
+      - "AGENTS.md"
+      - "package.json"
+      - "playwright.config.ts"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+
+jobs:
+  frontend-quality:
+    name: Frontend quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
+          run_install: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run frontend release preflight
+        run: pnpm --filter @aivis/frontend release:preflight
+
+      - name: Run mock browser smoke
+        run: pnpm test:e2e:mock
+
+      - name: Run visual layout checks
+        run: pnpm test:visual
+
+      - name: Run reviewer evidence smoke
+        run: pnpm test:reviewer-evidence
+
+      - name: Guard public documentation
+        run: pnpm guard:public-docs
+
+      - name: Guard claim boundaries
+        run: pnpm guard:claim-boundaries
+
+      - name: Guard browser origins
+        run: pnpm guard:browser-origins
+
+      - name: Guard browser bundles
+        run: pnpm guard:browser-bundles
+
+      - name: Check whitespace
+        run: git diff --check

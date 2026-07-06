@@ -1,0 +1,108 @@
+name: Backend quality
+
+"on":
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/backend-ci.yml"
+      - "backend/**"
+      - "scripts/local-backend-smoke.py"
+      - "scripts/quality-guards.mjs"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/backend-ci.yml"
+      - "backend/**"
+      - "scripts/local-backend-smoke.py"
+      - "scripts/quality-guards.mjs"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+
+jobs:
+  backend-quality:
+    name: Backend quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
+          run_install: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: pnpm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install backend dev dependencies
+        run: |
+          python -m venv backend/.venv
+          backend/.venv/bin/python -m pip install --upgrade pip
+          backend/.venv/bin/python -m pip install -e "backend[dev]"
+
+      - name: Run backend release preflight
+        run: pnpm --filter @aivis/backend release:preflight
+
+      - name: Run local backend smoke
+        shell: bash
+        run: |
+          backend/.venv/bin/python -m uvicorn aivis_api.main:app --host 127.0.0.1 --port 8000 &
+          backend_pid="$!"
+
+          cleanup() {
+            kill "$backend_pid" 2>/dev/null || true
+            wait "$backend_pid" 2>/dev/null || true
+          }
+
+          trap cleanup EXIT
+
+          smoke_ok=0
+          for attempt in {1..30}; do
+            if backend/.venv/bin/python scripts/local-backend-smoke.py --timeout 2; then
+              smoke_ok=1
+              break
+            fi
+
+            echo "Waiting for local backend smoke to pass (${attempt}/30)."
+            sleep 1
+          done
+
+          if [ "$smoke_ok" != "1" ]; then
+            backend/.venv/bin/python scripts/local-backend-smoke.py
+          fi
+
+      - name: Guard claim boundaries
+        run: pnpm guard:claim-boundaries
+
+      - name: Guard secrets
+        run: pnpm guard:secrets
+
+      - name: Check whitespace
+        run: git diff --check
