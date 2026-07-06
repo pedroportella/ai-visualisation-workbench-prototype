@@ -20,7 +20,7 @@ export const workbenchRouteItems = [
     items: [
       {
         href: "/evidence-workbench/sources",
-        label: "Source blockers"
+        label: "Source evidence"
       },
       {
         href: "/evidence-workbench/process",

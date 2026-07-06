@@ -14,7 +14,7 @@ export const mobileMainNavItems: QhdsHeaderNavItem[] = [
     href: "/evidence-workbench/review",
     label: "Review answer",
     items: [
-      { href: "/evidence-workbench/sources", label: "Source blockers" },
+      { href: "/evidence-workbench/sources", label: "Source evidence" },
       { href: "/evidence-workbench/process", label: "Evidence map" }
     ]
   },

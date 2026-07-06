@@ -55,7 +55,7 @@ describe("QhdsHeader mobile main navigation", () => {
     expect(html).toContain('class="qld__main-nav__cta-wrapper qld__main-nav__cta-wrapper--dark-alt qhds-header__main-nav-cta-wrapper"');
     expect(html).toContain("Overview");
     expect(html).toContain("Review answer");
-    expect(html).toContain("Source blockers");
+    expect(html).toContain("Source evidence");
     expect(html).toContain("Evidence map");
     expect(html).toContain("Audit state");
     expect(html).toContain("Fixture reviewer");

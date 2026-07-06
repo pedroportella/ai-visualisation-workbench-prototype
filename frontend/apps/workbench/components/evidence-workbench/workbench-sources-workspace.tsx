@@ -36,7 +36,7 @@ export function WorkbenchSourcesWorkspace({
         className="evidence-workbench-panel"
         heading="Source inventory"
         headingId="sources-title"
-        lead="Full source inventory, citation relationships and blocker state."
+        lead="Source records, citation relationships and blocker state for the current review."
         leadDensity="compact"
         withBodyClass={false}
       >
@@ -65,6 +65,8 @@ export function WorkbenchSourcesWorkspace({
           onSelectIssue={onSelectIssue}
           reviewActionPath={REVIEW_ROUTE}
           selectedIssueId={selectedIssue?.id ?? null}
+          selectedSummaryPosition="before-selector"
+          showIssueTable={false}
           sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
         />
       </QhdsContentSection>

@@ -96,7 +96,9 @@ export function SourceBlockerReview({
         name="evidence-workbench-source-issue"
         onChange={(issueId) => onSelectIssue(issueId)}
         options={issues.map((issue) => ({
-          hint: `${issue.warningMessage} ${issue.sourceFreshness}; ${issue.ownerLabel}.`,
+          hint: selectsActionTarget
+            ? `${issue.warningMessage} ${issue.sourceFreshness}; ${issue.ownerLabel}.`
+            : issue.warningMessage,
           label: issueLabel(issue),
           value: issue.id
         }))}
@@ -123,6 +125,52 @@ function SelectedSourceIssueSummary({
   selectsActionTarget: boolean;
   sourceInventoryPath: string;
 }>): ReactElement {
+  const summaryItems = selectsActionTarget
+    ? [
+        {
+          description: `${selectedIssue.warningId}: ${selectedIssue.warningMessage}`,
+          term: "Selected issue"
+        },
+        {
+          description: `${selectedIssue.sourceId}: ${selectedIssue.sourceTitle}`,
+          term: "Source record"
+        },
+        {
+          description: selectedIssue.sourceStatus,
+          term: "Source status"
+        },
+        {
+          description: selectedIssue.sourceFreshness,
+          term: "Freshness"
+        },
+        {
+          description: selectedIssue.ownerLabel,
+          term: "Synthetic owner"
+        },
+        {
+          description: selectedIssue.reviewOwnerQueue,
+          term: "Owner queue"
+        }
+      ]
+    : [
+        {
+          description: `${selectedIssue.warningId}: ${selectedIssue.warningMessage}`,
+          term: "Focused issue"
+        },
+        {
+          description: (
+            <a href={`${sourceInventoryPath}#source-${selectedIssue.sourceId}`}>
+              {selectedIssue.sourceId}
+            </a>
+          ),
+          term: "Source record"
+        },
+        {
+          description: "Continue to the review route to record a local action.",
+          term: "Action route"
+        }
+      ];
+
   return (
     <section
       aria-labelledby="selected-source-issue-title"
@@ -138,32 +186,7 @@ function SelectedSourceIssueSummary({
             : "Focused source issue"
         }
         className="evidence-workbench-source-review__metadata"
-        items={[
-          {
-            description: `${selectedIssue.warningId}: ${selectedIssue.warningMessage}`,
-            term: selectsActionTarget ? "Selected issue" : "Focused issue"
-          },
-          {
-            description: `${selectedIssue.sourceId}: ${selectedIssue.sourceTitle}`,
-            term: "Source record"
-          },
-          {
-            description: selectedIssue.sourceStatus,
-            term: "Source status"
-          },
-          {
-            description: selectedIssue.sourceFreshness,
-            term: "Freshness"
-          },
-          {
-            description: selectedIssue.ownerLabel,
-            term: "Synthetic owner"
-          },
-          {
-            description: selectedIssue.reviewOwnerQueue,
-            term: "Owner queue"
-          }
-        ]}
+        items={summaryItems}
       />
       <p>{selectedIssue.evidenceImpact}</p>
       <div className="evidence-workbench-source-review__actions">

@@ -170,7 +170,7 @@ export function WorkbenchOverview({
         >
           <QhdsButton href={REVIEW_ROUTE}>Start review</QhdsButton>
           <QhdsButton href={SOURCE_INVENTORY_ROUTE} variant="secondary">
-            Review source blockers
+            Review source evidence
           </QhdsButton>
           <QhdsButton href={PROCESS_ROUTE} variant="secondary">
             Open evidence map

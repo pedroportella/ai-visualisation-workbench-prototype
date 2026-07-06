@@ -2,10 +2,12 @@ import type { ReactElement } from "react";
 
 import {
   AivisEvidencePanelHeader,
-  AivisEvidenceWarningList,
-  QhdsCol,
+  AivisEvidenceStatus,
+  QhdsAccordion,
+  QhdsButton,
   QhdsContentSection,
-  QhdsRow
+  QhdsRadioGroup,
+  QhdsSummaryList
 } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
@@ -15,12 +17,8 @@ import { SOURCE_INVENTORY_ROUTE } from "./evidence-workbench-routes";
 import type { ReviewDecisionBarProps } from "./review-decision-bar";
 import type { ReviewDecisionState } from "./review-action-state";
 import { ReviewDecisionBar } from "./review-decision-bar";
-import {
-  SelectedSourceInspector,
-  selectedSourceWarnings
-} from "./selected-source-inspector";
+import { SelectedSourceInspector } from "./selected-source-inspector";
 import type { SourceBlockerIssue } from "./source-blocker-review";
-import { SourceBlockerReview } from "./source-blocker-review";
 
 interface WorkbenchReviewWorkspaceProps {
   data: EvidenceWorkbenchViewModel;
@@ -45,86 +43,133 @@ export function WorkbenchReviewWorkspace({
   const selectedClaim = data.reviewClaims.find(
     (claim) => claim.id === review.selectedClaimId
   );
-  const selectedSources = data.sourceItems.filter((source) => source.isSelectedClaimSource);
-  const selectedClaimTopWarning = selectedSourceWarnings(selectedSources).find(
-    (warning) => warning.blocksApproval
-  );
+  const selectedBlockerLabel = selectedIssue
+    ? `${selectedIssue.warningId}: ${selectedIssue.warningMessage}`
+    : "No source blocker is selected.";
 
   return (
     <>
-      <QhdsRow className="evidence-workbench-grid evidence-workbench-primary-frame">
-        <QhdsCol lg={7} xl={7}>
-          <QhdsContentSection
-            className="evidence-workbench-panel"
-            heading="Draft answer"
-            headingId="answer-title"
-            lead={data.answer.summary}
-            leadDensity="compact"
-            withBodyClass={false}
-          >
-            <AivisEvidencePanelHeader
-              label="Draft answer"
-              status={data.answer.status}
-              statusTone="warning"
-            />
-            <p className="evidence-workbench-answer-meta">
-              Fixture timestamp: {data.answer.generatedAt}
-            </p>
-            <AnswerMarkdown
-              citations={data.citations}
-              markdown={data.answer.markdown}
-              selectedClaimId={review.selectedClaimId}
-              sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
-            />
-            {selectedClaimTopWarning ? (
-              <section
-                aria-label={`${review.selectedClaimId} selected blocker`}
-                className="evidence-workbench-selected-claim-warning"
-              >
-                <h3>{review.selectedClaimId} selected blocker</h3>
-                <AivisEvidenceWarningList
-                  ariaLabel={`${review.selectedClaimId} selected blocker detail`}
-                  warnings={[
-                    {
-                      id: selectedClaimTopWarning.id,
-                      impact: selectedClaimTopWarning.evidenceImpact,
-                      message: selectedClaimTopWarning.message,
-                      severity: `${selectedClaimTopWarning.severity}${
-                        selectedClaimTopWarning.blocksApproval ? " approval blocker" : " review note"
-                      }`
-                    }
-                  ]}
-                />
-                <p>
-                  <a href="#selected-claim-sources">
-                    Review the selected source inspector for linked evidence.
-                  </a>
-                </p>
-              </section>
-            ) : null}
-          </QhdsContentSection>
-        </QhdsCol>
+      <QhdsContentSection
+        className="evidence-workbench-panel evidence-workbench-review-decision-section"
+        heading="Decision required"
+        headingId="review-decision-required-title"
+        lead="Start here: decide what must happen before this answer can be copied or approved."
+        leadDensity="compact"
+        withBodyClass={false}
+      >
+        <div className="evidence-workbench-review-decision-card">
+          <AivisEvidencePanelHeader
+            label="Current decision"
+            status={review.copyState === "enabled" ? "Ready to copy" : "Do not use yet"}
+            statusTone={review.copyState === "enabled" ? "success" : "warning"}
+          />
+          <h3>
+            {review.copyState === "enabled"
+              ? "This answer can be copied after review."
+              : "This answer cannot be used yet."}
+          </h3>
+          <p>
+            {selectedIssue
+              ? `${selectedBlockerLabel} is blocking approval. Record a local review action before anyone uses the answer.`
+              : "A source blocker must be selected before the next local review action can be recorded."}
+          </p>
+          <div className="evidence-workbench-review-decision-card__actions">
+            <QhdsButton href="#source-issue-review-title">Review blocker</QhdsButton>
+            <QhdsButton href="#review-decision-title" variant="secondary">
+              Skip to final action
+            </QhdsButton>
+            <QhdsButton href="#answer-title" variant="tertiary">
+              Read draft answer
+            </QhdsButton>
+          </div>
+        </div>
+      </QhdsContentSection>
 
-        <QhdsCol lg={5} xl={5}>
-          <QhdsContentSection
-            className="evidence-workbench-panel evidence-workbench-source-review-section evidence-workbench-source-review-section--decision"
-            heading="Selected blocker and action target"
-            headingId="source-issue-review-title"
-            lead="Confirm the blocker that the next local action will target."
-            leadDensity="compact"
-            withBodyClass={false}
-          >
-            <SourceBlockerReview
-              issues={sourceBlockerIssues}
-              onSelectIssue={onSelectIssue}
-              selectedIssueId={selectedIssue?.id ?? null}
-              selectedSummaryPosition="before-selector"
-              showIssueTable={false}
-              sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
-            />
-          </QhdsContentSection>
-        </QhdsCol>
-      </QhdsRow>
+      <QhdsContentSection
+        className="evidence-workbench-panel evidence-workbench-current-blocker-section"
+        heading="Current blocker"
+        headingId="source-issue-review-title"
+        lead="The next review action will target this blocker."
+        leadDensity="compact"
+        withBodyClass={false}
+      >
+        <ReviewCurrentBlocker
+          issues={sourceBlockerIssues}
+          onSelectIssue={onSelectIssue}
+          selectedIssue={selectedIssue}
+        />
+      </QhdsContentSection>
+
+      <QhdsContentSection
+        className="evidence-workbench-panel"
+        heading="Draft answer"
+        headingId="answer-title"
+        lead={data.answer.summary}
+        leadDensity="compact"
+        withBodyClass={false}
+      >
+        <AivisEvidencePanelHeader
+          label="Draft answer"
+          status={data.answer.status}
+          statusTone="warning"
+        />
+        <p className="evidence-workbench-answer-meta">
+          Fixture timestamp: {data.answer.generatedAt}
+        </p>
+        <AnswerMarkdown
+          citations={data.citations}
+          markdown={data.answer.markdown}
+          selectedClaimId={review.selectedClaimId}
+          sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
+        />
+      </QhdsContentSection>
+
+      <QhdsContentSection
+        className="evidence-workbench-panel evidence-workbench-supporting-evidence-section"
+        heading="Supporting evidence"
+        headingId="supporting-evidence-title"
+        lead="Open this when you need the source, claim and citation detail behind the decision."
+        leadDensity="compact"
+        withBodyClass={false}
+      >
+        <div className="evidence-workbench-supporting-evidence">
+          <QhdsAccordion
+            headingLevel={3}
+            items={[
+              {
+                content: (
+                  <section
+                    aria-labelledby="source-inspector-title"
+                    className="evidence-workbench-supporting-evidence__section"
+                  >
+                    <h3 id="source-inspector-title">Source inspector</h3>
+                    <p>Focused source evidence for the selected claim.</p>
+                    <SelectedSourceInspector
+                      selectedClaim={selectedClaim}
+                      selectedClaimId={review.selectedClaimId}
+                      sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
+                      sources={data.sourceItems}
+                    />
+                  </section>
+                ),
+                id: "review-source-inspector",
+                title: "Source inspector"
+              },
+              {
+                content: (
+                  <ClaimsReviewSection
+                    asPanel
+                    data={data}
+                    selectedClaimId={review.selectedClaimId}
+                  />
+                ),
+                id: "review-claims",
+                title: "Claims requiring review"
+              }
+            ]}
+          />
+        </div>
+      </QhdsContentSection>
 
       <ReviewDecisionBar
         flow="decision"
@@ -133,24 +178,91 @@ export function WorkbenchReviewWorkspace({
         selectedIssue={selectedIssue}
         state={decisionState}
       />
-
-      <QhdsContentSection
-        className="evidence-workbench-panel"
-        heading="Source inspector"
-        headingId="source-inspector-title"
-        lead="Focused source evidence for the selected claim."
-        leadDensity="compact"
-        withBodyClass={false}
-      >
-        <SelectedSourceInspector
-          selectedClaim={selectedClaim}
-          selectedClaimId={review.selectedClaimId}
-          sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
-          sources={data.sourceItems}
-        />
-      </QhdsContentSection>
-
-      <ClaimsReviewSection data={data} selectedClaimId={review.selectedClaimId} />
     </>
+  );
+}
+
+function ReviewCurrentBlocker({
+  issues,
+  onSelectIssue,
+  selectedIssue
+}: Readonly<{
+  issues: SourceBlockerIssue[];
+  onSelectIssue: (issueId: string) => void;
+  selectedIssue: SourceBlockerIssue | null;
+}>): ReactElement {
+  if (!selectedIssue) {
+    return (
+      <div className="evidence-workbench-current-blocker">
+        <p>No source blocker issue is active in this local fixture state.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="evidence-workbench-current-blocker"
+      data-selected-source-issue-id={selectedIssue.id}
+    >
+      <section
+        aria-labelledby="current-blocker-title"
+        className="evidence-workbench-current-blocker__summary"
+      >
+        <div className="evidence-workbench-current-blocker__heading">
+          <AivisEvidenceStatus tone="warning">Approval blocker</AivisEvidenceStatus>
+          <h3 id="current-blocker-title">
+            {selectedIssue.warningId}: {selectedIssue.warningMessage}
+          </h3>
+        </div>
+        <p>{selectedIssue.evidenceImpact}</p>
+        <QhdsSummaryList
+          ariaLabel="Current blocker target"
+          className="evidence-workbench-current-blocker__metadata"
+          items={[
+            {
+              description: (
+                <a href={`${SOURCE_INVENTORY_ROUTE}#source-${selectedIssue.sourceId}`}>
+                  {selectedIssue.sourceId}: {selectedIssue.sourceTitle}
+                </a>
+              ),
+              term: "Source record"
+            },
+            {
+              description: selectedIssue.ownerLabel,
+              term: "Owner"
+            }
+          ]}
+        />
+      </section>
+
+      <div className="evidence-workbench-current-blocker__change">
+        <QhdsAccordion
+          headingLevel={3}
+          items={[
+            {
+              content: (
+                <div className="evidence-workbench-current-blocker__selector-panel">
+                  <QhdsRadioGroup
+                    className="evidence-workbench-source-review__issue-selector"
+                    hint="Changing the blocker changes the warning and source recorded against the next local action."
+                    legend="Choose a different blocker"
+                    name="evidence-workbench-source-issue"
+                    onChange={(issueId) => onSelectIssue(issueId)}
+                    options={issues.map((issue) => ({
+                      hint: issue.warningMessage,
+                      label: `${issue.warningId} on ${issue.sourceId}`,
+                      value: issue.id
+                    }))}
+                    value={selectedIssue.id}
+                  />
+                </div>
+              ),
+              id: "review-change-blocker",
+              title: "Change blocker"
+            }
+          ]}
+        />
+      </div>
+    </div>
   );
 }

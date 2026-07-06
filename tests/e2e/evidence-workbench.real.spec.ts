@@ -23,7 +23,7 @@ test("Docker-backed Evidence Workbench renders backend fixture journey", async (
   await expect(page.getByText("Request source update recorded in local UI state.")).toBeVisible();
 
   await page.goto("/evidence-workbench/sources");
-  await expect(page.getByRole("heading", { level: 1, name: "Source blockers" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Source evidence" })).toBeVisible();
   await expect(page.getByText("Day-Of-Service Shuttle Dispatch Confirmation").first()).toBeVisible();
   await expect(page.getByText("operations-control-dispatch-confirmation").first()).toBeAttached();
 

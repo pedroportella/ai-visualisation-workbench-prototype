@@ -19,15 +19,15 @@ export const workbenchRouteLinks: Array<{
     view: "overview"
   },
   {
-    description: "Draft answer, inspector and local actions",
+    description: "Decision path, current blocker and local action",
     href: REVIEW_ROUTE,
     label: "Review",
     view: "review"
   },
   {
-    description: "Blockers and citation relationships",
+    description: "Source records, blockers and citation relationships",
     href: SOURCE_INVENTORY_ROUTE,
-    label: "Source blockers",
+    label: "Source evidence",
     view: "sources"
   },
   {

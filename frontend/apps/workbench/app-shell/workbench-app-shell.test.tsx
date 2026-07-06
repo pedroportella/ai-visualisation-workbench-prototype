@@ -46,7 +46,7 @@ describe("WorkbenchAppShell", () => {
     expect(html).not.toContain("qhds-side-nav__heading");
     expect(html).toContain("Overview");
     expect(html).toContain("Review answer");
-    expect(html).toContain("Source blockers");
+    expect(html).toContain("Source evidence");
     expect(html).toContain("Evidence map");
     expect(html).toContain("Audit state");
     expect(html).toContain('href="/evidence-workbench/review"');
@@ -103,7 +103,7 @@ describe("WorkbenchAppShell", () => {
     const sideNavHtml = html.slice(html.indexOf('id="section-navigation"'));
     const openParentIndex = sideNavHtml.indexOf("qld__left-nav__item-link qld__left-nav__item-link--open");
     const sourcesActiveIndex = sideNavHtml.indexOf('aria-current="page" class="active qhds-side-nav__item"');
-    const sourcesLabelIndex = sideNavHtml.indexOf("Source blockers");
+    const sourcesLabelIndex = sideNavHtml.indexOf("Source evidence");
 
     expect(openParentIndex).toBeGreaterThanOrEqual(0);
     expect(sourcesActiveIndex).toBeGreaterThan(openParentIndex);

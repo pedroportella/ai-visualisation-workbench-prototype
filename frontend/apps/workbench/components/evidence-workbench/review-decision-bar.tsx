@@ -3,7 +3,9 @@
 import { useId, useState, type ChangeEvent } from "react";
 import {
   AivisEvidenceStatus,
+  QhdsAccordion,
   QhdsButton,
+  QhdsContentSection,
   QhdsSummaryList,
   QhdsTextarea,
   type AivisEvidenceTone
@@ -161,9 +163,9 @@ export function ReviewDecisionBar({
     }
   ];
   const decisionSummaryItems = [
-    { description: selectedIssueLabel, term: "Selected blocker" },
-    { description: primaryActionDescription, term: "Next local action" },
-    { description: state.feedback, term: "Feedback" }
+    { description: selectedIssueLabel, term: "Action target" },
+    { description: primaryActionDescription, term: "Recommended action" },
+    { description: state.feedback, term: "Local feedback" }
   ];
   const auditContextItems = [
     { description: actionPath, term: "Warning path" },
@@ -181,68 +183,98 @@ export function ReviewDecisionBar({
     }
   ];
 
+  const sectionLead = isDecisionFlow
+    ? "Record the local decision after checking the blocker, draft answer and supporting evidence."
+    : undefined;
+
   return (
-    <section
-      aria-labelledby="review-decision-title"
-      className="evidence-workbench-review-actions"
-      data-local-review-state={state.isDirty ? "changed" : "seeded"}
+    <QhdsContentSection
+      className="evidence-workbench-panel evidence-workbench-review-actions-section"
+      heading={isDecisionFlow ? "Take action" : "Action and audit flow"}
+      headingId="review-decision-title"
+      lead={sectionLead}
+      leadDensity="compact"
+      withBodyClass={false}
     >
-      <div className="evidence-workbench-review-actions__heading">
-        <div>
+      <section
+        aria-labelledby="review-decision-title"
+        className="evidence-workbench-review-actions"
+        data-local-review-state={state.isDirty ? "changed" : "seeded"}
+      >
+        <div className="evidence-workbench-review-actions__heading">
           <p className="evidence-workbench-review-actions__label">Review decision</p>
-          <h2 id="review-decision-title">Action and audit flow</h2>
-        </div>
-        <div
-          aria-label="Review decision state"
-          className="evidence-workbench-review-actions__status"
-        >
-          <AivisEvidenceStatus tone={reviewStatusTone(state.review.statusId)}>
-            {state.review.status}
-          </AivisEvidenceStatus>
-          <AivisEvidenceStatus tone={copyDisabled ? "warning" : "success"}>
-            Copy {formatStateLabel(state.review.copyState)}
-          </AivisEvidenceStatus>
-          <AivisEvidenceStatus
-            tone={state.review.blockedByWarningIds.length > 0 ? "warning" : "success"}
+          <div
+            aria-label="Review decision state"
+            className="evidence-workbench-review-actions__status"
           >
-            {state.review.blockedByWarningIds.length} approval blockers
-          </AivisEvidenceStatus>
+            <AivisEvidenceStatus tone={reviewStatusTone(state.review.statusId)}>
+              {state.review.status}
+            </AivisEvidenceStatus>
+            <AivisEvidenceStatus tone={copyDisabled ? "warning" : "success"}>
+              Copy {formatStateLabel(state.review.copyState)}
+            </AivisEvidenceStatus>
+            <AivisEvidenceStatus
+              tone={state.review.blockedByWarningIds.length > 0 ? "warning" : "success"}
+            >
+              {state.review.blockedByWarningIds.length} approval blockers
+            </AivisEvidenceStatus>
+          </div>
         </div>
-      </div>
 
-      {isDecisionFlow ? (
-        <>
-          <QhdsSummaryList
-            ariaLabel="Primary review decision context"
-            className="evidence-workbench-review-actions__summary evidence-workbench-review-actions__decision-context"
-            items={decisionSummaryItems}
-          />
-          {copyState}
-          {controls}
-          <QhdsSummaryList
-            ariaLabel="Local review audit context"
-            className="evidence-workbench-review-actions__summary evidence-workbench-review-actions__audit-context"
-            items={auditContextItems}
-          />
-        </>
-      ) : (
-        <>
-          <QhdsSummaryList
-            ariaLabel="Review action metadata"
-            className="evidence-workbench-review-actions__summary"
-            items={standardSummaryItems}
-          />
-          {controls}
-        </>
-      )}
+        {isDecisionFlow ? (
+          <>
+            <p className="evidence-workbench-review-actions__description">
+              Use the primary action when the answer needs better evidence before
+              it can be copied. The copy action stays disabled until approval
+              blockers are resolved.
+            </p>
+            <QhdsSummaryList
+              ariaLabel="Primary review decision context"
+              className="evidence-workbench-review-actions__summary evidence-workbench-review-actions__decision-context"
+              items={decisionSummaryItems}
+            />
+            {controls}
+            {copyState}
+            <div className="evidence-workbench-review-actions__audit-details">
+              <QhdsAccordion
+                headingLevel={3}
+                items={[
+                  {
+                    content: (
+                      <div className="evidence-workbench-review-actions__audit-panel">
+                        <QhdsSummaryList
+                          ariaLabel="Local review audit context"
+                          className="evidence-workbench-review-actions__summary evidence-workbench-review-actions__audit-context"
+                          items={auditContextItems}
+                        />
+                      </div>
+                    ),
+                    id: "review-local-audit",
+                    title: "Local audit details"
+                  }
+                ]}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <QhdsSummaryList
+              ariaLabel="Review action metadata"
+              className="evidence-workbench-review-actions__summary"
+              items={standardSummaryItems}
+            />
+            {controls}
+          </>
+        )}
 
-      <div className="evidence-workbench-review-actions__footer">
-        {isDecisionFlow ? null : copyState}
-        <QhdsButton onClick={handleReset} type="button" variant="tertiary">
-          Reset local review state
-        </QhdsButton>
-      </div>
-    </section>
+        <div className="evidence-workbench-review-actions__footer">
+          {isDecisionFlow ? null : copyState}
+          <QhdsButton onClick={handleReset} type="button" variant="tertiary">
+            Reset local review state
+          </QhdsButton>
+        </div>
+      </section>
+    </QhdsContentSection>
   );
 }
 
@@ -278,7 +310,7 @@ function ReviewActionButton({
       <QhdsButton
         aria-describedby={reasonId}
         disabled={availability.disabled}
-        onClick={(event) => {
+        onClick={() => {
           onApplyAction(action.id, reviewerNote, selectedIssue);
         }}
         type="button"

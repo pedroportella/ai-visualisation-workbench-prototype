@@ -19,7 +19,7 @@ export function WorkbenchTaskHeader({
     overview: "Evidence Workbench",
     process: "Evidence map",
     review: "Review answer",
-    sources: "Source blockers"
+    sources: "Source evidence"
   } satisfies Record<EvidenceWorkbenchView, string>;
   const blockerCount = review.blockedByWarningIds.length;
 

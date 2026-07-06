@@ -198,15 +198,15 @@ describe("SourceTracePanel", () => {
   it("renders compact source inventory controls and row content", () => {
     const html = renderPanel();
 
-    expect(html).toContain("Compact source inventory");
-    expect(html).toContain("CLAIM-003 is aligned to 2 selected sources.");
+    expect(html).toContain("Source inventory summary");
+    expect(html).toContain("4 source records");
+    expect(html).toContain("CLAIM-003 is aligned to 2 selected sources;");
     expect(html).toContain("3 sources currently block approval.");
-    expect(html).toContain('href="#source-SRC-003"');
-    expect(html).toContain('href="#source-SRC-006"');
     expect(html).toContain("All sources");
     expect(html).toContain("Needs owner action");
     expect(html).toContain('aria-label="Needs owner action: 2 sources.');
     expect(html).toContain("Source inventory table");
+    expect(html).toContain("Primary source list with source status, freshness, owner, citation count and issue summary.");
     expect(html).toContain("qld__table__wrapper");
     expect(html).toContain("evidence-workbench-source-inventory");
     expect(html).toContain("Status");
@@ -214,11 +214,18 @@ describe("SourceTracePanel", () => {
     expect(html).toContain("Owner");
     expect(html).toContain("Citations");
     expect(html).toContain("Issue");
+    expect(html).toContain("Details");
+    expect(html).toContain('aria-label="Open details for SRC-003: Accessible Vehicle Allocation Guidance For Planned Shuttles"');
+    expect(html).toContain('href="#source-SRC-003"');
+    expect(html).toContain('href="#source-SRC-006"');
+    expect(html).toContain("Source record details");
+    expect(html).toContain("Record details");
     expect(html).toContain("Show details");
     expect(html).toContain("Hide details");
     expect(html).toContain("SRC-002");
     expect(html).toContain("Interchange Operations");
     expect(html).toContain("WARN-001 blocks approval");
+    expect(html).toContain("Source title:");
     expect(html).toContain("Synthetic owner queue");
   });
 

@@ -43,7 +43,14 @@ describe("QhdsAccordion", () => {
 
     expect(element.querySelector(".qld__accordion-group")).not.toBeNull();
     expect(element.querySelector(".qld__accordion")).not.toBeNull();
+    expect(element.querySelector(".qhds-accordion__icon")).toBeNull();
     expect(eligibilityButton?.className).toContain("qld__accordion__title");
+    expect(eligibilityButton?.querySelector(".qhds-accordion__toggle-closed")?.textContent).toBe(
+      "Show details"
+    );
+    expect(eligibilityButton?.querySelector(".qhds-accordion__toggle-open")?.textContent).toBe(
+      "Hide details"
+    );
     expect(eligibilityPanel?.className).toContain("qld__accordion__body");
     expect(eligibilityButton?.getAttribute("aria-expanded")).toBe("false");
     expect(eligibilityPanel?.hidden).toBe(true);

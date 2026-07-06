@@ -1,12 +1,12 @@
-import type { ReactElement } from "react";
+"use client";
+
+import { useEffect, type ReactElement } from "react";
 
 import {
   AivisEvidenceAnchorChipList,
   AivisEvidenceFilterNav,
-  AivisEvidencePanelHeader,
   AivisEvidenceStatus,
   AivisEvidenceTokenList,
-  QhdsCard,
   QhdsTable,
   type QhdsTableColumn,
   type QhdsTableRow
@@ -35,34 +35,22 @@ export function SourceTracePanel({
 
   return (
     <div className="evidence-workbench-source-trace">
-      <QhdsCard
-        actionMode="none"
-        aria-label="Compact source inventory priority"
-        className="evidence-workbench-source-inventory-summary"
-        density="compact"
-        heading="Compact source inventory"
-        headingLevel={3}
-        variant="workbench"
+      <SourceInventoryHashFocusBridge />
+
+      <section
+        aria-label="Source inventory summary"
+        className="evidence-workbench-source-trace__summary"
       >
-        <AivisEvidencePanelHeader
-          label="Source priority"
-          status={`${sources.length} source${sources.length === 1 ? "" : "s"}`}
-        />
         <p>
-          {selectedClaimId} is aligned to {focusedSources.length} selected source
-          {focusedSources.length === 1 ? "" : "s"}. {blockerSources.length} source
+          <strong>
+            {sources.length} source record{sources.length === 1 ? "" : "s"}
+          </strong>{" "}
+          in this fixture. {selectedClaimId} is aligned to{" "}
+          {focusedSources.length} selected source
+          {focusedSources.length === 1 ? "" : "s"}; {blockerSources.length} source
           {blockerSources.length === 1 ? "" : "s"} currently block approval.
         </p>
-        <AivisEvidenceTokenList
-          ariaLabel={`Sources linked to ${selectedClaimId}`}
-          items={focusedSources.map((source) => ({
-            description: source.status,
-            href: `#source-${source.id}`,
-            id: source.id,
-            label: source.id
-          }))}
-        />
-      </QhdsCard>
+      </section>
 
       <AivisEvidenceFilterNav
         ariaLabel="Source inventory groups"
@@ -77,29 +65,35 @@ export function SourceTracePanel({
 
       <SourceInventoryTable sources={orderedSources} />
 
-      <ol className="evidence-workbench-source-inventory" id="source-inventory">
-        {orderedSources.map((source, index) => {
-          const issueSummary = sourceIssueSummary(source);
-          const warnings = sourceWarnings(source);
+      <section
+        aria-labelledby="source-record-details-title"
+        className="evidence-workbench-source-records"
+      >
+        <h3 id="source-record-details-title">Source record details</h3>
+        <ol className="evidence-workbench-source-inventory" id="source-inventory">
+          {orderedSources.map((source, index) => {
+            const warnings = sourceWarnings(source);
 
-          return (
-            <li className="evidence-workbench-source-inventory__item" key={source.id}>
-              <details
-                className="evidence-workbench-disclosure evidence-workbench-source-inventory__details"
-                data-source-filter-state={source.trustState}
-                data-source-expanded-default="false"
-                data-source-priority={sourcePriority(source)}
-                data-source-row-order={index + 1}
-                id={`source-${source.id}`}
-              >
-                <summary className="evidence-workbench-disclosure__summary evidence-workbench-source-inventory__summary">
-                  <span className="evidence-workbench-source-inventory__source">
-                    <span className="evidence-workbench-source-inventory__cell-label">
-                      Source
+            return (
+              <li className="evidence-workbench-source-inventory__item" key={source.id}>
+                <details
+                  className="evidence-workbench-disclosure evidence-workbench-source-inventory__details"
+                  data-source-filter-state={source.trustState}
+                  data-source-expanded-default="false"
+                  data-source-priority={sourcePriority(source)}
+                  data-source-row-order={index + 1}
+                  id={`source-${source.id}`}
+                >
+                  <summary className="evidence-workbench-disclosure__summary evidence-workbench-source-inventory__summary">
+                    <span className="evidence-workbench-source-inventory__source">
+                      <span className="evidence-workbench-source-inventory__cell-label">
+                        Record details
+                      </span>
+                      <strong>{source.id}</strong>
+                      <span>Preview, citation relationships and warning detail.</span>
                     </span>
-                    <strong>{source.id}</strong>
-                    <span>{source.title}</span>
-                    <span className="evidence-workbench-source-inventory__badges">
+
+                    <span className="evidence-workbench-source-inventory__detail-status">
                       {source.isSelectedClaimSource ? (
                         <AivisEvidenceStatus tone="neutral">Selected claim source</AivisEvidenceStatus>
                       ) : null}
@@ -107,80 +101,121 @@ export function SourceTracePanel({
                         <AivisEvidenceStatus tone="warning">Approval blocker</AivisEvidenceStatus>
                       ) : null}
                     </span>
-                  </span>
 
-                  <span className="evidence-workbench-source-inventory__issue">
-                    <span className="evidence-workbench-source-inventory__cell-label">
-                      Issue
+                    <span
+                      className="evidence-workbench-disclosure__toggle evidence-workbench-source-inventory__toggle"
+                    >
+                      <span className="evidence-workbench-disclosure__toggle-closed">
+                        Show details
+                      </span>
+                      <span className="evidence-workbench-disclosure__toggle-open">
+                        Hide details
+                      </span>
                     </span>
-                    <strong>{issueSummary.label}</strong>
-                    <span>{issueSummary.description}</span>
-                  </span>
+                  </summary>
 
-                  <span
-                    className="evidence-workbench-disclosure__toggle evidence-workbench-source-inventory__toggle"
-                  >
-                    <span className="evidence-workbench-disclosure__toggle-closed">
-                      Show details
-                    </span>
-                    <span className="evidence-workbench-disclosure__toggle-open">
-                      Hide details
-                    </span>
-                  </span>
-                </summary>
+                  <div className="evidence-workbench-disclosure__content evidence-workbench-source-inventory__detail-panel">
+                    <div className="evidence-workbench-source-evidence-row">
+                      <section aria-label={`${source.id} evidence preview`}>
+                        <h3>Evidence preview</h3>
+                        <p>
+                          Source title: <strong>{source.title}</strong>
+                        </p>
+                        <p>{source.preview}</p>
+                        <p>
+                          Source type: <strong>{source.sourceType}</strong>
+                        </p>
+                      </section>
 
-                <div className="evidence-workbench-disclosure__content evidence-workbench-source-inventory__detail-panel">
-                  <div className="evidence-workbench-source-evidence-row">
-                    <section aria-label={`${source.id} evidence preview`}>
-                      <h3>Evidence preview</h3>
-                      <p>{source.preview}</p>
-                      <p>
-                        Source type: <strong>{source.sourceType}</strong>
-                      </p>
-                    </section>
+                      <section aria-label={`${source.id} citation relationships`}>
+                        <h3>Citation relationship</h3>
+                        <AivisEvidenceTokenList
+                          ariaLabel={`${source.id} citation relationships`}
+                          emptyMessage="Present in the inventory, not cited by this answer."
+                          items={source.citations.map((citation) => ({
+                            description: citation.relationship,
+                            href: `#claim-${citation.claimId}`,
+                            id: citation.id,
+                            label: citation.marker
+                          }))}
+                        />
+                      </section>
 
-                    <section aria-label={`${source.id} citation relationships`}>
-                      <h3>Citation relationship</h3>
-                      <AivisEvidenceTokenList
-                        ariaLabel={`${source.id} citation relationships`}
-                        emptyMessage="Present in the inventory, not cited by this answer."
-                        items={source.citations.map((citation) => ({
-                          description: citation.relationship,
-                          href: `#claim-${citation.claimId}`,
-                          id: citation.id,
-                          label: citation.marker
-                        }))}
-                      />
-                    </section>
+                      <section aria-label={`${source.id} context anchors`}>
+                        <h3>Context anchors</h3>
+                        <AivisEvidenceAnchorChipList
+                          anchors={source.contextAnchors.map((anchor) => ({
+                            description: anchor.supportingText,
+                            id: anchor.id,
+                            label: anchor.label,
+                            meta: "Context only"
+                          }))}
+                          ariaLabel={`${source.id} context anchors`}
+                          emptyMessage="No public context anchor attached."
+                        />
+                      </section>
+                    </div>
 
-                    <section aria-label={`${source.id} context anchors`}>
-                      <h3>Context anchors</h3>
-                      <AivisEvidenceAnchorChipList
-                        anchors={source.contextAnchors.map((anchor) => ({
-                          description: anchor.supportingText,
-                          id: anchor.id,
-                          label: anchor.label,
-                          meta: "Context only"
-                        }))}
-                        ariaLabel={`${source.id} context anchors`}
-                        emptyMessage="No public context anchor attached."
-                      />
-                    </section>
+                    <SourceWarningSummary source={source} warnings={warnings} />
+
+                    <p className="evidence-workbench-source-inventory__owner">
+                      Synthetic owner queue: <code>{source.reviewOwnerQueue}</code>
+                    </p>
                   </div>
-
-                  <SourceWarningSummary source={source} warnings={warnings} />
-
-                  <p className="evidence-workbench-source-inventory__owner">
-                    Synthetic owner queue: <code>{source.reviewOwnerQueue}</code>
-                  </p>
-                </div>
-              </details>
-            </li>
-          );
-        })}
-      </ol>
+                </details>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
     </div>
   );
+}
+
+function SourceInventoryHashFocusBridge(): null {
+  useEffect(() => {
+    const focusSourceRecord = () => {
+      let sourceTargetId = "";
+
+      try {
+        sourceTargetId = decodeURIComponent(window.location.hash.slice(1));
+      } catch {
+        return;
+      }
+
+      if (!sourceTargetId.startsWith("source-")) {
+        return;
+      }
+
+      const sourceRecord = document.getElementById(sourceTargetId);
+
+      if (!(sourceRecord instanceof HTMLDetailsElement)) {
+        return;
+      }
+
+      sourceRecord.open = true;
+
+      const sourceSummary = sourceRecord.querySelector("summary");
+
+      if (!(sourceSummary instanceof HTMLElement)) {
+        return;
+      }
+
+      window.requestAnimationFrame(() => {
+        sourceRecord.scrollIntoView({ block: "start" });
+        sourceSummary.focus({ preventScroll: true });
+      });
+    };
+
+    focusSourceRecord();
+    window.addEventListener("hashchange", focusSourceRecord);
+
+    return () => {
+      window.removeEventListener("hashchange", focusSourceRecord);
+    };
+  }, []);
+
+  return null;
 }
 
 function SourceWarningSummary({
@@ -208,14 +243,10 @@ function SourceWarningSummary({
         {warnings.map((warning) => (
           <li key={warning.id}>
             <div className="evidence-workbench-source-inventory__warning-row-header">
-              <strong>{source.id}</strong>
+              <strong>{warning.id}</strong>
               <AivisEvidenceStatus tone="warning">{warningSeverityLabel(warning)}</AivisEvidenceStatus>
             </div>
             <dl className="evidence-workbench-source-inventory__warning-row">
-              <div>
-                <dt>Warning</dt>
-                <dd>{warning.id}</dd>
-              </div>
               <div>
                 <dt>Message</dt>
                 <dd>{warning.message}</dd>
@@ -241,7 +272,8 @@ function SourceInventoryTable({
     { dataLabel: "Freshness", header: "Freshness", key: "freshness" },
     { dataLabel: "Owner", header: "Owner", key: "owner" },
     { dataLabel: "Citations", header: "Citations", key: "citations" },
-    { dataLabel: "Issue", header: "Issue", key: "issue" }
+    { dataLabel: "Issue", header: "Issue", key: "issue" },
+    { dataLabel: "Details", header: "Details", key: "details" }
   ];
   const rows = sources.map(sourceInventoryTableRow);
 
@@ -249,7 +281,7 @@ function SourceInventoryTable({
     <div className="evidence-workbench-source-inventory-table">
       <QhdsTable
         caption="Source inventory table"
-        captionDescription="Dense source status, freshness, owner and issue summary."
+        captionDescription="Primary source list with source status, freshness, owner, citation count and issue summary."
         columns={columns}
         rows={rows}
         striped
@@ -263,6 +295,15 @@ function sourceInventoryTableRow(source: EvidenceWorkbenchSource): QhdsTableRow 
 
   return {
     citations: source.citationCount,
+    details: (
+      <a
+        aria-label={`Open details for ${source.id}: ${source.title}`}
+        className="evidence-workbench-source-inventory-table__detail-link"
+        href={`#source-${source.id}`}
+      >
+        Open details
+      </a>
+    ),
     freshness: source.freshness,
     id: source.id,
     issue: (
@@ -274,7 +315,7 @@ function sourceInventoryTableRow(source: EvidenceWorkbenchSource): QhdsTableRow 
     owner: source.ownerLabel,
     source: (
       <span className="evidence-workbench-source-inventory-table__source">
-        <a href={`#source-${source.id}`}>{source.id}</a>
+        <strong>{source.id}</strong>
         <span>{source.title}</span>
       </span>
     ),

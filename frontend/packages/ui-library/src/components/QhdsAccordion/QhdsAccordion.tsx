@@ -85,9 +85,10 @@ export function QhdsAccordion({ allowMultipleOpen = true, headingLevel = 2, item
                 onKeyDown={(event) => handleButtonKeyDown(event, index)}
                 type="button"
               >
-                <span>{item.title}</span>
-                <span aria-hidden="true" className="qhds-accordion__icon">
-                  {isOpen ? "-" : "+"}
+                <span className="qhds-accordion__title">{item.title}</span>
+                <span className="qhds-accordion__toggle">
+                  <span className="qhds-accordion__toggle-closed">Show details</span>
+                  <span className="qhds-accordion__toggle-open">Hide details</span>
                 </span>
               </button>
             </Heading>

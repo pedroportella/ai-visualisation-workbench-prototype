@@ -77,6 +77,34 @@ describe("SourceBlockerReview", () => {
     expect(html).not.toContain("Selected for action");
   });
 
+  it("renders a lighter focused issue summary for source inspection", () => {
+    const issues = buildSourceBlockerIssues(fallbackEvidenceWorkbenchData.sourceItems);
+    const selectedIssue = issues[0];
+    const html = renderToStaticMarkup(
+      <SourceBlockerReview
+        actionMode="inspect"
+        issues={issues}
+        onSelectIssue={() => undefined}
+        reviewActionPath="/evidence-workbench/review"
+        selectedIssueId={selectedIssue?.id ?? null}
+        selectedSummaryPosition="before-selector"
+        showIssueTable={false}
+        sourceInventoryPath="/evidence-workbench/sources"
+      />
+    );
+
+    expect(html).toContain("Focused source issue");
+    expect(html).toContain("Focused issue");
+    expect(html).toContain("Action route");
+    expect(html).toContain("Continue to the review route to record a local action.");
+    expect(html).toContain("Choose source issue to inspect");
+    expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-002"');
+    expect(html).toContain('href="/evidence-workbench/review"');
+    expect(html).not.toContain("Source status");
+    expect(html).not.toContain("Synthetic owner");
+    expect(html).not.toContain("Selected for action");
+  });
+
   it("falls back to the first blocker issue when the selected issue id is unavailable", () => {
     const issues = buildSourceBlockerIssues(fallbackEvidenceWorkbenchData.sourceItems);
 

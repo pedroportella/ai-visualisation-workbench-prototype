@@ -18,16 +18,32 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await page.getByRole("link", { name: /^Start review$/ }).first().click();
   await expect(page).toHaveURL(/\/evidence-workbench\/review$/);
   await expect(page.getByRole("heading", { level: 1, name: "Review answer" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Decision required" })).toBeVisible();
+  await expect(
+    page.getByText("This answer cannot be used yet.")
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Review blocker" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Skip to final action" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Draft answer" })).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Selected blocker and action target" })
+    page.getByRole("heading", { name: "Current blocker" })
   ).toBeVisible();
   await expect(page.locator(".evidence-workbench-review-actions__decision-context")).toContainText(
-    "Next local action"
+    "Recommended action"
   );
   await expect(page.locator(".evidence-workbench-review-actions__copy-state")).toContainText(
     "Copy stays disabled because"
   );
+  await expect(page.getByRole("heading", { name: "Supporting evidence" })).toBeVisible();
+  await expect(page.locator("#review-source-inspector-accordion-button")).toHaveAttribute(
+    "aria-expanded",
+    "false"
+  );
+  await expect(page.locator("#review-claims-accordion-button")).toHaveAttribute(
+    "aria-expanded",
+    "false"
+  );
+  await expect(page.getByRole("heading", { name: "Take action" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Supporting workspaces" })).toHaveCount(0);
   await expect(page.getByText("Source blocker issues")).toHaveCount(0);
   await expectPersistentNavigationOwner(page);
@@ -36,8 +52,12 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await expectReviewDecisionFlowOrder(page);
   await expectNoHorizontalOverflow(page);
   await page.setViewportSize({ width: 1280, height: 720 });
-  await expect(page.getByText("WARN-FALLBACK-003").first()).toBeVisible();
+  await expect(page.getByText("WARN-FALLBACK-001").first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Request source update" })).toBeVisible();
+  const changeBlockerButton = page.locator("#review-change-blocker-accordion-button");
+  await changeBlockerButton.click();
+  await expect(changeBlockerButton).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByText("WARN-FALLBACK-003").first()).toBeVisible();
   await expectControlCanReceiveFocus(
     page,
     "radio",
@@ -61,6 +81,9 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
       "Request source update recorded in local UI state. Targeted WARN-FALLBACK-003 on SRC-FALLBACK-003."
     )
   ).toBeVisible();
+  const auditDetailsButton = page.locator("#review-local-audit-accordion-button");
+  await auditDetailsButton.click();
+  await expect(auditDetailsButton).toHaveAttribute("aria-expanded", "true");
   await expect(
     page.getByText("WARN-FALLBACK-003 on SRC-FALLBACK-003: Dispatch confirmation is missing.")
   ).toBeVisible();
@@ -73,12 +96,34 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await expect(
     page.getByRole("radio", { name: /WARN-FALLBACK-001 on SRC-FALLBACK-002/ })
   ).toBeChecked();
+  await page
+    .getByRole("link", { name: "SRC-FALLBACK-002: Synthetic wayfinding map extract" })
+    .click();
+  await expect(page).toHaveURL(/\/evidence-workbench\/sources#source-SRC-FALLBACK-002$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Source evidence" })).toBeVisible();
+  await expectSourceRecordFocused(page, "SRC-FALLBACK-002");
+  await expectControlCanReceiveFocus(page, "link", "Continue to review actions");
+  await page.getByRole("link", { name: "Continue to review actions" }).click();
+  await expect(page).toHaveURL(/\/evidence-workbench\/review$/);
 
   await page.goto("/evidence-workbench/sources");
-  await expect(page.getByRole("heading", { level: 1, name: "Source blockers" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Source evidence" })).toBeVisible();
   await expect(
     page.getByRole("heading", { exact: true, level: 2, name: "Source inventory" })
   ).toBeVisible();
+  await expect(page.getByText("Source inventory table")).toBeVisible();
+  await expect(
+    page.getByRole("link", {
+      name: "Open details for SRC-FALLBACK-003: Dispatch confirmation placeholder"
+    })
+  ).toBeVisible();
+  await page
+    .getByRole("link", {
+      name: "Open details for SRC-FALLBACK-003: Dispatch confirmation placeholder"
+    })
+    .click();
+  await expect(page).toHaveURL(/\/evidence-workbench\/sources#source-SRC-FALLBACK-003$/);
+  await expectSourceRecordFocused(page, "SRC-FALLBACK-003");
   await expect(page.getByText("Dispatch confirmation placeholder").first()).toBeVisible();
   await expectControlCanReceiveFocus(page, "link", "Continue to review actions");
 
@@ -121,6 +166,19 @@ test("mock evidence disclosures hide closed content and reveal open content", as
   await diagramSummary.click();
   await expectDisclosureCueClosed(diagramDisclosure, /Diagram text fallback.*Show details/);
   await expectDisclosureContentHidden(diagramPanel);
+
+  const sourceInspectorButton = page.locator("#review-source-inspector-accordion-button");
+  const sourceInspectorPanel = page.locator("#review-source-inspector-accordion-panel");
+  const claimsButton = page.locator("#review-claims-accordion-button");
+  const claimsPanel = page.locator("#review-claims-accordion-panel");
+
+  await expectAccordionClosed(sourceInspectorButton, sourceInspectorPanel);
+  await expectAccordionClosed(claimsButton, claimsPanel);
+  await sourceInspectorButton.click();
+  await expectAccordionOpen(sourceInspectorButton, sourceInspectorPanel);
+  await expectAccordionClosed(claimsButton, claimsPanel);
+  await claimsButton.click();
+  await expectAccordionOpen(claimsButton, claimsPanel);
 
   const warningDisclosure = page
     .locator(".evidence-workbench-source-inspector__warning-details")
@@ -174,7 +232,7 @@ async function expectOverviewAndPersistentNavigationOwners(page: Page) {
   const launcher = page.getByLabel("Evidence Workbench task launcher");
 
   await expect(launcher.getByRole("link", { name: "Start review" })).toBeVisible();
-  await expect(launcher.getByRole("link", { name: "Review source blockers" })).toBeVisible();
+  await expect(launcher.getByRole("link", { name: "Review source evidence" })).toBeVisible();
   await expect(launcher.getByRole("link", { name: "Open evidence map" })).toBeVisible();
   await expect(launcher.getByRole("link", { name: "View audit state" })).toBeVisible();
   await expectPersistentNavigationOwner(page);
@@ -186,7 +244,7 @@ async function expectPersistentNavigationOwner(page: Page) {
   await expect(sideNavigation).toBeVisible();
   await expect(sideNavigation).toContainText("Overview");
   await expect(sideNavigation).toContainText("Review answer");
-  await expect(sideNavigation).toContainText("Source blockers");
+  await expect(sideNavigation).toContainText("Source evidence");
   await expect(sideNavigation).toContainText("Evidence map");
   await expect(sideNavigation).toContainText("Audit state");
 }
@@ -196,11 +254,11 @@ async function expectReviewDecisionFlowOrder(page: Page) {
     const selectors = {
       answer: "#answer-title",
       blocker: "#source-issue-review-title",
-      claims: "#claims-title",
       copyState: ".evidence-workbench-review-actions__copy-state",
       decision: "#review-decision-title",
+      decisionRequired: "#review-decision-required-title",
       firstAction: ".evidence-workbench-review-actions__button-grid button",
-      inspector: "#source-inspector-title"
+      supportingEvidence: "#supporting-evidence-title"
     };
 
     return Object.fromEntries(
@@ -215,12 +273,12 @@ async function expectReviewDecisionFlowOrder(page: Page) {
     expect(value, `${key} should be rendered`).not.toBeNull();
   }
 
-  expect(positions.blocker ?? 0).toBeGreaterThanOrEqual(positions.answer ?? 0);
-  expect(positions.decision ?? 0).toBeGreaterThan(positions.blocker ?? 0);
-  expect(positions.copyState ?? 0).toBeGreaterThan(positions.decision ?? 0);
-  expect(positions.firstAction ?? 0).toBeGreaterThan(positions.copyState ?? 0);
-  expect(positions.inspector ?? 0).toBeGreaterThan(positions.firstAction ?? 0);
-  expect(positions.claims ?? 0).toBeGreaterThan(positions.inspector ?? 0);
+  expect(positions.blocker ?? 0).toBeGreaterThan(positions.decisionRequired ?? 0);
+  expect(positions.answer ?? 0).toBeGreaterThan(positions.blocker ?? 0);
+  expect(positions.supportingEvidence ?? 0).toBeGreaterThan(positions.answer ?? 0);
+  expect(positions.decision ?? 0).toBeGreaterThan(positions.supportingEvidence ?? 0);
+  expect(positions.firstAction ?? 0).toBeGreaterThan(positions.decision ?? 0);
+  expect(positions.copyState ?? 0).toBeGreaterThan(positions.firstAction ?? 0);
 }
 
 async function expectNoHorizontalOverflow(page: Page) {
@@ -229,6 +287,15 @@ async function expectNoHorizontalOverflow(page: Page) {
   );
 
   expect(overflow).toBeLessThanOrEqual(1);
+}
+
+async function expectSourceRecordFocused(page: Page, sourceId: string) {
+  const sourceRecord = page.locator(`#source-${sourceId}`);
+  const sourceSummary = sourceRecord.locator("summary");
+
+  await expect(sourceRecord).toHaveAttribute("open", "");
+  await expect(sourceSummary).toBeFocused();
+  await expect(sourceSummary).toHaveAccessibleName(new RegExp(`${sourceId}.*Hide details`));
 }
 
 async function expectDisclosureContentHidden(locator: Locator) {
@@ -251,16 +318,40 @@ async function expectDisclosureContentVisible(locator: Locator) {
   ).resolves.not.toBe("none");
 }
 
+async function expectAccordionClosed(button: Locator, panel: Locator) {
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+  await expect(button.locator(".qhds-accordion__icon")).toHaveCount(0);
+  await expect(button.locator(".qhds-accordion__toggle-closed")).toBeVisible();
+  await expect(button.locator(".qhds-accordion__toggle-open")).toBeHidden();
+  await expect(button).toHaveAccessibleName(/Show details/);
+  await expect(panel).toHaveAttribute("hidden", "");
+  await expectDisclosureContentHidden(panel);
+}
+
+async function expectAccordionOpen(button: Locator, panel: Locator) {
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  await expect(button.locator(".qhds-accordion__icon")).toHaveCount(0);
+  await expect(button.locator(".qhds-accordion__toggle-closed")).toBeHidden();
+  await expect(button.locator(".qhds-accordion__toggle-open")).toBeVisible();
+  await expect(button).toHaveAccessibleName(/Hide details/);
+  await expect(panel).not.toHaveAttribute("hidden", "");
+  await expectDisclosureContentVisible(panel);
+}
+
 async function expectDisclosureCueClosed(disclosure: Locator, accessibleName: RegExp) {
-  await expect(disclosure.locator(".evidence-workbench-disclosure__toggle-closed")).toBeVisible();
-  await expect(disclosure.locator(".evidence-workbench-disclosure__toggle-open")).toBeHidden();
-  await expect(disclosure.locator("summary")).toHaveAccessibleName(accessibleName);
+  const summary = disclosure.locator("summary").first();
+
+  await expect(summary.locator(".evidence-workbench-disclosure__toggle-closed")).toBeVisible();
+  await expect(summary.locator(".evidence-workbench-disclosure__toggle-open")).toBeHidden();
+  await expect(summary).toHaveAccessibleName(accessibleName);
 }
 
 async function expectDisclosureCueOpen(disclosure: Locator, accessibleName: RegExp) {
-  await expect(disclosure.locator(".evidence-workbench-disclosure__toggle-closed")).toBeHidden();
-  await expect(disclosure.locator(".evidence-workbench-disclosure__toggle-open")).toBeVisible();
-  await expect(disclosure.locator("summary")).toHaveAccessibleName(accessibleName);
+  const summary = disclosure.locator("summary").first();
+
+  await expect(summary.locator(".evidence-workbench-disclosure__toggle-closed")).toBeHidden();
+  await expect(summary.locator(".evidence-workbench-disclosure__toggle-open")).toBeVisible();
+  await expect(summary).toHaveAccessibleName(accessibleName);
 }
 
 async function expectSourceInventoryToggleAtTop(disclosure: Locator) {

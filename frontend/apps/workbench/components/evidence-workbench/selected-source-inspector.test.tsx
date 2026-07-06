@@ -29,18 +29,21 @@ describe("SelectedSourceInspector", () => {
     expect(html).toContain('href="#source-SRC-FALLBACK-002"');
     expect(html).toContain('href="#source-SRC-FALLBACK-003"');
     expect(html).toContain('href="#source-inventory"');
-    expect(html).toContain("Synthetic wayfinding map extract");
-    expect(html).toContain("Dispatch confirmation placeholder");
+    expect(html).toContain("View full source inventory");
+    expect(html).not.toContain("Synthetic wayfinding map extract");
+    expect(html).not.toContain("Dispatch confirmation placeholder");
     expect(html).not.toContain("Synthetic station access notice");
   });
 
-  it("shows source status, owner, freshness and both warning kinds", () => {
+  it("keeps only lightweight selected-source context visible before warning details", () => {
     const html = renderInspector();
 
     expect(html).toContain("Stale source");
     expect(html).toContain("Missing evidence");
-    expect(html).toContain("Fallback source set");
-    expect(html).toContain("Freshness");
+    expect(html).not.toContain("Fallback source set");
+    expect(html).not.toContain("Freshness");
+    expect(html).not.toContain("Citations");
+    expect(html).not.toContain("Missing-placeholder preview states");
     expect(html).toContain("Direct source warning");
     expect(html).toContain("Citation or claim warning");
     expect(html).toContain("aivis-evidence-warning-list__item");
@@ -57,10 +60,12 @@ describe("SelectedSourceInspector", () => {
 
     expect(html).toContain('aria-label="Top selected-source blocker"');
     expect(html).toContain("Top selected-source blocker");
-    expect(warningDetails).toHaveLength(2);
+    expect(warningDetails).toHaveLength(1);
     expect(warningDetails.every((attrs) => attrs.includes("evidence-workbench-disclosure"))).toBe(true);
     expect(warningDetails.every((attrs) => !attrs.includes("open"))).toBe(true);
+    expect(html).toContain("3 selected-source warnings");
     expect(html).toContain("evidence-workbench-source-inspector__warning-panel");
+    expect(html).toContain("evidence-workbench-source-inspector__warning-source");
     expect(html).toContain("evidence-workbench-disclosure__content");
     expect(html).toContain("evidence-workbench-disclosure__summary");
     expect(html).toContain("evidence-workbench-disclosure__toggle");

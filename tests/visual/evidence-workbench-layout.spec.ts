@@ -11,11 +11,11 @@ const routes = [
     ceiling: 16_000,
     heading: "Review answer",
     path: "/evidence-workbench/review",
-    readySelector: ".evidence-workbench-primary-frame"
+    readySelector: ".evidence-workbench-review-decision-section"
   },
   {
     ceiling: 18_000,
-    heading: "Source blockers",
+    heading: "Source evidence",
     path: "/evidence-workbench/sources",
     readySelector: ".evidence-workbench-source-inventory"
   },
@@ -402,7 +402,7 @@ async function expectMainRegionsHaveBoxes(page: Page) {
         [
           ".evidence-workbench-overview",
           ".evidence-workbench-task-launcher",
-          ".evidence-workbench-primary-frame",
+          ".evidence-workbench-review-decision-section",
           ".evidence-workbench-source-review-section",
           ".evidence-workbench-source-inventory",
           ".evidence-workbench-process-map",
@@ -539,6 +539,9 @@ async function expectActiveContrastSamples(page: Page) {
       ".evidence-workbench-generated-diagram__step",
       ".evidence-workbench-process-map__fallback",
       ".evidence-workbench-process-map__node",
+      ".evidence-workbench-review-decision-card",
+      ".evidence-workbench-current-blocker",
+      ".evidence-workbench-supporting-evidence",
       ".evidence-workbench-selected-claim-warning",
       ".evidence-workbench-source-inventory__summary",
       ".qhds-table td",
@@ -663,6 +666,8 @@ async function expectThemeColourSamples(
         { label: "task-header", required: true, selector: ".workbench-task-header" },
         { label: "content-section", selector: ".qhds-content-section" },
         { label: "overview-card", selector: ".evidence-workbench-overview-card" },
+        { label: "review-decision", selector: ".evidence-workbench-review-decision-card" },
+        { label: "current-blocker", selector: ".evidence-workbench-current-blocker" },
         { label: "review-actions", selector: ".evidence-workbench-review-actions" },
         { label: "card", selector: ".qhds-card" },
         { label: "panel", selector: ".evidence-workbench-panel" },
