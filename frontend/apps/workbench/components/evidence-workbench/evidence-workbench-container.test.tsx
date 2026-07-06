@@ -261,6 +261,18 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain(".evidence-workbench-process-map__handle.react-flow__handle");
     expect(styles).toContain(".evidence-workbench-process-map__fallback:focus-visible");
     expect(styles).toContain(".evidence-workbench-audit-summary:focus-visible");
+    expect(styles).toContain(".evidence-workbench-disclosure:not([open]) > .evidence-workbench-disclosure__content");
+    expect(styles).toContain("display: none;");
+    expect(styles).toContain(".evidence-workbench-disclosure[open] > .evidence-workbench-disclosure__content");
+    expect(styles).toContain("display: grid;");
+    expect(styles).toContain(".evidence-workbench-disclosure__summary");
+    expect(styles).toContain("box-sizing: border-box;");
+    expect(styles).toContain(".evidence-workbench-disclosure__toggle::after");
+    expect(styles).toContain(".evidence-workbench-disclosure[open] > summary .evidence-workbench-disclosure__toggle-open");
+    expect(styles).toContain(".evidence-workbench-source-inventory__toggle");
+    expect(styles).toContain("align-self: start;");
+    expect(styles).toContain("grid-row: 1;");
+    expect(styles).toContain("max-width: 100%;");
     expect(styles).toContain("data-node-tone=\"warning\"");
     expect(styles).not.toContain("workbench-view-intro");
     expect(styles).not.toContain("border-left");

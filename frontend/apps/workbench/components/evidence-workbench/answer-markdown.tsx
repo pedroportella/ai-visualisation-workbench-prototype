@@ -180,15 +180,29 @@ function renderGeneratedDiagram(
           </li>
         ))}
       </ol>
-      <details className="evidence-workbench-generated-diagram__fallback">
-        <summary>Diagram text fallback</summary>
-        <ol>
-          {block.diagram.nodes.map((node, index) => (
-            <li key={`${context.keyPrefix}-diagram-fallback-${index}`}>
-              {node.label}: {node.description}
-            </li>
-          ))}
-        </ol>
+      <details className="evidence-workbench-disclosure evidence-workbench-generated-diagram__fallback">
+        <summary className="evidence-workbench-disclosure__summary">
+          <span className="evidence-workbench-disclosure__summary-text">
+            Diagram text fallback
+          </span>
+          <span className="evidence-workbench-disclosure__toggle">
+            <span className="evidence-workbench-disclosure__toggle-closed">
+              Show details
+            </span>
+            <span className="evidence-workbench-disclosure__toggle-open">
+              Hide details
+            </span>
+          </span>
+        </summary>
+        <div className="evidence-workbench-disclosure__content evidence-workbench-generated-diagram__fallback-content">
+          <ol>
+            {block.diagram.nodes.map((node, index) => (
+              <li key={`${context.keyPrefix}-diagram-fallback-${index}`}>
+                {node.label}: {node.description}
+              </li>
+            ))}
+          </ol>
+        </div>
       </details>
     </figure>
   );

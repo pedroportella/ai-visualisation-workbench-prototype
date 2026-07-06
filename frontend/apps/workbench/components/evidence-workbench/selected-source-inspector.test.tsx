@@ -50,6 +50,23 @@ describe("SelectedSourceInspector", () => {
     expect(html).toContain("approval blocker");
     expect(html).not.toContain("qld__callout");
   });
+
+  it("keeps selected-source warning groups closed by default while preserving the top blocker", () => {
+    const html = renderInspector();
+    const warningDetails = warningDetailsAttributes(html);
+
+    expect(html).toContain('aria-label="Top selected-source blocker"');
+    expect(html).toContain("Top selected-source blocker");
+    expect(warningDetails).toHaveLength(2);
+    expect(warningDetails.every((attrs) => attrs.includes("evidence-workbench-disclosure"))).toBe(true);
+    expect(warningDetails.every((attrs) => !attrs.includes("open"))).toBe(true);
+    expect(html).toContain("evidence-workbench-source-inspector__warning-panel");
+    expect(html).toContain("evidence-workbench-disclosure__content");
+    expect(html).toContain("evidence-workbench-disclosure__summary");
+    expect(html).toContain("evidence-workbench-disclosure__toggle");
+    expect(html).toContain("Show details");
+    expect(html).toContain("Hide details");
+  });
 });
 
 function renderInspector(): string {
@@ -60,4 +77,12 @@ function renderInspector(): string {
       sources={sourceItems}
     />
   );
+}
+
+function warningDetailsAttributes(html: string): string[] {
+  return Array.from(
+    html.matchAll(
+      /<details(?<attrs>[^>]*evidence-workbench-source-inspector__warning-details[^>]*)>/g
+    )
+  ).map((match) => match.groups?.attrs ?? "");
 }

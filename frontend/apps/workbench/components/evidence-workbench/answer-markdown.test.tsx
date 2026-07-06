@@ -124,14 +124,26 @@ describe("AnswerMarkdown", () => {
     expect(html).toContain("Diagram text fallback");
   });
 
-  it("turns known citation markers into keyboard-focusable source links", () => {
-    const html = renderToStaticMarkup(
-      <AnswerMarkdown
-        citations={fixtureCitations}
-        markdown={fixtureMarkdown}
-        selectedClaimId="CLAIM-003"
-      />
+  it("keeps generated diagram fallback content in a closed disclosure by default", () => {
+    const html = renderMarkdown();
+    const fallbackDetails = html.match(
+      /<details(?<attrs>[^>]*)>[\s\S]*?<summary(?<summaryAttrs>[^>]*)>[\s\S]*?<div(?<contentAttrs>[^>]*)>/
     );
+
+    expect(fallbackDetails?.groups?.attrs).toContain("evidence-workbench-disclosure");
+    expect(fallbackDetails?.groups?.attrs).not.toContain("open");
+    expect(fallbackDetails?.groups?.summaryAttrs).toContain("evidence-workbench-disclosure__summary");
+    expect(fallbackDetails?.groups?.contentAttrs).toContain("evidence-workbench-disclosure__content");
+    expect(fallbackDetails?.groups?.contentAttrs).toContain("evidence-workbench-generated-diagram__fallback-content");
+    expect(html).toContain("Diagram text fallback");
+    expect(html).toContain("evidence-workbench-disclosure__toggle");
+    expect(html).toContain("Show details");
+    expect(html).toContain("Hide details");
+    expect(html).toContain("Reviewer action: Request source update before approving or copying advice");
+  });
+
+  it("turns known citation markers into keyboard-focusable source links", () => {
+    const html = renderMarkdown();
 
     expect(html).toContain('href="#source-SRC-003"');
     expect(html).toContain('href="#source-SRC-006"');
@@ -207,3 +219,13 @@ Leave [unsafe action](javascript:alert-unsafe) as text.`}
     expect(html).toContain("&lt;img src=&quot;x&quot;");
   });
 });
+
+function renderMarkdown(): string {
+  return renderToStaticMarkup(
+    <AnswerMarkdown
+      citations={fixtureCitations}
+      markdown={fixtureMarkdown}
+      selectedClaimId="CLAIM-003"
+    />
+  );
+}

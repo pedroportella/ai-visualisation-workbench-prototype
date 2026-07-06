@@ -110,52 +110,66 @@ export function SelectedSourceInspector({
         aria-label={`Selected sources for ${selectedClaimId}`}
         className="evidence-workbench-source-inspector__source-list"
       >
-        {focusedSources.map((source) => (
-          <li key={source.id}>
-            <QhdsCard
-              actionMode="none"
-              className="evidence-workbench-source-inspector__source"
-              density="compact"
-              heading={source.title}
-              headingLevel={4}
-              variant="workbench"
-            >
-              <div className="evidence-workbench-source-inspector__source-heading">
-                <a href={sourceHref(sourceInventoryPath, source.id)}>{source.id}</a>
-                <AivisEvidenceStatus tone={sourceStatusTone(source.status)}>
-                  {source.status}
-                </AivisEvidenceStatus>
-              </div>
-              <AivisEvidenceMetadata
-                ariaLabel={`${source.id} selected source details`}
-                className="evidence-workbench-source-inspector__source-meta"
-                items={[
-                  { description: source.ownerLabel, term: "Owner" },
-                  { description: source.freshness, term: "Freshness" },
-                  { description: source.citationCount, term: "Citations" },
-                  { description: source.sourceType, term: "Type" }
-                ]}
-              />
-              <p>{source.preview}</p>
-              <details className="evidence-workbench-source-inspector__warning-details">
-                <summary>
-                  {source.directWarnings.length + source.relationshipWarnings.length} source warning
-                  {source.directWarnings.length + source.relationshipWarnings.length === 1
-                    ? ""
-                    : "s"}
-                </summary>
-                <AivisEvidenceWarningGroup
-                  label="Direct source warning"
-                  warnings={source.directWarnings.map(inspectorWarning)}
+        {focusedSources.map((source) => {
+          const warningCount =
+            source.directWarnings.length + source.relationshipWarnings.length;
+
+          return (
+            <li key={source.id}>
+              <QhdsCard
+                actionMode="none"
+                className="evidence-workbench-source-inspector__source"
+                density="compact"
+                heading={source.title}
+                headingLevel={4}
+                variant="workbench"
+              >
+                <div className="evidence-workbench-source-inspector__source-heading">
+                  <a href={sourceHref(sourceInventoryPath, source.id)}>{source.id}</a>
+                  <AivisEvidenceStatus tone={sourceStatusTone(source.status)}>
+                    {source.status}
+                  </AivisEvidenceStatus>
+                </div>
+                <AivisEvidenceMetadata
+                  ariaLabel={`${source.id} selected source details`}
+                  className="evidence-workbench-source-inspector__source-meta"
+                  items={[
+                    { description: source.ownerLabel, term: "Owner" },
+                    { description: source.freshness, term: "Freshness" },
+                    { description: source.citationCount, term: "Citations" },
+                    { description: source.sourceType, term: "Type" }
+                  ]}
                 />
-                <AivisEvidenceWarningGroup
-                  label="Citation or claim warning"
-                  warnings={source.relationshipWarnings.map(inspectorWarning)}
-                />
-              </details>
-            </QhdsCard>
-          </li>
-        ))}
+                <p>{source.preview}</p>
+                <details className="evidence-workbench-disclosure evidence-workbench-source-inspector__warning-details">
+                  <summary className="evidence-workbench-disclosure__summary">
+                    <span className="evidence-workbench-disclosure__summary-text">
+                      {warningCount} source warning{warningCount === 1 ? "" : "s"}
+                    </span>
+                    <span className="evidence-workbench-disclosure__toggle">
+                      <span className="evidence-workbench-disclosure__toggle-closed">
+                        Show details
+                      </span>
+                      <span className="evidence-workbench-disclosure__toggle-open">
+                        Hide details
+                      </span>
+                    </span>
+                  </summary>
+                  <div className="evidence-workbench-disclosure__content evidence-workbench-source-inspector__warning-panel">
+                    <AivisEvidenceWarningGroup
+                      label="Direct source warning"
+                      warnings={source.directWarnings.map(inspectorWarning)}
+                    />
+                    <AivisEvidenceWarningGroup
+                      label="Citation or claim warning"
+                      warnings={source.relationshipWarnings.map(inspectorWarning)}
+                    />
+                  </div>
+                </details>
+              </QhdsCard>
+            </li>
+          );
+        })}
       </ul>
 
       <QhdsButton

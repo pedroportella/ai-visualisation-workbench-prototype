@@ -85,17 +85,14 @@ export function SourceTracePanel({
           return (
             <li className="evidence-workbench-source-inventory__item" key={source.id}>
               <details
-                className="evidence-workbench-source-inventory__details"
+                className="evidence-workbench-disclosure evidence-workbench-source-inventory__details"
                 data-source-filter-state={source.trustState}
                 data-source-expanded-default="false"
                 data-source-priority={sourcePriority(source)}
                 data-source-row-order={index + 1}
                 id={`source-${source.id}`}
               >
-                <summary
-                  aria-label={`${source.id}: ${source.title}. ${issueSummary.label}. Press Enter to toggle source details.`}
-                  className="evidence-workbench-source-inventory__summary"
-                >
+                <summary className="evidence-workbench-disclosure__summary evidence-workbench-source-inventory__summary">
                   <span className="evidence-workbench-source-inventory__source">
                     <span className="evidence-workbench-source-inventory__cell-label">
                       Source
@@ -119,9 +116,20 @@ export function SourceTracePanel({
                     <strong>{issueSummary.label}</strong>
                     <span>{issueSummary.description}</span>
                   </span>
+
+                  <span
+                    className="evidence-workbench-disclosure__toggle evidence-workbench-source-inventory__toggle"
+                  >
+                    <span className="evidence-workbench-disclosure__toggle-closed">
+                      Show details
+                    </span>
+                    <span className="evidence-workbench-disclosure__toggle-open">
+                      Hide details
+                    </span>
+                  </span>
                 </summary>
 
-                <div className="evidence-workbench-source-inventory__detail-panel">
+                <div className="evidence-workbench-disclosure__content evidence-workbench-source-inventory__detail-panel">
                   <div className="evidence-workbench-source-evidence-row">
                     <section aria-label={`${source.id} evidence preview`}>
                       <h3>Evidence preview</h3>

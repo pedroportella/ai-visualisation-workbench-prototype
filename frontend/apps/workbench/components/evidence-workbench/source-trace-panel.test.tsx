@@ -214,7 +214,8 @@ describe("SourceTracePanel", () => {
     expect(html).toContain("Owner");
     expect(html).toContain("Citations");
     expect(html).toContain("Issue");
-    expect(html).toContain("Press Enter to toggle source details.");
+    expect(html).toContain("Show details");
+    expect(html).toContain("Hide details");
     expect(html).toContain("SRC-002");
     expect(html).toContain("Interchange Operations");
     expect(html).toContain("WARN-001 blocks approval");
@@ -248,7 +249,13 @@ describe("SourceTracePanel", () => {
     expect(openSourceIds).toEqual([]);
     expect(defaultCollapsedSourceIds).toEqual(["SRC-003", "SRC-006", "SRC-002", "SRC-005"]);
     expect(sourceHasAttribute(html, "SRC-003", 'data-source-expanded-default="false"')).toBe(true);
-    expect(html).toContain("Press Enter to toggle source details.");
+    expect(sourceHasAttribute(html, "SRC-003", "evidence-workbench-disclosure")).toBe(true);
+    expect(html).toContain("evidence-workbench-disclosure__content evidence-workbench-source-inventory__detail-panel");
+    expect(html).toContain("evidence-workbench-disclosure__summary evidence-workbench-source-inventory__summary");
+    expect(html).toContain("evidence-workbench-disclosure__toggle evidence-workbench-source-inventory__toggle");
+    expect(html).toContain("Show details");
+    expect(html).toContain("Hide details");
+    expect(html).not.toContain("Press Enter to toggle source details.");
   });
 
   it("keeps warnings reachable through issue summaries without repeated source cards", () => {
