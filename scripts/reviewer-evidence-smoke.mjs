@@ -14,12 +14,23 @@ const repositoryFiles = execFileSync(
 const repositoryFileSet = new Set(repositoryFiles);
 const failures = [];
 
+const requiredEngineeringDocFiles = [
+  "docs/architecture.md",
+  "docs/frontend-architecture.md",
+  "docs/backend-architecture.md",
+  "docs/design-system-adapter.md",
+  "docs/api-and-security-evidence.md",
+  "docs/accessibility-and-ui-evidence.md",
+  "docs/testing-and-guardrails.md",
+  "docs/engineering-decisions.md"
+];
 const requiredFiles = [
   "README.md",
   "AGENTS.md",
   "backend/README.md",
   "docker/README.md",
   "docs/README.md",
+  ...requiredEngineeringDocFiles,
   "docs/aws-release-readiness.md",
   "docs/reviewer-pack.md",
   "docs/screenshots/evidence-workbench-overview-light.png",
@@ -71,7 +82,22 @@ const requiredReadmeText = [
   "pnpm test:e2e:mock",
   "pnpm test:visual",
   "pnpm test:reviewer-evidence",
-  "docs/reviewer-pack.md"
+  "docs/reviewer-pack.md",
+  ...requiredEngineeringDocFiles
+];
+const requiredDocsIndexText = [
+  "reviewer-pack.md",
+  "architecture.md",
+  "frontend-architecture.md",
+  "backend-architecture.md",
+  "design-system-adapter.md",
+  "api-and-security-evidence.md",
+  "accessibility-and-ui-evidence.md",
+  "testing-and-guardrails.md",
+  "engineering-decisions.md",
+  "environment-configuration-decision.md",
+  "release-orchestration-decision.md",
+  "aws-release-readiness.md"
 ];
 const requiredAwsReadinessText = [
   "pnpm guard",
@@ -96,6 +122,15 @@ const requiredReviewerPackText = [
   "screenshots/evidence-workbench-process-light.png",
   "screenshots/evidence-workbench-overview-dark-theme-preview.png",
   "screenshots/evidence-workbench-process-dark-theme-preview.png",
+  "Where To Go Deeper",
+  "architecture.md",
+  "frontend-architecture.md",
+  "backend-architecture.md",
+  "design-system-adapter.md",
+  "api-and-security-evidence.md",
+  "accessibility-and-ui-evidence.md",
+  "testing-and-guardrails.md",
+  "engineering-decisions.md",
   "synthetic fixture evidence",
   "local review state only",
   "not visual baselines",
@@ -112,6 +147,56 @@ const requiredReviewerPackText = [
   "SSO",
   "source-system writeback"
 ];
+const requiredEngineeringDocText = {
+  "docs/architecture.md": [
+    "implemented prototype architecture",
+    "synthetic fixture evidence",
+    "local review state",
+    "production-next"
+  ],
+  "docs/frontend-architecture.md": [
+    "server-only backend origin",
+    "NEXT_PUBLIC_*BACKEND",
+    "local review state",
+    "React Flow",
+    "safe hash"
+  ],
+  "docs/backend-architecture.md": [
+    "FastAPI",
+    "deterministic synthetic content",
+    "local process state",
+    "source-system writeback"
+  ],
+  "docs/design-system-adapter.md": [
+    "QHDS/QGDS-style",
+    "@aivis/ui-tokens",
+    "no-screenshot",
+    "not proof of a user-facing theme switcher"
+  ],
+  "docs/api-and-security-evidence.md": [
+    "server-only backend origin",
+    "NEXT_PUBLIC_*BACKEND",
+    "Generated answer markdown",
+    "not a formal security assurance"
+  ],
+  "docs/accessibility-and-ui-evidence.md": [
+    "not a formal WCAG audit",
+    "Text process map",
+    "no-screenshot",
+    "not formal WCAG assurance"
+  ],
+  "docs/testing-and-guardrails.md": [
+    "pnpm test:reviewer-evidence",
+    "pnpm guard:public-docs",
+    "pnpm guard:claim-boundaries",
+    "formal WCAG assurance"
+  ],
+  "docs/engineering-decisions.md": [
+    "Environment configuration decision",
+    "Release orchestration decision",
+    "Production-Next Limits"
+  ]
+};
 const forbiddenPublicDocPatterns = [
   { label: "internal notes path", pattern: new RegExp("ai-" + "notes", "i") },
   { label: "internal planning term", pattern: new RegExp("\\bdeep-" + "end\\b", "i") },
@@ -151,9 +236,13 @@ if (existsSync("package.json")) {
 }
 
 checkIncludes("README.md", requiredReadmeText);
+checkIncludes("docs/README.md", requiredDocsIndexText);
 checkIncludes("docs/aws-release-readiness.md", requiredAwsReadinessText);
 checkIncludes("docs/reviewer-pack.md", requiredReviewerPackText);
 checkIncludes("scripts/README.md", requiredScriptReadmeText);
+for (const [filePath, expectedTexts] of Object.entries(requiredEngineeringDocText)) {
+  checkIncludes(filePath, expectedTexts);
+}
 
 for (const filePath of publicMarkdownFiles()) {
   const contents = readFileSync(filePath, "utf8");

@@ -60,10 +60,36 @@ Not claimed:
 - production RAG, GraphRAG, Amazon Bedrock, Neo4j, Terraform, SSO,
   source-system writeback or live AWS operation.
 
-Current docs:
+## Reviewer Path
 
 - [Reviewer pack](reviewer-pack.md): five-minute route review, screenshot
   gallery, local evidence commands and prototype caveats for public reviewers.
+
+## Architecture And Evidence
+
+- [Architecture](architecture.md): top-level layer responsibilities, why the
+  current shape fits the prototype and what it does not prove.
+- [Frontend architecture](frontend-architecture.md): Next.js routes,
+  server-only backend origin handling, local package boundaries, safe markdown
+  rendering, React Flow and local review state.
+- [Backend architecture](backend-architecture.md): FastAPI endpoints,
+  deterministic fixture contract, local process state, validation and API
+  limits.
+- [Design-system adapter](design-system-adapter.md): local QHDS/QGDS-style
+  adapters, semantic tokens, theme-token evidence and visual caveats.
+- [API and security evidence](api-and-security-evidence.md): implemented
+  server-only, markdown, API validation, browser-origin, secret and claim
+  guardrails.
+- [Accessibility and UI evidence](accessibility-and-ui-evidence.md):
+  landmarks, headings, keyboard/focus checks, graph text fallback, responsive
+  layout and formal-audit limits.
+- [Testing and guardrails](testing-and-guardrails.md): reviewer evidence,
+  guard, frontend, backend, Docker and release-path command matrix.
+- [Engineering decisions](engineering-decisions.md): index of principal
+  engineering choices and links to deeper decision records.
+
+## Decisions And Release Readiness
+
 - [AWS release readiness](aws-release-readiness.md): planned short AWS review
   release boundary, local gates, evidence model and teardown posture. This is
   readiness documentation only, not live AWS proof.

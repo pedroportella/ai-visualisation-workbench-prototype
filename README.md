@@ -87,6 +87,22 @@ The repository does not currently claim direct D3.js, Cytoscape.js, Mermaid,
 TanStack Query, app-owned Zustand, Redux, axe, Lighthouse, WAVE, Dependabot or
 Socket.dev automation.
 
+## Architecture And Evidence
+
+For deeper engineering review:
+
+- [Architecture](docs/architecture.md),
+  [frontend architecture](docs/frontend-architecture.md) and
+  [backend architecture](docs/backend-architecture.md) explain the current
+  layer responsibilities and implementation boundaries.
+- [Design-system adapter](docs/design-system-adapter.md),
+  [API and security evidence](docs/api-and-security-evidence.md) and
+  [accessibility and UI evidence](docs/accessibility-and-ui-evidence.md)
+  explain review-grade evidence and caveats.
+- [Testing and guardrails](docs/testing-and-guardrails.md) and
+  [engineering decisions](docs/engineering-decisions.md) map the verification
+  strategy and decision record.
+
 ## Prototype Boundary
 
 - Uses synthetic transport-service-flavoured content.
