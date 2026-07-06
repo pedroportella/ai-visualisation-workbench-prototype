@@ -9,6 +9,23 @@ reviewer decide whether an AI-generated service-guidance answer is safe to use
 by showing the answer, supporting sources, evidence gaps, process path,
 warnings and local review actions in one place.
 
+## Five-Minute Review
+
+From the repository root:
+
+```text
+pnpm install
+pnpm --filter @aivis/workbench dev
+```
+
+Open `http://127.0.0.1:3200/evidence-workbench`, then follow the route path in
+[the reviewer pack](docs/reviewer-pack.md). For quick local evidence, run:
+
+```text
+pnpm test:reviewer-evidence
+pnpm test:visual
+```
+
 ## Reviewer Problem
 
 AI-generated service guidance can sound confident even when the supporting
@@ -36,6 +53,17 @@ The app is organised around one review task:
 The workbench lets the reviewer inspect source-backed markdown, citations,
 source records, warnings, a React Flow evidence/process map, action
 availability, disabled reasons and local audit feedback.
+
+## Screenshots
+
+These screenshots are reviewer examples, not visual baselines. The dark
+screenshots show a theme-token preview capture context, not proof of a
+user-facing theme switcher.
+
+| View | Light | Dark theme-token preview |
+| --- | --- | --- |
+| Overview | ![Evidence Workbench overview in the light theme](docs/screenshots/evidence-workbench-overview-light.png) | ![Evidence Workbench overview in a dark theme-token preview](docs/screenshots/evidence-workbench-overview-dark-theme-preview.png) |
+| Evidence map | ![Evidence Workbench process map in the light theme](docs/screenshots/evidence-workbench-process-light.png) | ![Evidence Workbench process map in a dark theme-token preview](docs/screenshots/evidence-workbench-process-dark-theme-preview.png) |
 
 ## Implemented Technology Posture
 

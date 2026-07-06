@@ -62,6 +62,8 @@ Not claimed:
 
 Current docs:
 
+- [Reviewer pack](reviewer-pack.md): five-minute route review, screenshot
+  gallery, local evidence commands and prototype caveats for public reviewers.
 - [AWS release readiness](aws-release-readiness.md): planned short AWS review
   release boundary, local gates, evidence model and teardown posture. This is
   readiness documentation only, not live AWS proof.

@@ -21,6 +21,11 @@ const requiredFiles = [
   "docker/README.md",
   "docs/README.md",
   "docs/aws-release-readiness.md",
+  "docs/reviewer-pack.md",
+  "docs/screenshots/evidence-workbench-overview-light.png",
+  "docs/screenshots/evidence-workbench-process-light.png",
+  "docs/screenshots/evidence-workbench-overview-dark-theme-preview.png",
+  "docs/screenshots/evidence-workbench-process-dark-theme-preview.png",
   "docs/release-orchestration-decision.md",
   "frontend/README.md",
   "package.json",
@@ -65,7 +70,8 @@ const requiredReadmeText = [
   "pnpm guard",
   "pnpm test:e2e:mock",
   "pnpm test:visual",
-  "pnpm test:reviewer-evidence"
+  "pnpm test:reviewer-evidence",
+  "docs/reviewer-pack.md"
 ];
 const requiredAwsReadinessText = [
   "pnpm guard",
@@ -74,6 +80,37 @@ const requiredAwsReadinessText = [
   "pnpm test:reviewer-evidence",
   "pnpm test:e2e:real",
   "pnpm guard:browser-bundles"
+];
+const requiredReviewerPackText = [
+  "pnpm --filter @aivis/workbench dev",
+  "pnpm test:reviewer-evidence",
+  "pnpm guard:public-docs",
+  "pnpm guard:claim-boundaries",
+  "pnpm test:visual",
+  "/evidence-workbench",
+  "/evidence-workbench/review",
+  "/evidence-workbench/sources",
+  "/evidence-workbench/process",
+  "/evidence-workbench/audit",
+  "screenshots/evidence-workbench-overview-light.png",
+  "screenshots/evidence-workbench-process-light.png",
+  "screenshots/evidence-workbench-overview-dark-theme-preview.png",
+  "screenshots/evidence-workbench-process-dark-theme-preview.png",
+  "synthetic fixture evidence",
+  "local review state only",
+  "not visual baselines",
+  "not proof of a user-facing theme switcher",
+  "does not claim real TMR data",
+  "official TMR system",
+  "QChat integration",
+  "live AWS deployment",
+  "production RAG",
+  "production GraphRAG",
+  "Bedrock",
+  "Neo4j",
+  "Terraform",
+  "SSO",
+  "source-system writeback"
 ];
 const forbiddenPublicDocPatterns = [
   { label: "internal notes path", pattern: new RegExp("ai-" + "notes", "i") },
@@ -115,6 +152,7 @@ if (existsSync("package.json")) {
 
 checkIncludes("README.md", requiredReadmeText);
 checkIncludes("docs/aws-release-readiness.md", requiredAwsReadinessText);
+checkIncludes("docs/reviewer-pack.md", requiredReviewerPackText);
 checkIncludes("scripts/README.md", requiredScriptReadmeText);
 
 for (const filePath of publicMarkdownFiles()) {
