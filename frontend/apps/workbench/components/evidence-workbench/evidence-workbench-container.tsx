@@ -10,7 +10,7 @@ import { WorkbenchOverview } from "./workbench-overview";
 import { WorkbenchProcessWorkspace } from "./workbench-process-workspace";
 import { WorkbenchReviewWorkspace } from "./workbench-review-workspace";
 import { WorkbenchSourcesWorkspace } from "./workbench-sources-workspace";
-import { WorkbenchViewIntro } from "./workbench-view-intro";
+import { WorkbenchTaskHeader } from "./workbench-task-header";
 import {
   createInitialReviewDecisionState,
   reviewDecisionReducer
@@ -55,7 +55,7 @@ export default function EvidenceWorkbenchContainer({
 
   return (
     <>
-      <WorkbenchViewIntro activeView={activeView} data={data} review={review} />
+      <WorkbenchTaskHeader activeView={activeView} review={review} />
 
       {activeView === "overview" ? (
         <WorkbenchOverview

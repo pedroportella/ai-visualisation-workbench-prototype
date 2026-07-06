@@ -1,13 +1,17 @@
+import { AivisEvidenceStatus } from "@aivis/ui-library";
+
 export default function EvidenceWorkbenchLoading() {
   return (
-    <header className="workbench-view-intro">
-      <p className="workbench-view-intro__label">Review case</p>
-      <h1 className="workbench-view-intro__heading" id="evidence-workbench-title">
+    <header className="workbench-task-header">
+      <h1 className="workbench-task-header__heading" id="evidence-workbench-title">
         Evidence Workbench
       </h1>
-      <p className="workbench-view-intro__description">
-        Loading local fixture evidence for review.
-      </p>
+      <div
+        aria-label="Review task state"
+        className="workbench-task-header__status"
+      >
+        <AivisEvidenceStatus tone="neutral">Loading review task</AivisEvidenceStatus>
+      </div>
     </header>
   );
 }

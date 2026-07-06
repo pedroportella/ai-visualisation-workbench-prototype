@@ -31,47 +31,37 @@
   overflow-wrap: anywhere;
 }
 
-.workbench-view-intro {
-  display: grid;
-  gap: var(--aivis-space-2);
-  max-width: var(--aivis-workbench-copy-max-width);
-  min-width: 0;
-}
-
-.workbench-view-intro__label,
 .evidence-workbench-review-actions__label,
-.workbench-view-intro__description,
-.workbench-view-intro__state,
 .evidence-workbench-answer-meta,
 .evidence-workbench-review-note {
   color: var(--aivis-shell-muted);
   line-height: var(--aivis-line-height-lead);
 }
 
-.workbench-view-intro__label {
-  color: var(--qhds-color-link);
-  font-size: var(--aivis-font-size-eyebrow);
-  font-weight: var(--aivis-font-weight-bold);
-  letter-spacing: var(--aivis-letter-spacing-default);
-  line-height: var(--aivis-line-height-short);
-  margin: 0;
-  text-transform: uppercase;
+.workbench-task-header {
+  align-items: end;
+  border-block-end: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  display: grid;
+  gap: var(--aivis-space-2) var(--aivis-space-4);
+  grid-template-columns: minmax(0, auto) minmax(16rem, max-content);
+  min-width: 0;
+  padding-block: var(--aivis-space-3);
 }
 
-.workbench-view-intro__heading {
+.workbench-task-header__heading {
   color: var(--aivis-shell-text);
   font-size: var(--qhds-font-size-h1-desktop);
   line-height: var(--aivis-line-height-heading);
   margin: 0;
+  min-width: 0;
 }
 
-.workbench-view-intro__description,
-.workbench-view-intro__state {
-  margin: 0;
-}
-
-.workbench-view-intro__description {
-  font-size: var(--qhds-font-size-lead-mobile);
+.workbench-task-header__status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aivis-space-2);
+  justify-content: end;
+  min-width: 0;
 }
 
 .evidence-workbench-review-actions {
@@ -1287,8 +1277,16 @@
     gap: var(--aivis-space-4);
   }
 
-  .workbench-view-intro__heading {
+  .workbench-task-header {
+    grid-template-columns: 1fr;
+  }
+
+  .workbench-task-header__heading {
     font-size: var(--qhds-font-size-h1-mobile);
+  }
+
+  .workbench-task-header__status {
+    justify-content: start;
   }
 
   .evidence-workbench-review-actions {

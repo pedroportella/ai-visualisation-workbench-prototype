@@ -14,21 +14,30 @@ describe("EvidenceWorkbenchContainer", () => {
     const html = renderToStaticMarkup(
       <EvidenceWorkbenchContainer data={fallbackEvidenceWorkbenchData} />
     );
-    const introIndex = html.indexOf("workbench-view-intro");
+    const headerIndex = html.indexOf("workbench-task-header");
     const overviewIndex = html.indexOf('id="overview-title"');
     const launcherIndex = html.indexOf('id="task-launcher-title"');
+    const taskHeader = extractTaskHeader(html);
 
     expect(html).not.toContain('data-workbench-view="overview"');
     expect(html).not.toContain('class="evidence-workbench"');
     expect(html).not.toContain('class="qld__body qld__body--light evidence-workbench"');
     expect(html).not.toContain('class="qld__body qhds-content-section evidence-workbench-panel');
     expect(html).not.toContain("qld__global-alert");
+    expect(html).not.toContain("workbench-view-intro");
+    expect(html.match(/<h1\b/g) ?? []).toHaveLength(1);
     expect(html).toContain(
-      '<h1 class="workbench-view-intro__heading" id="evidence-workbench-title">Evidence Workbench</h1>'
+      '<h1 class="workbench-task-header__heading" id="evidence-workbench-title">Evidence Workbench</h1>'
     );
-    expect(html).toContain("AIVIS is a simulated evidence workbench");
+    expect(taskHeader).toContain('aria-label="Review task state"');
+    expect(taskHeader).toContain("Needs review");
+    expect(taskHeader).toContain('aria-label="3 approval blockers"');
+    expect(taskHeader).toContain("3 blockers");
+    expect(taskHeader).toContain("Copy Disabled");
+    expect(taskHeader).not.toContain("Step-free transfer guidance needs evidence review");
+    expect(taskHeader).not.toContain("Bundled fallback");
+    expect(html).not.toContain("AIVIS is a simulated evidence workbench");
     expect(html).toContain("Step-free transfer guidance needs evidence review");
-    expect(html).toContain("3 approval blockers");
     expect(html).toContain("Bundled fallback");
     expect(html).toContain("Current review task");
     expect(html).toContain("The current synthetic case shows the review state");
@@ -57,8 +66,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).not.toContain('id="source-inspector-title"');
     expect(html).not.toContain("evidence-workbench-generated-diagram");
     expect(html).not.toContain("qld__abstract");
-    expect(introIndex).toBeGreaterThanOrEqual(0);
-    expect(overviewIndex).toBeGreaterThan(introIndex);
+    expect(headerIndex).toBeGreaterThanOrEqual(0);
+    expect(overviewIndex).toBeGreaterThan(headerIndex);
     expect(launcherIndex).toBeGreaterThan(overviewIndex);
   });
 
@@ -69,16 +78,25 @@ describe("EvidenceWorkbenchContainer", () => {
         data={fallbackEvidenceWorkbenchData}
       />
     );
-    const introIndex = html.indexOf("workbench-view-intro");
+    const headerIndex = html.indexOf("workbench-task-header");
     const decisionIndex = html.indexOf('id="review-decision-title"');
     const answerIndex = html.indexOf('id="answer-title"');
     const inspectorIndex = html.indexOf('id="source-inspector-title"');
     const sourceIssueIndex = html.indexOf('id="source-issue-review-title"');
+    const taskHeader = extractTaskHeader(html);
 
     expect(html).not.toContain('data-workbench-view="review"');
+    expect(html).not.toContain("workbench-view-intro");
+    expect(html.match(/<h1\b/g) ?? []).toHaveLength(1);
     expect(html).toContain(
-      '<h1 class="workbench-view-intro__heading" id="evidence-workbench-title">Review answer</h1>'
+      '<h1 class="workbench-task-header__heading" id="evidence-workbench-title">Review answer</h1>'
     );
+    expect(taskHeader).toContain("Needs review");
+    expect(taskHeader).toContain('aria-label="3 approval blockers"');
+    expect(taskHeader).toContain("3 blockers");
+    expect(taskHeader).toContain("Copy Disabled");
+    expect(taskHeader).not.toContain("Inspect the draft answer");
+    expect(taskHeader).not.toContain("Bundled fallback");
     expect(html).toContain("Action and audit flow");
     expect(html).toContain("Source issue review");
     expect(html).toContain("Inspect the blocker that the next local action will target.");
@@ -101,8 +119,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-003"');
     expect(html).not.toContain("qhds-page-header");
     expect(html).not.toContain("qhds-page-header__context");
-    expect(introIndex).toBeGreaterThanOrEqual(0);
-    expect(answerIndex).toBeGreaterThan(introIndex);
+    expect(headerIndex).toBeGreaterThanOrEqual(0);
+    expect(answerIndex).toBeGreaterThan(headerIndex);
     expect(inspectorIndex).toBeGreaterThan(answerIndex);
     expect(sourceIssueIndex).toBeGreaterThan(inspectorIndex);
     expect(decisionIndex).toBeGreaterThan(sourceIssueIndex);
@@ -146,6 +164,10 @@ describe("EvidenceWorkbenchContainer", () => {
     );
 
     expect(html).not.toContain('data-workbench-view="sources"');
+    expect(html).toContain(
+      '<h1 class="workbench-task-header__heading" id="evidence-workbench-title">Source blockers</h1>'
+    );
+    expect(html).not.toContain("Review the source records, warning relationships and approval blockers");
     expect(html).toContain('id="sources-title"');
     expect(html).toContain("Compact source inventory");
     expect(html).toContain("Blocker action target");
@@ -170,6 +192,10 @@ describe("EvidenceWorkbenchContainer", () => {
     );
 
     expect(html).not.toContain('data-workbench-view="process"');
+    expect(html).toContain(
+      '<h1 class="workbench-task-header__heading" id="evidence-workbench-title">Evidence map</h1>'
+    );
+    expect(html).not.toContain("Trace the synthetic question, source evidence");
     expect(html).toContain('id="process-map-title"');
     expect(html).toContain("React Flow graph");
     expect(html).toContain("evidence-workbench-process-map");
@@ -192,6 +218,10 @@ describe("EvidenceWorkbenchContainer", () => {
     );
 
     expect(html).not.toContain('data-workbench-view="audit"');
+    expect(html).toContain(
+      '<h1 class="workbench-task-header__heading" id="evidence-workbench-title">Audit state</h1>'
+    );
+    expect(html).not.toContain("Check the current local action state");
     expect(html).toContain('id="review-decision-title"');
     expect(html).toContain("Request source update");
     expect(html).toContain("Mark unsafe to use");
@@ -210,7 +240,8 @@ describe("EvidenceWorkbenchContainer", () => {
   it("scopes answer content to a readable tokenized work surface", () => {
     expect(styles).toContain("background: var(--aivis-color-panel-surface);");
     expect(styles).toContain(".aivis-app-shell .qhds-layout__main-section-body .qhds-content-section");
-    expect(styles).toContain(".workbench-view-intro");
+    expect(styles).toContain(".workbench-task-header");
+    expect(styles).toContain("border-block-end: var(--aivis-border-width-thin) solid var(--qhds-color-border);");
     expect(styles).toContain(".evidence-workbench-answer-markdown");
     expect(styles).toContain(".evidence-workbench-overview");
     expect(styles).toContain(".evidence-workbench-task-launcher");
@@ -227,8 +258,17 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain(".evidence-workbench-process-map__fallback:focus-visible");
     expect(styles).toContain(".evidence-workbench-audit-summary:focus-visible");
     expect(styles).toContain("data-node-tone=\"warning\"");
+    expect(styles).not.toContain("workbench-view-intro");
     expect(styles).not.toContain("border-left");
     expect(styles).not.toContain("border-inline-start");
     expect(styles).not.toMatch(/#[0-9a-fA-F]{3,8}|rgb\(|rgba\(/);
   });
 });
+
+function extractTaskHeader(html: string): string {
+  const match = html.match(/<header class="workbench-task-header">[\s\S]*?<\/header>/);
+
+  expect(match).not.toBeNull();
+
+  return match?.[0] ?? "";
+}
