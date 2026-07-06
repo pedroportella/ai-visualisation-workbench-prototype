@@ -21,7 +21,6 @@ import {
 } from "./selected-source-inspector";
 import type { SourceBlockerIssue } from "./source-blocker-review";
 import { SourceBlockerReview } from "./source-blocker-review";
-import { WorkbenchRouteCards } from "./workbench-route-cards";
 
 interface WorkbenchReviewWorkspaceProps {
   data: EvidenceWorkbenchViewModel;
@@ -108,48 +107,50 @@ export function WorkbenchReviewWorkspace({
 
         <QhdsCol lg={5} xl={5}>
           <QhdsContentSection
-            className="evidence-workbench-panel evidence-workbench-source-inspector-section"
-            heading="Source inspector"
-            headingId="source-inspector-title"
-            lead="Focused source evidence for the selected claim."
+            className="evidence-workbench-panel evidence-workbench-source-review-section evidence-workbench-source-review-section--decision"
+            heading="Selected blocker and action target"
+            headingId="source-issue-review-title"
+            lead="Confirm the blocker that the next local action will target."
             leadDensity="compact"
             withBodyClass={false}
           >
-            <SelectedSourceInspector
-              selectedClaim={selectedClaim}
-              selectedClaimId={review.selectedClaimId}
+            <SourceBlockerReview
+              issues={sourceBlockerIssues}
+              onSelectIssue={onSelectIssue}
+              selectedIssueId={selectedIssue?.id ?? null}
+              selectedSummaryPosition="before-selector"
+              showIssueTable={false}
               sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
-              sources={data.sourceItems}
             />
           </QhdsContentSection>
         </QhdsCol>
       </QhdsRow>
 
-      <QhdsContentSection
-        className="evidence-workbench-panel evidence-workbench-source-review-section"
-        heading="Source issue review"
-        headingId="source-issue-review-title"
-        lead="Inspect the blocker that the next local action will target."
-        leadDensity="compact"
-        withBodyClass={false}
-      >
-        <SourceBlockerReview
-          issues={sourceBlockerIssues}
-          onSelectIssue={onSelectIssue}
-          selectedIssueId={selectedIssue?.id ?? null}
-          sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
-        />
-      </QhdsContentSection>
-
       <ReviewDecisionBar
+        flow="decision"
         onApplyAction={onApplyAction}
         onReset={onReset}
         selectedIssue={selectedIssue}
         state={decisionState}
       />
 
+      <QhdsContentSection
+        className="evidence-workbench-panel"
+        heading="Source inspector"
+        headingId="source-inspector-title"
+        lead="Focused source evidence for the selected claim."
+        leadDensity="compact"
+        withBodyClass={false}
+      >
+        <SelectedSourceInspector
+          selectedClaim={selectedClaim}
+          selectedClaimId={review.selectedClaimId}
+          sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
+          sources={data.sourceItems}
+        />
+      </QhdsContentSection>
+
       <ClaimsReviewSection data={data} selectedClaimId={review.selectedClaimId} />
-      <WorkbenchRouteCards />
     </>
   );
 }

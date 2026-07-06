@@ -13,13 +13,36 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   ).toBeVisible();
   await expect(page.getByText("Synthetic fixture / Bundled fallback")).toBeVisible();
   await expect(page.getByText("Synthetic fixture / Backend fixture")).toHaveCount(0);
+  await expectOverviewAndPersistentNavigationOwners(page);
 
   await page.getByRole("link", { name: /^Start review$/ }).first().click();
   await expect(page).toHaveURL(/\/evidence-workbench\/review$/);
   await expect(page.getByRole("heading", { level: 1, name: "Review answer" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Draft answer" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Selected blocker and action target" })
+  ).toBeVisible();
+  await expect(page.locator(".evidence-workbench-review-actions__decision-context")).toContainText(
+    "Next local action"
+  );
+  await expect(page.locator(".evidence-workbench-review-actions__copy-state")).toContainText(
+    "Copy stays disabled because"
+  );
+  await expect(page.getByRole("heading", { name: "Supporting workspaces" })).toHaveCount(0);
+  await expect(page.getByText("Source blocker issues")).toHaveCount(0);
+  await expectPersistentNavigationOwner(page);
+  await expectReviewDecisionFlowOrder(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectReviewDecisionFlowOrder(page);
+  await expectNoHorizontalOverflow(page);
+  await page.setViewportSize({ width: 1280, height: 720 });
   await expect(page.getByText("WARN-FALLBACK-003").first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Request source update" })).toBeVisible();
+  await expectControlCanReceiveFocus(
+    page,
+    "radio",
+    "WARN-FALLBACK-003 on SRC-FALLBACK-003"
+  );
   await expectControlCanReceiveFocus(page, "button", "Request source update");
   await page
     .locator(".evidence-workbench-source-review__issue-selector")
@@ -139,12 +162,73 @@ test("mock evidence disclosures hide closed content and reveal open content", as
 
 async function expectControlCanReceiveFocus(
   page: Page,
-  role: "button" | "link",
+  role: "button" | "link" | "radio",
   name: string
 ) {
   const control = page.getByRole(role, { name }).first();
   await control.focus();
   await expect(control).toBeFocused();
+}
+
+async function expectOverviewAndPersistentNavigationOwners(page: Page) {
+  const launcher = page.getByLabel("Evidence Workbench task launcher");
+
+  await expect(launcher.getByRole("link", { name: "Start review" })).toBeVisible();
+  await expect(launcher.getByRole("link", { name: "Review source blockers" })).toBeVisible();
+  await expect(launcher.getByRole("link", { name: "Open evidence map" })).toBeVisible();
+  await expect(launcher.getByRole("link", { name: "View audit state" })).toBeVisible();
+  await expectPersistentNavigationOwner(page);
+}
+
+async function expectPersistentNavigationOwner(page: Page) {
+  const sideNavigation = page.locator("#section-navigation");
+
+  await expect(sideNavigation).toBeVisible();
+  await expect(sideNavigation).toContainText("Overview");
+  await expect(sideNavigation).toContainText("Review answer");
+  await expect(sideNavigation).toContainText("Source blockers");
+  await expect(sideNavigation).toContainText("Evidence map");
+  await expect(sideNavigation).toContainText("Audit state");
+}
+
+async function expectReviewDecisionFlowOrder(page: Page) {
+  const positions = await page.evaluate(() => {
+    const selectors = {
+      answer: "#answer-title",
+      blocker: "#source-issue-review-title",
+      claims: "#claims-title",
+      copyState: ".evidence-workbench-review-actions__copy-state",
+      decision: "#review-decision-title",
+      firstAction: ".evidence-workbench-review-actions__button-grid button",
+      inspector: "#source-inspector-title"
+    };
+
+    return Object.fromEntries(
+      Object.entries(selectors).map(([key, selector]) => {
+        const element = document.querySelector(selector);
+        return [key, element ? element.getBoundingClientRect().top + window.scrollY : null];
+      })
+    ) as Record<keyof typeof selectors, number | null>;
+  });
+
+  for (const [key, value] of Object.entries(positions)) {
+    expect(value, `${key} should be rendered`).not.toBeNull();
+  }
+
+  expect(positions.blocker ?? 0).toBeGreaterThanOrEqual(positions.answer ?? 0);
+  expect(positions.decision ?? 0).toBeGreaterThan(positions.blocker ?? 0);
+  expect(positions.copyState ?? 0).toBeGreaterThan(positions.decision ?? 0);
+  expect(positions.firstAction ?? 0).toBeGreaterThan(positions.copyState ?? 0);
+  expect(positions.inspector ?? 0).toBeGreaterThan(positions.firstAction ?? 0);
+  expect(positions.claims ?? 0).toBeGreaterThan(positions.inspector ?? 0);
+}
+
+async function expectNoHorizontalOverflow(page: Page) {
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+
+  expect(overflow).toBeLessThanOrEqual(1);
 }
 
 async function expectDisclosureContentHidden(locator: Locator) {

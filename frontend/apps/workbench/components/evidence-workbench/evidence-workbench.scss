@@ -809,6 +809,10 @@
   min-width: 0;
 }
 
+.evidence-workbench-source-review-section--decision .evidence-workbench-source-review {
+  margin-top: 0;
+}
+
 .evidence-workbench-source-review > p,
 .evidence-workbench-source-review__selected-summary p {
   color: var(--aivis-shell-muted);
@@ -1339,6 +1343,10 @@
   .evidence-workbench-review-actions__controls {
     align-items: start;
     grid-template-columns: minmax(18rem, 0.55fr) minmax(0, 1fr);
+  }
+
+  .evidence-workbench-review-actions__controls--action-first {
+    grid-template-columns: minmax(22rem, 0.9fr) minmax(18rem, 0.6fr);
   }
 
   .evidence-workbench-review-actions__status {

@@ -32,6 +32,8 @@ interface SourceBlockerReviewProps {
   onSelectIssue: (issueId: string) => void;
   reviewActionPath?: string;
   selectedIssueId: string | null;
+  selectedSummaryPosition?: "after-selector" | "before-selector";
+  showIssueTable?: boolean;
   sourceInventoryPath: string;
 }
 
@@ -41,10 +43,20 @@ export function SourceBlockerReview({
   onSelectIssue,
   reviewActionPath,
   selectedIssueId,
+  selectedSummaryPosition = "after-selector",
+  showIssueTable = true,
   sourceInventoryPath
 }: Readonly<SourceBlockerReviewProps>): ReactElement {
   const selectedIssue = selectedSourceIssue(issues, selectedIssueId);
   const selectsActionTarget = actionMode === "select";
+  const selectedIssueSummary = selectedIssue ? (
+    <SelectedSourceIssueSummary
+      reviewActionPath={reviewActionPath}
+      selectedIssue={selectedIssue}
+      selectsActionTarget={selectsActionTarget}
+      sourceInventoryPath={sourceInventoryPath}
+    />
+  ) : null;
 
   if (issues.length === 0) {
     return (
@@ -71,6 +83,8 @@ export function SourceBlockerReview({
           : "Inspect source issues here, then continue to the review route to choose the local action target."}
       </p>
 
+      {selectedSummaryPosition === "before-selector" ? selectedIssueSummary : null}
+
       <QhdsRadioGroup
         className="evidence-workbench-source-review__issue-selector"
         hint="The selected blocker determines the source, warning and owner queue recorded in the local audit state."
@@ -89,67 +103,83 @@ export function SourceBlockerReview({
         value={selectedIssue?.id ?? undefined}
       />
 
-      {selectedIssue ? (
-        <section
-          aria-labelledby="selected-source-issue-title"
-          className="evidence-workbench-source-review__selected-summary"
-        >
-          <h3 id="selected-source-issue-title">
-            {selectsActionTarget ? "Selected source issue" : "Focused source issue"}
-          </h3>
-          <QhdsSummaryList
-            ariaLabel={
-              selectsActionTarget
-                ? "Selected source issue for local action"
-                : "Focused source issue"
-            }
-            className="evidence-workbench-source-review__metadata"
-            items={[
-              {
-                description: `${selectedIssue.warningId}: ${selectedIssue.warningMessage}`,
-                term: selectsActionTarget ? "Selected issue" : "Focused issue"
-              },
-              {
-                description: `${selectedIssue.sourceId}: ${selectedIssue.sourceTitle}`,
-                term: "Source record"
-              },
-              {
-                description: selectedIssue.sourceStatus,
-                term: "Source status"
-              },
-              {
-                description: selectedIssue.sourceFreshness,
-                term: "Freshness"
-              },
-              {
-                description: selectedIssue.ownerLabel,
-                term: "Synthetic owner"
-              },
-              {
-                description: selectedIssue.reviewOwnerQueue,
-                term: "Owner queue"
-              }
-            ]}
-          />
-          <p>{selectedIssue.evidenceImpact}</p>
-          <div className="evidence-workbench-source-review__actions">
-            <QhdsButton
-              href={`${sourceInventoryPath}#source-${selectedIssue.sourceId}`}
-              variant="secondary"
-            >
-              Open source record
-            </QhdsButton>
-            {reviewActionPath ? (
-              <QhdsButton href={reviewActionPath} variant="secondary">
-                Continue to review actions
-              </QhdsButton>
-            ) : null}
-          </div>
-        </section>
-      ) : null}
+      {selectedSummaryPosition === "after-selector" ? selectedIssueSummary : null}
 
-      <SourceBlockerIssueTable issues={issues} selectedIssueId={selectedIssue?.id ?? null} />
+      {showIssueTable ? (
+        <SourceBlockerIssueTable issues={issues} selectedIssueId={selectedIssue?.id ?? null} />
+      ) : null}
     </div>
+  );
+}
+
+function SelectedSourceIssueSummary({
+  reviewActionPath,
+  selectedIssue,
+  selectsActionTarget,
+  sourceInventoryPath
+}: Readonly<{
+  reviewActionPath?: string;
+  selectedIssue: SourceBlockerIssue;
+  selectsActionTarget: boolean;
+  sourceInventoryPath: string;
+}>): ReactElement {
+  return (
+    <section
+      aria-labelledby="selected-source-issue-title"
+      className="evidence-workbench-source-review__selected-summary"
+    >
+      <h3 id="selected-source-issue-title">
+        {selectsActionTarget ? "Selected source issue" : "Focused source issue"}
+      </h3>
+      <QhdsSummaryList
+        ariaLabel={
+          selectsActionTarget
+            ? "Selected source issue for local action"
+            : "Focused source issue"
+        }
+        className="evidence-workbench-source-review__metadata"
+        items={[
+          {
+            description: `${selectedIssue.warningId}: ${selectedIssue.warningMessage}`,
+            term: selectsActionTarget ? "Selected issue" : "Focused issue"
+          },
+          {
+            description: `${selectedIssue.sourceId}: ${selectedIssue.sourceTitle}`,
+            term: "Source record"
+          },
+          {
+            description: selectedIssue.sourceStatus,
+            term: "Source status"
+          },
+          {
+            description: selectedIssue.sourceFreshness,
+            term: "Freshness"
+          },
+          {
+            description: selectedIssue.ownerLabel,
+            term: "Synthetic owner"
+          },
+          {
+            description: selectedIssue.reviewOwnerQueue,
+            term: "Owner queue"
+          }
+        ]}
+      />
+      <p>{selectedIssue.evidenceImpact}</p>
+      <div className="evidence-workbench-source-review__actions">
+        <QhdsButton
+          href={`${sourceInventoryPath}#source-${selectedIssue.sourceId}`}
+          variant="secondary"
+        >
+          Open source record
+        </QhdsButton>
+        {reviewActionPath ? (
+          <QhdsButton href={reviewActionPath} variant="secondary">
+            Continue to review actions
+          </QhdsButton>
+        ) : null}
+      </div>
+    </section>
   );
 }
 

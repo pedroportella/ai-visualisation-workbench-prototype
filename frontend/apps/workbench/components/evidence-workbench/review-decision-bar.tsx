@@ -22,6 +22,7 @@ import {
 } from "./review-action-state";
 
 export interface ReviewDecisionBarProps {
+  flow?: "audit" | "decision";
   onApplyAction: (
     actionId: string,
     reviewerNote: string,
@@ -33,6 +34,7 @@ export interface ReviewDecisionBarProps {
 }
 
 export function ReviewDecisionBar({
+  flow = "audit",
   onApplyAction,
   onReset,
   selectedIssue,
@@ -57,6 +59,17 @@ export function ReviewDecisionBar({
   const selectedIssueLabel = selectedIssue
     ? `${selectedIssue.warningId}: ${selectedIssue.warningMessage} (${selectedIssue.sourceId}, ${selectedIssue.ownerLabel})`
     : "No source blocker issue selected.";
+  const isDecisionFlow = flow === "decision";
+  const primaryAction =
+    state.actions.find((action) => action.id === PRIMARY_REVIEW_ACTION_ID) ??
+    state.actions[0] ??
+    null;
+  const primaryActionDescription = primaryAction
+    ? `${primaryAction.label}: ${
+        getReviewActionAvailability(state.review, primaryAction, reviewerNote).reason ??
+        actionReason(primaryAction, selectedIssue)
+      }`
+    : "No local review action is available in this fixture state.";
 
   const handleNoteChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setReviewerNote(event.target.value);
@@ -65,6 +78,108 @@ export function ReviewDecisionBar({
     onReset();
     setReviewerNote(PRIMARY_REVIEWER_NOTE);
   };
+  const copyState = (
+    <div className="evidence-workbench-review-actions__copy-state">
+      <QhdsButton
+        aria-describedby={copyReasonId}
+        disabled={copyDisabled}
+        type="button"
+        variant="secondary"
+      >
+        Copy approved answer
+      </QhdsButton>
+      <p id={copyReasonId}>{copyReason}</p>
+    </div>
+  );
+  const reviewerNoteInput = (
+    <QhdsTextarea
+      className="evidence-workbench-review-actions__note-input"
+      hint="Stored only in this local prototype state."
+      label="Reviewer note"
+      onChange={handleNoteChange}
+      rows={3}
+      value={reviewerNote}
+    />
+  );
+  const reviewActionButtons = (
+    <fieldset
+      aria-label="Review actions"
+      className="evidence-workbench-review-actions__button-grid"
+    >
+      <legend className="evidence-workbench-review-actions__legend">
+        Review actions
+      </legend>
+      {state.actions.map((action) => (
+        <ReviewActionButton
+          action={action}
+          baseId={baseId}
+          key={action.id}
+          onApplyAction={onApplyAction}
+          reviewerNote={reviewerNote}
+          selectedIssue={selectedIssue}
+          state={state}
+        />
+      ))}
+    </fieldset>
+  );
+  const controlsClassName = [
+    "evidence-workbench-review-actions__controls",
+    isDecisionFlow ? "evidence-workbench-review-actions__controls--action-first" : ""
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const controls = (
+    <div className={controlsClassName}>
+      {isDecisionFlow ? (
+        <>
+          {reviewActionButtons}
+          {reviewerNoteInput}
+        </>
+      ) : (
+        <>
+          {reviewerNoteInput}
+          {reviewActionButtons}
+        </>
+      )}
+    </div>
+  );
+  const standardSummaryItems = [
+    { description: selectedIssueLabel, term: "Selected source issue" },
+    { description: state.feedback, term: "Feedback" },
+    { description: actionPath, term: "Warning path" },
+    {
+      description: lastActionTargetLabel(state.lastActionTarget),
+      term: "Last local action target"
+    },
+    {
+      description: `${state.audit.id}: ${state.audit.reviewEventIds.length} fixture events; last action ${state.audit.lastReviewActionId ?? "none"}.`,
+      term: "Audit"
+    },
+    {
+      description: `${state.localStateLabel}; reset returns this panel to the loaded fixture seed.`,
+      term: "Local state"
+    }
+  ];
+  const decisionSummaryItems = [
+    { description: selectedIssueLabel, term: "Selected blocker" },
+    { description: primaryActionDescription, term: "Next local action" },
+    { description: state.feedback, term: "Feedback" }
+  ];
+  const auditContextItems = [
+    { description: actionPath, term: "Warning path" },
+    {
+      description: lastActionTargetLabel(state.lastActionTarget),
+      term: "Last local action target"
+    },
+    {
+      description: `${state.audit.id}: ${state.audit.reviewEventIds.length} fixture events; last action ${state.audit.lastReviewActionId ?? "none"}.`,
+      term: "Audit"
+    },
+    {
+      description: `${state.localStateLabel}; reset returns this panel to the loaded fixture seed.`,
+      term: "Local state"
+    }
+  ];
 
   return (
     <section
@@ -95,71 +210,34 @@ export function ReviewDecisionBar({
         </div>
       </div>
 
-      <QhdsSummaryList
-        ariaLabel="Review action metadata"
-        className="evidence-workbench-review-actions__summary"
-        items={[
-          { description: selectedIssueLabel, term: "Selected source issue" },
-          { description: state.feedback, term: "Feedback" },
-          { description: actionPath, term: "Warning path" },
-          {
-            description: lastActionTargetLabel(state.lastActionTarget),
-            term: "Last local action target"
-          },
-          {
-            description: `${state.audit.id}: ${state.audit.reviewEventIds.length} fixture events; last action ${state.audit.lastReviewActionId ?? "none"}.`,
-            term: "Audit"
-          },
-          {
-            description: `${state.localStateLabel}; reset returns this panel to the loaded fixture seed.`,
-            term: "Local state"
-          }
-        ]}
-      />
-
-      <div className="evidence-workbench-review-actions__controls">
-        <QhdsTextarea
-          className="evidence-workbench-review-actions__note-input"
-          hint="Stored only in this local prototype state."
-          label="Reviewer note"
-          onChange={handleNoteChange}
-          rows={3}
-          value={reviewerNote}
-        />
-
-        <fieldset
-          aria-label="Review actions"
-          className="evidence-workbench-review-actions__button-grid"
-        >
-          <legend className="evidence-workbench-review-actions__legend">
-            Review actions
-          </legend>
-          {state.actions.map((action) => (
-            <ReviewActionButton
-              action={action}
-              baseId={baseId}
-              key={action.id}
-              onApplyAction={onApplyAction}
-              reviewerNote={reviewerNote}
-              selectedIssue={selectedIssue}
-              state={state}
-            />
-          ))}
-        </fieldset>
-      </div>
+      {isDecisionFlow ? (
+        <>
+          <QhdsSummaryList
+            ariaLabel="Primary review decision context"
+            className="evidence-workbench-review-actions__summary evidence-workbench-review-actions__decision-context"
+            items={decisionSummaryItems}
+          />
+          {copyState}
+          {controls}
+          <QhdsSummaryList
+            ariaLabel="Local review audit context"
+            className="evidence-workbench-review-actions__summary evidence-workbench-review-actions__audit-context"
+            items={auditContextItems}
+          />
+        </>
+      ) : (
+        <>
+          <QhdsSummaryList
+            ariaLabel="Review action metadata"
+            className="evidence-workbench-review-actions__summary"
+            items={standardSummaryItems}
+          />
+          {controls}
+        </>
+      )}
 
       <div className="evidence-workbench-review-actions__footer">
-        <div className="evidence-workbench-review-actions__copy-state">
-          <QhdsButton
-            aria-describedby={copyReasonId}
-            disabled={copyDisabled}
-            type="button"
-            variant="secondary"
-          >
-            Copy approved answer
-          </QhdsButton>
-          <p id={copyReasonId}>{copyReason}</p>
-        </div>
+        {isDecisionFlow ? null : copyState}
         <QhdsButton onClick={handleReset} type="button" variant="tertiary">
           Reset local review state
         </QhdsButton>
@@ -189,10 +267,7 @@ function ReviewActionButton({
 }) {
   const availability = getReviewActionAvailability(state.review, action, reviewerNote);
   const reasonId = `${baseId}-${action.id.toLowerCase()}-reason`;
-  const targetReason = selectedIssue
-    ? ` Target: ${selectedIssue.warningId} on ${selectedIssue.sourceId}.`
-    : "";
-  const reason = availability.reason ?? `${action.description}${targetReason}`;
+  const reason = availability.reason ?? actionReason(action, selectedIssue);
 
   return (
     <div
@@ -218,6 +293,17 @@ function ReviewActionButton({
       </small>
     </div>
   );
+}
+
+function actionReason(
+  action: EvidenceWorkbenchReviewAction,
+  selectedIssue: ReviewActionTarget | null
+): string {
+  const targetReason = selectedIssue
+    ? ` Target: ${selectedIssue.warningId} on ${selectedIssue.sourceId}.`
+    : "";
+
+  return `${action.description}${targetReason}`;
 }
 
 function reviewStatusTone(statusId: string): AivisEvidenceTone {

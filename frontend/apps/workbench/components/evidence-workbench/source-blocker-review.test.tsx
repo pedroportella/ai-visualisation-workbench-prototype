@@ -54,6 +54,29 @@ describe("SourceBlockerReview", () => {
     expect(html).toContain("Open source record");
   });
 
+  it("can render the selected blocker before selection controls without the issue table", () => {
+    const issues = buildSourceBlockerIssues(fallbackEvidenceWorkbenchData.sourceItems);
+    const selectedIssue = issues[0];
+    const html = renderToStaticMarkup(
+      <SourceBlockerReview
+        issues={issues}
+        onSelectIssue={() => undefined}
+        selectedIssueId={selectedIssue?.id ?? null}
+        selectedSummaryPosition="before-selector"
+        showIssueTable={false}
+        sourceInventoryPath="/evidence-workbench/sources"
+      />
+    );
+    const selectedSummaryIndex = html.indexOf("Selected source issue for local action");
+    const selectorIndex = html.indexOf("Choose source issue for local action");
+
+    expect(selectedSummaryIndex).toBeGreaterThanOrEqual(0);
+    expect(selectorIndex).toBeGreaterThan(selectedSummaryIndex);
+    expect(html).toContain("WARN-FALLBACK-001: Temporary boarding map needs a freshness check.");
+    expect(html).not.toContain("Source blocker issues");
+    expect(html).not.toContain("Selected for action");
+  });
+
   it("falls back to the first blocker issue when the selected issue id is unavailable", () => {
     const issues = buildSourceBlockerIssues(fallbackEvidenceWorkbenchData.sourceItems);
 
