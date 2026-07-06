@@ -176,7 +176,7 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
           role="region"
         >
           <ReactFlow<EvidenceFlowNode, EvidenceFlowEdge>
-            colorMode="light"
+            colorMode="system"
             edges={flowEdges}
             fitView
             maxZoom={1.3}

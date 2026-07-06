@@ -102,6 +102,8 @@ describe("QhdsLayout", () => {
     expect(styles).toContain(".qhds-layout__main-section-body--task");
     expect(styles).toContain("max-width: 76rem");
     expect(styles).toContain(".qhds-layout--has-left-nav .qhds-layout__main");
+    expect(styles).toContain("background: var(--qhds-color-background)");
+    expect(styles).toContain("color: var(--qhds-color-text)");
     expect(styles).toContain(".qhds-layout__left-nav");
     expect(styles).toContain("background-color: var(--qhds-color-left-nav-background)");
     expect(styles).toContain("border-right: var(--QLD-border-width-default) solid var(--qhds-color-left-nav-border)");

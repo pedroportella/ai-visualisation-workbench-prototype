@@ -36,46 +36,50 @@ const viewports = [
   { height: 900, headerMax: 120, headerMin: 72, label: "desktop", width: 1440 },
   { height: 844, headerMax: 160, headerMin: 72, label: "mobile", width: 390 }
 ];
+const colourSchemes = ["light", "dark"] as const;
 
 for (const viewport of viewports) {
-  test.describe(`no-screenshot semantic and layout checks at ${viewport.label}`, () => {
-    test.use({ viewport });
+  for (const colourScheme of colourSchemes) {
+    test.describe(`no-screenshot semantic, layout and ${colourScheme} theme checks at ${viewport.label}`, () => {
+      test.use({ colorScheme: colourScheme, viewport });
 
-    for (const route of routes) {
-      test(`${route.path} preserves main semantics and compact header`, async ({
-        page
-      }) => {
-        assertRuntime();
-        printRuntime(route.path, viewport.label);
+      for (const route of routes) {
+        test(`${route.path} preserves main semantics, contrast and themed surfaces`, async ({
+          page
+        }) => {
+          assertRuntime();
+          printRuntime(route.path, viewport.label, colourScheme);
 
-        await page.goto(route.path);
-        await expect(
-          page.getByRole("heading", { level: 1, name: route.heading })
-        ).toBeVisible();
-        await expect(page.locator(route.readySelector).first()).toBeVisible();
+          await page.goto(route.path);
+          await expect(
+            page.getByRole("heading", { level: 1, name: route.heading })
+          ).toBeVisible();
+          await expect(page.locator(route.readySelector).first()).toBeVisible();
 
-        await expectMainAndHeadingContract(page, route.heading);
-        await expectCompactTaskHeader(page, viewport.headerMin, viewport.headerMax);
-        await expectNoDuplicateIds(page);
-        await expectAriaReferencesResolve(page);
-        await expectNoVisibleFocusableContentInsideAriaHidden(page);
-        await expectHeadingOrder(page);
-        await expectNoHorizontalOverflow(page);
-        await expectMainRegionsHaveBoxes(page);
-        await expectRouteHeightWithinCeiling(page, route.ceiling);
-        await expectActionControlsFitContainers(page);
-        await expectActiveContrastSamples(page);
-        await expectSkipLinkFocus(page);
-        await expectResponsiveNavigation(page, viewport.label);
+          await expectMainAndHeadingContract(page, route.heading);
+          await expectCompactTaskHeader(page, viewport.headerMin, viewport.headerMax);
+          await expectNoDuplicateIds(page);
+          await expectAriaReferencesResolve(page);
+          await expectNoVisibleFocusableContentInsideAriaHidden(page);
+          await expectHeadingOrder(page);
+          await expectNoHorizontalOverflow(page);
+          await expectMainRegionsHaveBoxes(page);
+          await expectRouteHeightWithinCeiling(page, route.ceiling);
+          await expectActionControlsFitContainers(page);
+          await expectActiveContrastSamples(page);
+          await expectThemeColourSamples(page, route.path, viewport.label, colourScheme);
+          await expectSkipLinkFocus(page);
+          await expectResponsiveNavigation(page, viewport.label);
 
-        if (route.path.endsWith("/process")) {
-          await expect(page.locator("#process-map-text-fallback")).toBeVisible();
-          await page.locator("#process-map-text-fallback").focus();
-          await expect(page.locator("#process-map-text-fallback")).toBeFocused();
-        }
-      });
-    }
-  });
+          if (route.path.endsWith("/process")) {
+            await expect(page.locator("#process-map-text-fallback")).toBeVisible();
+            await page.locator("#process-map-text-fallback").focus();
+            await expect(page.locator("#process-map-text-fallback")).toBeFocused();
+          }
+        });
+      }
+    });
+  }
 }
 
 test.describe("no-screenshot mobile drawer checks", () => {
@@ -105,6 +109,38 @@ test.describe("no-screenshot mobile drawer checks", () => {
     await expect(page.locator(".main")).not.toHaveAttribute("aria-hidden", "true");
     await expect(page.locator(".qld__footer")).not.toHaveAttribute("aria-hidden", "true");
     await expect(menuButton).toBeFocused();
+  });
+});
+
+test.describe("no-screenshot header and footer theme stability", () => {
+  test.use({ viewport: { height: 900, width: 1440 } });
+
+  test("keeps header and footer computed colours unchanged between light and dark", async ({
+    page
+  }) => {
+    assertRuntime();
+
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.goto("/evidence-workbench");
+    await expect(page.getByRole("heading", { level: 1, name: "Evidence Workbench" })).toBeVisible();
+    const lightSamples = await collectHeaderFooterSamples(page);
+
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.reload();
+    await expect(page.getByRole("heading", { level: 1, name: "Evidence Workbench" })).toBeVisible();
+    const darkSamples = await collectHeaderFooterSamples(page);
+
+    console.log(
+      [
+        "[aivis-visual-theme] route=/evidence-workbench",
+        "[aivis-visual-theme] viewport=desktop",
+        "[aivis-visual-theme] headerFooterStable=true",
+        `[aivis-visual-theme] light=${JSON.stringify(lightSamples)}`,
+        `[aivis-visual-theme] dark=${JSON.stringify(darkSamples)}`
+      ].join("\n")
+    );
+
+    expect(darkSamples).toEqual(lightSamples);
   });
 });
 
@@ -436,7 +472,10 @@ async function expectActiveContrastSamples(page: Page) {
         return null;
       }
 
-      const [red, green, blue, alpha = "1"] = match[1].split(",").map((part) => part.trim());
+      const [red, green, blue, alpha = "1"] = match[1]
+        .replace(/\s*\/\s*/, " ")
+        .split(/[,\s]+/)
+        .filter(Boolean);
       const parsedAlpha = Number.parseFloat(alpha);
 
       if (parsedAlpha === 0) {
@@ -490,6 +529,20 @@ async function expectActiveContrastSamples(page: Page) {
       "main h3",
       "main a",
       "main button:not(:disabled)",
+      ".aivis-evidence-card",
+      ".aivis-evidence-status",
+      ".aivis-evidence-warning-list__item strong",
+      ".aivis-evidence-warning-list__item p",
+      ".evidence-workbench-answer-markdown p",
+      ".evidence-workbench-citation",
+      ".evidence-workbench-code-block code",
+      ".evidence-workbench-generated-diagram__step",
+      ".evidence-workbench-process-map__fallback",
+      ".evidence-workbench-process-map__node",
+      ".evidence-workbench-selected-claim-warning",
+      ".evidence-workbench-source-inventory__summary",
+      ".qhds-table td",
+      ".qhds-table th",
       ".workbench-task-header .aivis-evidence-status",
       ".qhds-side-nav a"
     ].join(", ");
@@ -520,6 +573,266 @@ async function expectActiveContrastSamples(page: Page) {
   });
 
   expect(failures).toEqual([]);
+}
+
+async function expectThemeColourSamples(
+  page: Page,
+  path: string,
+  viewportLabel: string,
+  colourScheme: "dark" | "light"
+) {
+  const sideNavInteractionSamples = await collectSideNavInteractionSamples(page);
+  const result = await page.evaluate(
+    ({ colourScheme, path, viewportLabel }) => {
+      const parseRgb = (value: string) => {
+        const match = /^rgba?\(([^)]+)\)$/.exec(value.trim());
+
+        if (!match) {
+          return null;
+        }
+
+        const [red, green, blue, alpha = "1"] = match[1]
+          .replace(/\s*\/\s*/, " ")
+          .split(/[,\s]+/)
+          .filter(Boolean);
+        const parsedAlpha = Number.parseFloat(alpha);
+
+        if (parsedAlpha === 0) {
+          return null;
+        }
+
+        return {
+          blue: Number.parseFloat(blue),
+          green: Number.parseFloat(green),
+          red: Number.parseFloat(red)
+        };
+      };
+      const linearise = (channel: number) => {
+        const value = channel / 255;
+
+        return value <= 0.03928
+          ? value / 12.92
+          : ((value + 0.055) / 1.055) ** 2.4;
+      };
+      const relativeLuminance = (color: { blue: number; green: number; red: number }) =>
+        0.2126 * linearise(color.red) +
+        0.7152 * linearise(color.green) +
+        0.0722 * linearise(color.blue);
+      const isElementVisible = (element: Element) => {
+        const rect = element.getBoundingClientRect();
+        const style = window.getComputedStyle(element);
+
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          style.opacity !== "0"
+        );
+      };
+      const effectiveBackground = (element: HTMLElement) => {
+        let current: HTMLElement | null = element;
+
+        while (current) {
+          const background = window.getComputedStyle(current).backgroundColor;
+
+          if (parseRgb(background)) {
+            return background;
+          }
+
+          current = current.parentElement;
+        }
+
+        return window.getComputedStyle(document.body).backgroundColor;
+      };
+      const sampleSpecs = [
+        { label: "body", required: true, selector: "body" },
+        { label: "layout", required: true, selector: ".qhds-layout" },
+        { label: "app-shell", required: true, selector: ".aivis-app-shell" },
+        { label: "main", required: true, selector: ".qhds-layout__main" },
+        { label: "main-region", required: true, selector: "#aivis-main" },
+        { label: "main-section-body", required: true, selector: ".qhds-layout__main-section-body" },
+        { label: "side-nav-shell", required: viewportLabel === "desktop", selector: ".qhds-layout__left-nav" },
+        { label: "side-nav", required: viewportLabel === "desktop", selector: ".qhds-side-nav" },
+        { label: "side-nav-active", required: viewportLabel === "desktop", selector: ".qhds-side-nav__item.active > .qld__left-nav__item-link" },
+        { label: "side-nav-open", selector: ".qld__left-nav__item-link--open" },
+        { label: "side-nav-nested", selector: ".qhds-side-nav__list--nested .qld__left-nav__item-link" },
+        { label: "side-nav-toggle", selector: ".qld__left-nav__item-toggle" },
+        { label: "side-nav-badge", selector: ".qhds-side-nav__badge" },
+        { label: "side-nav-icon", selector: ".qld__left-nav__item-icon .qld__icon" },
+        { label: "task-header", required: true, selector: ".workbench-task-header" },
+        { label: "content-section", selector: ".qhds-content-section" },
+        { label: "overview-card", selector: ".evidence-workbench-overview-card" },
+        { label: "review-actions", selector: ".evidence-workbench-review-actions" },
+        { label: "card", selector: ".qhds-card" },
+        { label: "panel", selector: ".evidence-workbench-panel" },
+        { label: "tag", selector: ".aivis-evidence-status" },
+        { label: "table", selector: ".qhds-table" },
+        { label: "warning", selector: ".aivis-evidence-warning-list__item, .evidence-workbench-selected-claim-warning" },
+        { label: "markdown", selector: ".evidence-workbench-answer-markdown" },
+        { label: "code", selector: ".evidence-workbench-code-block" },
+        { label: "process-map", selector: ".evidence-workbench-process-map__viewport" },
+        { label: "process-node", selector: ".evidence-workbench-process-map__node" },
+        { label: "fallback-panel", selector: ".evidence-workbench-process-map__fallback, .evidence-workbench-generated-diagram" },
+        { label: "context-panel", selector: ".aivis-evidence-context" },
+        { label: "form-control", selector: ".qhds-textarea" }
+      ];
+      const failures: string[] = [];
+      const samples = sampleSpecs.flatMap((spec) => {
+        const element = document.querySelector<HTMLElement>(spec.selector);
+
+        if (!element || !isElementVisible(element)) {
+          return spec.required ? [{ failure: `${spec.label} missing or hidden` }] : [];
+        }
+
+        const style = window.getComputedStyle(element);
+        const background = effectiveBackground(element);
+        const parsedBackground = parseRgb(background);
+        const luminance = parsedBackground ? relativeLuminance(parsedBackground) : null;
+
+        return [{
+          background: style.backgroundColor,
+          border: style.borderColor,
+          color: style.color,
+          effectiveBackground: background,
+          failure: null,
+          label: spec.label,
+          luminance
+        }];
+      });
+
+      for (const sample of samples) {
+        if (sample.failure) {
+          failures.push(sample.failure);
+          continue;
+        }
+
+        if (colourScheme === "dark" && sample.luminance !== null && sample.luminance > 0.55) {
+          failures.push(`${sample.label} effective background is too light for dark theme: ${sample.effectiveBackground}`);
+        }
+
+        if (
+          colourScheme === "light" &&
+          ["body", "layout", "app-shell", "main", "main-region", "main-section-body"].includes(sample.label) &&
+          sample.luminance !== null &&
+          sample.luminance < 0.45
+        ) {
+          failures.push(`${sample.label} effective background is too dark for light theme: ${sample.effectiveBackground}`);
+        }
+      }
+
+      return {
+        failures,
+        path,
+        samples: samples.filter((sample) => !sample.failure),
+        viewportLabel
+      };
+    },
+    { colourScheme, path, viewportLabel }
+  );
+
+  console.log(
+    [
+      `[aivis-visual-theme] route=${path}`,
+      `[aivis-visual-theme] viewport=${viewportLabel}`,
+      `[aivis-visual-theme] colourScheme=${colourScheme}`,
+      ...result.samples.map(
+        (sample) =>
+          `[aivis-visual-theme] ${sample.label} color=${sample.color} bg=${sample.background} effectiveBg=${sample.effectiveBackground} border=${sample.border}`
+      ),
+      ...sideNavInteractionSamples.map(
+        (sample) =>
+          `[aivis-visual-theme] ${sample.label} color=${sample.color} bg=${sample.background} outline=${sample.outlineColor} boxShadow=${sample.boxShadow}`
+      )
+    ].join("\n")
+  );
+
+  expect(result.failures).toEqual([]);
+}
+
+async function collectSideNavInteractionSamples(page: Page) {
+  const samples: Array<{
+    background: string;
+    boxShadow: string;
+    color: string;
+    label: string;
+    outlineColor: string;
+  }> = [];
+  const link = page.locator(".qhds-side-nav .qld__left-nav__item-link").first();
+  const toggle = page.locator(".qhds-side-nav .qld__left-nav__item-toggle").first();
+
+  if (await link.isVisible().catch(() => false)) {
+    await link.hover();
+    samples.push(await link.evaluate((element) => {
+      const style = window.getComputedStyle(element);
+
+      return {
+        background: style.backgroundColor,
+        boxShadow: style.boxShadow,
+        color: style.color,
+        label: "side-nav-link-hover",
+        outlineColor: style.outlineColor
+      };
+    }));
+
+    await link.focus();
+    samples.push(await link.evaluate((element) => {
+      const style = window.getComputedStyle(element);
+
+      return {
+        background: style.backgroundColor,
+        boxShadow: style.boxShadow,
+        color: style.color,
+        label: "side-nav-link-focus",
+        outlineColor: style.outlineColor
+      };
+    }));
+  }
+
+  if (await toggle.isVisible().catch(() => false)) {
+    await toggle.hover();
+    samples.push(await toggle.evaluate((element) => {
+      const style = window.getComputedStyle(element);
+
+      return {
+        background: style.backgroundColor,
+        boxShadow: style.boxShadow,
+        color: style.color,
+        label: "side-nav-toggle-hover",
+        outlineColor: style.outlineColor
+      };
+    }));
+  }
+
+  return samples;
+}
+
+async function collectHeaderFooterSamples(page: Page) {
+  return page.evaluate(() => {
+    const sample = (selector: string) => {
+      const element = document.querySelector<HTMLElement>(selector);
+
+      if (!element) {
+        return null;
+      }
+
+      const style = window.getComputedStyle(element);
+
+      return {
+        background: style.backgroundColor,
+        borderTopColor: style.borderTopColor,
+        color: style.color
+      };
+    };
+
+    return {
+      footer: sample(".qld__footer"),
+      footerContent: sample(".qhds-footer__content"),
+      header: sample(".qld__header"),
+      headerMain: sample(".qld__header__main"),
+      preHeader: sample(".qld__header__pre-header")
+    };
+  });
 }
 
 async function expectSkipLinkFocus(page: Page) {
@@ -561,16 +874,17 @@ function assertRuntime() {
   expect(process.env.AIVIS_E2E_BASE_URL).toBeTruthy();
 }
 
-function printRuntime(path: string, viewportLabel: string) {
+function printRuntime(path: string, viewportLabel: string, colourScheme?: "dark" | "light") {
   console.log(
     [
       `[aivis-visual] route=${path}`,
       `[aivis-visual] viewport=${viewportLabel}`,
+      colourScheme ? `[aivis-visual] colourScheme=${colourScheme}` : null,
       `[aivis-visual] mode=${process.env.AIVIS_E2E_MODE}`,
       `[aivis-visual] baseUrl=${process.env.AIVIS_E2E_BASE_URL}`,
       `[aivis-visual] runtimeOwner=${process.env.AIVIS_E2E_RUNTIME_OWNER}`,
       "[aivis-visual] screenshotCapture=disabled",
       "[aivis-visual] teardownStatus=owned-by-wrapper"
-    ].join("\n")
+    ].filter(Boolean).join("\n")
   );
 }

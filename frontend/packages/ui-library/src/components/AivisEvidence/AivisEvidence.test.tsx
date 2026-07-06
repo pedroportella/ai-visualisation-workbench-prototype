@@ -118,6 +118,7 @@ describe("AivisEvidence adapters", () => {
     );
 
     expect(html).toContain("aivis-evidence-context");
+    expect(html).not.toContain("qld__body--light aivis-evidence-context");
     expect(html).toContain("Public context anchors");
     expect(html).toContain("aivis-evidence-path-list");
     expect(html).toContain("aivis-evidence-filter-nav");
@@ -142,8 +143,9 @@ describe("AivisEvidence adapters", () => {
     const calloutBlock = styles.match(/\.aivis-evidence-callout\.qld__callout \{(?<block>[\s\S]*?)\n\}/)
       ?.groups?.block;
 
-    expect(calloutBlock).toContain("background: var(--qhds-primitive-color-neutral-50)");
-    expect(calloutBlock).toContain("border-left: var(--QLD-border-width-thick) solid var(--QLD-color-light__design-accent)");
+    expect(calloutBlock).toContain("background: var(--aivis-color-callout-background)");
+    expect(calloutBlock).toContain("border-left: var(--aivis-border-width-accent) solid var(--aivis-color-callout-border)");
+    expect(calloutBlock).toContain("color: var(--aivis-shell-text)");
     expect(calloutBlock).toContain("max-width: 80ch");
     expect(calloutBlock).toContain("padding: var(--qhds-space-6) var(--qhds-space-4) var(--qhds-space-6) var(--qhds-space-6)");
     expect(calloutBlock).not.toContain("qhds-color-warning-background");

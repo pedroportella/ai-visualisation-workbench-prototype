@@ -159,8 +159,12 @@ describe("QhdsSideNav", () => {
   });
 
   it("matches QGDS left navigation shell and accordion control styling", () => {
+    expect(styles).toContain("--qhds-left-nav-action: var(--qhds-color-left-nav-action)");
+    expect(styles).toContain("--qhds-left-nav-active-accent: var(--qhds-color-left-nav-active-accent)");
     expect(styles).toContain("--qhds-left-nav-background: var(--qhds-color-left-nav-background)");
     expect(styles).toContain("--qhds-left-nav-border: var(--qhds-color-left-nav-border)");
+    expect(styles).toContain("--qhds-left-nav-focus: var(--qhds-color-left-nav-focus)");
+    expect(styles).toContain("--qhds-left-nav-link-hover: var(--qhds-color-left-nav-link-hover)");
     expect(styles).toContain("box-sizing: border-box");
     expect(styles).toContain("border-right: var(--QLD-border-width-default) solid var(--qhds-left-nav-border)");
     expect(styles).toContain("box-shadow: var(--qhds-shadow-side-nav-toggle)");
@@ -170,12 +174,15 @@ describe("QhdsSideNav", () => {
     expect(styles).toContain("inset: 0");
     expect(styles).toContain("position: absolute");
     expect(styles).toContain("transform: rotate(-180deg)");
+    expect(styles).toContain("background-color: var(--qhds-left-nav-active-accent)");
     expect(styles).not.toContain("qhds-side-nav__heading");
+    expect(styles).not.toContain("var(--QLD-color-light__");
   });
 
   it("keeps visited navigation links on the accessible side-nav palette", () => {
     expect(styles).toContain("a.qld__left-nav__item-link:visited");
-    expect(styles).toContain("color: var(--qhds-left-nav-text)");
+    expect(styles).toContain("--qhds-left-nav-visited: var(--qhds-color-left-nav-visited)");
+    expect(styles).toContain("color: var(--qhds-left-nav-visited)");
     expect(styles).toContain("a.qld__left-nav__item-link:visited:hover");
     expect(styles).toContain("color: var(--qhds-left-nav-link)");
     expect(styles).toContain("a.qld__left-nav__item-link--open:visited");

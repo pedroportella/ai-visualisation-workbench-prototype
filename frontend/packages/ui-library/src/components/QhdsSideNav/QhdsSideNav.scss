@@ -1,16 +1,17 @@
 .qhds-side-nav.qld__left-nav {
-  --qhds-left-nav-action: var(--QLD-color-light__action--secondary);
+  --qhds-left-nav-action: var(--qhds-color-left-nav-action);
+  --qhds-left-nav-active-accent: var(--qhds-color-left-nav-active-accent);
   --qhds-left-nav-background: var(--qhds-color-left-nav-background);
   --qhds-left-nav-border: var(--qhds-color-left-nav-border);
-  --qhds-left-nav-focus: var(--QLD-color-light__focus);
-  --qhds-left-nav-heading: var(--QLD-color-light__heading);
-  --qhds-left-nav-link: var(--QLD-color-light__link);
-  --qhds-left-nav-link-hover: var(--QLD-color-light__action--primary-hover);
-  --qhds-left-nav-muted: var(--QLD-color-light__text--lighter);
-  --qhds-left-nav-hover-background: var(--QLD-color-light__background--alt);
-  --qhds-left-nav-surface: var(--qhds-primitive-color-white);
-  --qhds-left-nav-text: var(--QLD-color-light__text);
-  --qhds-left-nav-visited: var(--qhds-left-nav-text);
+  --qhds-left-nav-focus: var(--qhds-color-left-nav-focus);
+  --qhds-left-nav-heading: var(--qhds-color-left-nav-heading);
+  --qhds-left-nav-hover-background: var(--qhds-color-left-nav-hover-background);
+  --qhds-left-nav-link: var(--qhds-color-left-nav-link);
+  --qhds-left-nav-link-hover: var(--qhds-color-left-nav-link-hover);
+  --qhds-left-nav-muted: var(--qhds-color-left-nav-muted);
+  --qhds-left-nav-surface: var(--qhds-color-left-nav-surface);
+  --qhds-left-nav-text: var(--qhds-color-left-nav-text);
+  --qhds-left-nav-visited: var(--qhds-color-left-nav-visited);
 
   background-color: var(--qhds-left-nav-background);
   border-right: var(--QLD-border-width-default) solid var(--qhds-left-nav-border);
@@ -43,7 +44,7 @@
 }
 
 .qhds-side-nav__item:not(.active) > .qld__left-nav__item-link::after {
-  background-color: var(--QLD-color-light__design-accent);
+  background-color: var(--qhds-left-nav-active-accent);
   content: "";
   height: calc(100% + 1px);
   left: 0;

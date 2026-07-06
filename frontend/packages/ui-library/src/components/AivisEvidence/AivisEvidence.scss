@@ -56,7 +56,10 @@
 
 .aivis-evidence-context {
   align-items: start;
+  background: var(--aivis-color-context-background);
+  border: var(--aivis-border-width-thin) solid var(--aivis-color-context-border);
   border-left: var(--aivis-border-width-accent) solid var(--aivis-color-callout-border);
+  color: var(--aivis-shell-text);
   display: grid;
   gap: var(--aivis-workbench-inline-gap);
   grid-template-columns: var(--aivis-workbench-context-columns);
@@ -232,10 +235,10 @@
 }
 
 .aivis-evidence-callout.qld__callout {
-  background: var(--qhds-primitive-color-neutral-50);
+  background: var(--aivis-color-callout-background);
   border: 0;
-  border-left: var(--QLD-border-width-thick) solid var(--QLD-color-light__design-accent);
-  color: var(--QLD-color-light__text);
+  border-left: var(--aivis-border-width-accent) solid var(--aivis-color-callout-border);
+  color: var(--aivis-shell-text);
   display: grid;
   gap: var(--aivis-workbench-copy-gap);
   max-width: 80ch;

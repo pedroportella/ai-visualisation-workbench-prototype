@@ -150,6 +150,9 @@ describe("WorkbenchAppShell", () => {
   });
 
   it("keeps mobile side-nav hiding local without reaching into layout gutters", () => {
+    expect(styles).toContain(".aivis-app-shell .qhds-layout__main");
+    expect(styles).toContain("background: var(--aivis-shell-page)");
+    expect(styles).toContain("color: var(--aivis-shell-text)");
     expect(styles).toContain("@media (max-width: 75rem)");
     expect(styles).toContain(
       ".aivis-app-shell.qhds-layout--has-left-nav .qhds-layout__left-nav"

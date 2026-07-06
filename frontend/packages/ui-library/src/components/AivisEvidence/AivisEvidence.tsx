@@ -124,7 +124,7 @@ export function AivisEvidenceContextAnchors({
   summary
 }: AivisEvidenceContextAnchorsProps) {
   return (
-    <div className="qld__body qld__body--light aivis-evidence-context">
+    <div className="aivis-evidence-context">
       <div className="aivis-evidence-context__summary">
         <p>{summary}</p>
         <p className="aivis-evidence-context__date">{dateLabel}</p>

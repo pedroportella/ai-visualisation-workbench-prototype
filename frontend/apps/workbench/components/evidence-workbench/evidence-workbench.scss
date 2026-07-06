@@ -370,12 +370,31 @@
 }
 
 .evidence-workbench-process-map__viewport {
-  background: var(--qhds-color-surface);
-  border: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  --xy-background-color: var(--aivis-color-panel-surface);
+  --xy-background-pattern-color: var(--aivis-shell-border-muted);
+  --xy-controls-button-background-color: var(--aivis-color-card-surface);
+  --xy-controls-button-background-color-hover: var(--aivis-color-accent-surface);
+  --xy-controls-button-border-color: var(--aivis-shell-border);
+  --xy-controls-button-color: var(--aivis-shell-text);
+  --xy-controls-button-color-hover: var(--aivis-shell-text);
+  --xy-controls-box-shadow: none;
+
+  background: var(--aivis-color-panel-surface);
+  border: var(--aivis-border-width-thin) solid var(--aivis-shell-border);
   border-radius: var(--QLD-border-radius-xs);
+  color: var(--aivis-shell-text);
   height: clamp(22rem, 44vh, 30rem);
   min-width: 0;
   overflow: hidden;
+}
+
+.evidence-workbench-process-map__viewport .react-flow__controls {
+  border: var(--aivis-border-width-thin) solid var(--aivis-shell-border);
+}
+
+.evidence-workbench-process-map__viewport .react-flow__controls-button:focus-visible {
+  outline: var(--aivis-focus-width) solid var(--aivis-shell-focus);
+  outline-offset: var(--aivis-focus-offset);
 }
 
 .evidence-workbench-process-map__viewport .react-flow__attribution {
@@ -397,8 +416,8 @@
 }
 
 .evidence-workbench-process-map__node {
-  background: var(--qhds-color-surface);
-  border: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  background: var(--aivis-color-card-surface);
+  border: var(--aivis-border-width-thin) solid var(--aivis-shell-border);
   border-radius: var(--QLD-border-radius-xs);
   color: var(--aivis-shell-text);
   cursor: pointer;
@@ -411,24 +430,24 @@
 }
 
 .evidence-workbench-process-map__handle.react-flow__handle {
-  background: var(--qhds-color-border);
-  border: var(--aivis-border-width-thin) solid var(--qhds-color-surface);
+  background: var(--aivis-shell-border);
+  border: var(--aivis-border-width-thin) solid var(--aivis-color-panel-surface);
   height: var(--aivis-space-2);
   width: var(--aivis-space-2);
 }
 
 .evidence-workbench-process-map__node[data-node-tone="context"] {
-  background: var(--qhds-color-surface-alt);
+  background: var(--aivis-color-context-background);
 }
 
 .evidence-workbench-process-map__node[data-node-tone="warning"] {
-  background: var(--qhds-color-warning-background);
-  border-color: var(--qhds-color-warning-border);
+  background: var(--aivis-color-warning-background);
+  border-color: var(--aivis-color-warning-border);
 }
 
 .evidence-workbench-process-map__node[data-node-tone="review"] {
-  background: var(--qhds-color-surface-alt);
-  border-color: var(--qhds-color-border);
+  background: var(--aivis-color-accent-surface);
+  border-color: var(--aivis-color-accent-border);
 }
 
 .evidence-workbench-process-map__node[aria-pressed="true"],
@@ -460,15 +479,15 @@
 }
 
 .evidence-workbench-process-map__node-status {
-  color: var(--qhds-color-link);
+  color: var(--aivis-shell-accent);
   font-size: var(--aivis-font-size-small);
   font-weight: var(--aivis-font-weight-bold);
   line-height: var(--aivis-line-height-short);
 }
 
 .evidence-workbench-process-map__fallback {
-  background: var(--qhds-color-surface);
-  border: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  background: var(--aivis-color-card-surface);
+  border: var(--aivis-border-width-thin) solid var(--aivis-shell-border);
   border-radius: var(--QLD-border-radius-xs);
   display: grid;
   gap: var(--aivis-workbench-copy-gap);

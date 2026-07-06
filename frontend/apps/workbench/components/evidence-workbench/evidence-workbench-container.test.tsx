@@ -178,6 +178,7 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain('id="source-SRC-FALLBACK-002"');
     expect(html).toContain('data-source-expanded-default="false"');
     expect(html).toContain("Public context anchors");
+    expect(html).not.toContain("qld__body--light aivis-evidence-context");
     expect(html).not.toContain('id="answer-title"');
     expect(html).not.toContain('id="process-map-title"');
     expect(html).not.toContain("qld__abstract");
@@ -254,6 +255,9 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).not.toContain("evidence-workbench-page-intro");
     expect(styles).not.toContain("@media (max-width: 61.9375rem)");
     expect(styles).toContain(".evidence-workbench-process-map__viewport");
+    expect(styles).toContain("--xy-background-color: var(--aivis-color-panel-surface);");
+    expect(styles).toContain("--xy-controls-button-background-color: var(--aivis-color-card-surface);");
+    expect(styles).toContain("background: var(--aivis-color-card-surface);");
     expect(styles).toContain(".evidence-workbench-process-map__handle.react-flow__handle");
     expect(styles).toContain(".evidence-workbench-process-map__fallback:focus-visible");
     expect(styles).toContain(".evidence-workbench-audit-summary:focus-visible");

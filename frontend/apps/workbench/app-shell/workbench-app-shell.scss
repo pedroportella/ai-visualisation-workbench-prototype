@@ -3,6 +3,11 @@
   color: var(--aivis-shell-text);
 }
 
+.aivis-app-shell .qhds-layout__main {
+  background: var(--aivis-shell-page);
+  color: var(--aivis-shell-text);
+}
+
 .aivis-app-shell .qhds-footer__content {
   color: var(--aivis-shell-footer-muted);
 }

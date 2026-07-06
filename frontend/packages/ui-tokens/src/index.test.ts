@@ -45,6 +45,8 @@ describe("prototypeTokens", () => {
     expect(prototypeTokens.color.semanticVariables).toContain("--qhds-color-header-background");
     expect(prototypeTokens.color.semanticVariables).toContain("--qhds-color-left-nav-background");
     expect(prototypeTokens.color.semanticVariables).toContain("--qhds-color-left-nav-border");
+    expect(prototypeTokens.color.semanticVariables).toContain("--qhds-color-left-nav-link-hover");
+    expect(prototypeTokens.color.semanticVariables).toContain("--qhds-color-left-nav-active-accent");
     expect(prototypeTokens.color.semanticVariables).toContain("--qhds-shadow-button-hover");
     expect(prototypeTokens.color.semanticVariables).toContain("--qhds-shadow-side-nav-toggle");
   });
@@ -99,8 +101,9 @@ describe("prototypeTokens", () => {
     expect(styles).toContain("[data-aivis-theme=\"light\"]");
     expect(styles).toContain("[data-aivis-theme=\"dark\"]");
     expect(styles).toContain("--aivis-color-scheme: dark");
-    expect(styles).toContain("--aivis-palette-page: var(--QLD-color-dark__background--alt)");
-    expect(styles).toContain("--aivis-palette-surface: var(--qhds-primitive-color-white)");
+    expect(styles).toContain("--aivis-palette-page: var(--qhds-palette-strong-background)");
+    expect(styles).toContain("--aivis-palette-surface: var(--qhds-palette-strong-surface)");
+    expect(styles).toContain("--aivis-palette-text: var(--qhds-palette-strong-text)");
     expect(styles).toContain(":root:not(.light):not(.light-theme)");
   });
 
@@ -118,8 +121,12 @@ describe("prototypeTokens", () => {
     expect(styles).toContain("--qhds-palette-bright-background: var(--QLD-color-light__background)");
     expect(styles).toContain("--qhds-palette-left-nav-background: var(--qhds-primitive-color-neutral-50)");
     expect(styles).toContain("--qhds-palette-left-nav-border: var(--qhds-primitive-color-neutral-100)");
+    expect(styles).toContain("--qhds-palette-left-nav-link-hover: var(--QLD-color-light__action--primary-hover)");
     expect(styles).toContain("--qhds-color-left-nav-background: var(--qhds-palette-left-nav-background)");
     expect(styles).toContain("--qhds-color-left-nav-border: var(--qhds-palette-left-nav-border)");
+    expect(styles).toContain("--qhds-color-left-nav-link-hover: var(--qhds-palette-left-nav-link-hover)");
+    expect(styles).toContain("--qhds-color-left-nav-background: var(--qhds-palette-strong-background)");
+    expect(styles).toContain("--qhds-color-left-nav-link-hover: var(--qhds-palette-strong-action)");
     expect(styles).toContain("--qhds-palette-alt-background: var(--QLD-color-light__background--alt)");
     expect(styles).toContain("--qhds-palette-bold-background: var(--QLD-color-dark__background)");
     expect(styles).toContain("--qhds-palette-bold-link-visited: var(--QLD-color-dark__link)");
@@ -128,13 +135,16 @@ describe("prototypeTokens", () => {
     expect(styles).toContain("--qhds-palette-feedback-error: var(--QLD-color-status__error--darker)");
     expect(styles).toContain("--qhds-palette-feedback-error-border: var(--QLD-color-status__error)");
     expect(styles).toContain("--qhds-palette-feedback-warning-border: var(--QLD-color-status__caution--darker)");
+    expect(styles).toContain("--qhds-palette-feedback-dark-background: var(--qhds-palette-bold-surface)");
     expect(styles).toContain("--qhds-palette-feedback-info-text: var(--QLD-color-light__text)");
     expect(styles).toContain("--qhds-color-overlay-disabled: rgb(0 0 0 / 10%)");
     expect(styles).toContain("--qhds-shadow-button-hover: 0 0.125rem 0.25rem rgb(0 0 0 / 20%)");
     expect(styles).toContain("@media (prefers-color-scheme: dark)");
+    expect(styles).toContain(':root:not(.light):not(.light-theme):not([data-qhds-theme="light"])');
     expect(styles).toContain("--qhds-color-background: var(--qhds-primitive-color-black)");
     expect(styles).toContain("--qhds-color-link-visited: var(--qhds-palette-bold-link-visited)");
     expect(styles).toContain("--qhds-color-error: var(--QLD-color-status__error--lightest)");
+    expect(styles).toContain("--qhds-color-warning-background: var(--qhds-palette-feedback-dark-background)");
     expect(styles).toContain("--qhds-color-invalid-border: var(--QLD-color-status__error--lightest)");
     expect(styles).toContain("--qhds-color-focus: var(--qhds-palette-bold-focus)");
   });
