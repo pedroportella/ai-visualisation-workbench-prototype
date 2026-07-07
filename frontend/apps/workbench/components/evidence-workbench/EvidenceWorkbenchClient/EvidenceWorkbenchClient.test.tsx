@@ -23,6 +23,30 @@ const styles = [
   readFileSync(
     join(componentDirectory, "../overview/OverviewTaskLauncher/OverviewTaskLauncher.scss"),
     "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../review/ReviewWorkspace/ReviewWorkspace.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../review/ReviewDecisionGate/ReviewDecisionGate.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../review/ReviewBlockerSelector/ReviewBlockerSelector.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../review/ReviewSupportingEvidence/ReviewSupportingEvidence.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../review/ReviewClaimsSupport/ReviewClaimsSupport.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../review/ReviewActionForm/ReviewActionForm.scss"),
+    "utf8"
   )
 ].join("\n");
 

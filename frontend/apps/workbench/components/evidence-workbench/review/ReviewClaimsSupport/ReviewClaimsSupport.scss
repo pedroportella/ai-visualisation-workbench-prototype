@@ -1,0 +1,12 @@
+.evidence-workbench-claim-stack {
+  display: grid;
+  gap: var(--aivis-workbench-copy-gap);
+  list-style: none;
+  margin: var(--aivis-space-4) 0 0;
+  padding: 0;
+}
+
+.evidence-workbench-claims-section .evidence-workbench-claim-stack {
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin-top: 0;
+}

@@ -1,0 +1,17 @@
+.evidence-workbench-review-decision-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aivis-space-2);
+}
+
+@media (max-width: 44rem) {
+  .evidence-workbench-review-decision-card__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .evidence-workbench-review-decision-card__actions .qhds-button {
+    justify-content: center;
+    width: 100%;
+  }
+}

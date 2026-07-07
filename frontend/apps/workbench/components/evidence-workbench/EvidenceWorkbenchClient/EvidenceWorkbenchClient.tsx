@@ -11,9 +11,9 @@ import {
 } from "../state/reviewDecisionState";
 import { summaryMap } from "../viewFormatters";
 import { OverviewWorkspace } from "../overview/OverviewWorkspace";
+import { ReviewWorkspace } from "../review/ReviewWorkspace";
 import { WorkbenchAuditWorkspace } from "../workbench-audit-workspace";
 import { WorkbenchProcessWorkspace } from "../workbench-process-workspace";
-import { WorkbenchReviewWorkspace } from "../workbench-review-workspace";
 import { WorkbenchSourcesWorkspace } from "../workbench-sources-workspace";
 import {
   buildSourceBlockerIssues,
@@ -66,7 +66,7 @@ export function EvidenceWorkbenchClient({
       ) : null}
 
       {activeView === "review" ? (
-        <WorkbenchReviewWorkspace
+        <ReviewWorkspace
           data={data}
           decisionState={decisionState}
           onApplyAction={applyReviewAction}

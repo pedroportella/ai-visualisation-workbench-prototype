@@ -15,16 +15,16 @@ import {
   MARK_REVIEWED_ACTION_ID,
   PRIMARY_REVIEW_ACTION_ID,
   PRIMARY_REVIEWER_NOTE
-} from "../../services/evidence-workbench/review-action-fixture";
-import type { EvidenceWorkbenchReviewAction } from "../../services/evidence-workbench/types";
+} from "../../../../services/evidence-workbench/review-action-fixture";
+import type { EvidenceWorkbenchReviewAction } from "../../../../services/evidence-workbench/types";
 import {
   getReviewActionAvailability,
   type ReviewActionAvailability,
   type ReviewActionTarget,
   type ReviewDecisionState
-} from "./state/reviewDecisionState";
+} from "../../state/reviewDecisionState";
 
-export interface ReviewDecisionBarProps {
+export interface ReviewActionFormProps {
   flow?: "audit" | "decision";
   labelledBy?: string;
   onApplyAction: (
@@ -37,14 +37,14 @@ export interface ReviewDecisionBarProps {
   state: ReviewDecisionState;
 }
 
-export function ReviewDecisionBar({
+export function ReviewActionForm({
   flow = "audit",
   labelledBy,
   onApplyAction,
   onReset,
   selectedIssue,
   state
-}: ReviewDecisionBarProps) {
+}: ReviewActionFormProps) {
   const baseId = useId();
   const copyReasonId = `${baseId}-copy-reason`;
   const selectedActionReasonId = `${baseId}-selected-action-reason`;

@@ -5,20 +5,20 @@ import {
   QhdsContentSection
 } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
-import { statusTone } from "./viewFormatters";
+import type { EvidenceWorkbenchViewModel } from "../../../../services/evidence-workbench/types";
+import { statusTone } from "../../viewFormatters";
 
-interface ClaimsReviewSectionProps {
+interface ReviewClaimsSupportProps {
   asPanel?: boolean;
   data: EvidenceWorkbenchViewModel;
   selectedClaimId: string;
 }
 
-export function ClaimsReviewSection({
+export function ReviewClaimsSupport({
   asPanel = false,
   data,
   selectedClaimId
-}: Readonly<ClaimsReviewSectionProps>): ReactElement {
+}: Readonly<ReviewClaimsSupportProps>): ReactElement {
   const claimList = (
     <ul
       aria-label="Claims requiring review"
