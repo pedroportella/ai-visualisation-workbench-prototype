@@ -50,7 +50,8 @@ describe("SourceBlockerReview", () => {
     expect(html).toContain('checked="" value="SRC-FALLBACK-002-WARN-FALLBACK-002"');
     expect(html).toContain("Source blocker issues");
     expect(html).toContain("Selected for action");
-    expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-002"');
+    expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-002-accordion-button"');
+    expect(html).toContain("qld__direction-link");
     expect(html).toContain("Open source record");
   });
 
@@ -98,8 +99,9 @@ describe("SourceBlockerReview", () => {
     expect(html).toContain("Action route");
     expect(html).toContain("Continue to the review route to record a local action.");
     expect(html).toContain("Choose source issue to inspect");
-    expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-002"');
+    expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-002-accordion-button"');
     expect(html).toContain('href="/evidence-workbench/review"');
+    expect(html).toContain("qld__direction-link--right");
     expect(html).not.toContain("Source status");
     expect(html).not.toContain("Synthetic owner");
     expect(html).not.toContain("Selected for action");

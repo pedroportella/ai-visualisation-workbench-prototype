@@ -6,7 +6,7 @@ import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter
 } from "../../services/evidence-workbench/types";
-import { SourceTracePanel } from "./source-trace-panel";
+import { SourceRecordDetails, SourceTracePanel } from "./source-trace-panel";
 
 const contextAnchors: EvidenceWorkbenchContextAnchor[] = [
   {
@@ -191,6 +191,20 @@ const filters: EvidenceWorkbenchSourceFilter[] = [
     id: "needs-owner-action",
     label: "Needs owner action",
     sourceIds: ["SRC-002", "SRC-006"]
+  },
+  {
+    count: 1,
+    description: "The selected claim source currently under review.",
+    id: "selected-claim-source",
+    label: "Selected claim source",
+    sourceIds: ["SRC-003"]
+  },
+  {
+    count: 0,
+    description: "No source records currently match this fixture group.",
+    id: "no-current-match",
+    label: "No current match",
+    sourceIds: []
   }
 ];
 
@@ -198,15 +212,29 @@ describe("SourceTracePanel", () => {
   it("renders compact source inventory controls and row content", () => {
     const html = renderPanel();
 
+    expect(html).toContain("evidence-workbench-summary-card evidence-workbench-summary-card--warning evidence-workbench-source-summary-card");
+    expect(html).toContain("evidence-workbench-summary-card__actions evidence-workbench-source-summary-card__actions");
+    expect(html).toContain("evidence-workbench-source-summary-card");
+    expect(html).toContain('aria-labelledby="source-inventory-summary-title"');
     expect(html).toContain("Source inventory summary");
+    expect(html).toContain("Source trace");
+    expect(html).toContain("3 source blockers");
+    expect(html).toContain("Synthetic fixture source set");
     expect(html).toContain("4 source records");
     expect(html).toContain("CLAIM-003 is aligned to 2 selected sources;");
     expect(html).toContain("3 sources currently block approval.");
     expect(html).toContain("All sources");
+    expect(html).toContain("All sources (4)");
     expect(html).toContain("Needs owner action");
-    expect(html).toContain('aria-label="Needs owner action: 2 sources.');
+    expect(html).toContain("Needs owner action (2)");
+    expect(html).toContain('aria-label="Needs owner action: 2 sources. Moves focus to the source inventory table');
+    expect(html).toContain('aria-label="Selected claim source: 1 source. Opens source record SRC-003.');
+    expect(html).toContain('aria-label="No current match: no source records currently match.');
+    expect(html).toContain("No current match (0)");
+    expect(html).toContain('href="#source-inventory-table"');
+    expect(html).not.toContain("aivis-evidence-filter-nav");
     expect(html).toContain("Source inventory table");
-    expect(html).toContain("Primary source list with source status, freshness, owner, citation count and issue summary.");
+    expect(html).toContain("Primary source list ordered with approval blockers first, then selected claim sources, then remaining source records.");
     expect(html).toContain("qld__table__wrapper");
     expect(html).toContain("evidence-workbench-source-inventory");
     expect(html).toContain("Status");
@@ -216,8 +244,8 @@ describe("SourceTracePanel", () => {
     expect(html).toContain("Issue");
     expect(html).toContain("Details");
     expect(html).toContain('aria-label="Open details for SRC-003: Accessible Vehicle Allocation Guidance For Planned Shuttles"');
-    expect(html).toContain('href="#source-SRC-003"');
-    expect(html).toContain('href="#source-SRC-006"');
+    expect(html).toContain('href="#source-SRC-003-accordion-button"');
+    expect(html).toContain('href="#source-SRC-006-accordion-button"');
     expect(html).toContain("Source record details");
     expect(html).toContain("Record details");
     expect(html).toContain("Show details");
@@ -231,10 +259,10 @@ describe("SourceTracePanel", () => {
 
   it("orders selected blocker sources before other blockers and inventory rows", () => {
     const html = renderPanel();
-    const selectedRelationshipBlockerIndex = html.indexOf('id="source-SRC-003"');
-    const selectedMissingBlockerIndex = html.indexOf('id="source-SRC-006"');
-    const staleBlockerIndex = html.indexOf('id="source-SRC-002"');
-    const uncitedInventoryIndex = html.indexOf('id="source-SRC-005"');
+    const selectedRelationshipBlockerIndex = html.indexOf('id="source-SRC-003-accordion-button"');
+    const selectedMissingBlockerIndex = html.indexOf('id="source-SRC-006-accordion-button"');
+    const staleBlockerIndex = html.indexOf('id="source-SRC-002-accordion-button"');
+    const uncitedInventoryIndex = html.indexOf('id="source-SRC-005-accordion-button"');
 
     expect(selectedRelationshipBlockerIndex).toBeGreaterThanOrEqual(0);
     expect(selectedMissingBlockerIndex).toBeGreaterThan(selectedRelationshipBlockerIndex);
@@ -247,19 +275,19 @@ describe("SourceTracePanel", () => {
 
   it("keeps source summaries collapsed by default and toggleable", () => {
     const html = renderPanel();
-    const openSourceIds = sourceIdsWithAttribute(html, "open");
-    const defaultCollapsedSourceIds = sourceIdsWithAttribute(
-      html,
-      'data-source-expanded-default="false"'
-    );
+    const openSourceIds = sourceIdsWithButtonExpanded(html, "true");
+    const defaultCollapsedSourceIds = sourceIdsWithButtonExpanded(html, "false");
 
     expect(openSourceIds).toEqual([]);
     expect(defaultCollapsedSourceIds).toEqual(["SRC-003", "SRC-006", "SRC-002", "SRC-005"]);
-    expect(sourceHasAttribute(html, "SRC-003", 'data-source-expanded-default="false"')).toBe(true);
-    expect(sourceHasAttribute(html, "SRC-003", "evidence-workbench-disclosure")).toBe(true);
-    expect(html).toContain("evidence-workbench-disclosure__content evidence-workbench-source-inventory__detail-panel");
-    expect(html).toContain("evidence-workbench-disclosure__summary evidence-workbench-source-inventory__summary");
-    expect(html).toContain("evidence-workbench-disclosure__toggle evidence-workbench-source-inventory__toggle");
+    expect(sourceHasPanelAttribute(html, "SRC-003", 'data-source-expanded-default="false"')).toBe(true);
+    expect(html).toContain("qhds-accordion");
+    expect(html).toContain('aria-controls="source-SRC-003-accordion-panel" aria-expanded="false"');
+    expect(html).toContain('aria-labelledby="source-SRC-003-accordion-button"');
+    expect(html).toContain('hidden="" id="source-SRC-003-accordion-panel"');
+    expect(html).toContain("evidence-workbench-source-inventory__detail-panel");
+    expect(html).toContain("evidence-workbench-source-inventory__summary");
+    expect(html).not.toContain("<details");
     expect(html).toContain("Show details");
     expect(html).toContain("Hide details");
     expect(html).not.toContain("Press Enter to toggle source details.");
@@ -286,8 +314,8 @@ describe("SourceTracePanel", () => {
   it("preserves source anchors, claim links and public context boundary", () => {
     const html = renderPanel();
 
-    expect(html).toContain('id="source-SRC-003"');
-    expect(html).toContain('id="source-SRC-006"');
+    expect(html).toContain('id="source-SRC-003-accordion-button"');
+    expect(html).toContain('id="source-SRC-006-accordion-button"');
     expect(html).toContain('href="#claim-CLAIM-003"');
     expect(html).toContain('href="#claim-CLAIM-002"');
     expect(html).toContain("aivis-evidence-anchor-chip-list");
@@ -301,29 +329,39 @@ describe("SourceTracePanel", () => {
 
 function renderPanel(): string {
   return renderToStaticMarkup(
-    <SourceTracePanel
-      filters={filters}
-      selectedClaimId="CLAIM-003"
-      sources={sourceItems}
-    />
+    <>
+      <SourceTracePanel
+        filters={filters}
+        selectedClaimId="CLAIM-003"
+        sources={sourceItems}
+      />
+      <section aria-labelledby="source-record-details-title">
+        <h2 id="source-record-details-title">Source record details</h2>
+        <SourceRecordDetails sources={sourceItems} />
+      </section>
+    </>
   );
 }
 
-function sourceIdsWithAttribute(html: string, attribute: string): string[] {
-  return Array.from(html.matchAll(/<details(?<attrs>[^>]*)>/g))
-    .filter((match) => match.groups?.attrs.includes(attribute))
+function sourceIdsWithButtonExpanded(html: string, expanded: "false" | "true"): string[] {
+  return Array.from(html.matchAll(/<button(?<attrs>[^>]*)>/g))
+    .filter((match) =>
+      Boolean(match.groups?.attrs.includes(`aria-expanded="${expanded}"`)) &&
+      Boolean(match.groups?.attrs.includes("-accordion-button"))
+    )
     .map((match) => {
-      const idMatch = match.groups?.attrs.match(/id="source-([^"]+)"/);
+      const idMatch = match.groups?.attrs.match(/id="source-(.+?)-accordion-button"/);
 
       return idMatch?.[1] ?? "";
     })
     .filter(Boolean);
 }
 
-function sourceHasAttribute(html: string, sourceId: string, attribute: string): boolean {
-  return Array.from(html.matchAll(/<details(?<attrs>[^>]*)>/g)).some(
+function sourceHasPanelAttribute(html: string, sourceId: string, attribute: string): boolean {
+  return Array.from(html.matchAll(/<div(?<attrs>[^>]*)>/g)).some(
     (match) =>
-      Boolean(match.groups?.attrs.includes(`id="source-${sourceId}"`)) &&
+      Boolean(match.groups?.attrs.includes(`data-source-row-order=`)) &&
+      Boolean(html.includes(`id="source-${sourceId}-accordion-panel"`)) &&
       Boolean(match.groups?.attrs.includes(attribute))
   );
 }

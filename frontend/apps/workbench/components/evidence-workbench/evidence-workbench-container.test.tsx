@@ -229,6 +229,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).not.toContain("qld__abstract");
     expect(html).not.toContain("evidence-workbench-panel-wide");
     expect(html).not.toContain("evidence-workbench-claim ");
+    expect(html).toContain("evidence-workbench-summary-card evidence-workbench-summary-card--warning evidence-workbench-review-decision-card");
+    expect(html).toContain("evidence-workbench-summary-card__actions evidence-workbench-review-decision-card__actions");
   });
 
   it("renders the source inventory and context on the sources route", () => {
@@ -238,28 +240,64 @@ describe("EvidenceWorkbenchContainer", () => {
         data={fallbackEvidenceWorkbenchData}
       />
     );
+    const sourceInventoryIndex = html.indexOf('id="sources-title-accordion-button"');
+    const blockerIndex = html.indexOf('id="source-action-target-accordion-button"');
+    const recordDetailsIndex = html.indexOf('id="source-record-details-accordion-button"');
+    const scenarioIndex = html.indexOf('id="scenario-accordion-button"');
 
     expect(html).not.toContain('data-workbench-view="sources"');
     expect(html).toContain(
       '<h1 class="workbench-task-header__heading" id="evidence-workbench-title">Source evidence</h1>'
     );
     expect(html).not.toContain("Review the source records, warning relationships and approval blockers");
-    expect(html).toContain('id="sources-title"');
+    expect(html).toContain('id="sources-title-accordion-button"');
+    expect(html).toContain('aria-controls="sources-title-accordion-panel" aria-expanded="true"');
+    expect(html).toContain('id="sources-title-accordion-panel"');
+    expect(html).toContain('aria-labelledby="sources-title-accordion-button"');
+    expect(html).toContain("evidence-workbench-summary-card evidence-workbench-summary-card--warning evidence-workbench-source-summary-card");
+    expect(html).toContain("evidence-workbench-source-summary-card");
+    expect(html).toContain('aria-labelledby="source-inventory-summary-title"');
+    expect(html).toContain("Source trace");
     expect(html).toContain("Source inventory summary");
-    expect(html).toContain("Primary source list with source status, freshness, owner, citation count and issue summary.");
+    expect(html).toContain("Synthetic fixture source set");
+    expect(html).toContain("All sources (3)");
+    expect(html).toContain("Needs owner action (2)");
+    expect(html).not.toContain("aivis-evidence-filter-nav");
+    expect(html).toContain("Primary source list ordered with approval blockers first, then selected claim sources, then remaining source records.");
+    expect(html).toContain('href="#source-inventory-table"');
+    expect(html).toContain('aria-label="Cited in answer: no source records currently match.');
     expect(html).toContain("Open details");
     expect(html).toContain("Source record details");
+    expect(html).toContain('id="source-record-details-accordion-button"');
+    expect(html).toContain('aria-controls="source-record-details-accordion-panel" aria-expanded="false"');
+    expect(html).toContain('hidden="" id="source-record-details-accordion-panel"');
     expect(html).toContain("Blocker action target");
+    expect(html).toContain('id="source-action-target-accordion-button"');
+    expect(html).toContain('aria-controls="source-action-target-accordion-panel" aria-expanded="false"');
+    expect(html).toContain('hidden="" id="source-action-target-accordion-panel"');
     expect(html).toContain("Choose a blocker to inspect");
     expect(html).toContain("Continue to review actions");
     expect(html).toContain('href="/evidence-workbench/review"');
+    expect(html).toContain("qld__direction-link");
     expect(html).toContain("evidence-workbench-source-inventory");
-    expect(html).toContain('id="source-SRC-FALLBACK-002"');
+    expect(html).toContain('id="source-SRC-FALLBACK-002-accordion-button"');
+    expect(html).toContain('aria-controls="source-SRC-FALLBACK-002-accordion-panel" aria-expanded="false"');
+    expect(html).toContain('aria-labelledby="source-SRC-FALLBACK-002-accordion-button"');
+    expect(html).toContain('hidden="" id="source-SRC-FALLBACK-002-accordion-panel"');
     expect(html).toContain('data-source-expanded-default="false"');
     expect(html).not.toContain("Source blocker issues");
     expect(html).not.toContain("evidence-workbench-source-review__issue-table");
+    expect(html).toContain("Scenario context");
+    expect(html).toContain('id="scenario-accordion-button"');
+    expect(html).toContain('aria-controls="scenario-accordion-panel" aria-expanded="false"');
+    expect(html).toContain('hidden="" id="scenario-accordion-panel"');
     expect(html).toContain("Public context anchors");
-    expect(html).not.toContain("qld__body--light aivis-evidence-context");
+    expect(html).toContain("aivis-place-context");
+    expect(sourceInventoryIndex).toBeGreaterThanOrEqual(0);
+    expect(blockerIndex).toBeGreaterThan(sourceInventoryIndex);
+    expect(recordDetailsIndex).toBeGreaterThan(blockerIndex);
+    expect(scenarioIndex).toBeGreaterThan(recordDetailsIndex);
+    expect(html).not.toContain("aivis-evidence-context");
     expect(html).not.toContain('id="answer-title"');
     expect(html).not.toContain('id="process-map-title"');
     expect(html).not.toContain("qld__abstract");
@@ -401,7 +439,23 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain(".evidence-workbench-review-actions__copy-state .qhds-button");
     expect(styles).not.toContain("box-shadow: inset 0.25rem 0 0");
     expect(styles).toContain(".evidence-workbench-review-decision-card");
+    expect(styles).toContain(".evidence-workbench-source-summary-card");
+    expect(styles).toContain(".evidence-workbench-summary-card");
+    expect(styles).toContain(".evidence-workbench-summary-card--warning");
+    expect(styles).toContain(".evidence-workbench-summary-card__actions");
+    expect(styles).toContain(".evidence-workbench-summary-card .aivis-evidence-panel-header");
+    expect(styles).toContain(".evidence-workbench-summary-card .aivis-evidence-status.qld__tag");
+    expect(styles).toContain(".evidence-workbench-summary-card .aivis-evidence-status--warning.qld__tag");
+    expect(styles).toContain("background: var(--qhds-color-surface);");
+    expect(styles).toContain("color: var(--aivis-shell-text);");
+    expect(styles).toContain("background: var(--aivis-color-warning-background);");
+    expect(styles).toContain("border: var(--aivis-border-width-thin) solid var(--aivis-color-warning-border);");
+    expect(styles).not.toContain("--qhds-color-warning-background: var(--qhds-palette-feedback-warning-background);");
+    expect(styles).not.toContain("--qhds-button-secondary-color: var(--QLD-color-light__link);");
+    expect(styles).toContain(".evidence-workbench-source-summary-card__actions");
     expect(styles).toContain(".evidence-workbench-review-accordion .qhds-accordion");
+    expect(styles).toContain(".evidence-workbench-sources-accordion .qhds-accordion");
+    expect(styles).toContain(".evidence-workbench-sources-accordion__panel");
     expect(styles).toContain(".evidence-workbench-current-blocker");
     expect(styles).toContain(".evidence-workbench-supporting-evidence");
     expect(styles).toContain(".evidence-workbench-supporting-evidence .qhds-accordion");
@@ -431,9 +485,11 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain("box-sizing: border-box;");
     expect(styles).toContain(".evidence-workbench-disclosure__toggle::after");
     expect(styles).toContain(".evidence-workbench-disclosure[open] > summary .evidence-workbench-disclosure__toggle-open");
-    expect(styles).toContain(".evidence-workbench-source-inventory__toggle");
+    expect(styles).toContain(".evidence-workbench-source-records .qhds-accordion");
+    expect(styles).toContain(".evidence-workbench-scenario-context .aivis-place-context");
+    expect(styles).toContain(".evidence-workbench-source-records .qhds-accordion__button");
+    expect(styles).toContain("[id^=\"source-\"][id$=\"-accordion-button\"]");
     expect(styles).toContain("align-self: start;");
-    expect(styles).toContain("grid-row: 1;");
     expect(styles).toContain("max-width: 100%;");
     expect(styles).toContain("data-node-tone=\"warning\"");
     expect(styles).not.toContain("workbench-view-intro");

@@ -4,9 +4,11 @@ import { useEffect, type ReactElement } from "react";
 
 import {
   AivisEvidenceAnchorChipList,
-  AivisEvidenceFilterNav,
+  AivisEvidencePanelHeader,
   AivisEvidenceStatus,
   AivisEvidenceTokenList,
+  QhdsAccordion,
+  QhdsButton,
   QhdsTable,
   type QhdsTableColumn,
   type QhdsTableRow
@@ -35,187 +37,315 @@ export function SourceTracePanel({
 
   return (
     <div className="evidence-workbench-source-trace">
-      <SourceInventoryHashFocusBridge />
-
-      <section
-        aria-label="Source inventory summary"
-        className="evidence-workbench-source-trace__summary"
-      >
-        <p>
-          <strong>
-            {sources.length} source record{sources.length === 1 ? "" : "s"}
-          </strong>{" "}
-          in this fixture. {selectedClaimId} is aligned to{" "}
-          {focusedSources.length} selected source
-          {focusedSources.length === 1 ? "" : "s"}; {blockerSources.length} source
-          {blockerSources.length === 1 ? "" : "s"} currently block approval.
-        </p>
-      </section>
-
-      <AivisEvidenceFilterNav
-        ariaLabel="Source inventory groups"
-        filters={filters.map((filter) => ({
-          ariaLabel: `${filter.label}: ${filter.count} source${filter.count === 1 ? "" : "s"}. ${filter.description}`,
-          count: filter.count,
-          href: sourceFilterHref(filter),
-          id: filter.id,
-          label: filter.label
-        }))}
+      <SourceInventorySummaryCard
+        blockerCount={blockerSources.length}
+        filterActions={filters}
+        focusedSourceCount={focusedSources.length}
+        selectedClaimId={selectedClaimId}
+        sourceCount={sources.length}
       />
 
+      <p className="evidence-workbench-source-trace__table-note">
+        The inventory is ordered with approval blockers first, then selected claim sources,
+        then the remaining source records. On smaller screens, scroll the table sideways
+        to inspect each column.
+      </p>
+
       <SourceInventoryTable sources={orderedSources} />
+    </div>
+  );
+}
 
-      <section
-        aria-labelledby="source-record-details-title"
-        className="evidence-workbench-source-records"
-      >
-        <h3 id="source-record-details-title">Source record details</h3>
-        <ol className="evidence-workbench-source-inventory" id="source-inventory">
-          {orderedSources.map((source, index) => {
-            const warnings = sourceWarnings(source);
+function SourceInventorySummaryCard({
+  blockerCount,
+  filterActions,
+  focusedSourceCount,
+  selectedClaimId,
+  sourceCount
+}: Readonly<{
+  blockerCount: number;
+  filterActions: EvidenceWorkbenchSourceFilter[];
+  focusedSourceCount: number;
+  selectedClaimId: string;
+  sourceCount: number;
+}>): ReactElement {
+  return (
+    <section
+      aria-labelledby="source-inventory-summary-title"
+      className="evidence-workbench-summary-card evidence-workbench-summary-card--warning evidence-workbench-source-summary-card"
+    >
+      <AivisEvidencePanelHeader
+        label="Source trace"
+        status={`${blockerCount} source blocker${blockerCount === 1 ? "" : "s"}`}
+        statusTone={blockerCount > 0 ? "warning" : "success"}
+      />
+      <h3 id="source-inventory-summary-title">Source inventory summary</h3>
+      <p>
+        Synthetic fixture source set: <strong>
+          {sourceCount} source record{sourceCount === 1 ? "" : "s"}
+        </strong>{" "}
+        available. {selectedClaimId} is aligned to{" "}
+        {focusedSourceCount} selected source
+        {focusedSourceCount === 1 ? "" : "s"}; {blockerCount} source
+        {blockerCount === 1 ? "" : "s"} currently block approval.
+      </p>
+      <nav aria-label="Source inventory groups">
+        <ul className="qld__link-list evidence-workbench-summary-card__actions evidence-workbench-source-summary-card__actions">
+          {filterActions.map((filter) => (
+            <li key={filter.id}>
+              <QhdsButton
+                aria-label={sourceFilterAriaLabel(filter)}
+                className="evidence-workbench-summary-card__action evidence-workbench-source-summary-card__action"
+                href={sourceFilterHref(filter)}
+                variant="secondary"
+              >
+                {filter.label} ({filter.count})
+              </QhdsButton>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </section>
+  );
+}
 
-            return (
-              <li className="evidence-workbench-source-inventory__item" key={source.id}>
-                <details
-                  className="evidence-workbench-disclosure evidence-workbench-source-inventory__details"
-                  data-source-filter-state={source.trustState}
-                  data-source-expanded-default="false"
-                  data-source-priority={sourcePriority(source)}
-                  data-source-row-order={index + 1}
-                  id={`source-${source.id}`}
-                >
-                  <summary className="evidence-workbench-disclosure__summary evidence-workbench-source-inventory__summary">
-                    <span className="evidence-workbench-source-inventory__source">
-                      <span className="evidence-workbench-source-inventory__cell-label">
-                        Record details
-                      </span>
-                      <strong>{source.id}</strong>
-                      <span>Preview, citation relationships and warning detail.</span>
-                    </span>
+export function SourceRecordDetails({
+  sources
+}: Readonly<Pick<SourceTracePanelProps, "sources">>): ReactElement {
+  const orderedSources = sourceInventoryOrder(sources);
 
-                    <span className="evidence-workbench-source-inventory__detail-status">
-                      {source.isSelectedClaimSource ? (
-                        <AivisEvidenceStatus tone="neutral">Selected claim source</AivisEvidenceStatus>
-                      ) : null}
-                      {hasApprovalBlocker(source) ? (
-                        <AivisEvidenceStatus tone="warning">Approval blocker</AivisEvidenceStatus>
-                      ) : null}
-                    </span>
+  return (
+    <div className="evidence-workbench-source-records">
+      <SourceInventoryHashFocusBridge />
+      <QhdsAccordion
+        headingLevel={3}
+        items={orderedSources.map((source, index) => {
+          const warnings = sourceWarnings(source);
 
-                    <span
-                      className="evidence-workbench-disclosure__toggle evidence-workbench-source-inventory__toggle"
-                    >
-                      <span className="evidence-workbench-disclosure__toggle-closed">
-                        Show details
-                      </span>
-                      <span className="evidence-workbench-disclosure__toggle-open">
-                        Hide details
-                      </span>
-                    </span>
-                  </summary>
-
-                  <div className="evidence-workbench-disclosure__content evidence-workbench-source-inventory__detail-panel">
-                    <div className="evidence-workbench-source-evidence-row">
-                      <section aria-label={`${source.id} evidence preview`}>
-                        <h3>Evidence preview</h3>
-                        <p>
-                          Source title: <strong>{source.title}</strong>
-                        </p>
-                        <p>{source.preview}</p>
-                        <p>
-                          Source type: <strong>{source.sourceType}</strong>
-                        </p>
-                      </section>
-
-                      <section aria-label={`${source.id} citation relationships`}>
-                        <h3>Citation relationship</h3>
-                        <AivisEvidenceTokenList
-                          ariaLabel={`${source.id} citation relationships`}
-                          emptyMessage="Present in the inventory, not cited by this answer."
-                          items={source.citations.map((citation) => ({
-                            description: citation.relationship,
-                            href: `#claim-${citation.claimId}`,
-                            id: citation.id,
-                            label: citation.marker
-                          }))}
-                        />
-                      </section>
-
-                      <section aria-label={`${source.id} context anchors`}>
-                        <h3>Context anchors</h3>
-                        <AivisEvidenceAnchorChipList
-                          anchors={source.contextAnchors.map((anchor) => ({
-                            description: anchor.supportingText,
-                            id: anchor.id,
-                            label: anchor.label,
-                            meta: "Context only"
-                          }))}
-                          ariaLabel={`${source.id} context anchors`}
-                          emptyMessage="No public context anchor attached."
-                        />
-                      </section>
-                    </div>
-
-                    <SourceWarningSummary source={source} warnings={warnings} />
-
-                    <p className="evidence-workbench-source-inventory__owner">
-                      Synthetic owner queue: <code>{source.reviewOwnerQueue}</code>
+          return {
+            content: (
+              <div
+                className="evidence-workbench-source-inventory__detail-panel"
+                data-source-expanded-default="false"
+                data-source-filter-state={source.trustState}
+                data-source-priority={sourcePriority(source)}
+                data-source-row-order={index + 1}
+              >
+                <div className="evidence-workbench-source-evidence-row">
+                  <section aria-label={`${source.id} evidence preview`}>
+                    <h3>Evidence preview</h3>
+                    <p>
+                      Source title: <strong>{source.title}</strong>
                     </p>
-                  </div>
-                </details>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
+                    <p>{source.preview}</p>
+                    <p>
+                      Source type: <strong>{source.sourceType}</strong>
+                    </p>
+                  </section>
+
+                  <section aria-label={`${source.id} citation relationships`}>
+                    <h3>Citation relationship</h3>
+                    <AivisEvidenceTokenList
+                      ariaLabel={`${source.id} citation relationships`}
+                      emptyMessage="Present in the inventory, not cited by this answer."
+                      items={source.citations.map((citation) => ({
+                        description: citation.relationship,
+                        href: `#claim-${citation.claimId}`,
+                        id: citation.id,
+                        label: citation.marker
+                      }))}
+                    />
+                  </section>
+
+                  <section aria-label={`${source.id} context anchors`}>
+                    <h3>Context anchors</h3>
+                    <AivisEvidenceAnchorChipList
+                      anchors={source.contextAnchors.map((anchor) => ({
+                        description: anchor.supportingText,
+                        id: anchor.id,
+                        label: anchor.label,
+                        meta: "Context only"
+                      }))}
+                      ariaLabel={`${source.id} context anchors`}
+                      emptyMessage="No public context anchor attached."
+                    />
+                  </section>
+                </div>
+
+                <SourceWarningSummary source={source} warnings={warnings} />
+
+                <p className="evidence-workbench-source-inventory__owner">
+                  Synthetic owner queue: <code>{source.reviewOwnerQueue}</code>
+                </p>
+              </div>
+            ),
+            id: sourceAccordionItemId(source.id),
+            title: <SourceRecordAccordionTitle source={source} />
+          };
+        })}
+      />
     </div>
   );
 }
 
 function SourceInventoryHashFocusBridge(): null {
   useEffect(() => {
-    const focusSourceRecord = () => {
-      let sourceTargetId = "";
+    const focusHashTarget = (hash = window.location.hash) => {
+      let targetId = "";
 
       try {
-        sourceTargetId = decodeURIComponent(window.location.hash.slice(1));
+        targetId = decodeURIComponent(hash.slice(1));
       } catch {
         return;
       }
 
-      if (!sourceTargetId.startsWith("source-")) {
+      if (targetId === "source-inventory-table") {
+        focusElementById(targetId);
         return;
       }
 
-      const sourceRecord = document.getElementById(sourceTargetId);
+      const sourceButtonId = sourceAccordionButtonIdFromHashTarget(targetId);
 
-      if (!(sourceRecord instanceof HTMLDetailsElement)) {
+      if (!sourceButtonId) {
         return;
       }
 
-      sourceRecord.open = true;
+      const sourceButton = document.getElementById(sourceButtonId);
 
-      const sourceSummary = sourceRecord.querySelector("summary");
+      if (!(sourceButton instanceof HTMLButtonElement)) {
+        return;
+      }
 
-      if (!(sourceSummary instanceof HTMLElement)) {
+      openContainingAccordionPanels(sourceButton);
+
+      if (sourceButton.getAttribute("aria-expanded") !== "true") {
+        sourceButton.click();
+      }
+
+      focusElement(sourceButton);
+    };
+
+    const handleHashChange = () => focusHashTarget();
+    const handleSourceAnchorClick = (event: MouseEvent) => {
+      const target = event.target;
+
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const anchor = target.closest("a[href*='#source-'], a[href='#source-inventory-table']");
+
+      if (!(anchor instanceof HTMLAnchorElement) || !anchor.hash) {
+        return;
+      }
+
+      if (anchor.origin === window.location.origin && anchor.pathname !== window.location.pathname) {
         return;
       }
 
       window.requestAnimationFrame(() => {
-        sourceRecord.scrollIntoView({ block: "start" });
-        sourceSummary.focus({ preventScroll: true });
+        focusHashTarget(anchor.hash);
       });
     };
 
-    focusSourceRecord();
-    window.addEventListener("hashchange", focusSourceRecord);
+    focusHashTarget();
+    window.addEventListener("hashchange", handleHashChange);
+    document.addEventListener("click", handleSourceAnchorClick);
 
     return () => {
-      window.removeEventListener("hashchange", focusSourceRecord);
+      window.removeEventListener("hashchange", handleHashChange);
+      document.removeEventListener("click", handleSourceAnchorClick);
     };
   }, []);
 
   return null;
+}
+
+function SourceRecordAccordionTitle({
+  source
+}: Readonly<{ source: EvidenceWorkbenchSource }>): ReactElement {
+  return (
+    <span className="evidence-workbench-source-inventory__summary">
+      <span className="evidence-workbench-source-inventory__source">
+        <span className="evidence-workbench-source-inventory__cell-label">
+          Record details
+        </span>
+        <strong>{source.id}</strong>
+        <span>{source.title}</span>
+      </span>
+
+      <span className="evidence-workbench-source-inventory__detail-status">
+        {source.isSelectedClaimSource ? (
+          <AivisEvidenceStatus tone="neutral">Selected claim source</AivisEvidenceStatus>
+        ) : null}
+        {hasApprovalBlocker(source) ? (
+          <AivisEvidenceStatus tone="warning">Approval blocker</AivisEvidenceStatus>
+        ) : null}
+      </span>
+    </span>
+  );
+}
+
+function focusElementById(targetId: string): void {
+  const target = document.getElementById(targetId);
+
+  if (target instanceof HTMLElement) {
+    openContainingAccordionPanels(target);
+    focusElement(target);
+  }
+}
+
+function openContainingAccordionPanels(target: HTMLElement): void {
+  const hiddenPanels: HTMLElement[] = [];
+  let current: HTMLElement | null = target.parentElement;
+
+  while (current) {
+    if (
+      current.classList.contains("qhds-accordion__panel") &&
+      current.hidden
+    ) {
+      hiddenPanels.push(current);
+    }
+
+    current = current.parentElement;
+  }
+
+  hiddenPanels.reverse().forEach((panel) => {
+    const controllingButtonId = panel.getAttribute("aria-labelledby");
+    const controllingButton = controllingButtonId
+      ? document.getElementById(controllingButtonId)
+      : null;
+
+    if (
+      controllingButton instanceof HTMLButtonElement &&
+      controllingButton.getAttribute("aria-expanded") !== "true"
+    ) {
+      controllingButton.click();
+    }
+  });
+}
+
+function focusElement(target: HTMLElement): void {
+  window.requestAnimationFrame(() => {
+    target.scrollIntoView({ block: "start" });
+    target.focus({ preventScroll: true });
+  });
+}
+
+function sourceAccordionButtonIdFromHashTarget(targetId: string): string | null {
+  if (!targetId.startsWith("source-")) {
+    return null;
+  }
+
+  if (targetId.endsWith("-accordion-button")) {
+    return targetId;
+  }
+
+  if (targetId.endsWith("-accordion-panel")) {
+    return targetId.replace(/-accordion-panel$/, "-accordion-button");
+  }
+
+  return `${targetId}-accordion-button`;
 }
 
 function SourceWarningSummary({
@@ -278,10 +408,15 @@ function SourceInventoryTable({
   const rows = sources.map(sourceInventoryTableRow);
 
   return (
-    <div className="evidence-workbench-source-inventory-table">
+    <div
+      aria-label="Source inventory table target"
+      className="evidence-workbench-source-inventory-table"
+      id="source-inventory-table"
+      tabIndex={-1}
+    >
       <QhdsTable
         caption="Source inventory table"
-        captionDescription="Primary source list with source status, freshness, owner, citation count and issue summary."
+        captionDescription="Primary source list ordered with approval blockers first, then selected claim sources, then remaining source records."
         columns={columns}
         rows={rows}
         striped
@@ -299,7 +434,7 @@ function sourceInventoryTableRow(source: EvidenceWorkbenchSource): QhdsTableRow 
       <a
         aria-label={`Open details for ${source.id}: ${source.title}`}
         className="evidence-workbench-source-inventory-table__detail-link"
-        href={`#source-${source.id}`}
+        href={sourceAccordionHash(source.id)}
       >
         Open details
       </a>
@@ -328,7 +463,35 @@ function warningSeverityLabel(warning: EvidenceWorkbenchSourceWarning): string {
 }
 
 function sourceFilterHref(filter: EvidenceWorkbenchSourceFilter): string {
-  return filter.sourceIds[0] ? `#source-${filter.sourceIds[0]}` : "#sources-title";
+  return filter.sourceIds.length === 1
+    ? sourceAccordionHash(filter.sourceIds[0])
+    : "#source-inventory-table";
+}
+
+function sourceFilterAriaLabel(filter: EvidenceWorkbenchSourceFilter): string {
+  const countLabel = `${filter.count} source${filter.count === 1 ? "" : "s"}`;
+
+  if (filter.sourceIds.length === 1) {
+    return `${filter.label}: ${countLabel}. Opens source record ${filter.sourceIds[0]}. ${filter.description}`;
+  }
+
+  if (filter.sourceIds.length === 0) {
+    return `${filter.label}: no source records currently match. Moves focus to the source inventory table. ${filter.description}`;
+  }
+
+  return `${filter.label}: ${countLabel}. Moves focus to the source inventory table for matching records. ${filter.description}`;
+}
+
+function sourceAccordionHash(sourceId: string): string {
+  return `#${sourceAccordionButtonId(sourceId)}`;
+}
+
+function sourceAccordionButtonId(sourceId: string): string {
+  return `${sourceAccordionItemId(sourceId)}-accordion-button`;
+}
+
+function sourceAccordionItemId(sourceId: string): string {
+  return `source-${sourceId}`;
 }
 
 function sourceInventoryOrder(sources: EvidenceWorkbenchSource[]): EvidenceWorkbenchSource[] {

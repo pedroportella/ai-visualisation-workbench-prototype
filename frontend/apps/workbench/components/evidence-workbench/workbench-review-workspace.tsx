@@ -57,7 +57,7 @@ export function WorkbenchReviewWorkspace({
         leadDensity="compact"
         withBodyClass={false}
       >
-        <div className="evidence-workbench-review-decision-card">
+        <div className="evidence-workbench-summary-card evidence-workbench-summary-card--warning evidence-workbench-review-decision-card">
           <AivisEvidencePanelHeader
             label="Current decision"
             status={review.copyState === "enabled" ? "Ready to copy" : "Do not use yet"}
@@ -73,7 +73,7 @@ export function WorkbenchReviewWorkspace({
               ? `${selectedBlockerLabel} is blocking approval. Record a local review action before anyone uses the answer.`
               : "A source blocker must be selected before the next local review action can be recorded."}
           </p>
-          <div className="evidence-workbench-review-decision-card__actions">
+          <div className="evidence-workbench-summary-card__actions evidence-workbench-review-decision-card__actions">
             <QhdsButton
               aria-controls="review-current-blocker-accordion-panel"
               href="#review-current-blocker-accordion-button"

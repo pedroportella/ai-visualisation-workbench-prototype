@@ -21,15 +21,21 @@
 #task-launcher-title,
 #source-inspector-title,
 #process-map-title,
-#sources-title,
+#sources-title-accordion-button,
 #audit-summary-accordion-button,
 #audit-reset-boundary-accordion-button,
 #audit-warning-ownership-accordion-button,
-#scenario-title,
+#scenario-accordion-button,
 #supporting-workspaces-title,
 #source-inventory,
-#source-record-details-title,
+#source-inventory-table,
+#source-action-target-accordion-button,
+#source-record-details-accordion-button,
 #selected-claim-sources {
+  scroll-margin-top: var(--aivis-space-4);
+}
+
+[id^="source-"][id$="-accordion-button"] {
   scroll-margin-top: var(--aivis-space-4);
 }
 
@@ -79,7 +85,6 @@
   padding: var(--aivis-workbench-list-item-padding);
 }
 
-.evidence-workbench-review-decision-card,
 .evidence-workbench-current-blocker,
 .evidence-workbench-supporting-evidence {
   background: var(--qhds-color-surface);
@@ -91,13 +96,43 @@
   padding: var(--aivis-workbench-list-item-padding);
 }
 
-.evidence-workbench-review-decision-card {
-  background: var(--qhds-color-warning-background);
+.evidence-workbench-summary-card {
+  background: var(--qhds-color-surface);
+  border: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  border-radius: var(--QLD-border-radius-xs);
+  color: var(--aivis-shell-text);
+  display: grid;
+  gap: var(--aivis-space-2);
+  min-width: 0;
+  padding: var(--aivis-space-4);
+}
+
+.evidence-workbench-summary-card--warning {
   border-color: var(--qhds-color-warning-border);
 }
 
-.evidence-workbench-review-decision-card h3,
-.evidence-workbench-review-decision-card p,
+.evidence-workbench-summary-card .aivis-evidence-panel-header {
+  gap: var(--aivis-space-2);
+  margin-bottom: 0;
+  padding-bottom: var(--aivis-space-2);
+}
+
+.evidence-workbench-summary-card .aivis-evidence-status.qld__tag {
+  min-height: auto;
+  padding: var(--aivis-space-1) var(--aivis-space-2);
+  white-space: nowrap;
+}
+
+.evidence-workbench-summary-card .aivis-evidence-status--success.qld__tag {
+  border-color: var(--qhds-color-success-border);
+}
+
+.evidence-workbench-summary-card .aivis-evidence-status--warning.qld__tag {
+  border-color: var(--qhds-color-warning-border);
+}
+
+.evidence-workbench-summary-card h3,
+.evidence-workbench-summary-card p,
 .evidence-workbench-current-blocker h3,
 .evidence-workbench-current-blocker p,
 .evidence-workbench-supporting-evidence__section h3,
@@ -105,7 +140,18 @@
   margin: 0;
 }
 
-.evidence-workbench-review-decision-card h3,
+.aivis-app-shell .qhds-layout__main-section-body .evidence-workbench-summary-card > h3,
+.aivis-app-shell .qhds-layout__main-section-body .evidence-workbench-summary-card > p {
+  margin-block: 0;
+}
+
+.evidence-workbench-summary-card h3 {
+  color: var(--aivis-shell-text);
+  font-size: var(--qhds-font-size-md, var(--aivis-font-size-body-sm));
+  font-weight: var(--aivis-font-weight-bold);
+  line-height: var(--aivis-line-height-heading);
+}
+
 .evidence-workbench-current-blocker h3,
 .evidence-workbench-supporting-evidence__section h3 {
   color: var(--aivis-shell-text);
@@ -113,17 +159,38 @@
   line-height: var(--aivis-line-height-heading);
 }
 
-.evidence-workbench-review-decision-card p,
+.evidence-workbench-summary-card p,
 .evidence-workbench-current-blocker p,
 .evidence-workbench-supporting-evidence__section p {
   color: var(--aivis-shell-muted);
+  font-size: var(--aivis-font-size-body-sm);
   line-height: var(--aivis-line-height-note);
 }
 
-.evidence-workbench-review-decision-card__actions {
+.evidence-workbench-summary-card p {
+  max-width: none;
+}
+
+.evidence-workbench-summary-card__actions,
+.evidence-workbench-review-decision-card__actions,
+.evidence-workbench-source-summary-card__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--aivis-space-2);
+}
+
+.evidence-workbench-summary-card__actions .qhds-button {
+  font-size: var(--aivis-font-size-body-sm);
+  justify-content: center;
+  line-height: var(--aivis-line-height-short);
+  min-width: 0;
+  padding: var(--aivis-space-2) var(--aivis-space-3);
+}
+
+.evidence-workbench-source-summary-card__actions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .evidence-workbench-review-actions-section {
@@ -131,26 +198,32 @@
 }
 
 .evidence-workbench-review-accordion,
+.evidence-workbench-sources-accordion,
 .evidence-workbench-review-accordion .qhds-accordion__body-wrapper,
+.evidence-workbench-sources-accordion .qhds-accordion__body-wrapper,
 .evidence-workbench-review-accordion__panel,
+.evidence-workbench-sources-accordion__panel,
 .evidence-workbench-review-actions-section {
   box-sizing: border-box;
   min-width: 0;
   width: 100%;
 }
 
-.evidence-workbench-review-accordion .qhds-accordion {
+.evidence-workbench-review-accordion .qhds-accordion,
+.evidence-workbench-sources-accordion .qhds-accordion {
   max-width: none;
   width: 100%;
 }
 
 .evidence-workbench-review-accordion__panel,
+.evidence-workbench-sources-accordion__panel,
 .evidence-workbench-review-actions-section {
   display: grid;
   gap: var(--aivis-workbench-copy-gap);
 }
 
 .evidence-workbench-review-accordion__panel > .qhds-content-section__lead,
+.evidence-workbench-sources-accordion__panel > .qhds-content-section__lead,
 .evidence-workbench-review-actions-section > .qhds-content-section__lead {
   margin: 0;
 }
@@ -827,9 +900,10 @@
 }
 
 .evidence-workbench-audit-summary__state {
-  background: var(--qhds-color-warning-background);
-  border: var(--aivis-border-width-thin) solid var(--qhds-color-warning-border);
+  background: var(--aivis-color-warning-background);
+  border: var(--aivis-border-width-thin) solid var(--aivis-color-warning-border);
   border-radius: var(--QLD-border-radius-xs);
+  color: var(--aivis-color-warning-text);
   display: grid;
   gap: var(--aivis-space-2);
   margin-bottom: var(--aivis-space-4);
@@ -838,8 +912,13 @@
 }
 
 .evidence-workbench-audit-summary__state[data-copy-state="enabled"] {
-  background: var(--qhds-color-success-background);
-  border-color: var(--qhds-color-success-border);
+  background: var(--aivis-color-success-background);
+  border-color: var(--aivis-color-success-border);
+  color: var(--aivis-color-success-text);
+}
+
+.evidence-workbench-audit-summary__state p {
+  color: inherit;
 }
 
 .evidence-workbench-audit-summary__state .aivis-evidence-status {
@@ -1345,9 +1424,25 @@
 }
 
 .evidence-workbench-source-trace__summary p,
-.evidence-workbench-source-inventory-summary p {
+.evidence-workbench-source-trace__table-note,
+.evidence-workbench-source-inventory-summary p,
+.evidence-workbench-scenario-context p {
   color: var(--aivis-shell-muted);
   line-height: var(--aivis-line-height-note);
+  margin: 0;
+}
+
+.evidence-workbench-scenario-context,
+.evidence-workbench-scenario-context .aivis-place-context {
+  display: grid;
+  gap: var(--aivis-workbench-copy-gap);
+  min-width: 0;
+}
+
+.evidence-workbench-scenario-context h3 {
+  color: var(--aivis-shell-text);
+  font-size: var(--aivis-font-size-panel-heading);
+  line-height: var(--aivis-line-height-heading);
   margin: 0;
 }
 
@@ -1391,7 +1486,21 @@
   gap: var(--aivis-space-2);
 }
 
-.evidence-workbench-source-records h3 {
+.evidence-workbench-source-records,
+.evidence-workbench-source-records .qhds-accordion,
+.evidence-workbench-source-records .qhds-accordion__body-wrapper {
+  box-sizing: border-box;
+  max-width: none;
+  min-width: 0;
+  width: 100%;
+}
+
+.evidence-workbench-source-records .qhds-accordion__button {
+  align-items: start;
+  min-width: 0;
+}
+
+.evidence-workbench-source-records h3:not(.qhds-accordion__heading) {
   color: var(--aivis-shell-text);
   font-size: var(--aivis-font-size-body-sm);
   line-height: var(--aivis-line-height-heading);
@@ -1439,13 +1548,12 @@
 .evidence-workbench-source-inventory__summary {
   align-items: start;
   color: var(--aivis-shell-text);
-  cursor: pointer;
   display: grid;
   gap: var(--aivis-space-3);
-  grid-template-columns: minmax(13rem, 1fr) minmax(12rem, 1.2fr) auto;
+  grid-template-columns: minmax(13rem, 1fr) minmax(12rem, 1.2fr);
   max-width: 100%;
   min-width: 0;
-  padding: var(--aivis-workbench-list-item-padding);
+  width: 100%;
 }
 
 .evidence-workbench-source-inventory__source,
@@ -1894,7 +2002,9 @@
 
   .evidence-workbench-review-actions__selected-action,
   .evidence-workbench-review-actions__copy-state,
+  .evidence-workbench-summary-card__actions,
   .evidence-workbench-review-decision-card__actions,
+  .evidence-workbench-source-summary-card__actions,
   .evidence-workbench-audit-reset__actions,
   .evidence-workbench-source-review__actions,
   .evidence-workbench-process-map__filters,
@@ -1905,7 +2015,9 @@
 
   .evidence-workbench-review-actions__selected-action .qhds-button,
   .evidence-workbench-review-actions__copy-state .qhds-button,
+  .evidence-workbench-summary-card__actions .qhds-button,
   .evidence-workbench-review-decision-card__actions .qhds-button,
+  .evidence-workbench-source-summary-card__actions .qhds-button,
   .evidence-workbench-review-actions__footer .qhds-button,
   .evidence-workbench-audit-reset__actions .qhds-button,
   .evidence-workbench-source-inspector__inventory-link.qld__btn,

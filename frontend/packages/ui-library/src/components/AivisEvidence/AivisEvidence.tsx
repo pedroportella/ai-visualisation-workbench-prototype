@@ -124,19 +124,13 @@ export function AivisEvidenceContextAnchors({
   summary
 }: AivisEvidenceContextAnchorsProps) {
   return (
-    <div className="aivis-evidence-context">
-      <div className="aivis-evidence-context__summary">
+    <div className="aivis-place-context">
+      <div className="aivis-place-context__summary">
         <p>{summary}</p>
-        <p className="aivis-evidence-context__date">{dateLabel}</p>
+        <p className="aivis-place-context__date">{dateLabel}</p>
       </div>
-      <QhdsCard
-        actionMode="none"
-        className="aivis-evidence-card aivis-evidence-context__anchors"
-        density="compact"
-        heading="Public context anchors"
-        headingLevel={3}
-        variant="workbench"
-      >
+      <section aria-label="Public context anchors" className="aivis-place-context__anchors">
+        <h3>Public context anchors</h3>
         <p>{anchorSummary}</p>
         <ul aria-label={ariaLabel} className="aivis-evidence-anchor-list">
           {anchors.map((anchor) => (
@@ -147,7 +141,7 @@ export function AivisEvidenceContextAnchors({
             </li>
           ))}
         </ul>
-      </QhdsCard>
+      </section>
     </div>
   );
 }
@@ -392,15 +386,14 @@ export function AivisEvidenceFilterNav({
       <ul className="qld__link-list aivis-evidence-filter-nav__list">
         {filters.map((filter) => (
           <li key={filter.id}>
-            <QhdsButton
+            <a
               aria-label={filter.ariaLabel}
               className="aivis-evidence-filter-nav__link"
               href={filter.href}
-              variant="secondary"
             >
               <span>{filter.label}</span>
               <strong>{filter.count}</strong>
-            </QhdsButton>
+            </a>
           </li>
         ))}
       </ul>

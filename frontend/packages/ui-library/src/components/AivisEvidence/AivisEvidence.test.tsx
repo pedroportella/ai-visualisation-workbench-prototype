@@ -117,12 +117,17 @@ describe("AivisEvidence adapters", () => {
       </>
     );
 
-    expect(html).toContain("aivis-evidence-context");
-    expect(html).not.toContain("qld__body--light aivis-evidence-context");
+    expect(html).toContain("aivis-place-context");
+    expect(html).toContain("aivis-place-context__summary");
+    expect(html).not.toContain("aivis-evidence-context");
     expect(html).toContain("Public context anchors");
     expect(html).toContain("aivis-evidence-path-list");
     expect(html).toContain("aivis-evidence-filter-nav");
-    expect(html).toContain("qld__btn");
+    expect(html).toContain("qld__link-list");
+    expect(html).toContain('class="aivis-evidence-filter-nav__link"');
+    expect(html).not.toContain("aivis-evidence-filter-nav__link qld__btn");
+    expect(styles).toContain(".aivis-place-context");
+    expect(styles).not.toContain(".aivis-evidence-context");
   });
 
   it("renders callouts with QHDS callout classes without alert semantics", () => {

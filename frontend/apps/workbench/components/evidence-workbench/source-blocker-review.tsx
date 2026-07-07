@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import {
   AivisEvidencePanelHeader,
-  QhdsButton,
+  QhdsDirectionLink,
   QhdsRadioGroup,
   QhdsSummaryList,
   QhdsTable,
@@ -159,7 +159,7 @@ function SelectedSourceIssueSummary({
         },
         {
           description: (
-            <a href={`${sourceInventoryPath}#source-${selectedIssue.sourceId}`}>
+            <a href={`${sourceInventoryPath}${sourceRecordHash(selectedIssue.sourceId)}`}>
               {selectedIssue.sourceId}
             </a>
           ),
@@ -190,20 +190,24 @@ function SelectedSourceIssueSummary({
       />
       <p>{selectedIssue.evidenceImpact}</p>
       <div className="evidence-workbench-source-review__actions">
-        <QhdsButton
-          href={`${sourceInventoryPath}#source-${selectedIssue.sourceId}`}
-          variant="secondary"
+        <QhdsDirectionLink
+          direction="down"
+          href={`${sourceInventoryPath}${sourceRecordHash(selectedIssue.sourceId)}`}
         >
           Open source record
-        </QhdsButton>
+        </QhdsDirectionLink>
         {reviewActionPath ? (
-          <QhdsButton href={reviewActionPath} variant="secondary">
+          <QhdsDirectionLink direction="right" href={reviewActionPath}>
             Continue to review actions
-          </QhdsButton>
+          </QhdsDirectionLink>
         ) : null}
       </div>
     </section>
   );
+}
+
+function sourceRecordHash(sourceId: string): string {
+  return `#source-${sourceId}-accordion-button`;
 }
 
 function SourceBlockerIssueTable({
