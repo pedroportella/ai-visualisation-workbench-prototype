@@ -13,6 +13,10 @@ const styles = [
   readFileSync(join(componentDirectory, "../evidence-workbench.scss"), "utf8"),
   readFileSync(join(componentDirectory, "EvidenceWorkbenchClient.scss"), "utf8"),
   readFileSync(
+    join(componentDirectory, "../answer/AnswerMarkdownRenderer/AnswerMarkdownRenderer.scss"),
+    "utf8"
+  ),
+  readFileSync(
     join(componentDirectory, "../EvidenceWorkbenchTaskHeader/EvidenceWorkbenchTaskHeader.scss"),
     "utf8"
   ),
