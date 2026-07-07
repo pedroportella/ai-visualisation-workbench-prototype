@@ -10,8 +10,8 @@ import {
   reviewDecisionReducer
 } from "../state/reviewDecisionState";
 import { summaryMap } from "../viewFormatters";
+import { OverviewWorkspace } from "../overview/OverviewWorkspace";
 import { WorkbenchAuditWorkspace } from "../workbench-audit-workspace";
-import { WorkbenchOverview } from "../workbench-overview";
 import { WorkbenchProcessWorkspace } from "../workbench-process-workspace";
 import { WorkbenchReviewWorkspace } from "../workbench-review-workspace";
 import { WorkbenchSourcesWorkspace } from "../workbench-sources-workspace";
@@ -58,7 +58,7 @@ export function EvidenceWorkbenchClient({
       <EvidenceWorkbenchTaskHeader activeView={activeView} review={review} />
 
       {activeView === "overview" ? (
-        <WorkbenchOverview
+        <OverviewWorkspace
           data={data}
           decisionState={decisionState}
           summary={summary}

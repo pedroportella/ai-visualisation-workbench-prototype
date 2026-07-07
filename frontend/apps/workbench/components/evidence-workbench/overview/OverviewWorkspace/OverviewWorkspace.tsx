@@ -9,27 +9,27 @@ import {
   QhdsSummaryList
 } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
-import type { ReviewDecisionState } from "./state/reviewDecisionState";
-import { formatStateLabel, statusTone } from "./viewFormatters";
+import type { EvidenceWorkbenchViewModel } from "../../../../services/evidence-workbench/types";
+import type { ReviewDecisionState } from "../../state/reviewDecisionState";
+import { formatStateLabel, statusTone } from "../../viewFormatters";
 import {
   AUDIT_ROUTE,
   PROCESS_ROUTE,
   REVIEW_ROUTE,
   SOURCE_INVENTORY_ROUTE
-} from "./routeModel";
+} from "../../routeModel";
 
-interface WorkbenchOverviewProps {
+interface OverviewWorkspaceProps {
   data: EvidenceWorkbenchViewModel;
   decisionState: ReviewDecisionState;
   summary: ReadonlyMap<string, string>;
 }
 
-export function WorkbenchOverview({
+export function OverviewWorkspace({
   data,
   decisionState,
   summary
-}: Readonly<WorkbenchOverviewProps>): ReactElement {
+}: Readonly<OverviewWorkspaceProps>): ReactElement {
   const review = decisionState.review;
   const selectedClaim = data.reviewClaims.find(
     (claim) => claim.id === review.selectedClaimId

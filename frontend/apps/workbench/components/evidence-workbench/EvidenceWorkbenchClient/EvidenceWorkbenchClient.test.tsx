@@ -15,6 +15,14 @@ const styles = [
   readFileSync(
     join(componentDirectory, "../EvidenceWorkbenchTaskHeader/EvidenceWorkbenchTaskHeader.scss"),
     "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../overview/OverviewWorkspace/OverviewWorkspace.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../overview/OverviewTaskLauncher/OverviewTaskLauncher.scss"),
+    "utf8"
   )
 ].join("\n");
 

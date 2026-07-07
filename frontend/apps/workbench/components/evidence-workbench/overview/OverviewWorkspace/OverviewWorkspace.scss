@@ -1,0 +1,77 @@
+.evidence-workbench-overview {
+  display: grid;
+  gap: var(--aivis-workbench-copy-gap);
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  margin-top: var(--aivis-space-4);
+  min-width: 0;
+}
+
+.evidence-workbench-overview-card.qhds-card {
+  background: var(--qhds-color-surface);
+  border-color: var(--qhds-color-border);
+}
+
+.evidence-workbench-overview-card .qhds-card__content-body,
+.evidence-workbench-overview__action-list,
+.evidence-workbench-overview__action-list li {
+  display: grid;
+  gap: var(--aivis-workbench-copy-gap);
+  min-width: 0;
+}
+
+.evidence-workbench-overview-card p,
+.evidence-workbench-overview__action-list span {
+  color: var(--aivis-shell-muted);
+  line-height: var(--aivis-line-height-note);
+  margin: 0;
+}
+
+.evidence-workbench-overview__status {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aivis-space-2);
+}
+
+.evidence-workbench-overview__summary.qhds-summary-list {
+  border-top: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  margin: 0;
+  padding-top: var(--aivis-space-3);
+}
+
+.evidence-workbench-overview__summary .qhds-summary-list__term {
+  color: var(--qhds-color-link);
+  font-size: var(--aivis-font-size-eyebrow);
+  letter-spacing: var(--aivis-letter-spacing-default);
+  line-height: var(--aivis-line-height-short);
+  text-transform: uppercase;
+}
+
+.evidence-workbench-overview__summary .qhds-summary-list__description {
+  color: var(--aivis-shell-text);
+  font-size: var(--aivis-font-size-body-sm);
+  line-height: var(--aivis-line-height-note);
+}
+
+.evidence-workbench-overview__action-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.evidence-workbench-overview__action-list li {
+  border-block-start: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  padding-block-start: var(--aivis-space-3);
+}
+
+.evidence-workbench-task-launcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aivis-space-3);
+  margin-top: var(--aivis-space-4);
+  min-width: 0;
+}
+
+.evidence-workbench-task-launcher .qhds-button {
+  min-width: min(100%, 13rem);
+}
