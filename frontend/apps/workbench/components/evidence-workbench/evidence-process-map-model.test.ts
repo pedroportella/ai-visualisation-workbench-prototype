@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 import {
-  createEvidenceProcessMapModel,
-  getEvidenceProcessMapVisibleIds
-} from "./evidence-process-map-model";
+  createProcessEvidenceMapModel,
+  getProcessEvidenceMapVisibleIds
+} from "./process/ProcessEvidenceMap/processEvidenceMapModel";
 
 const graph: EvidenceWorkbenchViewModel["graph"] = {
   accessibleSummary:
@@ -98,9 +98,9 @@ const graph: EvidenceWorkbenchViewModel["graph"] = {
   smallViewportFallback: "step_list"
 };
 
-describe("evidence process map model", () => {
+describe("process evidence map model", () => {
   it("marks the CLAIM-003 weak and missing evidence route as the selected path", () => {
-    const model = createEvidenceProcessMapModel(graph);
+    const model = createProcessEvidenceMapModel(graph);
 
     expect(model.selectedPathNodeIds).toEqual([
       "NODE-CLAIM-003",
@@ -121,9 +121,9 @@ describe("evidence process map model", () => {
   });
 
   it("keeps public context anchors context-only while visible in the review path filter", () => {
-    const model = createEvidenceProcessMapModel(graph);
+    const model = createProcessEvidenceMapModel(graph);
     const contextAnchor = model.nodes.find((candidate) => candidate.graphNode.id === "NODE-PCA-001");
-    const visibleIds = getEvidenceProcessMapVisibleIds(model, "review-path");
+    const visibleIds = getProcessEvidenceMapVisibleIds(model, "review-path");
 
     expect(contextAnchor?.isContextOnly).toBe(true);
     expect(contextAnchor?.tone).toBe("context");

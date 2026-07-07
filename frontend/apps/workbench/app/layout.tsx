@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "@aivis/ui-library/theme.scss";
-import "@xyflow/react/dist/style.css";
+import "../components/evidence-workbench/process/ProcessEvidenceMap/ProcessEvidenceMapStyles";
 import "./workbench.scss";
 
 export const metadata: Metadata = {

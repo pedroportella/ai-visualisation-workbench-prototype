@@ -2,10 +2,10 @@ import type {
   EvidenceWorkbenchGraphEdge,
   EvidenceWorkbenchGraphNode,
   EvidenceWorkbenchViewModel
-} from "../../services/evidence-workbench/types";
+} from "../../../../services/evidence-workbench/types";
 
-export type EvidenceProcessMapFilterId = "review-path" | "warnings" | "context" | "all";
-export type EvidenceProcessMapTone =
+export type ProcessEvidenceMapFilterId = "review-path" | "warnings" | "context" | "all";
+export type ProcessEvidenceMapTone =
   | "claim"
   | "context"
   | "evidence"
@@ -13,17 +13,17 @@ export type EvidenceProcessMapTone =
   | "review"
   | "warning";
 
-export interface EvidenceProcessMapNodeModel {
+export interface ProcessEvidenceMapNodeModel {
   graphNode: EvidenceWorkbenchGraphNode;
   isContextOnly: boolean;
   isSelectedPath: boolean;
   refLabel: string;
-  tone: EvidenceProcessMapTone;
+  tone: ProcessEvidenceMapTone;
   typeLabel: string;
   warningLabel: string;
 }
 
-export interface EvidenceProcessMapEdgeModel {
+export interface ProcessEvidenceMapEdgeModel {
   edge: EvidenceWorkbenchGraphEdge;
   isContextOnly: boolean;
   isSelectedPath: boolean;
@@ -31,23 +31,23 @@ export interface EvidenceProcessMapEdgeModel {
   warningLabel: string;
 }
 
-export interface EvidenceProcessMapFilter {
-  id: EvidenceProcessMapFilterId;
+export interface ProcessEvidenceMapFilter {
+  id: ProcessEvidenceMapFilterId;
   label: string;
   summary: string;
 }
 
-export interface EvidenceProcessMapVisibleIds {
+export interface ProcessEvidenceMapVisibleIds {
   edgeIds: string[];
   nodeIds: string[];
 }
 
-export interface EvidenceProcessMapModel {
+export interface ProcessEvidenceMapModel {
   defaultSelectedNodeId: string;
-  edges: EvidenceProcessMapEdgeModel[];
-  filters: EvidenceProcessMapFilter[];
+  edges: ProcessEvidenceMapEdgeModel[];
+  filters: ProcessEvidenceMapFilter[];
   graphId: string;
-  nodes: EvidenceProcessMapNodeModel[];
+  nodes: ProcessEvidenceMapNodeModel[];
   selectedPathEdgeIds: string[];
   selectedPathNodeIds: string[];
 }
@@ -60,7 +60,7 @@ const WARNING_NODE_TYPES = new Set([
   "source_warning"
 ]);
 
-export const evidenceProcessMapFilters: EvidenceProcessMapFilter[] = [
+export const processEvidenceMapFilters: ProcessEvidenceMapFilter[] = [
   {
     id: "review-path",
     label: "Selected path",
@@ -83,9 +83,9 @@ export const evidenceProcessMapFilters: EvidenceProcessMapFilter[] = [
   }
 ];
 
-export function createEvidenceProcessMapModel(
+export function createProcessEvidenceMapModel(
   graph: EvidenceWorkbenchViewModel["graph"]
-): EvidenceProcessMapModel {
+): ProcessEvidenceMapModel {
   const selectedPath = createSelectedPath(graph);
   const nodes = graph.nodes.map((node) => ({
     graphNode: node,
@@ -93,21 +93,21 @@ export function createEvidenceProcessMapModel(
     isSelectedPath: selectedPath.nodeIds.has(node.id),
     refLabel: `${node.refObjectType}:${node.refObjectId}`,
     tone: nodeTone(node),
-    typeLabel: formatGraphLabel(node.type),
-    warningLabel: formatWarningIds(node.warningIds)
+    typeLabel: formatProcessGraphLabel(node.type),
+    warningLabel: formatProcessWarningIds(node.warningIds)
   }));
   const edges = graph.edges.map((edge) => ({
     edge,
     isContextOnly: edge.type === "uses_place_anchor",
     isSelectedPath: selectedPath.edgeIds.has(edge.id),
-    typeLabel: formatGraphLabel(edge.type),
-    warningLabel: formatWarningIds(edge.warningIds)
+    typeLabel: formatProcessGraphLabel(edge.type),
+    warningLabel: formatProcessWarningIds(edge.warningIds)
   }));
 
   return {
     defaultSelectedNodeId: graph.defaultSelectedNodeId,
     edges,
-    filters: evidenceProcessMapFilters,
+    filters: processEvidenceMapFilters,
     graphId: graph.id,
     nodes,
     selectedPathEdgeIds: [...selectedPath.edgeIds],
@@ -115,10 +115,10 @@ export function createEvidenceProcessMapModel(
   };
 }
 
-export function getEvidenceProcessMapVisibleIds(
-  model: EvidenceProcessMapModel,
-  filterId: EvidenceProcessMapFilterId
-): EvidenceProcessMapVisibleIds {
+export function getProcessEvidenceMapVisibleIds(
+  model: ProcessEvidenceMapModel,
+  filterId: ProcessEvidenceMapFilterId
+): ProcessEvidenceMapVisibleIds {
   const nodeIds = new Set<string>();
 
   for (const node of model.nodes) {
@@ -194,8 +194,8 @@ function createSelectedPath(graph: EvidenceWorkbenchViewModel["graph"]): {
 }
 
 function shouldShowNode(
-  node: EvidenceProcessMapNodeModel,
-  filterId: EvidenceProcessMapFilterId
+  node: ProcessEvidenceMapNodeModel,
+  filterId: ProcessEvidenceMapFilterId
 ): boolean {
   if (filterId === "all") {
     return true;
@@ -217,8 +217,8 @@ function shouldShowNode(
 }
 
 function shouldShowEdge(
-  edge: EvidenceProcessMapEdgeModel,
-  filterId: EvidenceProcessMapFilterId
+  edge: ProcessEvidenceMapEdgeModel,
+  filterId: ProcessEvidenceMapFilterId
 ): boolean {
   if (filterId === "all") {
     return true;
@@ -235,7 +235,7 @@ function shouldShowEdge(
   return edge.isSelectedPath || edge.isContextOnly;
 }
 
-function nodeTone(node: EvidenceWorkbenchGraphNode): EvidenceProcessMapTone {
+function nodeTone(node: EvidenceWorkbenchGraphNode): ProcessEvidenceMapTone {
   if (node.type === "question") {
     return "question";
   }
@@ -263,7 +263,11 @@ function isContextOnlyNode(node: EvidenceWorkbenchGraphNode): boolean {
   return node.type === "public_context_anchor" || node.status === "context_only";
 }
 
-function formatGraphLabel(value: string): string {
+function formatProcessGraphLabel(value: string): string {
+  return formatProcessGraphStatus(value);
+}
+
+export function formatProcessGraphStatus(value: string): string {
   return value
     .split("_")
     .filter(Boolean)
@@ -271,6 +275,6 @@ function formatGraphLabel(value: string): string {
     .join(" ");
 }
 
-function formatWarningIds(warningIds: string[]): string {
+function formatProcessWarningIds(warningIds: string[]): string {
   return warningIds.length > 0 ? warningIds.join(", ") : "No active warnings";
 }

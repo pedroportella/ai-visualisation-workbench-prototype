@@ -17,8 +17,8 @@ import {
   selectedSourceIssue
 } from "../sources/SourcesBlockerTarget";
 import { SourcesWorkspace } from "../sources/SourcesWorkspace";
+import { ProcessWorkspace } from "../process/ProcessWorkspace";
 import { WorkbenchAuditWorkspace } from "../workbench-audit-workspace";
-import { WorkbenchProcessWorkspace } from "../workbench-process-workspace";
 
 export function EvidenceWorkbenchClient({
   activeView = "overview",
@@ -88,7 +88,7 @@ export function EvidenceWorkbenchClient({
       ) : null}
 
       {activeView === "process" ? (
-        <WorkbenchProcessWorkspace data={data} decisionState={decisionState} />
+        <ProcessWorkspace data={data} decisionState={decisionState} />
       ) : null}
 
       {activeView === "audit" ? (

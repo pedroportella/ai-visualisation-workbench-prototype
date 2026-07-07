@@ -5,23 +5,23 @@ import {
   QhdsContentSection
 } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
-import { EvidenceProcessMap } from "./evidence-process-map";
-import type { ReviewDecisionState } from "./state/reviewDecisionState";
+import type { EvidenceWorkbenchViewModel } from "../../../../services/evidence-workbench/types";
+import { ProcessEvidenceMap } from "../ProcessEvidenceMap";
+import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import {
   WorkbenchWarningOwnershipDetail,
   WorkbenchWarningOwnershipSummary
-} from "./workbench-warning-ownership";
+} from "../../workbench-warning-ownership";
 
-interface WorkbenchProcessWorkspaceProps {
+interface ProcessWorkspaceProps {
   data: EvidenceWorkbenchViewModel;
   decisionState: ReviewDecisionState;
 }
 
-export function WorkbenchProcessWorkspace({
+export function ProcessWorkspace({
   data,
   decisionState
-}: Readonly<WorkbenchProcessWorkspaceProps>): ReactElement {
+}: Readonly<ProcessWorkspaceProps>): ReactElement {
   return (
     <QhdsContentSection
       className="evidence-workbench-panel evidence-workbench-process-map-section"
@@ -35,7 +35,7 @@ export function WorkbenchProcessWorkspace({
         label="React Flow graph"
         status="Local fixture"
       />
-      <EvidenceProcessMap
+      <ProcessEvidenceMap
         graph={data.graph}
         supportingEvidence={
           <div className="evidence-workbench-warning-ownership__content">

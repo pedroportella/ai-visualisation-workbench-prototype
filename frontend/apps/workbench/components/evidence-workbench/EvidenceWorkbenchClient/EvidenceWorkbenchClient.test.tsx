@@ -5,13 +5,21 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { fallbackEvidenceWorkbenchData } from "../../../services/evidence-workbench/fallback-fixture";
-import { EVIDENCE_PROCESS_MAP_COLOR_MODE } from "../evidence-process-map";
+import { EVIDENCE_PROCESS_MAP_COLOR_MODE } from "../process/ProcessEvidenceMap";
 import { EvidenceWorkbenchClient } from ".";
 
 const componentDirectory = dirname(fileURLToPath(import.meta.url));
 const styles = [
   readFileSync(join(componentDirectory, "../evidence-workbench.scss"), "utf8"),
   readFileSync(join(componentDirectory, "EvidenceWorkbenchClient.scss"), "utf8"),
+  readFileSync(
+    join(componentDirectory, "../process/ProcessWorkspace/ProcessWorkspace.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../process/ProcessEvidenceMap/ProcessEvidenceMap.scss"),
+    "utf8"
+  ),
   readFileSync(
     join(componentDirectory, "../answer/AnswerMarkdownRenderer/AnswerMarkdownRenderer.scss"),
     "utf8"

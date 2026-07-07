@@ -10,16 +10,13 @@ import {
 import {
   Background,
   Controls,
-  Handle,
   MarkerType,
   Panel,
   Position,
   ReactFlow,
   ReactFlowProvider,
   useReactFlow,
-  type Edge,
-  type Node,
-  type NodeProps
+  type Edge
 } from "@xyflow/react";
 import {
   QhdsAccordion,
@@ -31,28 +28,29 @@ import {
 import type {
   EvidenceWorkbenchGraphPosition,
   EvidenceWorkbenchViewModel
-} from "../../services/evidence-workbench/types";
+} from "../../../../services/evidence-workbench/types";
 import {
-  createEvidenceProcessMapModel,
-  getEvidenceProcessMapVisibleIds,
-  type EvidenceProcessMapFilterId,
-  type EvidenceProcessMapNodeModel
-} from "./evidence-process-map-model";
+  createProcessEvidenceMapModel,
+  formatProcessGraphStatus,
+  getProcessEvidenceMapVisibleIds,
+  type ProcessEvidenceMapFilterId,
+  type ProcessEvidenceMapNodeModel
+} from "./processEvidenceMapModel";
+import {
+  ProcessMapNode,
+  type ProcessFlowNode,
+  type ProcessMapNodeData
+} from "./ProcessMapNode";
+import { ProcessTextFallback } from "./ProcessTextFallback";
 
-interface EvidenceProcessMapProps {
+interface ProcessEvidenceMapProps {
   graph: EvidenceWorkbenchViewModel["graph"];
   supportingEvidence?: ReactNode;
   supportingEvidenceId?: string;
   supportingEvidenceTitle?: string;
 }
 
-interface EvidenceFlowNodeData extends EvidenceProcessMapNodeModel, Record<string, unknown> {
-  isSelectedNode: boolean;
-  onSelectNode: (nodeId: string) => void;
-}
-
-type EvidenceFlowNode = Node<EvidenceFlowNodeData, "evidenceNode">;
-type EvidenceFlowEdge = Edge<{
+type ProcessFlowEdge = Edge<{
   isSelectedPath: boolean;
   warningLabel: string;
 }>;
@@ -64,20 +62,20 @@ const FLOW_Y_OFFSET = 28;
 export const EVIDENCE_PROCESS_MAP_COLOR_MODE = "light";
 
 const nodeTypes = {
-  evidenceNode: EvidenceFlowNodeComponent
+  evidenceNode: ProcessMapNode
 };
 
-export function EvidenceProcessMap({
+export function ProcessEvidenceMap({
   graph,
   supportingEvidence,
   supportingEvidenceId,
   supportingEvidenceTitle
-}: EvidenceProcessMapProps) {
-  const model = useMemo(() => createEvidenceProcessMapModel(graph), [graph]);
-  const [filterId, setFilterId] = useState<EvidenceProcessMapFilterId>("review-path");
+}: ProcessEvidenceMapProps) {
+  const model = useMemo(() => createProcessEvidenceMapModel(graph), [graph]);
+  const [filterId, setFilterId] = useState<ProcessEvidenceMapFilterId>("review-path");
   const [selectedNodeId, setSelectedNodeId] = useState(graph.defaultSelectedNodeId);
   const visibleIds = useMemo(
-    () => getEvidenceProcessMapVisibleIds(model, filterId),
+    () => getProcessEvidenceMapVisibleIds(model, filterId),
     [filterId, model]
   );
   const visibleNodeIds = useMemo(() => new Set(visibleIds.nodeIds), [visibleIds.nodeIds]);
@@ -89,12 +87,12 @@ export function EvidenceProcessMap({
     () =>
       model.nodes
         .filter((node) => visibleNodeIds.has(node.graphNode.id))
-        .map<EvidenceFlowNode>((node) => ({
+        .map<ProcessFlowNode>((node) => ({
           data: {
             ...node,
             isSelectedNode: node.graphNode.id === selectedNodeId,
             onSelectNode: handleSelectNode
-          },
+          } satisfies ProcessMapNodeData,
           draggable: false,
           id: node.graphNode.id,
           position: toFlowPosition(node.graphNode.positionHint),
@@ -109,7 +107,7 @@ export function EvidenceProcessMap({
     () =>
       model.edges
         .filter((edge) => visibleEdgeIds.has(edge.edge.id))
-        .map<EvidenceFlowEdge>((edge) => ({
+        .map<ProcessFlowEdge>((edge) => ({
           animated: edge.isSelectedPath,
           className: [
             "evidence-workbench-process-map__edge",
@@ -164,7 +162,7 @@ export function EvidenceProcessMap({
   }
 
   detailItems.push({
-    content: <TextProcessMapFallback graph={graph} />,
+    content: <ProcessTextFallback graph={graph} />,
     id: "process-text-map",
     title: "Text process map"
   });
@@ -221,7 +219,7 @@ export function EvidenceProcessMap({
           data-small-viewport-fallback={graph.smallViewportFallback}
           role="region"
         >
-          <ReactFlow<EvidenceFlowNode, EvidenceFlowEdge>
+          <ReactFlow<ProcessFlowNode, ProcessFlowEdge>
             colorMode={EVIDENCE_PROCESS_MAP_COLOR_MODE}
             edges={flowEdges}
             fitView
@@ -248,67 +246,8 @@ export function EvidenceProcessMap({
   );
 }
 
-function EvidenceFlowNodeComponent({
-  data,
-  selected
-}: NodeProps<EvidenceFlowNode>) {
-  const selectedState = data.isSelectedNode || selected;
-
-  return (
-    <div className="evidence-workbench-process-map__node-shell">
-      <Handle
-        className="evidence-workbench-process-map__handle"
-        isConnectable={false}
-        position={Position.Left}
-        type="target"
-      />
-      <button
-        aria-label={[
-          data.graphNode.label,
-          data.typeLabel,
-          formatGraphStatus(data.graphNode.status),
-          data.warningLabel,
-          selectedState ? "Selected node" : "Select node for detail"
-        ].join(". ")}
-        aria-pressed={selectedState}
-        className={[
-          "evidence-workbench-process-map__node",
-          data.isSelectedPath ? "evidence-workbench-process-map__node--path" : "",
-          data.isContextOnly ? "evidence-workbench-process-map__node--context-only" : ""
-        ]
-          .filter(Boolean)
-          .join(" ")}
-        data-context-only={data.isContextOnly ? "true" : undefined}
-        data-node-id={data.graphNode.id}
-        data-node-tone={data.tone}
-        data-node-type={data.graphNode.type}
-        data-selected-path={data.isSelectedPath ? "true" : undefined}
-        onClick={() => data.onSelectNode(data.graphNode.id)}
-        type="button"
-      >
-        <span className="evidence-workbench-process-map__node-type">{data.typeLabel}</span>
-        <strong>{data.graphNode.label}</strong>
-        <span className="evidence-workbench-process-map__node-ref">{data.refLabel}</span>
-        <span className="evidence-workbench-process-map__node-status">
-          {formatGraphStatus(data.graphNode.status)}
-        </span>
-        {data.graphNode.warningIds.length > 0 ? (
-          <small>{data.warningLabel}</small>
-        ) : null}
-        {data.isContextOnly ? <small>Context only</small> : null}
-      </button>
-      <Handle
-        className="evidence-workbench-process-map__handle"
-        isConnectable={false}
-        position={Position.Right}
-        type="source"
-      />
-    </div>
-  );
-}
-
 function ProcessMapCanvasControls() {
-  const { fitView, setViewport } = useReactFlow<EvidenceFlowNode, EvidenceFlowEdge>();
+  const { fitView, setViewport } = useReactFlow<ProcessFlowNode, ProcessFlowEdge>();
 
   return (
     <Panel className="evidence-workbench-process-map__canvas-controls" position="top-right">
@@ -332,39 +271,10 @@ function ProcessMapCanvasControls() {
   );
 }
 
-function TextProcessMapFallback({
-  graph
-}: {
-  graph: EvidenceWorkbenchViewModel["graph"];
-}): ReactElement {
-  return (
-    <div
-      aria-label="Text process map"
-      className="evidence-workbench-process-map__fallback"
-      id="process-map-text-fallback"
-      role="region"
-      tabIndex={0}
-    >
-      <p>{graph.accessibleSummary}</p>
-      <ol>
-        {graph.fallbackSteps.map((step) => (
-          <li key={`${step.step}-${step.heading}`}>
-            <h4>
-              Step {step.step}: {step.heading}
-            </h4>
-            <p>{step.summary}</p>
-            <small>Includes: {step.includeIds.join(", ")}</small>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}
-
 function SelectedNodeDetail({
   node
 }: {
-  node: EvidenceProcessMapNodeModel;
+  node: ProcessEvidenceMapNodeModel;
 }): ReactElement {
   return (
     <div
@@ -376,7 +286,7 @@ function SelectedNodeDetail({
           { description: node.graphNode.label, term: "Node" },
           { description: node.typeLabel, term: "Type" },
           { description: node.refLabel, term: "Reference" },
-          { description: formatGraphStatus(node.graphNode.status), term: "Status" },
+          { description: formatProcessGraphStatus(node.graphNode.status), term: "Status" },
           { description: node.warningLabel, term: "Warnings" }
         ]}
       />
@@ -389,12 +299,4 @@ function toFlowPosition(position: EvidenceWorkbenchGraphPosition): { x: number; 
     x: (position.column - 1) * FLOW_COLUMN_GAP + FLOW_X_OFFSET,
     y: (position.row - 1) * FLOW_ROW_GAP + FLOW_Y_OFFSET
   };
-}
-
-function formatGraphStatus(value: string): string {
-  return value
-    .split("_")
-    .filter(Boolean)
-    .map((word) => `${word[0]?.toUpperCase() ?? ""}${word.slice(1)}`)
-    .join(" ");
 }
