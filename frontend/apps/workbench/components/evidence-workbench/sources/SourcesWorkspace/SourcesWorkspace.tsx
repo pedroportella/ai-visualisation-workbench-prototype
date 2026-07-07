@@ -2,17 +2,16 @@ import type { ReactElement, ReactNode } from "react";
 
 import { QhdsAccordion } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchViewModel } from "../../../../services/evidence-workbench/types";
 import {
   REVIEW_ROUTE,
   SOURCE_INVENTORY_ROUTE
-} from "./routeModel";
-import { ScenarioContextSection } from "./scenario-context-section";
-import type { SourceBlockerIssue } from "./source-blocker-review";
-import { SourceBlockerReview } from "./source-blocker-review";
-import { SourceRecordDetails, SourceTracePanel } from "./source-trace-panel";
+} from "../../routeModel";
+import { SourcesBlockerTarget, type SourceBlockerIssue } from "../SourcesBlockerTarget";
+import { SourcesInventory, SourcesRecordAccordion } from "../SourcesInventory";
+import { SourcesScenarioContext } from "../SourcesScenarioContext";
 
-interface WorkbenchSourcesWorkspaceProps {
+interface SourcesWorkspaceProps {
   data: EvidenceWorkbenchViewModel;
   onSelectIssue: (issueId: string) => void;
   selectedClaimId: string;
@@ -20,13 +19,13 @@ interface WorkbenchSourcesWorkspaceProps {
   sourceBlockerIssues: SourceBlockerIssue[];
 }
 
-export function WorkbenchSourcesWorkspace({
+export function SourcesWorkspace({
   data,
   onSelectIssue,
   selectedClaimId,
   selectedIssue,
   sourceBlockerIssues
-}: Readonly<WorkbenchSourcesWorkspaceProps>): ReactElement {
+}: Readonly<SourcesWorkspaceProps>): ReactElement {
   return (
     <div className="evidence-workbench-sources-accordion">
       <QhdsAccordion
@@ -35,7 +34,7 @@ export function WorkbenchSourcesWorkspace({
           {
             content: (
               <SourcesAccordionPanel lead="Source records, citation relationships and blocker state for the current review.">
-                <SourceTracePanel
+                <SourcesInventory
                   filters={data.sourceFilters}
                   selectedClaimId={selectedClaimId}
                   sources={data.sourceItems}
@@ -49,7 +48,7 @@ export function WorkbenchSourcesWorkspace({
           {
             content: (
               <SourcesAccordionPanel lead="Choose a blocker to inspect, then continue to the review route to record the local action.">
-                <SourceBlockerReview
+                <SourcesBlockerTarget
                   actionMode="inspect"
                   issues={sourceBlockerIssues}
                   onSelectIssue={onSelectIssue}
@@ -67,7 +66,7 @@ export function WorkbenchSourcesWorkspace({
           {
             content: (
               <SourcesAccordionPanel lead="Open a source record when you need preview, citation, context and warning detail.">
-                <SourceRecordDetails sources={data.sourceItems} />
+                <SourcesRecordAccordion sources={data.sourceItems} />
               </SourcesAccordionPanel>
             ),
             id: "source-record-details",
@@ -76,7 +75,7 @@ export function WorkbenchSourcesWorkspace({
           {
             content: (
               <SourcesAccordionPanel lead="Non-evidence case background for understanding the local review task.">
-                <ScenarioContextSection data={data} />
+                <SourcesScenarioContext data={data} />
               </SourcesAccordionPanel>
             ),
             id: "scenario",

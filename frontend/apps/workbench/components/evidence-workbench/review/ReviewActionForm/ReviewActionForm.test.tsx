@@ -5,7 +5,7 @@ import { fallbackEvidenceWorkbenchData } from "../../../../services/evidence-wor
 import {
   buildSourceBlockerIssues,
   selectedSourceIssue
-} from "../../source-blocker-review";
+} from "../../sources/SourcesBlockerTarget";
 import { createInitialReviewDecisionState } from "../../state/reviewDecisionState";
 import { ReviewActionForm } from ".";
 

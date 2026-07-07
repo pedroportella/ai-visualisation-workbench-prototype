@@ -47,6 +47,29 @@ const styles = [
   readFileSync(
     join(componentDirectory, "../review/ReviewActionForm/ReviewActionForm.scss"),
     "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../sources/SourcesWorkspace/SourcesWorkspace.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../sources/SourcesInventory/SourcesInventory.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../sources/SourcesBlockerTarget/SourcesBlockerTarget.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(
+      componentDirectory,
+      "../sources/SourcesSelectedSourceInspector/SourcesSelectedSourceInspector.scss"
+    ),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../sources/SourcesScenarioContext/SourcesScenarioContext.scss"),
+    "utf8"
   )
 ].join("\n");
 

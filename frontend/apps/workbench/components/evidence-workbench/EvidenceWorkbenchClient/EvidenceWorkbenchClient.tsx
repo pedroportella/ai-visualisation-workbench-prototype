@@ -12,13 +12,13 @@ import {
 import { summaryMap } from "../viewFormatters";
 import { OverviewWorkspace } from "../overview/OverviewWorkspace";
 import { ReviewWorkspace } from "../review/ReviewWorkspace";
-import { WorkbenchAuditWorkspace } from "../workbench-audit-workspace";
-import { WorkbenchProcessWorkspace } from "../workbench-process-workspace";
-import { WorkbenchSourcesWorkspace } from "../workbench-sources-workspace";
 import {
   buildSourceBlockerIssues,
   selectedSourceIssue
-} from "../source-blocker-review";
+} from "../sources/SourcesBlockerTarget";
+import { SourcesWorkspace } from "../sources/SourcesWorkspace";
+import { WorkbenchAuditWorkspace } from "../workbench-audit-workspace";
+import { WorkbenchProcessWorkspace } from "../workbench-process-workspace";
 
 export function EvidenceWorkbenchClient({
   activeView = "overview",
@@ -78,7 +78,7 @@ export function EvidenceWorkbenchClient({
       ) : null}
 
       {activeView === "sources" ? (
-        <WorkbenchSourcesWorkspace
+        <SourcesWorkspace
           data={data}
           onSelectIssue={setSelectedSourceIssueId}
           selectedClaimId={review.selectedClaimId}

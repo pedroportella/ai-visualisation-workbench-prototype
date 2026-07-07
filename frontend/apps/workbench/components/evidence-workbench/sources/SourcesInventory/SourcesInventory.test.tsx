@@ -5,8 +5,8 @@ import type {
   EvidenceWorkbenchContextAnchor,
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter
-} from "../../services/evidence-workbench/types";
-import { SourceRecordDetails, SourceTracePanel } from "./source-trace-panel";
+} from "../../../../services/evidence-workbench/types";
+import { SourcesInventory, SourcesRecordAccordion } from ".";
 
 const contextAnchors: EvidenceWorkbenchContextAnchor[] = [
   {
@@ -208,7 +208,7 @@ const filters: EvidenceWorkbenchSourceFilter[] = [
   }
 ];
 
-describe("SourceTracePanel", () => {
+describe("SourcesInventory", () => {
   it("renders compact source inventory controls and row content", () => {
     const html = renderPanel();
 
@@ -330,14 +330,14 @@ describe("SourceTracePanel", () => {
 function renderPanel(): string {
   return renderToStaticMarkup(
     <>
-      <SourceTracePanel
+      <SourcesInventory
         filters={filters}
         selectedClaimId="CLAIM-003"
         sources={sourceItems}
       />
       <section aria-labelledby="source-record-details-title">
         <h2 id="source-record-details-title">Source record details</h2>
-        <SourceRecordDetails sources={sourceItems} />
+        <SourcesRecordAccordion sources={sourceItems} />
       </section>
     </>
   );

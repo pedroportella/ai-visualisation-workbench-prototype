@@ -13,21 +13,21 @@ import type {
   EvidenceWorkbenchClaim,
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
-} from "../../services/evidence-workbench/types";
+} from "../../../../services/evidence-workbench/types";
 
-interface SelectedSourceInspectorProps {
+interface SourcesSelectedSourceInspectorProps {
   selectedClaim?: EvidenceWorkbenchClaim;
   selectedClaimId: string;
   sourceInventoryPath?: string;
   sources: EvidenceWorkbenchSource[];
 }
 
-export function SelectedSourceInspector({
+export function SourcesSelectedSourceInspector({
   selectedClaim,
   selectedClaimId,
   sourceInventoryPath = "",
   sources
-}: Readonly<SelectedSourceInspectorProps>): ReactElement {
+}: Readonly<SourcesSelectedSourceInspectorProps>): ReactElement {
   const focusedSources = sources.filter((source) => source.isSelectedClaimSource);
   const focusedWarnings = selectedSourceWarnings(focusedSources);
   const topWarning =

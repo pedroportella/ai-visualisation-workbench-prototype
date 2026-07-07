@@ -1,14 +1,14 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { fallbackEvidenceWorkbenchData } from "../../services/evidence-workbench/fallback-fixture";
+import { fallbackEvidenceWorkbenchData } from "../../../../services/evidence-workbench/fallback-fixture";
 import {
-  SourceBlockerReview,
+  SourcesBlockerTarget,
   buildSourceBlockerIssues,
   selectedSourceIssue
-} from "./source-blocker-review";
+} from ".";
 
-describe("SourceBlockerReview", () => {
+describe("SourcesBlockerTarget", () => {
   it("builds source blocker issues from direct and relationship warnings", () => {
     const issues = buildSourceBlockerIssues(fallbackEvidenceWorkbenchData.sourceItems);
 
@@ -31,7 +31,7 @@ describe("SourceBlockerReview", () => {
     const issues = buildSourceBlockerIssues(fallbackEvidenceWorkbenchData.sourceItems);
     const selectedIssue = issues[1];
     const html = renderToStaticMarkup(
-      <SourceBlockerReview
+      <SourcesBlockerTarget
         issues={issues}
         onSelectIssue={() => undefined}
         selectedIssueId={selectedIssue?.id ?? null}
@@ -59,7 +59,7 @@ describe("SourceBlockerReview", () => {
     const issues = buildSourceBlockerIssues(fallbackEvidenceWorkbenchData.sourceItems);
     const selectedIssue = issues[0];
     const html = renderToStaticMarkup(
-      <SourceBlockerReview
+      <SourcesBlockerTarget
         issues={issues}
         onSelectIssue={() => undefined}
         selectedIssueId={selectedIssue?.id ?? null}
@@ -82,7 +82,7 @@ describe("SourceBlockerReview", () => {
     const issues = buildSourceBlockerIssues(fallbackEvidenceWorkbenchData.sourceItems);
     const selectedIssue = issues[0];
     const html = renderToStaticMarkup(
-      <SourceBlockerReview
+      <SourcesBlockerTarget
         actionMode="inspect"
         issues={issues}
         onSelectIssue={() => undefined}

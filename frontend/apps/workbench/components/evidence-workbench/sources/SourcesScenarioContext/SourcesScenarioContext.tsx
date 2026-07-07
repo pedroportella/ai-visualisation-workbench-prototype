@@ -2,9 +2,9 @@ import type { ReactElement } from "react";
 
 import { AivisEvidenceContextAnchors } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchViewModel } from "../../../../services/evidence-workbench/types";
 
-export function ScenarioContextSection({
+export function SourcesScenarioContext({
   data
 }: Readonly<{ data: EvidenceWorkbenchViewModel }>): ReactElement {
   return (

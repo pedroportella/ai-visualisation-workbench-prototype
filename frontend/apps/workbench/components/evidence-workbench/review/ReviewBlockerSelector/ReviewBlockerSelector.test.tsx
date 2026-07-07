@@ -5,7 +5,7 @@ import { fallbackEvidenceWorkbenchData } from "../../../../services/evidence-wor
 import {
   buildSourceBlockerIssues,
   selectedSourceIssue
-} from "../../source-blocker-review";
+} from "../../sources/SourcesBlockerTarget";
 import { ReviewBlockerSelector } from ".";
 
 describe("ReviewBlockerSelector", () => {

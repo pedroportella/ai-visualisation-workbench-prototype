@@ -1,9 +1,9 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { fallbackEvidenceWorkbenchData } from "../../services/evidence-workbench/fallback-fixture";
-import type { EvidenceWorkbenchClaim } from "../../services/evidence-workbench/types";
-import { SelectedSourceInspector } from "./selected-source-inspector";
+import { fallbackEvidenceWorkbenchData } from "../../../../services/evidence-workbench/fallback-fixture";
+import type { EvidenceWorkbenchClaim } from "../../../../services/evidence-workbench/types";
+import { SourcesSelectedSourceInspector } from ".";
 
 const selectedClaim: EvidenceWorkbenchClaim = {
   id: "CLAIM-003",
@@ -19,7 +19,7 @@ const sourceItems = fallbackEvidenceWorkbenchData.sourceItems.map((source) =>
     : source
 );
 
-describe("SelectedSourceInspector", () => {
+describe("SourcesSelectedSourceInspector", () => {
   it("renders selected claim, linked sources and stable inventory anchors", () => {
     const html = renderInspector();
 
@@ -76,7 +76,7 @@ describe("SelectedSourceInspector", () => {
 
 function renderInspector(): string {
   return renderToStaticMarkup(
-    <SelectedSourceInspector
+    <SourcesSelectedSourceInspector
       selectedClaim={selectedClaim}
       selectedClaimId={selectedClaim.id}
       sources={sourceItems}

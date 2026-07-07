@@ -13,8 +13,8 @@ import {
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
-} from "../../services/evidence-workbench/types";
-import type { ReviewActionTarget } from "./state/reviewDecisionState";
+} from "../../../../services/evidence-workbench/types";
+import type { ReviewActionTarget } from "../../state/reviewDecisionState";
 
 export interface SourceBlockerIssue extends ReviewActionTarget {
   code: string;
@@ -26,7 +26,7 @@ export interface SourceBlockerIssue extends ReviewActionTarget {
   trustState: string;
 }
 
-interface SourceBlockerReviewProps {
+interface SourcesBlockerTargetProps {
   actionMode?: "inspect" | "select";
   issues: SourceBlockerIssue[];
   onSelectIssue: (issueId: string) => void;
@@ -37,7 +37,7 @@ interface SourceBlockerReviewProps {
   sourceInventoryPath: string;
 }
 
-export function SourceBlockerReview({
+export function SourcesBlockerTarget({
   actionMode = "select",
   issues,
   onSelectIssue,
@@ -46,7 +46,7 @@ export function SourceBlockerReview({
   selectedSummaryPosition = "after-selector",
   showIssueTable = true,
   sourceInventoryPath
-}: Readonly<SourceBlockerReviewProps>): ReactElement {
+}: Readonly<SourcesBlockerTargetProps>): ReactElement {
   const selectedIssue = selectedSourceIssue(issues, selectedIssueId);
   const selectsActionTarget = actionMode === "select";
   const selectedIssueSummary = selectedIssue ? (

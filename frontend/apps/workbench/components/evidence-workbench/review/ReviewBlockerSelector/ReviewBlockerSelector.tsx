@@ -8,7 +8,7 @@ import {
 } from "@aivis/ui-library";
 
 import { SOURCE_INVENTORY_ROUTE } from "../../routeModel";
-import type { SourceBlockerIssue } from "../../source-blocker-review";
+import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
 
 interface ReviewBlockerSelectorProps {
   issues: SourceBlockerIssue[];

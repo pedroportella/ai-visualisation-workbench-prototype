@@ -7,7 +7,7 @@ import {
 } from "@aivis/ui-library";
 
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
-import type { SourceBlockerIssue } from "../../source-blocker-review";
+import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
 
 interface ReviewDecisionGateProps {
   review: ReviewDecisionState["review"];

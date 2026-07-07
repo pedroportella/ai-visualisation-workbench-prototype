@@ -9,7 +9,7 @@ import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workben
 import { AuditSummary } from "./audit-summary";
 import { REVIEW_ROUTE } from "./routeModel";
 import type { ReviewDecisionState } from "./state/reviewDecisionState";
-import type { SourceBlockerIssue } from "./source-blocker-review";
+import type { SourceBlockerIssue } from "./sources/SourcesBlockerTarget";
 import {
   WorkbenchWarningOwnershipDetail,
   WorkbenchWarningOwnershipSummary
