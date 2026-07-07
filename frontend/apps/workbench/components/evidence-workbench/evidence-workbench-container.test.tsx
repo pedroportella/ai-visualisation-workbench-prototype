@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { fallbackEvidenceWorkbenchData } from "../../services/evidence-workbench/fallback-fixture";
+import { EVIDENCE_PROCESS_MAP_COLOR_MODE } from "./evidence-process-map";
 import EvidenceWorkbenchContainer from "./evidence-workbench-container";
 
 const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "evidence-workbench.scss"), "utf8");
@@ -231,6 +232,10 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain('id="process-map-title"');
     expect(html).toContain("React Flow graph");
     expect(html).toContain("evidence-workbench-process-map");
+    expect(EVIDENCE_PROCESS_MAP_COLOR_MODE).toBe("light");
+    expect(html).toContain('class="react-flow light"');
+    expect(html).not.toContain('class="react-flow dark"');
+    expect(html).not.toContain('class="react-flow system"');
     expect(html).toContain('role="region"');
     expect(html).toContain('aria-describedby="process-map-filter-summary"');
     expect(html).toContain('id="process-selected-node-accordion-button"');

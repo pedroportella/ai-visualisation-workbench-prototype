@@ -61,6 +61,7 @@ const FLOW_COLUMN_GAP = 260;
 const FLOW_ROW_GAP = 118;
 const FLOW_X_OFFSET = 32;
 const FLOW_Y_OFFSET = 28;
+export const EVIDENCE_PROCESS_MAP_COLOR_MODE = "light";
 
 const nodeTypes = {
   evidenceNode: EvidenceFlowNodeComponent
@@ -221,7 +222,7 @@ export function EvidenceProcessMap({
           role="region"
         >
           <ReactFlow<EvidenceFlowNode, EvidenceFlowEdge>
-            colorMode="system"
+            colorMode={EVIDENCE_PROCESS_MAP_COLOR_MODE}
             edges={flowEdges}
             fitView
             maxZoom={1.3}

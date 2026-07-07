@@ -264,6 +264,68 @@ test("mock evidence disclosures hide closed content and reveal open content", as
   ).toBeVisible();
 });
 
+test("process map renders with deterministic colour mode and stable accessible fallback", async ({
+  page
+}) => {
+  assertRuntime("mock", "0");
+
+  const hydrationMessages: string[] = [];
+  page.on("console", (message) => {
+    const text = message.text();
+
+    if (/hydration|hydrated|did not match|react-flow (light|dark)/i.test(text)) {
+      hydrationMessages.push(`[${message.type()}] ${text}`);
+    }
+  });
+  page.on("pageerror", (error) => {
+    const text = error.message;
+
+    if (/hydration|hydrated|did not match|react-flow (light|dark)/i.test(text)) {
+      hydrationMessages.push(`[pageerror] ${text}`);
+    }
+  });
+
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto("/evidence-workbench/process");
+  await expect(page.getByRole("heading", { level: 1, name: "Evidence map" })).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Interactive evidence process map" })
+  ).toBeVisible();
+  await expect(page.locator(".react-flow")).toHaveClass(/(^|\s)light(\s|$)/);
+  await expect(page.locator(".react-flow.dark")).toHaveCount(0);
+  await expect(page.locator(".react-flow.system")).toHaveCount(0);
+  await expect(page.locator(".evidence-workbench-process-map")).toHaveAttribute(
+    "data-selected-node-id",
+    "NODE-FALLBACK-CLAIM-003"
+  );
+  await expect(page.locator(".evidence-workbench-process-map__node").first()).toBeVisible();
+
+  const textMapButton = page.locator("#process-text-map-accordion-button");
+  const textMapPanel = page.locator("#process-text-map-accordion-panel");
+
+  await expect(textMapButton).toHaveAccessibleName(/Text process map.*Show details/);
+  await expect(textMapButton).toHaveAttribute(
+    "aria-controls",
+    "process-text-map-accordion-panel"
+  );
+  await expect(textMapButton).toHaveAttribute("aria-expanded", "false");
+  await expect(textMapPanel).toHaveAttribute(
+    "aria-labelledby",
+    "process-text-map-accordion-button"
+  );
+  await expect(textMapPanel).toHaveAttribute("hidden", "");
+  await expect(page.locator("#process-map-text-fallback")).toBeHidden();
+  await textMapButton.click();
+  await expect(textMapButton).toHaveAccessibleName(/Text process map.*Hide details/);
+  await expect(textMapButton).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator("#process-map-text-fallback")).toBeVisible();
+  await page.locator("#process-map-text-fallback").focus();
+  await expect(page.locator("#process-map-text-fallback")).toBeFocused();
+
+  await page.waitForTimeout(250);
+  expect(hydrationMessages).toEqual([]);
+});
+
 async function expectControlCanReceiveFocus(
   page: Page,
   role: "button" | "link" | "radio",
