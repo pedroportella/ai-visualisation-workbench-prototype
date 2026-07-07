@@ -22,9 +22,9 @@
 #supporting-evidence-title,
 #process-map-title,
 #sources-title,
-#audit-summary,
-#audit-reset-boundary-title,
-#audit-warning-ownership-title,
+#audit-summary-accordion-button,
+#audit-reset-boundary-accordion-button,
+#audit-warning-ownership-accordion-button,
 #scenario-title,
 #supporting-workspaces-title,
 #source-inventory,
@@ -551,11 +551,28 @@
   max-width: var(--aivis-workbench-copy-max-width);
 }
 
-.evidence-workbench-audit-summary.qhds-content-section {
-  max-width: var(--aivis-workbench-copy-max-width);
+.evidence-workbench-audit-accordion,
+.evidence-workbench-audit-accordion .qhds-accordion__body-wrapper,
+.evidence-workbench-audit-accordion .evidence-workbench-warning-ownership,
+.evidence-workbench-audit-summary,
+.evidence-workbench-audit-reset {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
 }
 
-.evidence-workbench-audit-reset.qhds-content-section,
+.evidence-workbench-audit-accordion .qhds-accordion,
+.evidence-workbench-audit-accordion .evidence-workbench-warning-ownership {
+  max-width: none;
+  width: 100%;
+}
+
+.evidence-workbench-audit-summary,
+.evidence-workbench-audit-reset {
+  display: grid;
+  gap: var(--aivis-workbench-copy-gap);
+}
+
 .evidence-workbench-process-map-section .evidence-workbench-warning-ownership,
 .evidence-workbench-warning-ownership {
   max-width: var(--aivis-workbench-copy-max-width);

@@ -2,7 +2,6 @@ import type { ReactElement } from "react";
 
 import {
   AivisEvidenceStatus,
-  QhdsContentSection,
   QhdsSummaryList
 } from "@aivis/ui-library";
 
@@ -26,15 +25,14 @@ export function AuditSummary({
   );
 
   return (
-    <QhdsContentSection
+    <div
       className="evidence-workbench-panel evidence-workbench-audit-summary"
-      heading="Audit summary"
-      headingId="audit-summary"
-      lead="Read-only local state for copy availability, selected issue, recorded action target and feedback."
-      leadDensity="compact"
       tabIndex={0}
-      withBodyClass={false}
     >
+      <p className="qhds-content-section__lead qhds-content-section__lead--compact">
+        Read-only local state for copy availability, selected issue, recorded
+        action target and feedback.
+      </p>
       <div
         className="evidence-workbench-audit-summary__state"
         data-copy-state={review.copyState}
@@ -106,6 +104,6 @@ export function AuditSummary({
           }
         ]}
       />
-    </QhdsContentSection>
+    </div>
   );
 }

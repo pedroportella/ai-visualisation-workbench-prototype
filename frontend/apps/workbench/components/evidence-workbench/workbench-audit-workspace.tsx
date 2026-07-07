@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 
 import {
-  QhdsButton,
-  QhdsContentSection
+  QhdsAccordion,
+  QhdsButton
 } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
@@ -10,7 +10,10 @@ import { AuditSummary } from "./audit-summary";
 import { REVIEW_ROUTE } from "./evidence-workbench-routes";
 import type { ReviewDecisionState } from "./review-action-state";
 import type { SourceBlockerIssue } from "./source-blocker-review";
-import { WorkbenchWarningOwnership } from "./workbench-warning-ownership";
+import {
+  WorkbenchWarningOwnershipDetail,
+  WorkbenchWarningOwnershipSummary
+} from "./workbench-warning-ownership";
 
 interface WorkbenchAuditWorkspaceProps {
   data: EvidenceWorkbenchViewModel;
@@ -26,19 +29,39 @@ export function WorkbenchAuditWorkspace({
   selectedIssue
 }: Readonly<WorkbenchAuditWorkspaceProps>): ReactElement {
   return (
-    <>
-      <AuditSummary decisionState={decisionState} selectedIssue={selectedIssue} />
-      <AuditResetBoundary onReset={onReset} />
-      <WorkbenchWarningOwnership
-        blockedWarningIds={decisionState.review.blockedByWarningIds}
-        context="audit"
-        heading="Audit warning ownership"
-        headingId="audit-warning-ownership-title"
-        sourceItems={data.sourceItems}
-        summary="Audit records local action state. Warning messages are supporting evidence and remain owned by Source evidence."
-        warnings={decisionState.warnings}
+    <div className="evidence-workbench-audit-accordion">
+      <QhdsAccordion
+        headingLevel={2}
+        items={[
+          {
+            content: (
+              <AuditSummary
+                decisionState={decisionState}
+                selectedIssue={selectedIssue}
+              />
+            ),
+            defaultOpen: true,
+            id: "audit-summary",
+            title: "Audit summary"
+          },
+          {
+            content: <AuditResetBoundary onReset={onReset} />,
+            id: "audit-reset-boundary",
+            title: "Reset boundary"
+          },
+          {
+            content: (
+              <AuditWarningOwnership
+                data={data}
+                decisionState={decisionState}
+              />
+            ),
+            id: "audit-warning-ownership",
+            title: "Audit warning ownership"
+          }
+        ]}
       />
-    </>
+    </div>
   );
 }
 
@@ -46,14 +69,10 @@ function AuditResetBoundary({
   onReset
 }: Readonly<{ onReset: () => void }>): ReactElement {
   return (
-    <QhdsContentSection
-      className="evidence-workbench-panel evidence-workbench-audit-reset"
-      heading="Reset boundary"
-      headingId="audit-reset-boundary-title"
-      lead="Reset is the only state-changing control on this route."
-      leadDensity="compact"
-      withBodyClass={false}
-    >
+    <div className="evidence-workbench-panel evidence-workbench-audit-reset">
+      <p className="qhds-content-section__lead qhds-content-section__lead--compact">
+        Reset is the only state-changing control on this route.
+      </p>
       <div className="evidence-workbench-audit-reset__content">
         <p>
           Audit is read-only local state plus reset. Record or change local
@@ -68,6 +87,42 @@ function AuditResetBoundary({
           </QhdsButton>
         </div>
       </div>
-    </QhdsContentSection>
+    </div>
+  );
+}
+
+function AuditWarningOwnership({
+  data,
+  decisionState
+}: Readonly<
+  Pick<WorkbenchAuditWorkspaceProps, "data" | "decisionState">
+>): ReactElement {
+  return (
+    <div className="evidence-workbench-supporting-evidence evidence-workbench-warning-ownership">
+      <div className="evidence-workbench-supporting-evidence__section evidence-workbench-warning-ownership__summary">
+        <WorkbenchWarningOwnershipSummary
+          blockedWarningIds={decisionState.review.blockedByWarningIds}
+          heading="Audit warning ownership"
+          sourceItems={data.sourceItems}
+          summary="Audit records local action state. Warning messages are supporting evidence and remain owned by Source evidence."
+          warnings={decisionState.warnings}
+        />
+      </div>
+      <QhdsAccordion
+        headingLevel={3}
+        items={[
+          {
+            content: (
+              <WorkbenchWarningOwnershipDetail
+                heading="Audit warning ownership"
+                warnings={decisionState.warnings}
+              />
+            ),
+            id: "audit-supporting-warning-detail",
+            title: "Supporting warning detail"
+          }
+        ]}
+      />
+    </div>
   );
 }
