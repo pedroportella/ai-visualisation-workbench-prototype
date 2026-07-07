@@ -17,7 +17,7 @@ const routes = [
     ceiling: 18_000,
     heading: "Source evidence",
     path: "/evidence-workbench/sources",
-    readySelector: ".evidence-workbench-source-inventory"
+    readySelector: ".evidence-workbench-source-trace"
   },
   {
     ceiling: 14_000,
@@ -409,7 +409,8 @@ async function expectMainRegionsHaveBoxes(page: Page) {
           ".evidence-workbench-task-launcher",
           ".evidence-workbench-review-decision-section",
           ".evidence-workbench-source-review-section",
-          ".evidence-workbench-source-inventory",
+          ".evidence-workbench-source-trace",
+          ".evidence-workbench-source-inventory-table",
           ".evidence-workbench-process-map",
           ".evidence-workbench-audit-summary",
           ".evidence-workbench-review-actions",

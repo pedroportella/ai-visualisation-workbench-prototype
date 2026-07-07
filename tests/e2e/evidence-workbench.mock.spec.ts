@@ -161,15 +161,17 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await expect(page).toHaveURL(/\/evidence-workbench\/sources#source-SRC-FALLBACK-002$/);
   await expect(page.getByRole("heading", { level: 1, name: "Source evidence" })).toBeVisible();
   await expectSourceRecordFocused(page, "SRC-FALLBACK-002");
+  await openSourceActionTarget(page);
   await expectControlCanReceiveFocus(page, "link", "Continue to review actions");
   await page.getByRole("link", { name: "Continue to review actions" }).click();
   await expect(page).toHaveURL(/\/evidence-workbench\/review$/);
 
   await page.goto("/evidence-workbench/sources");
   await expect(page.getByRole("heading", { level: 1, name: "Source evidence" })).toBeVisible();
-  await expect(
-    page.getByRole("heading", { exact: true, level: 2, name: "Source inventory" })
-  ).toBeVisible();
+  await expectAccordionOpen(
+    page.locator("#sources-title-accordion-button"),
+    page.locator("#sources-title-accordion-panel")
+  );
   await expect(page.getByText("Source inventory table")).toBeVisible();
   await expect(
     page.getByRole("link", {
@@ -181,9 +183,12 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
       name: "Open details for SRC-FALLBACK-003: Dispatch confirmation placeholder"
     })
     .click();
-  await expect(page).toHaveURL(/\/evidence-workbench\/sources#source-SRC-FALLBACK-003$/);
+  await expect(page).toHaveURL(
+    /\/evidence-workbench\/sources#source-SRC-FALLBACK-003-accordion-button$/
+  );
   await expectSourceRecordFocused(page, "SRC-FALLBACK-003");
   await expect(page.getByText("Dispatch confirmation placeholder").first()).toBeVisible();
+  await openSourceActionTarget(page);
   await expectControlCanReceiveFocus(page, "link", "Continue to review actions");
 
   await page.goto("/evidence-workbench/process");
@@ -281,20 +286,20 @@ test("mock evidence disclosures hide closed content and reveal open content", as
 
   await page.goto("/evidence-workbench/sources");
 
-  const sourceDisclosure = page.locator("#source-SRC-FALLBACK-002");
-  const sourcePanel = sourceDisclosure.locator(
-    ".evidence-workbench-source-inventory__detail-panel"
-  );
-  await expect(sourceDisclosure).not.toHaveAttribute("open", "");
-  await expectDisclosureCueClosed(sourceDisclosure, /SRC-FALLBACK-002.*Show details/);
-  await expectSourceInventoryToggleAtTop(sourceDisclosure);
-  await expectSummaryContainedByDetails(sourceDisclosure);
-  await expectDisclosureContentHidden(sourcePanel);
-  await sourceDisclosure.locator("summary").focus();
-  await expect(sourceDisclosure.locator("summary")).toBeFocused();
-  await sourceDisclosure.locator("summary").click();
-  await expectDisclosureCueOpen(sourceDisclosure, /SRC-FALLBACK-002.*Hide details/);
-  await expectDisclosureContentVisible(sourcePanel);
+  const sourceRecordDetailsButton = page.locator("#source-record-details-accordion-button");
+  const sourceRecordDetailsPanel = page.locator("#source-record-details-accordion-panel");
+  const sourceButton = page.locator("#source-SRC-FALLBACK-002-accordion-button");
+  const sourcePanel = page.locator("#source-SRC-FALLBACK-002-accordion-panel");
+
+  await expectAccordionClosed(sourceRecordDetailsButton, sourceRecordDetailsPanel);
+  await sourceRecordDetailsButton.click();
+  await expectAccordionOpen(sourceRecordDetailsButton, sourceRecordDetailsPanel);
+  await expectAccordionClosed(sourceButton, sourcePanel);
+  await expectSourceInventoryButtonContained(sourceButton);
+  await sourceButton.focus();
+  await expect(sourceButton).toBeFocused();
+  await sourceButton.click();
+  await expectAccordionOpen(sourceButton, sourcePanel);
 
   await page.goto("/evidence-workbench/process");
 
@@ -605,12 +610,26 @@ async function expectNoHorizontalOverflow(page: Page) {
 }
 
 async function expectSourceRecordFocused(page: Page, sourceId: string) {
-  const sourceRecord = page.locator(`#source-${sourceId}`);
-  const sourceSummary = sourceRecord.locator("summary");
+  const sourceRecordDetailsButton = page.locator("#source-record-details-accordion-button");
+  const sourceRecordDetailsPanel = page.locator("#source-record-details-accordion-panel");
+  const sourceButton = page.locator(`#source-${sourceId}-accordion-button`);
+  const sourcePanel = page.locator(`#source-${sourceId}-accordion-panel`);
 
-  await expect(sourceRecord).toHaveAttribute("open", "");
-  await expect(sourceSummary).toBeFocused();
-  await expect(sourceSummary).toHaveAccessibleName(new RegExp(`${sourceId}.*Hide details`));
+  await expectAccordionOpen(sourceRecordDetailsButton, sourceRecordDetailsPanel);
+  await expectAccordionOpen(sourceButton, sourcePanel);
+  await expect(sourceButton).toBeFocused();
+  await expect(sourceButton).toHaveAccessibleName(new RegExp(`${sourceId}.*Hide details`));
+}
+
+async function openSourceActionTarget(page: Page) {
+  const actionTargetButton = page.locator("#source-action-target-accordion-button");
+  const actionTargetPanel = page.locator("#source-action-target-accordion-panel");
+
+  if ((await actionTargetButton.getAttribute("aria-expanded")) !== "true") {
+    await actionTargetButton.click();
+  }
+
+  await expectAccordionOpen(actionTargetButton, actionTargetPanel);
 }
 
 async function expectDisclosureContentHidden(locator: Locator) {
@@ -711,65 +730,32 @@ async function expectDisclosureCueOpen(disclosure: Locator, accessibleName: RegE
   await expect(summary).toHaveAccessibleName(accessibleName);
 }
 
-async function expectSourceInventoryToggleAtTop(disclosure: Locator) {
-  const summary = disclosure.locator("summary");
-  const toggle = disclosure.locator(".evidence-workbench-source-inventory__toggle");
-  const sourceLabel = disclosure.locator(".evidence-workbench-source-inventory__cell-label").first();
+async function expectSourceInventoryButtonContained(button: Locator) {
+  const geometry = await button.evaluate((buttonElement) => {
+    const accordionItem = buttonElement.closest(".qhds-accordion__item");
 
-  const verticalOffsets = await summary.evaluate((summaryElement) => {
-    const toggleElement = summaryElement.querySelector(
-      ".evidence-workbench-source-inventory__toggle"
-    );
-    const labelElement = summaryElement.querySelector(
-      ".evidence-workbench-source-inventory__cell-label"
-    );
-
-    if (!toggleElement || !labelElement) {
+    if (!accordionItem) {
       return null;
     }
 
-    const summaryRect = summaryElement.getBoundingClientRect();
-    const toggleRect = toggleElement.getBoundingClientRect();
-    const labelRect = labelElement.getBoundingClientRect();
+    const itemRect = accordionItem.getBoundingClientRect();
+    const buttonRect = buttonElement.getBoundingClientRect();
 
     return {
-      labelTop: labelRect.top - summaryRect.top,
-      toggleTop: toggleRect.top - summaryRect.top
-    };
-  });
-
-  expect(verticalOffsets).not.toBeNull();
-  expect(verticalOffsets?.toggleTop).toBeLessThan(24);
-  expect(Math.abs((verticalOffsets?.toggleTop ?? 0) - (verticalOffsets?.labelTop ?? 0))).toBeLessThan(12);
-  await expect(toggle).toBeVisible();
-  await expect(sourceLabel).toBeVisible();
-}
-
-async function expectSummaryContainedByDetails(disclosure: Locator) {
-  const geometry = await disclosure.evaluate((detailsElement) => {
-    const summaryElement = detailsElement.querySelector("summary");
-
-    if (!summaryElement) {
-      return null;
-    }
-
-    const detailsRect = detailsElement.getBoundingClientRect();
-    const summaryRect = summaryElement.getBoundingClientRect();
-
-    return {
-      detailsLeft: detailsRect.left,
-      detailsRight: detailsRect.right,
-      summaryLeft: summaryRect.left,
-      summaryRight: summaryRect.right,
-      summaryWidth: summaryRect.width,
-      detailsWidth: detailsRect.width
+      buttonLeft: buttonRect.left,
+      buttonRight: buttonRect.right,
+      buttonWidth: buttonRect.width,
+      itemLeft: itemRect.left,
+      itemRight: itemRect.right,
+      itemWidth: itemRect.width
     };
   });
 
   expect(geometry).not.toBeNull();
-  expect(geometry?.summaryWidth).toBeLessThanOrEqual((geometry?.detailsWidth ?? 0) + 1);
-  expect(geometry?.summaryLeft).toBeGreaterThanOrEqual((geometry?.detailsLeft ?? 0) - 1);
-  expect(geometry?.summaryRight).toBeLessThanOrEqual((geometry?.detailsRight ?? 0) + 1);
+  expect(geometry?.buttonWidth).toBeLessThanOrEqual((geometry?.itemWidth ?? 0) + 1);
+  expect(geometry?.buttonLeft).toBeGreaterThanOrEqual((geometry?.itemLeft ?? 0) - 1);
+  expect(geometry?.buttonRight).toBeLessThanOrEqual((geometry?.itemRight ?? 0) + 1);
+  await expect(button.locator(".evidence-workbench-source-inventory__cell-label").first()).toBeVisible();
 }
 
 function assertRuntime(expectedMode: string, expectedBackend: string) {

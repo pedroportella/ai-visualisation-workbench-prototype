@@ -34,7 +34,7 @@ ROUTE_CHECKS = [
     ),
     (
         "/evidence-workbench/review",
-        ("Review answer", "Action and audit flow"),
+        ("Review answer", "Decision required", "Take action"),
         (
             "South Brisbane lift outage and PA Hospital accessible shuttle advice",
             "CIT-003-A",

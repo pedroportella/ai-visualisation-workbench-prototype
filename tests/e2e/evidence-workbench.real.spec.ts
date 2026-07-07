@@ -16,8 +16,9 @@ test("Docker-backed Evidence Workbench renders backend fixture journey", async (
   await page.getByRole("link", { name: /^Start review$/ }).first().click();
   await expect(page).toHaveURL(/\/evidence-workbench\/review$/);
   await expect(page.getByRole("heading", { level: 1, name: "Review answer" })).toBeVisible();
+  await page.locator("#review-answer-accordion-button").click();
   await expect(page.getByText("CIT-003-A").first()).toBeVisible();
-  await expect(page.getByText("SRC-006").first()).toBeVisible();
+  await page.locator("#review-take-action-accordion-button").click();
   await expectControlCanReceiveFocus(page, "button", "Request source update");
   await page.getByRole("button", { name: "Request source update" }).click();
   await expect(page.getByText("Request source update recorded in local UI state.")).toBeVisible();
@@ -33,7 +34,6 @@ test("Docker-backed Evidence Workbench renders backend fixture journey", async (
     "data-graph-id",
     "GRAPH-001"
   );
-  await expect(page.getByText("NODE-SRC-006").first()).toBeVisible();
   const textMapButton = page.getByRole("button", { name: /Text process map/ });
   await expect(textMapButton).toBeVisible();
   await expect(textMapButton).toHaveAttribute("aria-expanded", "false");
@@ -41,13 +41,15 @@ test("Docker-backed Evidence Workbench renders backend fixture journey", async (
   await textMapButton.click();
   await expect(textMapButton).toHaveAttribute("aria-expanded", "true");
   await expect(page.locator("#process-map-text-fallback")).toBeVisible();
+  await expect(page.locator("#process-map-text-fallback").getByText("NODE-SRC-006")).toBeVisible();
   await page.locator("#process-map-text-fallback").focus();
   await expect(page.locator("#process-map-text-fallback")).toBeFocused();
 
   await page.goto("/evidence-workbench/audit");
   await expect(page.getByRole("heading", { level: 1, name: "Audit state" })).toBeVisible();
   await expect(page.getByText("AUDIT-001").first()).toBeVisible();
-  await expect(page.getByText("ACT-REQUEST-SOURCE-UPDATE").first()).toBeVisible();
+  await expect(page.getByText("Copy remains unavailable").first()).toBeVisible();
+  await expect(page.getByText("Local state is at the loaded fixture seed.").first()).toBeVisible();
   await expect(page.getByText("SRC-FALLBACK")).toHaveCount(0);
 });
 
