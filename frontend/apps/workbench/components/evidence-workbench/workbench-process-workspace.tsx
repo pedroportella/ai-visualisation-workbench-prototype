@@ -7,7 +7,7 @@ import {
 
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 import { EvidenceProcessMap } from "./evidence-process-map";
-import type { ReviewDecisionState } from "./review-action-state";
+import type { ReviewDecisionState } from "./state/reviewDecisionState";
 import {
   WorkbenchWarningOwnershipDetail,
   WorkbenchWarningOwnershipSummary

@@ -1,4 +1,4 @@
-import EvidenceWorkbenchContainer from "../../../components/evidence-workbench/evidence-workbench-container";
+import { EvidenceWorkbenchClient } from "../../../components/evidence-workbench/EvidenceWorkbenchClient";
 import { getEvidenceWorkbenchData } from "../../../services/evidence-workbench/backend-service";
 
 export const dynamic = "force-dynamic";
@@ -7,5 +7,5 @@ export const runtime = "nodejs";
 export default async function EvidenceWorkbenchReviewPage() {
   const data = await getEvidenceWorkbenchData();
 
-  return <EvidenceWorkbenchContainer activeView="review" data={data} />;
+  return <EvidenceWorkbenchClient activeView="review" data={data} />;
 }

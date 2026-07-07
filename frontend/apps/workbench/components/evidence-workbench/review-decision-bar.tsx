@@ -22,7 +22,7 @@ import {
   type ReviewActionAvailability,
   type ReviewActionTarget,
   type ReviewDecisionState
-} from "./review-action-state";
+} from "./state/reviewDecisionState";
 
 export interface ReviewDecisionBarProps {
   flow?: "audit" | "decision";

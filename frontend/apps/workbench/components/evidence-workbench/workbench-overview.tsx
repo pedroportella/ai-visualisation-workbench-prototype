@@ -10,14 +10,14 @@ import {
 } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
-import type { ReviewDecisionState } from "./review-action-state";
-import { formatStateLabel, statusTone } from "./evidence-workbench-formatters";
+import type { ReviewDecisionState } from "./state/reviewDecisionState";
+import { formatStateLabel, statusTone } from "./viewFormatters";
 import {
   AUDIT_ROUTE,
   PROCESS_ROUTE,
   REVIEW_ROUTE,
   SOURCE_INVENTORY_ROUTE
-} from "./evidence-workbench-routes";
+} from "./routeModel";
 
 interface WorkbenchOverviewProps {
   data: EvidenceWorkbenchViewModel;

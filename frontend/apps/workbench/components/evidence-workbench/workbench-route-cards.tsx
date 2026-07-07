@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import { QhdsCard, QhdsContentSection } from "@aivis/ui-library";
 
-import { workbenchRouteLinks } from "./evidence-workbench-routes";
+import { workbenchRouteLinks } from "./routeModel";
 
 export function WorkbenchRouteCards(): ReactElement {
   const supportingRoutes = workbenchRouteLinks.filter((link) => link.view !== "review");

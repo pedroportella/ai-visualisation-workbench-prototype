@@ -14,7 +14,7 @@ import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
 } from "../../services/evidence-workbench/types";
-import type { ReviewActionTarget } from "./review-action-state";
+import type { ReviewActionTarget } from "./state/reviewDecisionState";
 
 export interface SourceBlockerIssue extends ReviewActionTarget {
   code: string;

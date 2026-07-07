@@ -13,9 +13,9 @@ import {
 import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
 import { AnswerMarkdown } from "./answer-markdown";
 import { ClaimsReviewSection } from "./claims-review-section";
-import { SOURCE_INVENTORY_ROUTE } from "./evidence-workbench-routes";
+import { SOURCE_INVENTORY_ROUTE } from "./routeModel";
 import type { ReviewDecisionBarProps } from "./review-decision-bar";
-import type { ReviewDecisionState } from "./review-action-state";
+import type { ReviewDecisionState } from "./state/reviewDecisionState";
 import { ReviewDecisionBar } from "./review-decision-bar";
 import { SelectedSourceInspector } from "./selected-source-inspector";
 import type { SourceBlockerIssue } from "./source-blocker-review";

@@ -4,16 +4,24 @@ import { fileURLToPath } from "node:url";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { fallbackEvidenceWorkbenchData } from "../../services/evidence-workbench/fallback-fixture";
-import { EVIDENCE_PROCESS_MAP_COLOR_MODE } from "./evidence-process-map";
-import EvidenceWorkbenchContainer from "./evidence-workbench-container";
+import { fallbackEvidenceWorkbenchData } from "../../../services/evidence-workbench/fallback-fixture";
+import { EVIDENCE_PROCESS_MAP_COLOR_MODE } from "../evidence-process-map";
+import { EvidenceWorkbenchClient } from ".";
 
-const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "evidence-workbench.scss"), "utf8");
+const componentDirectory = dirname(fileURLToPath(import.meta.url));
+const styles = [
+  readFileSync(join(componentDirectory, "../evidence-workbench.scss"), "utf8"),
+  readFileSync(join(componentDirectory, "EvidenceWorkbenchClient.scss"), "utf8"),
+  readFileSync(
+    join(componentDirectory, "../EvidenceWorkbenchTaskHeader/EvidenceWorkbenchTaskHeader.scss"),
+    "utf8"
+  )
+].join("\n");
 
-describe("EvidenceWorkbenchContainer", () => {
+describe("EvidenceWorkbenchClient", () => {
   it("uses the overview route as a compact welcome and task launcher", () => {
     const html = renderToStaticMarkup(
-      <EvidenceWorkbenchContainer data={fallbackEvidenceWorkbenchData} />
+      <EvidenceWorkbenchClient data={fallbackEvidenceWorkbenchData} />
     );
     const headerIndex = html.indexOf("workbench-task-header");
     const overviewIndex = html.indexOf('id="overview-title"');
@@ -74,7 +82,7 @@ describe("EvidenceWorkbenchContainer", () => {
 
   it("uses the review route for the compact primary review task", () => {
     const html = renderToStaticMarkup(
-      <EvidenceWorkbenchContainer
+      <EvidenceWorkbenchClient
         activeView="review"
         data={fallbackEvidenceWorkbenchData}
       />
@@ -235,7 +243,7 @@ describe("EvidenceWorkbenchContainer", () => {
 
   it("renders the source inventory and context on the sources route", () => {
     const html = renderToStaticMarkup(
-      <EvidenceWorkbenchContainer
+      <EvidenceWorkbenchClient
         activeView="sources"
         data={fallbackEvidenceWorkbenchData}
       />
@@ -305,7 +313,7 @@ describe("EvidenceWorkbenchContainer", () => {
 
   it("renders the React Flow process map and fallback on the process route", () => {
     const html = renderToStaticMarkup(
-      <EvidenceWorkbenchContainer
+      <EvidenceWorkbenchClient
         activeView="process"
         data={fallbackEvidenceWorkbenchData}
       />
@@ -355,7 +363,7 @@ describe("EvidenceWorkbenchContainer", () => {
 
   it("uses the audit route for read-only local action state plus reset", () => {
     const html = renderToStaticMarkup(
-      <EvidenceWorkbenchContainer
+      <EvidenceWorkbenchClient
         activeView="audit"
         data={fallbackEvidenceWorkbenchData}
       />

@@ -2,25 +2,25 @@
 
 import { useMemo, useReducer, useState } from "react";
 
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
-import { summaryMap } from "./evidence-workbench-formatters";
-import type { EvidenceWorkbenchView } from "./evidence-workbench-routes";
-import { WorkbenchAuditWorkspace } from "./workbench-audit-workspace";
-import { WorkbenchOverview } from "./workbench-overview";
-import { WorkbenchProcessWorkspace } from "./workbench-process-workspace";
-import { WorkbenchReviewWorkspace } from "./workbench-review-workspace";
-import { WorkbenchSourcesWorkspace } from "./workbench-sources-workspace";
-import { WorkbenchTaskHeader } from "./workbench-task-header";
+import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
+import { EvidenceWorkbenchTaskHeader } from "../EvidenceWorkbenchTaskHeader";
+import type { EvidenceWorkbenchView } from "../routeModel";
 import {
   createInitialReviewDecisionState,
   reviewDecisionReducer
-} from "./review-action-state";
+} from "../state/reviewDecisionState";
+import { summaryMap } from "../viewFormatters";
+import { WorkbenchAuditWorkspace } from "../workbench-audit-workspace";
+import { WorkbenchOverview } from "../workbench-overview";
+import { WorkbenchProcessWorkspace } from "../workbench-process-workspace";
+import { WorkbenchReviewWorkspace } from "../workbench-review-workspace";
+import { WorkbenchSourcesWorkspace } from "../workbench-sources-workspace";
 import {
   buildSourceBlockerIssues,
   selectedSourceIssue
-} from "./source-blocker-review";
+} from "../source-blocker-review";
 
-export default function EvidenceWorkbenchContainer({
+export function EvidenceWorkbenchClient({
   activeView = "overview",
   data
 }: Readonly<{
@@ -55,7 +55,7 @@ export default function EvidenceWorkbenchContainer({
 
   return (
     <>
-      <WorkbenchTaskHeader activeView={activeView} review={review} />
+      <EvidenceWorkbenchTaskHeader activeView={activeView} review={review} />
 
       {activeView === "overview" ? (
         <WorkbenchOverview

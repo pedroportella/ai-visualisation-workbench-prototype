@@ -5,14 +5,14 @@ import {
   MARK_REVIEWED_ACTION_ID,
   PRIMARY_REVIEW_ACTION_ID,
   PRIMARY_REVIEWER_NOTE
-} from "../../services/evidence-workbench/review-action-fixture";
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
-import { fallbackEvidenceWorkbenchData } from "../../services/evidence-workbench/fallback-fixture";
+} from "../../../services/evidence-workbench/review-action-fixture";
+import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
+import { fallbackEvidenceWorkbenchData } from "../../../services/evidence-workbench/fallback-fixture";
 import {
   createInitialReviewDecisionState,
   getReviewActionAvailability,
   reviewDecisionReducer
-} from "./review-action-state";
+} from "./reviewDecisionState";
 
 const backendLikeData: EvidenceWorkbenchViewModel = {
   ...fallbackEvidenceWorkbenchData,

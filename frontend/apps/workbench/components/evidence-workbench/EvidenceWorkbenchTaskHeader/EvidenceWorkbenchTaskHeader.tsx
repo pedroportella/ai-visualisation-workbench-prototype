@@ -1,19 +1,19 @@
 import type { ReactElement } from "react";
 import { AivisEvidenceStatus } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
-import type { EvidenceWorkbenchView } from "./evidence-workbench-routes";
-import { formatStateLabel, statusTone } from "./evidence-workbench-formatters";
+import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchView } from "../routeModel";
+import { formatStateLabel, statusTone } from "../viewFormatters";
 
-interface WorkbenchTaskHeaderProps {
+interface EvidenceWorkbenchTaskHeaderProps {
   activeView: EvidenceWorkbenchView;
   review: EvidenceWorkbenchViewModel["review"];
 }
 
-export function WorkbenchTaskHeader({
+export function EvidenceWorkbenchTaskHeader({
   activeView,
   review
-}: Readonly<WorkbenchTaskHeaderProps>): ReactElement {
+}: Readonly<EvidenceWorkbenchTaskHeaderProps>): ReactElement {
   const titles = {
     audit: "Audit state",
     overview: "Evidence Workbench",

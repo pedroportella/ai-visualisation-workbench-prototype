@@ -1,0 +1,39 @@
+.workbench-task-header {
+  align-items: end;
+  border-block-end: var(--aivis-border-width-thin) solid var(--qhds-color-border);
+  display: grid;
+  gap: var(--aivis-space-2) var(--aivis-space-4);
+  grid-template-columns: minmax(0, auto) minmax(16rem, max-content);
+  min-width: 0;
+  padding-block: var(--aivis-space-3);
+}
+
+.workbench-task-header__heading {
+  color: var(--aivis-shell-text);
+  font-size: var(--qhds-font-size-h1-desktop);
+  line-height: var(--aivis-line-height-heading);
+  margin: 0;
+  min-width: 0;
+}
+
+.workbench-task-header__status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aivis-space-2);
+  justify-content: end;
+  min-width: 0;
+}
+
+@media (max-width: 44rem) {
+  .workbench-task-header {
+    grid-template-columns: 1fr;
+  }
+
+  .workbench-task-header__heading {
+    font-size: var(--qhds-font-size-h1-mobile);
+  }
+
+  .workbench-task-header__status {
+    justify-content: start;
+  }
+}
