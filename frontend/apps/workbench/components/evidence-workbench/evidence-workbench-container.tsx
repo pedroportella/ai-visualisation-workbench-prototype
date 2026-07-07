@@ -93,8 +93,8 @@ export default function EvidenceWorkbenchContainer({
 
       {activeView === "audit" ? (
         <WorkbenchAuditWorkspace
+          data={data}
           decisionState={decisionState}
-          onApplyAction={applyReviewAction}
           onReset={resetReviewState}
           selectedIssue={selectedIssue}
         />

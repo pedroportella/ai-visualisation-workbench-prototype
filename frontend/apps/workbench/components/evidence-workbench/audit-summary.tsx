@@ -6,19 +6,32 @@ import {
   QhdsSummaryList
 } from "@aivis/ui-library";
 
-import type { ReviewDecisionState } from "./review-action-state";
+import { REVIEW_ROUTE } from "./evidence-workbench-routes";
+import type {
+  ReviewActionTarget,
+  ReviewDecisionState
+} from "./review-action-state";
 
 export function AuditSummary({
-  decisionState
-}: Readonly<{ decisionState: ReviewDecisionState }>): ReactElement {
+  decisionState,
+  selectedIssue
+}: Readonly<{
+  decisionState: ReviewDecisionState;
+  selectedIssue: ReviewActionTarget | null;
+}>): ReactElement {
   const review = decisionState.review;
   const actionTarget = decisionState.lastActionTarget;
+  const availableActions = decisionState.actions.filter((action) =>
+    review.availableActionIds.includes(action.id)
+  );
 
   return (
     <QhdsContentSection
       className="evidence-workbench-panel evidence-workbench-audit-summary"
       heading="Audit summary"
       headingId="audit-summary"
+      lead="Read-only local state for copy availability, selected issue, recorded action target and feedback."
+      leadDensity="compact"
       tabIndex={0}
       withBodyClass={false}
     >
@@ -31,15 +44,18 @@ export function AuditSummary({
         </AivisEvidenceStatus>
         <p className="evidence-workbench-review-note">
           Copy state is {review.copyState}. Approval remains blocked by{" "}
-          {review.blockedByWarningIds.join(", ")} with {review.activeWarningCount}{" "}
-          active fixture warnings. Audit {decisionState.audit.id} last action is{" "}
-          {decisionState.audit.lastReviewActionId ?? "none"}.
+          {review.blockedByWarningIds.join(", ")}. Audit {decisionState.audit.id} last
+          action is {decisionState.audit.lastReviewActionId ?? "none"}.
         </p>
       </div>
       <QhdsSummaryList
         ariaLabel="Local audit target summary"
         className="evidence-workbench-audit-summary__metadata"
         items={[
+          {
+            description: review.status,
+            term: "Review state"
+          },
           {
             description: review.copyState,
             term: "Copy state"
@@ -51,6 +67,18 @@ export function AuditSummary({
           {
             description: review.activeWarningCount,
             term: "Active warnings"
+          },
+          {
+            description: selectedIssue
+              ? `${selectedIssue.warningId} on ${selectedIssue.sourceId}: ${selectedIssue.warningMessage}`
+              : "No source issue is selected for the next local action.",
+            term: "Selected source issue"
+          },
+          {
+            description:
+              availableActions.map((action) => action.label).join(", ") ||
+              "No local actions are available.",
+            term: "Available local actions"
           },
           {
             description: decisionState.audit.lastReviewActionId ?? "None",
@@ -71,6 +99,10 @@ export function AuditSummary({
               ? "Local state has changed from the loaded fixture seed."
               : "Local state is at the loaded fixture seed.",
             term: "Reset state"
+          },
+          {
+            description: <a href={REVIEW_ROUTE}>Record local actions on Review answer</a>,
+            term: "Action route"
           }
         ]}
       />

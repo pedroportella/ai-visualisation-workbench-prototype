@@ -37,7 +37,7 @@ export const workbenchRouteLinks: Array<{
     view: "process"
   },
   {
-    description: "Local audit state and warnings",
+    description: "Read-only local action state and reset boundary",
     href: AUDIT_ROUTE,
     label: "Audit state",
     view: "audit"

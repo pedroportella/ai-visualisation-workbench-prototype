@@ -72,6 +72,11 @@ for (const viewport of viewports) {
           await expectResponsiveNavigation(page, viewport.label);
 
           if (route.path.endsWith("/process")) {
+            const textMapButton = page.getByRole("button", { name: /Text process map/ });
+            await expect(textMapButton).toHaveAttribute("aria-expanded", "false");
+            await expect(page.locator("#process-map-text-fallback")).toBeHidden();
+            await textMapButton.click();
+            await expect(textMapButton).toHaveAttribute("aria-expanded", "true");
             await expect(page.locator("#process-map-text-fallback")).toBeVisible();
             await page.locator("#process-map-text-fallback").focus();
             await expect(page.locator("#process-map-text-fallback")).toBeFocused();

@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  type ReactElement,
+  type ReactNode
+} from "react";
 import {
   Background,
   Controls,
@@ -15,7 +21,12 @@ import {
   type Node,
   type NodeProps
 } from "@xyflow/react";
-import { QhdsButton, QhdsCard, QhdsSummaryList } from "@aivis/ui-library";
+import {
+  QhdsAccordion,
+  QhdsButton,
+  QhdsSummaryList,
+  type QhdsAccordionItem
+} from "@aivis/ui-library";
 
 import type {
   EvidenceWorkbenchGraphPosition,
@@ -30,6 +41,9 @@ import {
 
 interface EvidenceProcessMapProps {
   graph: EvidenceWorkbenchViewModel["graph"];
+  supportingEvidence?: ReactNode;
+  supportingEvidenceId?: string;
+  supportingEvidenceTitle?: string;
 }
 
 interface EvidenceFlowNodeData extends EvidenceProcessMapNodeModel, Record<string, unknown> {
@@ -52,7 +66,12 @@ const nodeTypes = {
   evidenceNode: EvidenceFlowNodeComponent
 };
 
-export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
+export function EvidenceProcessMap({
+  graph,
+  supportingEvidence,
+  supportingEvidenceId,
+  supportingEvidenceTitle
+}: EvidenceProcessMapProps) {
   const model = useMemo(() => createEvidenceProcessMapModel(graph), [graph]);
   const [filterId, setFilterId] = useState<EvidenceProcessMapFilterId>("review-path");
   const [selectedNodeId, setSelectedNodeId] = useState(graph.defaultSelectedNodeId);
@@ -133,6 +152,29 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
     model.nodes.find((node) => node.graphNode.id === model.defaultSelectedNodeId) ??
     model.nodes[0];
   const selectedFilter = model.filters.find((filter) => filter.id === filterId);
+  const detailItems: QhdsAccordionItem[] = [];
+
+  if (selectedNode) {
+    detailItems.push({
+      content: <SelectedNodeDetail node={selectedNode} />,
+      id: "process-selected-node",
+      title: "Selected graph node"
+    });
+  }
+
+  detailItems.push({
+    content: <TextProcessMapFallback graph={graph} />,
+    id: "process-text-map",
+    title: "Text process map"
+  });
+
+  if (supportingEvidence && supportingEvidenceId && supportingEvidenceTitle) {
+    detailItems.push({
+      content: supportingEvidence,
+      id: supportingEvidenceId,
+      title: supportingEvidenceTitle
+    });
+  }
 
   return (
     <div
@@ -161,7 +203,10 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
           ))}
         </div>
         {selectedFilter ? (
-          <p className="evidence-workbench-process-map__filter-summary">
+          <p
+            className="evidence-workbench-process-map__filter-summary"
+            id="process-map-filter-summary"
+          >
             {selectedFilter.summary}
           </p>
         ) : null}
@@ -169,7 +214,7 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
 
       <ReactFlowProvider>
         <div
-          aria-describedby="process-map-text-fallback"
+          aria-describedby={selectedFilter ? "process-map-filter-summary" : undefined}
           aria-label="Interactive evidence process map"
           className="evidence-workbench-process-map__viewport"
           data-small-viewport-fallback={graph.smallViewportFallback}
@@ -196,28 +241,7 @@ export function EvidenceProcessMap({ graph }: EvidenceProcessMapProps) {
       </ReactFlowProvider>
 
       <div className="evidence-workbench-process-map__details">
-        {selectedNode ? <SelectedNodeDetail node={selectedNode} /> : null}
-        <div
-          aria-labelledby="process-map-text-fallback-title"
-          className="evidence-workbench-process-map__fallback"
-          id="process-map-text-fallback"
-          role="region"
-          tabIndex={0}
-        >
-          <h3 id="process-map-text-fallback-title">Text process map</h3>
-          <p>{graph.accessibleSummary}</p>
-          <ol>
-            {graph.fallbackSteps.map((step) => (
-              <li key={`${step.step}-${step.heading}`}>
-                <h4>
-                  Step {step.step}: {step.heading}
-                </h4>
-                <p>{step.summary}</p>
-                <small>Includes: {step.includeIds.join(", ")}</small>
-              </li>
-            ))}
-          </ol>
-        </div>
+        <QhdsAccordion headingLevel={3} items={detailItems} />
       </div>
     </div>
   );
@@ -307,16 +331,43 @@ function ProcessMapCanvasControls() {
   );
 }
 
-function SelectedNodeDetail({ node }: { node: EvidenceProcessMapNodeModel }) {
+function TextProcessMapFallback({
+  graph
+}: {
+  graph: EvidenceWorkbenchViewModel["graph"];
+}): ReactElement {
   return (
-    <QhdsCard
-      actionMode="none"
+    <div
+      aria-label="Text process map"
+      className="evidence-workbench-process-map__fallback"
+      id="process-map-text-fallback"
+      role="region"
+      tabIndex={0}
+    >
+      <p>{graph.accessibleSummary}</p>
+      <ol>
+        {graph.fallbackSteps.map((step) => (
+          <li key={`${step.step}-${step.heading}`}>
+            <h4>
+              Step {step.step}: {step.heading}
+            </h4>
+            <p>{step.summary}</p>
+            <small>Includes: {step.includeIds.join(", ")}</small>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function SelectedNodeDetail({
+  node
+}: {
+  node: EvidenceProcessMapNodeModel;
+}): ReactElement {
+  return (
+    <div
       className="evidence-workbench-process-map__selected-node"
-      density="compact"
-      heading="Selected graph node"
-      headingId="process-map-selected-node-title"
-      headingLevel={3}
-      variant="workbench"
     >
       <QhdsSummaryList
         ariaLabel="Selected graph node metadata"
@@ -328,7 +379,7 @@ function SelectedNodeDetail({ node }: { node: EvidenceProcessMapNodeModel }) {
           { description: node.warningLabel, term: "Warnings" }
         ]}
       />
-    </QhdsCard>
+    </div>
   );
 }
 

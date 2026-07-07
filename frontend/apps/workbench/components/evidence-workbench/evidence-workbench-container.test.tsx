@@ -232,16 +232,36 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(html).toContain("React Flow graph");
     expect(html).toContain("evidence-workbench-process-map");
     expect(html).toContain('role="region"');
-    expect(html).toContain('aria-describedby="process-map-text-fallback"');
+    expect(html).toContain('aria-describedby="process-map-filter-summary"');
+    expect(html).toContain('id="process-selected-node-accordion-button"');
+    expect(html).toContain('aria-controls="process-selected-node-accordion-panel"');
+    expect(html).toContain('id="process-selected-node-accordion-panel"');
     expect(html).toContain("Text process map");
+    expect(html).toContain('id="process-text-map-accordion-button"');
+    expect(html).toContain('aria-controls="process-text-map-accordion-panel"');
+    expect(html).toContain('id="process-text-map-accordion-panel"');
     expect(html).toContain('id="process-map-text-fallback"');
     expect(html).toContain("Selected graph node");
-    expect(html).toContain("Active fixture warnings");
+    expect(html).toContain("Process warning ownership");
+    expect(html).toContain('id="process-warning-ownership-accordion-button"');
+    expect(html).toContain('aria-controls="process-warning-ownership-accordion-panel"');
+    expect(html).toContain('id="process-warning-ownership-accordion-panel"');
+    expect(html).toContain("The map explains how the evidence path happened.");
+    expect(html).toContain("3 active warnings");
+    expect(html).toContain("3 approval blockers");
+    expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-002"');
+    expect(html).toContain('aria-expanded="false"');
+    expect(html).toContain('hidden=""');
+    expect(html).not.toContain('id="process-supporting-warning-detail-accordion-button"');
+    expect(html).toContain("Show details");
+    expect(html).toContain("Hide details");
+    expect(html).toContain("Full warning messages are supporting evidence here.");
+    expect(html).not.toContain("Active fixture warnings");
     expect(html).not.toContain('id="sources-title"');
     expect(html).not.toContain("qld__abstract");
   });
 
-  it("keeps local review actions and audit state reachable on the audit route", () => {
+  it("uses the audit route for read-only local action state plus reset", () => {
     const html = renderToStaticMarkup(
       <EvidenceWorkbenchContainer
         activeView="audit"
@@ -254,15 +274,41 @@ describe("EvidenceWorkbenchContainer", () => {
       '<h1 class="workbench-task-header__heading" id="evidence-workbench-title">Audit state</h1>'
     );
     expect(html).not.toContain("Check the current local action state");
-    expect(html).toContain('id="review-decision-title"');
+    expect(html).not.toContain('id="review-decision-title"');
+    expect(html).not.toContain('aria-label="Review actions"');
+    expect(html).not.toContain("evidence-workbench-review-actions__button-grid");
+    expect(html).not.toContain("Copy approved answer");
     expect(html).toContain("Request source update");
     expect(html).toContain("Mark unsafe to use");
-    expect(html).toContain("Copy approved answer");
     expect(html).toContain("Audit summary");
     expect(html).toContain('id="audit-summary"');
     expect(html).toContain('tabindex="0"');
+    expect(html).toContain("Read-only local state for copy availability");
     expect(html).toContain("evidence-workbench-audit-summary__state");
-    expect(html).toContain("Active fixture warnings");
+    expect(html).toContain("Copy remains unavailable");
+    expect(html).toContain("Selected source issue");
+    expect(html).toContain("Available local actions");
+    expect(html).toContain("Action route");
+    expect(html).toContain('href="/evidence-workbench/review"');
+    expect(html).toContain("Reset boundary");
+    expect(html).toContain("Reset is the only state-changing control on this route.");
+    expect(html).toContain("Audit is read-only local state plus reset.");
+    expect(html).toContain("Reset local review state");
+    expect(html).toContain("Audit warning ownership");
+    expect(html).toContain("Audit records local action state.");
+    expect(html).toContain("3 active warnings");
+    expect(html).toContain("3 approval blockers");
+    expect(html).toContain('href="/evidence-workbench/sources#source-SRC-FALLBACK-003"');
+    expect(html).toContain('id="audit-supporting-warning-detail-accordion-button"');
+    expect(html).toContain('aria-controls="audit-supporting-warning-detail-accordion-panel"');
+    expect(html).toContain('aria-expanded="false"');
+    expect(html).toContain('id="audit-supporting-warning-detail-accordion-panel"');
+    expect(html).toContain('hidden=""');
+    expect(html).toContain("Supporting warning detail");
+    expect(html).toContain("Show details");
+    expect(html).toContain("Hide details");
+    expect(html).toContain("Full warning messages are supporting evidence here.");
+    expect(html).not.toContain("Active fixture warnings");
     expect(html).not.toContain("qld__callout");
     expect(html).not.toContain('id="answer-title"');
     expect(html).not.toContain('id="sources-title"');
@@ -283,6 +329,8 @@ describe("EvidenceWorkbenchContainer", () => {
     expect(styles).toContain(".evidence-workbench-current-blocker");
     expect(styles).toContain(".evidence-workbench-supporting-evidence");
     expect(styles).toContain(".evidence-workbench-supporting-evidence .qhds-accordion");
+    expect(styles).toContain(".evidence-workbench-warning-ownership__counts");
+    expect(styles).toContain(".evidence-workbench-audit-reset__actions");
     expect(styles).toContain(".evidence-workbench-source-review");
     expect(styles).toContain(".evidence-workbench-source-review-section--decision .evidence-workbench-source-review");
     expect(styles).toContain(".evidence-workbench-source-review__selected-summary");

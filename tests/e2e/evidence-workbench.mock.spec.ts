@@ -129,11 +129,19 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
 
   await page.goto("/evidence-workbench/process");
   await expect(page.getByRole("heading", { level: 1, name: "Evidence map" })).toBeVisible();
-  await expect(page.locator("#process-map-text-fallback")).toBeVisible();
+  await expect(page.getByRole("button", { name: /Selected graph node/ })).toBeVisible();
+  const textMapButton = page.getByRole("button", { name: /Text process map/ });
+  await expect(textMapButton).toBeVisible();
+  await expect(textMapButton).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#process-map-text-fallback")).toBeHidden();
+  await expect(page.getByRole("button", { name: /Process warning ownership/ })).toBeVisible();
   await expect(page.locator(".evidence-workbench-process-map")).toHaveAttribute(
     "data-graph-id",
     "GRAPH-FALLBACK"
   );
+  await textMapButton.click();
+  await expect(textMapButton).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator("#process-map-text-fallback")).toBeVisible();
   await page.locator("#process-map-text-fallback").focus();
   await expect(page.locator("#process-map-text-fallback")).toBeFocused();
 
@@ -216,6 +224,44 @@ test("mock evidence disclosures hide closed content and reveal open content", as
   await sourceDisclosure.locator("summary").click();
   await expectDisclosureCueOpen(sourceDisclosure, /SRC-FALLBACK-002.*Hide details/);
   await expectDisclosureContentVisible(sourcePanel);
+
+  await page.goto("/evidence-workbench/process");
+
+  const processAccordion = page.locator(".evidence-workbench-process-map__details .qhds-accordion");
+  const selectedNodeButton = page.locator("#process-selected-node-accordion-button");
+  const selectedNodePanel = page.locator("#process-selected-node-accordion-panel");
+  const textProcessButton = page.locator("#process-text-map-accordion-button");
+  const textProcessPanel = page.locator("#process-text-map-accordion-panel");
+  const warningOwnershipButton = page.locator("#process-warning-ownership-accordion-button");
+  const warningOwnershipPanel = page.locator("#process-warning-ownership-accordion-panel");
+
+  await expect(processAccordion.locator(".qhds-accordion__item")).toHaveCount(3);
+  await expectAccordionRowsStacked(processAccordion.locator(".qhds-accordion__item"));
+  await expect(selectedNodeButton).toHaveAccessibleName(/Selected graph node.*Show details/);
+  await expect(textProcessButton).toHaveAccessibleName(/Text process map.*Show details/);
+  await expect(warningOwnershipButton).toHaveAccessibleName(
+    /Process warning ownership.*Show details/
+  );
+  await expectAccordionClosed(selectedNodeButton, selectedNodePanel);
+  await expectAccordionClosed(textProcessButton, textProcessPanel);
+  await expectAccordionClosed(warningOwnershipButton, warningOwnershipPanel);
+  await expect(page.locator("#process-map-text-fallback")).toBeHidden();
+
+  await selectedNodeButton.click();
+  await expectAccordionOpen(selectedNodeButton, selectedNodePanel);
+  await expect(selectedNodePanel.getByText("Step-free transfer assurance")).toBeVisible();
+
+  await textProcessButton.click();
+  await expectAccordionOpen(textProcessButton, textProcessPanel);
+  await page.locator("#process-map-text-fallback").focus();
+  await expect(page.locator("#process-map-text-fallback")).toBeFocused();
+
+  await warningOwnershipButton.click();
+  await expectAccordionOpen(warningOwnershipButton, warningOwnershipPanel);
+  await expect(warningOwnershipPanel.getByText("3 active warnings")).toBeVisible();
+  await expect(
+    warningOwnershipPanel.getByRole("link", { name: "SRC-FALLBACK-002" })
+  ).toBeVisible();
 });
 
 async function expectControlCanReceiveFocus(
@@ -336,6 +382,25 @@ async function expectAccordionOpen(button: Locator, panel: Locator) {
   await expect(button).toHaveAccessibleName(/Hide details/);
   await expect(panel).not.toHaveAttribute("hidden", "");
   await expectDisclosureContentVisible(panel);
+}
+
+async function expectAccordionRowsStacked(items: Locator) {
+  const boxes = await items.evaluateAll((elements) =>
+    elements.map((element) => {
+      const rect = element.getBoundingClientRect();
+
+      return {
+        bottom: rect.bottom,
+        top: rect.top
+      };
+    })
+  );
+
+  expect(boxes.length).toBe(3);
+
+  for (let index = 1; index < boxes.length; index += 1) {
+    expect(boxes[index]?.top ?? 0).toBeGreaterThanOrEqual((boxes[index - 1]?.bottom ?? 0) - 1);
+  }
 }
 
 async function expectDisclosureCueClosed(disclosure: Locator, accessibleName: RegExp) {

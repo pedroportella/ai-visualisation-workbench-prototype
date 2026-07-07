@@ -34,6 +34,13 @@ test("Docker-backed Evidence Workbench renders backend fixture journey", async (
     "GRAPH-001"
   );
   await expect(page.getByText("NODE-SRC-006").first()).toBeVisible();
+  const textMapButton = page.getByRole("button", { name: /Text process map/ });
+  await expect(textMapButton).toBeVisible();
+  await expect(textMapButton).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#process-map-text-fallback")).toBeHidden();
+  await textMapButton.click();
+  await expect(textMapButton).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator("#process-map-text-fallback")).toBeVisible();
   await page.locator("#process-map-text-fallback").focus();
   await expect(page.locator("#process-map-text-fallback")).toBeFocused();
 
