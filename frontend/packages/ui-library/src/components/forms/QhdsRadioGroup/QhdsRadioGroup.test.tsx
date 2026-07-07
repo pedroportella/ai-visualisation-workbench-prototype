@@ -100,6 +100,25 @@ describe("QhdsRadioGroup", () => {
     expect(html).toContain('id="contact-method-phone"');
   });
 
+  it("renders beforeOptions content before the options control group", () => {
+    const html = renderToStaticMarkup(
+      <QhdsRadioGroup
+        beforeOptions={<div className="radio-before-options">Reviewer note</div>}
+        id="review-action"
+        legend="Decision option"
+        options={[
+          { label: "Request source update", value: "source-update" },
+          { label: "Mark unsafe", value: "mark-unsafe" }
+        ]}
+      />
+    );
+    const beforeOptionsIndex = html.indexOf("radio-before-options");
+    const optionsIndex = html.indexOf("qld__control-group qhds-radio-group__options");
+
+    expect(beforeOptionsIndex).toBeGreaterThanOrEqual(0);
+    expect(optionsIndex).toBeGreaterThan(beforeOptionsIndex);
+  });
+
   it("marks controlled radio groups as readonly when no change handler is supplied", () => {
     const html = renderToStaticMarkup(
       <QhdsRadioGroup

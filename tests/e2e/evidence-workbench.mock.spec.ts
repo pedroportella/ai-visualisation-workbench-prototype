@@ -22,12 +22,44 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await expect(
     page.getByText("This answer cannot be used yet.")
   ).toBeVisible();
+
+  const currentBlockerButton = page.locator("#review-current-blocker-accordion-button");
+  const currentBlockerPanel = page.locator("#review-current-blocker-accordion-panel");
+  const answerButton = page.locator("#review-answer-accordion-button");
+  const answerPanel = page.locator("#review-answer-accordion-panel");
+  const supportingEvidenceButton = page.locator("#review-supporting-evidence-accordion-button");
+  const supportingEvidencePanel = page.locator("#review-supporting-evidence-accordion-panel");
+  const takeActionButton = page.locator("#review-take-action-accordion-button");
+  const takeActionPanel = page.locator("#review-take-action-accordion-panel");
+
   await expect(page.getByRole("link", { name: "Review blocker" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Skip to final action" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Read draft answer" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Draft answer" })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Current blocker" })
   ).toBeVisible();
+  await expectAccordionClosed(currentBlockerButton, currentBlockerPanel);
+  await expectAccordionClosed(answerButton, answerPanel);
+  await expectAccordionClosed(supportingEvidenceButton, supportingEvidencePanel);
+  await expectAccordionClosed(takeActionButton, takeActionPanel);
+
+  await page.getByRole("link", { name: "Review blocker" }).click();
+  await expect(page).toHaveURL(
+    /\/evidence-workbench\/review#review-current-blocker-accordion-button$/
+  );
+  await expectAccordionOpen(currentBlockerButton, currentBlockerPanel);
+  await page.getByRole("link", { name: "Read draft answer" }).click();
+  await expect(page).toHaveURL(
+    /\/evidence-workbench\/review#review-answer-accordion-button$/
+  );
+  await expectAccordionOpen(answerButton, answerPanel);
+  await page.getByRole("link", { name: "Skip to final action" }).click();
+  await expect(page).toHaveURL(
+    /\/evidence-workbench\/review#review-take-action-accordion-button$/
+  );
+  await expectAccordionOpen(takeActionButton, takeActionPanel);
+
   await expect(page.locator(".evidence-workbench-review-actions__decision-context")).toContainText(
     "Recommended action"
   );
@@ -44,6 +76,30 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
     "false"
   );
   await expect(page.getByRole("heading", { name: "Take action" })).toBeVisible();
+  await expect(page.locator(".evidence-workbench-review-action-choices")).toBeVisible();
+  await expectReviewActionNoteBeforeOptions(page);
+  await expectReviewActionOptionsFullWidth(page);
+  await expectReviewActionRadioControlsDoNotOverlapText(page);
+  await expectReviewActionFooterRows(page);
+  await expect(page.getByRole("radio", { name: /Request source update/ })).toBeChecked();
+  await expect(page.getByRole("radio", { name: /Mark reviewed/ })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Request source update" })).toBeVisible();
+  await expect(page.locator(".evidence-workbench-review-actions__selected-action")).toHaveAttribute(
+    "data-action-tone",
+    "primary"
+  );
+  await expect(page.getByRole("button", { name: "Request source update" })).toHaveClass(
+    /qhds-button--primary/
+  );
+  await getReviewActionOption(page, "Mark unsafe to use").click();
+  await expect(page.getByRole("button", { name: "Mark unsafe to use" })).toHaveClass(
+    /qhds-button--secondary/
+  );
+  await expect(page.locator(".evidence-workbench-review-actions__selected-action")).toHaveAttribute(
+    "data-action-tone",
+    "destructive"
+  );
+  await getReviewActionOption(page, "Request source update").click();
   await expect(page.getByRole("heading", { name: "Supporting workspaces" })).toHaveCount(0);
   await expect(page.getByText("Source blocker issues")).toHaveCount(0);
   await expectPersistentNavigationOwner(page);
@@ -53,24 +109,24 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await expectNoHorizontalOverflow(page);
   await page.setViewportSize({ width: 1280, height: 720 });
   await expect(page.getByText("WARN-FALLBACK-001").first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Request source update" })).toBeVisible();
   const changeBlockerButton = page.locator("#review-change-blocker-accordion-button");
   await changeBlockerButton.click();
   await expect(changeBlockerButton).toHaveAttribute("aria-expanded", "true");
   await expect(page.getByText("WARN-FALLBACK-003").first()).toBeVisible();
-  await expectControlCanReceiveFocus(
-    page,
-    "radio",
-    "WARN-FALLBACK-003 on SRC-FALLBACK-003"
+  const sourceIssueSelector = page.locator(
+    ".evidence-workbench-source-review__issue-selector"
   );
+  const fallback003Radio = sourceIssueSelector.getByRole("radio", {
+    name: "WARN-FALLBACK-003 on SRC-FALLBACK-003"
+  });
+  await fallback003Radio.focus();
+  await expect(fallback003Radio).toBeFocused();
+  await expectControlCanReceiveFocus(page, "radio", /Request source update/);
   await expectControlCanReceiveFocus(page, "button", "Request source update");
-  await page
-    .locator(".evidence-workbench-source-review__issue-selector")
+  await sourceIssueSelector
     .getByText("WARN-FALLBACK-003 on SRC-FALLBACK-003")
     .click();
-  await expect(
-    page.getByRole("radio", { name: /WARN-FALLBACK-003 on SRC-FALLBACK-003/ })
-  ).toBeChecked();
+  await expect(fallback003Radio).toBeChecked();
   await expect(
     page.getByText("WARN-FALLBACK-003: Dispatch confirmation is missing.").first()
   ).toBeVisible();
@@ -94,8 +150,11 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
     page.getByText("No local action target recorded.")
   ).toBeVisible();
   await expect(
-    page.getByRole("radio", { name: /WARN-FALLBACK-001 on SRC-FALLBACK-002/ })
+    sourceIssueSelector.getByRole("radio", {
+      name: "WARN-FALLBACK-001 on SRC-FALLBACK-002"
+    })
   ).toBeChecked();
+  await expect(page.getByRole("radio", { name: /Request source update/ })).toBeChecked();
   await page
     .getByRole("link", { name: "SRC-FALLBACK-002: Synthetic wayfinding map extract" })
     .click();
@@ -158,6 +217,13 @@ test("mock evidence disclosures hide closed content and reveal open content", as
 
   await page.goto("/evidence-workbench/review");
 
+  const answerButton = page.locator("#review-answer-accordion-button");
+  const answerPanel = page.locator("#review-answer-accordion-panel");
+
+  await expectAccordionClosed(answerButton, answerPanel);
+  await answerButton.click();
+  await expectAccordionOpen(answerButton, answerPanel);
+
   const diagramDisclosure = page.locator(".evidence-workbench-generated-diagram__fallback");
   const diagramPanel = diagramDisclosure.locator(
     ".evidence-workbench-generated-diagram__fallback-content"
@@ -175,11 +241,16 @@ test("mock evidence disclosures hide closed content and reveal open content", as
   await expectDisclosureCueClosed(diagramDisclosure, /Diagram text fallback.*Show details/);
   await expectDisclosureContentHidden(diagramPanel);
 
+  const supportingEvidenceButton = page.locator("#review-supporting-evidence-accordion-button");
+  const supportingEvidencePanel = page.locator("#review-supporting-evidence-accordion-panel");
   const sourceInspectorButton = page.locator("#review-source-inspector-accordion-button");
   const sourceInspectorPanel = page.locator("#review-source-inspector-accordion-panel");
   const claimsButton = page.locator("#review-claims-accordion-button");
   const claimsPanel = page.locator("#review-claims-accordion-panel");
 
+  await expectAccordionClosed(supportingEvidenceButton, supportingEvidencePanel);
+  await supportingEvidenceButton.click();
+  await expectAccordionOpen(supportingEvidenceButton, supportingEvidencePanel);
   await expectAccordionClosed(sourceInspectorButton, sourceInspectorPanel);
   await expectAccordionClosed(claimsButton, claimsPanel);
   await sourceInspectorButton.click();
@@ -329,11 +400,18 @@ test("process map renders with deterministic colour mode and stable accessible f
 async function expectControlCanReceiveFocus(
   page: Page,
   role: "button" | "link" | "radio",
-  name: string
+  name: RegExp | string
 ) {
   const control = page.getByRole(role, { name }).first();
   await control.focus();
   await expect(control).toBeFocused();
+}
+
+function getReviewActionOption(page: Page, name: string): Locator {
+  return page
+    .locator(".evidence-workbench-review-action-choices .qhds-radio__label")
+    .filter({ hasText: name })
+    .first();
 }
 
 async function expectOverviewAndPersistentNavigationOwners(page: Page) {
@@ -360,13 +438,13 @@ async function expectPersistentNavigationOwner(page: Page) {
 async function expectReviewDecisionFlowOrder(page: Page) {
   const positions = await page.evaluate(() => {
     const selectors = {
-      answer: "#answer-title",
-      blocker: "#source-issue-review-title",
+      answer: "#review-answer-accordion-button",
+      blocker: "#review-current-blocker-accordion-button",
       copyState: ".evidence-workbench-review-actions__copy-state",
-      decision: "#review-decision-title",
+      decision: "#review-take-action-accordion-button",
       decisionRequired: "#review-decision-required-title",
-      firstAction: ".evidence-workbench-review-actions__button-grid button",
-      supportingEvidence: "#supporting-evidence-title"
+      firstAction: ".evidence-workbench-review-action-choices",
+      supportingEvidence: "#review-supporting-evidence-accordion-button"
     };
 
     return Object.fromEntries(
@@ -387,6 +465,135 @@ async function expectReviewDecisionFlowOrder(page: Page) {
   expect(positions.decision ?? 0).toBeGreaterThan(positions.supportingEvidence ?? 0);
   expect(positions.firstAction ?? 0).toBeGreaterThan(positions.decision ?? 0);
   expect(positions.copyState ?? 0).toBeGreaterThan(positions.firstAction ?? 0);
+}
+
+async function expectReviewActionNoteBeforeOptions(page: Page) {
+  const orderState = await page.evaluate(() => {
+    const fieldset = document.querySelector(".evidence-workbench-review-action-choices");
+    const note = fieldset?.querySelector(".evidence-workbench-review-actions__note-input");
+    const options = fieldset?.querySelector(".qhds-radio-group__options");
+
+    return Boolean(
+      fieldset &&
+        note &&
+        options &&
+        (note.compareDocumentPosition(options) & Node.DOCUMENT_POSITION_FOLLOWING)
+    );
+  });
+
+  expect(orderState).toBe(true);
+}
+
+async function expectReviewActionOptionsFullWidth(page: Page) {
+  const geometry = await page.evaluate(() => {
+    const fieldset = document.querySelector(".evidence-workbench-review-action-choices");
+    const options = fieldset?.querySelector(".qhds-radio-group__options");
+
+    if (!fieldset || !options) {
+      return null;
+    }
+
+    const fieldsetRect = fieldset.getBoundingClientRect();
+    const optionsRect = options.getBoundingClientRect();
+
+    return {
+      fieldsetWidth: fieldsetRect.width,
+      optionsWidth: optionsRect.width
+    };
+  });
+
+  expect(geometry).not.toBeNull();
+  expect(geometry?.optionsWidth).toBeGreaterThanOrEqual((geometry?.fieldsetWidth ?? 0) - 1);
+}
+
+async function expectReviewActionRadioControlsDoNotOverlapText(page: Page) {
+  const clearances = await page.evaluate(() => {
+    const labels = [
+      ...document.querySelectorAll<HTMLElement>(
+        ".evidence-workbench-review-action-choices .qhds-radio__label"
+      )
+    ];
+
+    return labels.map((label) => {
+      const content = label.querySelector<HTMLElement>(
+        ".evidence-workbench-review-action-choice"
+      );
+      const radioStyle = getComputedStyle(label, "::before");
+      const radioLeft = parseFloat(radioStyle.left);
+      const radioWidth = parseFloat(radioStyle.width);
+
+      if (!content || Number.isNaN(radioLeft) || Number.isNaN(radioWidth)) {
+        return null;
+      }
+
+      const labelRect = label.getBoundingClientRect();
+      const contentRect = content.getBoundingClientRect();
+
+      return contentRect.left - labelRect.left - (radioLeft + radioWidth);
+    });
+  });
+
+  expect(clearances).not.toContain(null);
+  for (const clearance of clearances) {
+    expect(clearance ?? 0).toBeGreaterThanOrEqual(8);
+  }
+}
+
+async function expectReviewActionFooterRows(page: Page) {
+  const rowGeometry = await page.evaluate(() => {
+    const selectors = [
+      {
+        expectedButtonVariant: "qhds-button--primary",
+        expectedState: "primary",
+        selector: ".evidence-workbench-review-actions__selected-action",
+        stateAttribute: "data-action-tone"
+      },
+      {
+        expectedButtonVariant: "qhds-button--secondary",
+        expectedState: "disabled",
+        selector: ".evidence-workbench-review-actions__copy-state",
+        stateAttribute: "data-copy-state"
+      }
+    ];
+
+    return selectors.map(({ expectedButtonVariant, expectedState, selector, stateAttribute }) => {
+      const row = document.querySelector<HTMLElement>(selector);
+      const text = row?.querySelector<HTMLElement>(
+        ".evidence-workbench-review-actions__footer-copy"
+      );
+      const button = row?.querySelector<HTMLElement>(".qhds-button");
+
+      if (!row || !text || !button) {
+        return null;
+      }
+
+      const rowStyle = getComputedStyle(row);
+      const textRect = text.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+
+      return {
+        borderLeftWidth: rowStyle.borderLeftWidth,
+        borderRightWidth: rowStyle.borderRightWidth,
+        buttonWidth: buttonRect.width,
+        buttonUsesExpectedVariant: button.classList.contains(expectedButtonVariant),
+        hasNoInsetAccent: rowStyle.boxShadow === "none",
+        columnCount: rowStyle.gridTemplateColumns.split(" ").filter(Boolean).length,
+        stateMatchesExpected: row.getAttribute(stateAttribute) === expectedState,
+        textClearsButton: textRect.right <= buttonRect.left - 8
+      };
+    });
+  });
+
+  expect(rowGeometry).not.toContain(null);
+  for (const row of rowGeometry) {
+    expect(row?.borderLeftWidth).toBe(row?.borderRightWidth);
+    expect(row?.columnCount).toBeGreaterThanOrEqual(2);
+    expect(row?.buttonWidth).toBeGreaterThanOrEqual(160);
+    expect(row?.buttonUsesExpectedVariant).toBe(true);
+    expect(row?.hasNoInsetAccent).toBe(true);
+    expect(row?.stateMatchesExpected).toBe(true);
+    expect(row?.textClearsButton).toBe(true);
+  }
 }
 
 async function expectNoHorizontalOverflow(page: Page) {
@@ -431,6 +638,7 @@ async function expectAccordionClosed(button: Locator, panel: Locator) {
   await expect(button.locator(".qhds-accordion__icon")).toHaveCount(0);
   await expect(button.locator(".qhds-accordion__toggle-closed")).toBeVisible();
   await expect(button.locator(".qhds-accordion__toggle-open")).toBeHidden();
+  await expectAccordionToggleIconCentred(button, "closed");
   await expect(button).toHaveAccessibleName(/Show details/);
   await expect(panel).toHaveAttribute("hidden", "");
   await expectDisclosureContentHidden(panel);
@@ -441,9 +649,31 @@ async function expectAccordionOpen(button: Locator, panel: Locator) {
   await expect(button.locator(".qhds-accordion__icon")).toHaveCount(0);
   await expect(button.locator(".qhds-accordion__toggle-closed")).toBeHidden();
   await expect(button.locator(".qhds-accordion__toggle-open")).toBeVisible();
+  await expectAccordionToggleIconCentred(button, "open");
   await expect(button).toHaveAccessibleName(/Hide details/);
   await expect(panel).not.toHaveAttribute("hidden", "");
   await expectDisclosureContentVisible(panel);
+}
+
+async function expectAccordionToggleIconCentred(
+  button: Locator,
+  state: "closed" | "open"
+) {
+  const iconStyle = await button.locator(".qhds-accordion__toggle").evaluate((element) => {
+    const style = getComputedStyle(element, "::after");
+
+    return {
+      alignSelf: style.alignSelf,
+      boxSizing: style.boxSizing,
+      position: style.position,
+      top: style.top
+    };
+  });
+
+  expect(iconStyle.alignSelf).toBe("center");
+  expect(iconStyle.boxSizing).toBe("border-box");
+  expect(iconStyle.position).toBe("relative");
+  expect(iconStyle.top).toBe(state === "open" ? "1px" : "-1px");
 }
 
 async function expectAccordionRowsStacked(items: Locator) {

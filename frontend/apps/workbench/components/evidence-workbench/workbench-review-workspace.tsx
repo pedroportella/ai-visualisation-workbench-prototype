@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 import {
   AivisEvidencePanelHeader,
@@ -74,111 +74,194 @@ export function WorkbenchReviewWorkspace({
               : "A source blocker must be selected before the next local review action can be recorded."}
           </p>
           <div className="evidence-workbench-review-decision-card__actions">
-            <QhdsButton href="#source-issue-review-title">Review blocker</QhdsButton>
-            <QhdsButton href="#review-decision-title" variant="secondary">
+            <QhdsButton
+              aria-controls="review-current-blocker-accordion-panel"
+              href="#review-current-blocker-accordion-button"
+              onNavigate={openReviewAccordionAnchor}
+            >
+              Review blocker
+            </QhdsButton>
+            <QhdsButton
+              aria-controls="review-take-action-accordion-panel"
+              href="#review-take-action-accordion-button"
+              onNavigate={openReviewAccordionAnchor}
+              variant="secondary"
+            >
               Skip to final action
             </QhdsButton>
-            <QhdsButton href="#answer-title" variant="tertiary">
+            <QhdsButton
+              aria-controls="review-answer-accordion-panel"
+              href="#review-answer-accordion-button"
+              onNavigate={openReviewAccordionAnchor}
+              variant="tertiary"
+            >
               Read draft answer
             </QhdsButton>
           </div>
         </div>
       </QhdsContentSection>
 
-      <QhdsContentSection
-        className="evidence-workbench-panel evidence-workbench-current-blocker-section"
-        heading="Current blocker"
-        headingId="source-issue-review-title"
-        lead="The next review action will target this blocker."
-        leadDensity="compact"
-        withBodyClass={false}
-      >
-        <ReviewCurrentBlocker
-          issues={sourceBlockerIssues}
-          onSelectIssue={onSelectIssue}
-          selectedIssue={selectedIssue}
-        />
-      </QhdsContentSection>
-
-      <QhdsContentSection
-        className="evidence-workbench-panel"
-        heading="Draft answer"
-        headingId="answer-title"
-        lead={data.answer.summary}
-        leadDensity="compact"
-        withBodyClass={false}
-      >
-        <AivisEvidencePanelHeader
-          label="Draft answer"
-          status={data.answer.status}
-          statusTone="warning"
-        />
-        <p className="evidence-workbench-answer-meta">
-          Fixture timestamp: {data.answer.generatedAt}
-        </p>
-        <AnswerMarkdown
-          citations={data.citations}
-          markdown={data.answer.markdown}
-          selectedClaimId={review.selectedClaimId}
-          sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
-        />
-      </QhdsContentSection>
-
-      <QhdsContentSection
-        className="evidence-workbench-panel evidence-workbench-supporting-evidence-section"
-        heading="Supporting evidence"
-        headingId="supporting-evidence-title"
-        lead="Open this when you need the source, claim and citation detail behind the decision."
-        leadDensity="compact"
-        withBodyClass={false}
-      >
-        <div className="evidence-workbench-supporting-evidence">
-          <QhdsAccordion
-            headingLevel={3}
-            items={[
-              {
-                content: (
-                  <section
-                    aria-labelledby="source-inspector-title"
-                    className="evidence-workbench-supporting-evidence__section"
-                  >
-                    <h3 id="source-inspector-title">Source inspector</h3>
-                    <p>Focused source evidence for the selected claim.</p>
-                    <SelectedSourceInspector
-                      selectedClaim={selectedClaim}
-                      selectedClaimId={review.selectedClaimId}
-                      sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
-                      sources={data.sourceItems}
-                    />
-                  </section>
-                ),
-                id: "review-source-inspector",
-                title: "Source inspector"
-              },
-              {
-                content: (
-                  <ClaimsReviewSection
-                    asPanel
-                    data={data}
-                    selectedClaimId={review.selectedClaimId}
+      <div className="evidence-workbench-review-accordion">
+        <QhdsAccordion
+          headingLevel={2}
+          items={[
+            {
+              content: (
+                <ReviewAccordionPanel
+                  className="evidence-workbench-current-blocker-section"
+                  lead="The next review action will target this blocker."
+                >
+                  <ReviewCurrentBlocker
+                    issues={sourceBlockerIssues}
+                    onSelectIssue={onSelectIssue}
+                    selectedIssue={selectedIssue}
                   />
-                ),
-                id: "review-claims",
-                title: "Claims requiring review"
-              }
-            ]}
-          />
-        </div>
-      </QhdsContentSection>
-
-      <ReviewDecisionBar
-        flow="decision"
-        onApplyAction={onApplyAction}
-        onReset={onReset}
-        selectedIssue={selectedIssue}
-        state={decisionState}
-      />
+                </ReviewAccordionPanel>
+              ),
+              id: "review-current-blocker",
+              title: "Current blocker"
+            },
+            {
+              content: (
+                <ReviewAccordionPanel lead={data.answer.summary}>
+                  <AivisEvidencePanelHeader
+                    label="Draft answer"
+                    status={data.answer.status}
+                    statusTone="warning"
+                  />
+                  <p className="evidence-workbench-answer-meta">
+                    Fixture timestamp: {data.answer.generatedAt}
+                  </p>
+                  <AnswerMarkdown
+                    citations={data.citations}
+                    markdown={data.answer.markdown}
+                    selectedClaimId={review.selectedClaimId}
+                    sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
+                  />
+                </ReviewAccordionPanel>
+              ),
+              id: "review-answer",
+              title: "Draft answer"
+            },
+            {
+              content: (
+                <ReviewAccordionPanel
+                  className="evidence-workbench-supporting-evidence-section"
+                  lead="Open this when you need the source, claim and citation detail behind the decision."
+                >
+                  <div className="evidence-workbench-supporting-evidence">
+                    <QhdsAccordion
+                      headingLevel={3}
+                      items={[
+                        {
+                          content: (
+                            <section
+                              aria-labelledby="source-inspector-title"
+                              className="evidence-workbench-supporting-evidence__section"
+                            >
+                              <h3 id="source-inspector-title">Source inspector</h3>
+                              <p>Focused source evidence for the selected claim.</p>
+                              <SelectedSourceInspector
+                                selectedClaim={selectedClaim}
+                                selectedClaimId={review.selectedClaimId}
+                                sourceInventoryPath={SOURCE_INVENTORY_ROUTE}
+                                sources={data.sourceItems}
+                              />
+                            </section>
+                          ),
+                          id: "review-source-inspector",
+                          title: "Source inspector"
+                        },
+                        {
+                          content: (
+                            <ClaimsReviewSection
+                              asPanel
+                              data={data}
+                              selectedClaimId={review.selectedClaimId}
+                            />
+                          ),
+                          id: "review-claims",
+                          title: "Claims requiring review"
+                        }
+                      ]}
+                    />
+                  </div>
+                </ReviewAccordionPanel>
+              ),
+              id: "review-supporting-evidence",
+              title: "Supporting evidence"
+            },
+            {
+              content: (
+                <ReviewDecisionBar
+                  flow="decision"
+                  labelledBy="review-take-action-accordion-button"
+                  onApplyAction={onApplyAction}
+                  onReset={onReset}
+                  selectedIssue={selectedIssue}
+                  state={decisionState}
+                />
+              ),
+              id: "review-take-action",
+              title: "Take action"
+            }
+          ]}
+        />
+      </div>
     </>
+  );
+}
+
+function openReviewAccordionAnchor(href: string): void {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const targetId = href.startsWith("#") ? href.slice(1) : href;
+  const target = document.getElementById(targetId);
+
+  if (!target) {
+    return;
+  }
+
+  if (typeof window !== "undefined" && href.startsWith("#")) {
+    window.history.pushState(null, "", href);
+  }
+
+  if (target instanceof HTMLButtonElement && target.getAttribute("aria-expanded") !== "true") {
+    target.click();
+  }
+
+  target.focus({ preventScroll: true });
+  target.scrollIntoView({ block: "start" });
+}
+
+function ReviewAccordionPanel({
+  children,
+  className,
+  lead
+}: Readonly<{
+  children: ReactNode;
+  className?: string;
+  lead?: ReactNode;
+}>): ReactElement {
+  const classes = [
+    "evidence-workbench-panel",
+    "evidence-workbench-review-accordion__panel",
+    className
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <div className={classes}>
+      {lead ? (
+        <p className="qhds-content-section__lead qhds-content-section__lead--compact">
+          {lead}
+        </p>
+      ) : null}
+      {children}
+    </div>
   );
 }
 

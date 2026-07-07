@@ -1,8 +1,13 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { QhdsAccordion } from "./QhdsAccordion";
+
+const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "QhdsAccordion.scss"), "utf8");
 
 let root: Root | undefined;
 let container: HTMLDivElement | undefined;
@@ -74,5 +79,15 @@ describe("QhdsAccordion", () => {
     });
 
     expect(document.activeElement).toBe(documentsButton);
+  });
+
+  it("centres the toggle chevron inside the toggle control", () => {
+    expect(styles).toContain(".qhds-accordion__toggle::after");
+    expect(styles).toContain("align-self: center;");
+    expect(styles).toContain("flex: 0 0 auto;");
+    expect(styles).toContain("position: relative;");
+    expect(styles).toContain("top: -0.0625rem;");
+    expect(styles).toContain("transform-origin: center;");
+    expect(styles).toContain("top: 0.0625rem;");
   });
 });

@@ -15,6 +15,7 @@ export interface QhdsRadioOption {
 }
 
 export interface QhdsRadioGroupProps extends Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "children" | "disabled" | "onChange"> {
+  beforeOptions?: ReactNode;
   defaultValue?: string;
   disabled?: boolean;
   error?: ReactNode;
@@ -43,6 +44,7 @@ function renderRequirement(required: boolean, optional: boolean) {
 
 export function QhdsRadioGroup({
   "aria-describedby": ariaDescribedBy,
+  beforeOptions,
   className,
   defaultValue,
   disabled = false,
@@ -96,6 +98,7 @@ export function QhdsRadioGroup({
           {error}
         </span>
       ) : null}
+      {beforeOptions}
       <div className="qld__control-group qhds-radio-group__options">
         {options.map((option, index) => {
           const optionId = option.id ?? `${controlId}-${toSafeControlId(option.value) || `option-${index + 1}`}`;

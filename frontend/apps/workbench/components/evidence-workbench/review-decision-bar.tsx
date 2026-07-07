@@ -5,7 +5,7 @@ import {
   AivisEvidenceStatus,
   QhdsAccordion,
   QhdsButton,
-  QhdsContentSection,
+  QhdsRadioGroup,
   QhdsSummaryList,
   QhdsTextarea,
   type AivisEvidenceTone
@@ -19,12 +19,14 @@ import {
 import type { EvidenceWorkbenchReviewAction } from "../../services/evidence-workbench/types";
 import {
   getReviewActionAvailability,
+  type ReviewActionAvailability,
   type ReviewActionTarget,
   type ReviewDecisionState
 } from "./review-action-state";
 
 export interface ReviewDecisionBarProps {
   flow?: "audit" | "decision";
+  labelledBy?: string;
   onApplyAction: (
     actionId: string,
     reviewerNote: string,
@@ -37,6 +39,7 @@ export interface ReviewDecisionBarProps {
 
 export function ReviewDecisionBar({
   flow = "audit",
+  labelledBy,
   onApplyAction,
   onReset,
   selectedIssue,
@@ -44,6 +47,7 @@ export function ReviewDecisionBar({
 }: ReviewDecisionBarProps) {
   const baseId = useId();
   const copyReasonId = `${baseId}-copy-reason`;
+  const selectedActionReasonId = `${baseId}-selected-action-reason`;
   const [reviewerNote, setReviewerNote] = useState(
     state.review.reviewerNote ?? PRIMARY_REVIEWER_NOTE
   );
@@ -72,6 +76,8 @@ export function ReviewDecisionBar({
         actionReason(primaryAction, selectedIssue)
       }`
     : "No local review action is available in this fixture state.";
+  const initialSelectedActionId = primaryAction?.id ?? state.actions[0]?.id ?? "";
+  const [selectedActionId, setSelectedActionId] = useState(initialSelectedActionId);
 
   const handleNoteChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setReviewerNote(event.target.value);
@@ -79,9 +85,45 @@ export function ReviewDecisionBar({
   const handleReset = () => {
     onReset();
     setReviewerNote(PRIMARY_REVIEWER_NOTE);
+    setSelectedActionId(initialSelectedActionId);
+  };
+  const selectedAction =
+    state.actions.find((action) => action.id === selectedActionId) ??
+    primaryAction ??
+    state.actions[0] ??
+    null;
+  const selectedActionAvailability = selectedAction
+    ? getReviewActionAvailability(state.review, selectedAction, reviewerNote)
+    : null;
+  const selectedActionReason = selectedAction
+    ? actionReasonText(selectedAction, selectedActionAvailability, selectedIssue)
+    : "No local review action is available in this fixture state.";
+  const selectedActionStatus = selectedAction
+    ? `${selectedAction.label} selected.`
+    : "No action selected.";
+  const canSubmitSelectedAction =
+    selectedAction !== null && selectedActionAvailability?.disabled !== true;
+  const selectedActionSubmitLabel = selectedAction?.label ?? "Record action";
+  const selectedActionSubmitVariant =
+    selectedAction?.uiTone === "primary" && canSubmitSelectedAction
+      ? "primary"
+      : "secondary";
+  const handleSelectedActionSubmit = () => {
+    if (!selectedAction || selectedActionAvailability?.disabled) {
+      return;
+    }
+
+    onApplyAction(selectedAction.id, reviewerNote, selectedIssue);
   };
   const copyState = (
-    <div className="evidence-workbench-review-actions__copy-state">
+    <div
+      className="evidence-workbench-review-actions__copy-state"
+      data-copy-state={copyDisabled ? "disabled" : "enabled"}
+    >
+      <div className="evidence-workbench-review-actions__footer-copy">
+        <strong>{copyDisabled ? "Copy unavailable" : "Copy ready"}</strong>
+        <p id={copyReasonId}>{copyReason}</p>
+      </div>
       <QhdsButton
         aria-describedby={copyReasonId}
         disabled={copyDisabled}
@@ -90,7 +132,6 @@ export function ReviewDecisionBar({
       >
         Copy approved answer
       </QhdsButton>
-      <p id={copyReasonId}>{copyReason}</p>
     </div>
   );
   const reviewerNoteInput = (
@@ -103,26 +144,37 @@ export function ReviewDecisionBar({
       value={reviewerNote}
     />
   );
-  const reviewActionButtons = (
-    <fieldset
-      aria-label="Review actions"
-      className="evidence-workbench-review-actions__button-grid"
-    >
-      <legend className="evidence-workbench-review-actions__legend">
-        Review actions
-      </legend>
-      {state.actions.map((action) => (
-        <ReviewActionButton
-          action={action}
-          baseId={baseId}
-          key={action.id}
-          onApplyAction={onApplyAction}
-          reviewerNote={reviewerNote}
-          selectedIssue={selectedIssue}
-          state={state}
-        />
-      ))}
-    </fieldset>
+  const reviewActionChoices = (
+    <QhdsRadioGroup
+      beforeOptions={isDecisionFlow ? reviewerNoteInput : undefined}
+      className="evidence-workbench-review-action-choices"
+      hint="Choose one local action path, then record it once."
+      legend="Decision option"
+      name={`${baseId}-review-action-choice`}
+      onChange={setSelectedActionId}
+      options={state.actions.map((action) => {
+        const availability = getReviewActionAvailability(
+          state.review,
+          action,
+          reviewerNote
+        );
+        const isSelected = selectedAction?.id === action.id;
+
+        return {
+          disabled: availability.disabled,
+          label: (
+            <ReviewActionChoiceLabel
+              action={action}
+              isSelected={isSelected}
+              reason={actionReasonText(action, availability, selectedIssue)}
+              state={availability.disabled ? "unavailable" : isSelected ? "selected" : "available"}
+            />
+          ),
+          value: action.id
+        };
+      })}
+      value={selectedAction?.id ?? ""}
+    />
   );
   const controlsClassName = [
     "evidence-workbench-review-actions__controls",
@@ -134,13 +186,34 @@ export function ReviewDecisionBar({
     <div className={controlsClassName}>
       {isDecisionFlow ? (
         <>
-          {reviewActionButtons}
-          {reviewerNoteInput}
+          {reviewActionChoices}
+          <div
+            aria-live="polite"
+            className="evidence-workbench-review-actions__selected-action"
+            data-action-enabled={canSubmitSelectedAction ? "true" : "false"}
+            data-action-tone={selectedAction?.uiTone ?? "secondary"}
+          >
+            <div className="evidence-workbench-review-actions__footer-copy">
+              <strong>{selectedActionStatus}</strong>
+              <p id={selectedActionReasonId}>{selectedActionReason}</p>
+            </div>
+            <QhdsButton
+              aria-describedby={selectedActionReasonId}
+              aria-disabled={!canSubmitSelectedAction || undefined}
+              className="evidence-workbench-review-actions__selected-action-button"
+              disabled={!canSubmitSelectedAction}
+              onClick={handleSelectedActionSubmit}
+              type="button"
+              variant={selectedActionSubmitVariant}
+            >
+              {selectedActionSubmitLabel}
+            </QhdsButton>
+          </div>
         </>
       ) : (
         <>
           {reviewerNoteInput}
-          {reviewActionButtons}
+          {reviewActionChoices}
         </>
       )}
     </div>
@@ -188,16 +261,14 @@ export function ReviewDecisionBar({
     : undefined;
 
   return (
-    <QhdsContentSection
-      className="evidence-workbench-panel evidence-workbench-review-actions-section"
-      heading={isDecisionFlow ? "Take action" : "Action and audit flow"}
-      headingId="review-decision-title"
-      lead={sectionLead}
-      leadDensity="compact"
-      withBodyClass={false}
-    >
+    <div className="evidence-workbench-panel evidence-workbench-review-actions-section">
+      {sectionLead ? (
+        <p className="qhds-content-section__lead qhds-content-section__lead--compact">
+          {sectionLead}
+        </p>
+      ) : null}
       <section
-        aria-labelledby="review-decision-title"
+        aria-labelledby={labelledBy}
         className="evidence-workbench-review-actions"
         data-local-review-state={state.isDirty ? "changed" : "seeded"}
       >
@@ -274,57 +345,54 @@ export function ReviewDecisionBar({
           </QhdsButton>
         </div>
       </section>
-    </QhdsContentSection>
+    </div>
   );
 }
 
-function ReviewActionButton({
+function ReviewActionChoiceLabel({
   action,
-  baseId,
-  onApplyAction,
-  reviewerNote,
-  selectedIssue,
+  isSelected,
+  reason,
   state
 }: {
   action: EvidenceWorkbenchReviewAction;
-  baseId: string;
-  onApplyAction: (
-    actionId: string,
-    reviewerNote: string,
-    targetIssue: ReviewActionTarget | null
-  ) => void;
-  reviewerNote: string;
-  selectedIssue: ReviewActionTarget | null;
-  state: ReviewDecisionState;
+  isSelected: boolean;
+  reason: string;
+  state: "available" | "selected" | "unavailable";
 }) {
-  const availability = getReviewActionAvailability(state.review, action, reviewerNote);
-  const reasonId = `${baseId}-${action.id.toLowerCase()}-reason`;
-  const reason = availability.reason ?? actionReason(action, selectedIssue);
-
   return (
-    <div
-      className="evidence-workbench-review-actions__action"
-      data-action-id={action.id}
+    <span
+      className="evidence-workbench-review-action-choice"
       data-action-tone={action.uiTone}
+      data-choice-state={state}
     >
-      <QhdsButton
-        aria-describedby={reasonId}
-        disabled={availability.disabled}
-        onClick={() => {
-          onApplyAction(action.id, reviewerNote, selectedIssue);
-        }}
-        type="button"
-        variant={action.uiTone === "primary" ? "primary" : "secondary"}
-      >
-        {action.label}
-      </QhdsButton>
-      <small id={reasonId}>
-        {action.id === MARK_REVIEWED_ACTION_ID && availability.disabled
-          ? `${reason} Mark reviewed remains disabled in this fixture.`
-          : reason}
+      <span className="evidence-workbench-review-action-choice__header">
+        <span className="evidence-workbench-review-action-choice__label">
+          {action.label}
+        </span>
+        <span className="evidence-workbench-review-action-choice__state">
+          {state === "unavailable" ? "Unavailable" : isSelected ? "Selected" : "Available"}
+        </span>
+      </span>
+      <small className="evidence-workbench-review-action-choice__hint">
+        {reason}
       </small>
-    </div>
+    </span>
   );
+}
+
+function actionReasonText(
+  action: EvidenceWorkbenchReviewAction,
+  availability: ReviewActionAvailability | null,
+  selectedIssue: ReviewActionTarget | null
+): string {
+  const reason = availability?.reason ?? actionReason(action, selectedIssue);
+
+  if (action.id === MARK_REVIEWED_ACTION_ID && availability?.disabled) {
+    return `${reason} Mark reviewed remains disabled in this fixture.`;
+  }
+
+  return reason;
 }
 
 function actionReason(
