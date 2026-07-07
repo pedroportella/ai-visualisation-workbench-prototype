@@ -63,6 +63,7 @@ user-facing theme switcher.
 | View | Light | Dark theme-token preview |
 | --- | --- | --- |
 | Overview | ![Evidence Workbench overview in the light theme](docs/screenshots/evidence-workbench-overview-light.png) | ![Evidence Workbench overview in a dark theme-token preview](docs/screenshots/evidence-workbench-overview-dark-theme-preview.png) |
+| Review answer | ![Evidence Workbench review answer route in the light theme](docs/screenshots/evidence-workbench-review-light.png) | ![Evidence Workbench review answer route in a dark theme-token preview](docs/screenshots/evidence-workbench-review-dark-theme-preview.png) |
 | Evidence map | ![Evidence Workbench process map in the light theme](docs/screenshots/evidence-workbench-process-light.png) | ![Evidence Workbench process map in a dark theme-token preview](docs/screenshots/evidence-workbench-process-dark-theme-preview.png) |
 
 ## Implemented Technology Posture
