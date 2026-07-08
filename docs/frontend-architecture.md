@@ -46,6 +46,23 @@ The app-local service boundary is intentionally flat under
 `EvidenceWorkbench*` PascalCase filenames so the boundary stays easy to scan
 beside PascalCase app shell and component modules.
 
+## Component Ownership
+
+Workbench UI code is app-owned and grouped directly under
+`frontend/apps/workbench/components/` by product responsibility: answer,
+audit, evidence, overview, process, review, sources and warnings. Shared route
+helpers live under `components/shared/`; review decision state lives under
+`components/state/`.
+
+Client boundaries stay narrow and explicit. The app shell owns navigation
+interactions, `EvidenceWorkbenchClient` owns loaded view state,
+`ReviewActionForm` owns the interactive decision form, `SourcesRecordAccordion`
+owns source disclosure/hash focus and `ProcessEvidenceMap` owns React Flow.
+
+`pnpm guard:app-naming` protects this shape by failing legacy app-shell paths,
+legacy nested service paths and non-PascalCase app shell, component TSX/SCSS or
+service-boundary module filenames.
+
 ## Package Boundaries
 
 The frontend monorepo uses local AIVIS packages:

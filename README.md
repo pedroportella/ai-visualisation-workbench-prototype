@@ -70,6 +70,9 @@ user-facing theme switcher.
 
 - Frontend: Next.js App Router, React, TypeScript, local `@aivis/*` packages
   and local QHDS/QGDS-style adapters.
+- App structure: PascalCase `AppShell/`, app-owned workbench component groups
+  under `frontend/apps/workbench/components/` and a flat server-only service
+  boundary under `frontend/apps/workbench/services/`.
 - Visualisation: React Flow through `@xyflow/react` for the evidence/process
   map, with a text fallback.
 - Content rendering: an app-local safe markdown renderer for the fixture answer
@@ -81,8 +84,8 @@ user-facing theme switcher.
 - Backend: FastAPI health, readiness, metadata, answer, source, graph and
   review-action fixture endpoints.
 - Verification: Vitest package tests, backend pytest, Playwright route and
-  no-screenshot DOM/layout checks, local Docker smoke checks and public guard
-  scripts.
+  no-screenshot DOM/layout checks, Docker-backed browser smoke checks and
+  public guard scripts, including the app naming guard.
 
 The repository does not currently claim direct D3.js, Cytoscape.js, Mermaid,
 TanStack Query, app-owned Zustand, Redux, axe, Lighthouse, WAVE, Dependabot or
@@ -131,11 +134,10 @@ This is a pnpm monorepo.
 
 ## Current Build Direction
 
-The current local baseline focuses on a complete reviewer-facing vertical
-slice: public-safe fixtures, backend contract endpoints, a front-door task
-launcher, focused workbench routes, rich markdown, source traceability,
-evidence/process visualisation, local review actions and no-screenshot
-verification.
+The current local baseline is a complete reviewer-facing vertical slice:
+public-safe fixtures, backend contract endpoints, focused workbench routes,
+rich markdown, source traceability, evidence/process visualisation, local
+review actions and repeatable no-screenshot verification.
 
 ## Release Readiness
 

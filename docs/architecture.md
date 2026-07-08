@@ -10,7 +10,8 @@ what the architecture does not prove.
 | --- | --- | --- |
 | Next.js workbench app | Renders `/evidence-workbench` and the review, sources, process and audit routes. | `frontend/apps/workbench/app/evidence-workbench/*` |
 | Workbench app shell | Provides the header, side navigation, main region and route framing. | `frontend/apps/workbench/AppShell/` |
-| Evidence workspaces | Renders the answer, sources, evidence map, warnings and local action state. | `frontend/apps/workbench/components/` |
+| Evidence workspaces | Renders the answer, sources, evidence map, warnings and local action state through app-owned component groups. | `frontend/apps/workbench/components/` |
+| Workbench service boundary | Loads backend fixture data server-side and falls back to bundled fixture data when required. | `frontend/apps/workbench/services/` |
 | Shared frontend packages | Hold local services, design-system adapters, tokens, assets and utilities. | `frontend/packages/*` |
 | FastAPI API spine | Serves health, readiness, metadata and deterministic fixture endpoints. | `backend/src/aivis_api/main.py` |
 | Synthetic contract data | Provides answer, source, graph, warning, context-anchor and review-action fixtures. | `backend/src/aivis_api/fixture_data.py` |
@@ -35,6 +36,11 @@ chatbot. The architecture keeps the review task narrow:
   path without implying live operations.
 - React Flow is used where the reviewer benefits from an interactive evidence
   process map; a text fallback remains available for review resilience.
+- App-owned workbench components are grouped by domain: answer, audit,
+  evidence, overview, process, review, sources and warnings. Component SCSS
+  and tests sit beside the code they prove.
+- The app shell and service-boundary modules use PascalCase source paths. The
+  naming guard keeps the public source shape stable.
 - Local packages keep AIVIS adapters, tokens and utilities under repo control.
 - Guard scripts keep public docs and implementation text aligned with the
   prototype boundary.

@@ -45,7 +45,7 @@ runtime.
 | Command | What it protects |
 | --- | --- |
 | `pnpm guard` | Runs artifact, app-naming, public-doc, claim-boundary, secret and browser-origin guards. |
-| `pnpm guard:app-naming` | Keeps app shell modules, component TSX/SCSS modules and workbench service boundary files in PascalCase paths. |
+| `pnpm guard:app-naming` | Prevents drift from the current PascalCase app shell, component-module and flat service-boundary source shape. |
 | `pnpm guard:artifacts` | Prevents generated outputs and local environment files from being committed. |
 | `pnpm guard:secrets` | Scans text candidates for common secret markers. |
 | `pnpm guard:browser-origins` | Keeps backend origins and local paths out of browser-visible source files. |
@@ -68,6 +68,9 @@ git diff --check
 Use broader package, browser, Docker and bundle checks when the change touches
 runtime code, package scripts, examples, TypeScript, Python or release
 configuration.
+
+For source-structure refactors, include `pnpm guard:app-naming` explicitly
+when reviewing the diff. It is also part of `pnpm guard`.
 
 ## Limits
 

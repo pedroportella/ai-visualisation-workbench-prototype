@@ -42,6 +42,9 @@ Implemented now:
 
 - Next.js App Router, React and TypeScript for the Evidence Workbench.
 - Local `@aivis/*` frontend packages and local QHDS/QGDS-style adapters.
+- App-owned workbench components grouped under
+  `frontend/apps/workbench/components/`, with PascalCase app shell and flat
+  workbench service-boundary modules.
 - FastAPI fixture backend with health, readiness, metadata, answer, source,
   graph and review-action endpoints.
 - Server-only backend origin handling in the frontend app.
@@ -49,7 +52,8 @@ Implemented now:
 - App-local safe markdown rendering for the fixture answer shape.
 - Local React state for simulated review actions and reset behaviour.
 - Vitest, backend pytest, Playwright route checks, no-screenshot DOM/layout
-  checks, Docker smoke checks and public guard scripts.
+  checks, Docker smoke checks and public guard scripts, including source-shape
+  naming protection.
 
 Not claimed:
 
