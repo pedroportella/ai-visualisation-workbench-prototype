@@ -232,8 +232,11 @@ async function expectCompactTaskHeader(page: Page, minHeight: number, maxHeight:
 
     return {
       bottom: rect?.bottom ?? 0,
-      fallbackTextInHeader: header?.textContent?.includes("Bundled fallback") ?? false,
       height: rect?.height ?? 0,
+      localFixtureStateInHeader:
+        header
+          ?.querySelector('[aria-label="Evidence data state"]')
+          ?.textContent?.includes("Local fixture") ?? false,
       oldIntroCount: document.querySelectorAll(".workbench-view-intro").length,
       routeDescriptionInHeader:
         header?.textContent?.includes("AIVIS is a simulated evidence workbench") ??
@@ -258,7 +261,7 @@ async function expectCompactTaskHeader(page: Page, minHeight: number, maxHeight:
   expect(metrics.workGap).toBeGreaterThanOrEqual(0);
   expect(metrics.workGap).toBeLessThanOrEqual(32);
   expect(metrics.routeDescriptionInHeader).toBe(false);
-  expect(metrics.fallbackTextInHeader).toBe(true);
+  expect(metrics.localFixtureStateInHeader).toBe(true);
 }
 
 async function expectNoDuplicateIds(page: Page) {
