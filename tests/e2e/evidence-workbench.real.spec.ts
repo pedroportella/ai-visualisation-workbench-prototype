@@ -21,7 +21,9 @@ test("Docker-backed Evidence Workbench renders backend fixture journey", async (
   await page.locator("#review-take-action-accordion-button").click();
   await expectControlCanReceiveFocus(page, "button", "Request source update");
   await page.getByRole("button", { name: "Request source update" }).click();
-  await expect(page.getByText("Request source update recorded in local UI state.")).toBeVisible();
+  await expect(
+    page.getByText("Review action request failed with status 409.")
+  ).toBeVisible();
 
   await page.goto("/evidence-workbench/sources");
   await expect(page.getByRole("heading", { level: 1, name: "Source evidence" })).toBeVisible();

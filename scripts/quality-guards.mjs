@@ -394,7 +394,7 @@ function listGitCandidateFiles() {
     { encoding: "utf8" }
   );
 
-  return output.split("\0").filter(Boolean);
+  return output.split("\0").filter(Boolean).filter(existsSync);
 }
 
 function listPublicDocFiles() {

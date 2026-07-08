@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import re
 import sys
 import time
@@ -16,8 +17,14 @@ from collections.abc import Iterable
 from typing import Any
 
 
-DEFAULT_BACKEND_BASE_URL = "http://127.0.0.1:8080"
-DEFAULT_FRONTEND_BASE_URL = "http://127.0.0.1:3200"
+DEFAULT_BACKEND_BASE_URL = os.environ.get(
+    "AIVIS_DOCKER_SMOKE_BACKEND_BASE_URL",
+    f"http://127.0.0.1:{os.environ.get('AIVIS_BACKEND_HOST_PORT', '8080')}",
+)
+DEFAULT_FRONTEND_BASE_URL = os.environ.get(
+    "AIVIS_DOCKER_SMOKE_FRONTEND_BASE_URL",
+    f"http://127.0.0.1:{os.environ.get('AIVIS_WORKBENCH_HOST_PORT', '3200')}",
+)
 EXPECTED_CONTRACT_VERSION = "aivis-evidence-workbench-contract@0.1.0"
 EXPECTED_REVIEW_CONFLICT = "ACT-REQUEST-SOURCE-UPDATE has already been completed."
 PRIMARY_REVIEWER_NOTE = (

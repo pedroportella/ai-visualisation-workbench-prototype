@@ -1,8 +1,10 @@
 # Principal Software Engineer Environment Configuration Decision
 
-Status: accepted
+Status: accepted, amended with optional templates
 
 Date: 2026-07-04
+
+Updated: 2026-07-08
 
 ## Context
 
@@ -17,11 +19,14 @@ The current runtime has two local surfaces:
 
 The prototype does not currently have a database, external service credentials,
 browser runtime-config generation, multiple deployed frontend apps or local
-secret material that needs to be represented in a developer environment file.
+secret material that needs to be represented in a required developer
+environment file.
 
 ## Decision
 
 Do not require local environment-file setup for the current AIVIS runtime.
+Provide committed `.env.example` templates only as optional, non-secret
+guidance for local overrides.
 
 Keep local runtime defaults in code, scripts and Compose where they are already
 clear and safe:
@@ -34,9 +39,9 @@ clear and safe:
 - the frontend must not expose backend origins through `NEXT_PUBLIC_*`
   variables.
 
-Local environment files remain ignored. If future local overrides become
-useful, add a committed `.env.example` with browser-safe, non-secret values
-only. Do not commit a real `.env` or `.env.local` file.
+Local environment files remain ignored. The committed templates document
+frontend mock mode, backend-mode selection, local host-port overrides and the
+server-side backend origin variable. Do not commit real local env files.
 
 ## Options Considered
 
@@ -50,8 +55,8 @@ Option 1: require local environment-file setup for all local development.
 Option 2: add `.env.example` now.
 
 - Pros: discoverable list of optional override names.
-- Cons: mostly repeats defaults already present in Docker, scripts and docs;
-  risks making optional values look mandatory.
+- Cons: can make optional values look mandatory unless the template is clear
+  that no local secret file is required.
 
 Option 3: keep no env file requirement and document the decision.
 
@@ -63,11 +68,11 @@ Option 3: keep no env file requirement and document the decision.
 
 ## Main Reason
 
-Choose option 3 because AIVIS should stay small and explicit until it has a
-real need for environment-file-driven configuration.
+Choose option 3 with optional templates because AIVIS should stay small and
+explicit while making server-side runtime switches discoverable.
 
 The most important security boundary is that backend origins and privileged
-runtime settings stay server-side. Requiring a local env file now would add
+runtime settings stay server-side. Requiring a local env file would add
 process without improving runtime proof.
 
 ## Consequences
@@ -80,6 +85,5 @@ process without improving runtime proof.
   server-side backend origin or an explicitly selected mock mode.
 - No secret values should be introduced into source, Docker build args,
   browser bundles or public documentation.
-- A future `.env.example` is acceptable only when it documents optional,
-  non-secret local overrides and does not introduce browser-visible backend
-  configuration.
+- The committed `.env.example` files document optional, non-secret local
+  overrides and do not introduce browser-visible backend configuration.

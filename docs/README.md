@@ -101,8 +101,8 @@ Not claimed:
   release boundary, local gates, evidence model and teardown posture. This is
   readiness documentation only, not live AWS proof.
 - [Principal software engineer environment configuration decision](environment-configuration-decision.md):
-  why the current runtime works from checked-in defaults without local
-  environment-file setup.
+  why the current runtime works from checked-in defaults and uses env templates
+  only as optional local guidance.
 - [Principal software developer release orchestration decision](release-orchestration-decision.md):
   why the monorepo uses private backend and frontend pnpm release manifests
   while keeping native package files as source of truth.

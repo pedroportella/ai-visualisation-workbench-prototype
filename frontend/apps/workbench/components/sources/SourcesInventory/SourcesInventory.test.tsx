@@ -5,7 +5,7 @@ import type {
   EvidenceWorkbenchContextAnchor,
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter
-} from "../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
 import { SourcesInventory, SourcesRecordAccordion } from ".";
 
 const contextAnchors: EvidenceWorkbenchContextAnchor[] = [

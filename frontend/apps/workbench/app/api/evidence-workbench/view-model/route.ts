@@ -2,7 +2,7 @@ import "server-only";
 
 import { NextResponse } from "next/server";
 
-import { getEvidenceWorkbenchData } from "../../../../services/EvidenceWorkbenchBackendService";
+import { getEvidenceWorkbenchData } from "@aivis/services/server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

@@ -12,7 +12,7 @@ import {
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
-} from "../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
 import {
   hasApprovalBlocker,
   sourceAccordionItemId,

@@ -15,8 +15,8 @@ import {
   MARK_REVIEWED_ACTION_ID,
   PRIMARY_REVIEW_ACTION_ID,
   PRIMARY_REVIEWER_NOTE
-} from "../../../services/EvidenceWorkbenchReviewActionFixture";
-import type { EvidenceWorkbenchReviewAction } from "../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
+import type { EvidenceWorkbenchReviewAction } from "@aivis/services";
 import {
   getReviewActionAvailability,
   type ReviewActionAvailability,
@@ -472,5 +472,5 @@ function reviewActionStatusMessage(state: ReviewActionMutationViewState): string
 
   return state.mode === "backend"
     ? "Records through the backend fixture."
-    : "Bundled fallback records this in local UI state.";
+    : "Local fixture records this in local UI state.";
 }

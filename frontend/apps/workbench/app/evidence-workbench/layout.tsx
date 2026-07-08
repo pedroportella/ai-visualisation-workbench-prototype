@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { QhdsGlobalAlert } from "@aivis/ui-library";
 
 import { WorkbenchAppShell } from "../../AppShell/WorkbenchAppShell";
-import { getEvidenceWorkbenchData } from "../../services/EvidenceWorkbenchBackendService";
+import { getEvidenceWorkbenchData } from "@aivis/services/server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -21,7 +21,7 @@ export default async function EvidenceWorkbenchLayout({
       title={data.fetchState.message}
       verticalNav
     >
-      Review can continue against the bundled fallback fixture state.
+      Review can continue against the local fixture state.
     </QhdsGlobalAlert>
   ) : null;
 

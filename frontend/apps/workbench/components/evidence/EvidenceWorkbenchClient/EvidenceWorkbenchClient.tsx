@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import {
   useEvidenceWorkbenchReviewActionMutation,
   useEvidenceWorkbenchViewModel

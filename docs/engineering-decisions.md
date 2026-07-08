@@ -16,7 +16,7 @@ prototype. It links to the deeper notes rather than duplicating every detail.
 | Visualisation | React Flow evidence map plus text fallback. | Supports interactive review while preserving a readable fallback path. |
 | Design system | Local QHDS/QGDS-style adapters and tokens. | Keeps design implementation testable and repo-owned. |
 | Verification | Guard scripts, package tests, browser checks and Docker smoke. | Connects public claims to checks reviewers can run locally. |
-| Environment configuration | No required local environment file for the current runtime. | Reduces secret-handling surface and keeps checked-in defaults usable. |
+| Environment configuration | Optional non-secret env templates; no required local env file. | Keeps checked-in defaults usable while documenting server-side runtime overrides. |
 | Release orchestration | Private backend and frontend pnpm release manifests. | Gives component-scoped release checks while keeping native package files authoritative. |
 
 ## Deeper Notes
@@ -36,7 +36,7 @@ prototype. It links to the deeper notes rather than duplicating every detail.
 - [Testing and guardrails](testing-and-guardrails.md): command matrix and
   guard strategy.
 - [Environment configuration decision](environment-configuration-decision.md):
-  why the prototype does not require local environment-file setup.
+  why env templates are optional guidance rather than required setup.
 - [Release orchestration decision](release-orchestration-decision.md): why
   backend and frontend release checks use private pnpm wrapper manifests.
 - [AWS release readiness](aws-release-readiness.md): planned short review

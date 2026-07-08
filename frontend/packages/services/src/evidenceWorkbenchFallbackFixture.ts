@@ -5,8 +5,8 @@ import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter,
   EvidenceWorkbenchViewModel
-} from "./EvidenceWorkbenchTypes";
-import { REVIEW_ACTION_RECORDS } from "./EvidenceWorkbenchReviewActionFixture";
+} from "./evidenceWorkbenchTypes";
+import { REVIEW_ACTION_RECORDS } from "./evidenceWorkbenchReviewActionFixture";
 
 const fallbackContextAnchors: EvidenceWorkbenchContextAnchor[] = [
   {

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { AivisEvidenceStatus, QhdsButton } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import type { EvidenceWorkbenchView } from "../../shared/routeModel";
 import { formatStateLabel, statusTone } from "../../shared/viewFormatters";
 
@@ -64,7 +64,7 @@ export function EvidenceWorkbenchTaskHeader({
           <AivisEvidenceStatus
             tone={serverState.source === "backend" ? "success" : "warning"}
           >
-            {serverState.source === "backend" ? "Backend fixture" : "Bundled fallback"}
+            {serverState.source === "backend" ? "Backend fixture" : "Local fixture"}
           </AivisEvidenceStatus>
           <span className="workbench-task-header__refresh-state" role="status">
             {serverState.isRefreshing ? "Refreshing evidence" : serverState.refreshLabel}

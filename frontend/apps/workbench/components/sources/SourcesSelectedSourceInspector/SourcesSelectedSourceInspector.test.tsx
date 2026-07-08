@@ -1,8 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { fallbackEvidenceWorkbenchData } from "../../../services/EvidenceWorkbenchFallbackFixture";
-import type { EvidenceWorkbenchClaim } from "../../../services/EvidenceWorkbenchTypes";
+import { fallbackEvidenceWorkbenchData } from "@aivis/services/fixtures";
+import type { EvidenceWorkbenchClaim } from "@aivis/services";
 import { SourcesSelectedSourceInspector } from ".";
 
 const selectedClaim: EvidenceWorkbenchClaim = {

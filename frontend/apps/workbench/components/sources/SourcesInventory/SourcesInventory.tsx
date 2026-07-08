@@ -8,7 +8,7 @@ import {
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter
-} from "../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
 import { SourcesInventoryTable } from "./SourcesInventoryTable";
 import {
   hasApprovalBlocker,

@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import { fallbackEvidenceWorkbenchData } from "./EvidenceWorkbenchFallbackFixture";
+import { fallbackEvidenceWorkbenchData } from "@aivis/services/fixtures";
 import {
   PRIMARY_REVIEW_ACTION_ID,
   REVIEW_ACTION_RECORDS
-} from "./EvidenceWorkbenchReviewActionFixture";
+} from "@aivis/services";
 import {
   EVIDENCE_WORKBENCH_REVIEW_ACTIONS_API_ROUTE,
   EVIDENCE_WORKBENCH_VIEW_MODEL_API_ROUTE,
   applyReviewActionResult
 } from "./EvidenceWorkbenchQueryState";
-import type { EvidenceWorkbenchReviewActionMutationResult } from "./EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchReviewActionMutationResult } from "@aivis/services";
 
 describe("EvidenceWorkbenchQueryState", () => {
   it("keeps browser fetch targets on same-origin API routes", () => {

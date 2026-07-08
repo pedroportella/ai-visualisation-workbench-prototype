@@ -13,7 +13,7 @@ import type {
   EvidenceWorkbenchClaim,
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
-} from "../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
 
 interface SourcesSelectedSourceInspectorProps {
   selectedClaim?: EvidenceWorkbenchClaim;

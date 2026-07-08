@@ -1,7 +1,7 @@
 import type {
   EvidenceWorkbenchReviewAction,
   EvidenceWorkbenchWarning
-} from "./EvidenceWorkbenchTypes";
+} from "./evidenceWorkbenchTypes";
 
 export const PRIMARY_REVIEW_ACTION_ID = "ACT-REQUEST-SOURCE-UPDATE";
 export const ADD_REVIEW_NOTE_ACTION_ID = "ACT-ADD-REVIEW-NOTE";

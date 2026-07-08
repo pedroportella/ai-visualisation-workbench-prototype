@@ -18,6 +18,9 @@ importers:
 
   frontend/apps/workbench:
     dependencies:
+      '@aivis/services':
+        specifier: workspace:*
+        version: link:../../packages/services
       '@aivis/ui-library':
         specifier: workspace:*
         version: link:../../packages/ui-library
@@ -61,9 +64,6 @@ importers:
 
   frontend/packages/services:
     dependencies:
-      '@aivis/utils':
-        specifier: workspace:*
-        version: link:../utils
       server-only:
         specifier: ^0.0.1
         version: 0.0.1

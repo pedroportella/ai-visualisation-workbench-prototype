@@ -1,7 +1,7 @@
 import "server-only";
 
-import { fallbackEvidenceWorkbenchData } from "./EvidenceWorkbenchFallbackFixture";
-import { REVIEW_ACTION_RECORDS } from "./EvidenceWorkbenchReviewActionFixture";
+import { fallbackEvidenceWorkbenchData } from "../evidenceWorkbenchFallbackFixture";
+import { REVIEW_ACTION_RECORDS } from "../evidenceWorkbenchReviewActionFixture";
 import type {
   EvidenceWorkbenchAuditMetadata,
   EvidenceWorkbenchCitation,
@@ -17,12 +17,13 @@ import type {
   EvidenceWorkbenchSourceWarning,
   EvidenceWorkbenchWarning,
   EvidenceWorkbenchViewModel
-} from "./EvidenceWorkbenchTypes";
+} from "../evidenceWorkbenchTypes";
+import { resolveFrontendRuntimeConfig } from "./runtimeConfig";
+import type { FrontendRuntimeConfig } from "./runtimeConfig";
 
-const DEFAULT_BACKEND_ORIGIN = "http://127.0.0.1:8000";
-
-interface BackendServiceConfig {
-  backendOrigin: string;
+export interface EvidenceWorkbenchServiceOptions {
+  config?: FrontendRuntimeConfig;
+  fetchImpl?: typeof fetch;
 }
 
 interface FixtureMetadata {
@@ -232,15 +233,43 @@ export class EvidenceWorkbenchBackendRequestError extends Error {
   }
 }
 
-export function loadEvidenceBackendConfig(env: NodeJS.ProcessEnv = process.env): BackendServiceConfig {
+interface EvidenceWorkbenchBackendRuntime {
+  backendUrl: string;
+  fetchImpl: typeof fetch;
+}
+
+function getRuntimeConfig(config?: FrontendRuntimeConfig): FrontendRuntimeConfig {
+  return config ?? resolveFrontendRuntimeConfig();
+}
+
+function requireBackendRuntime(
+  config: FrontendRuntimeConfig,
+  fetchImpl: typeof fetch = fetch
+): EvidenceWorkbenchBackendRuntime {
+  if (config.dataSource !== "backend" || !config.backendUrl) {
+    throw new EvidenceWorkbenchBackendRequestError(
+      "Evidence Workbench backend mode requires server-side backend configuration.",
+      503
+    );
+  }
+
   return {
-    backendOrigin: (env.AIVIS_BACKEND_ORIGIN ?? DEFAULT_BACKEND_ORIGIN).replace(/\/$/, "")
+    backendUrl: config.backendUrl,
+    fetchImpl
   };
 }
 
-export async function getEvidenceWorkbenchData(): Promise<EvidenceWorkbenchViewModel> {
+export async function getEvidenceWorkbenchData(
+  options: EvidenceWorkbenchServiceOptions = {}
+): Promise<EvidenceWorkbenchViewModel> {
+  const runtimeConfig = getRuntimeConfig(options.config);
+
+  if (runtimeConfig.dataSource === "mock") {
+    return fallbackEvidenceWorkbenchData;
+  }
+
   try {
-    const config = loadEvidenceBackendConfig();
+    const config = requireBackendRuntime(runtimeConfig, options.fetchImpl);
     const [answerResponse, sourceResponse, graphResponse] = await Promise.all([
       fetchFixture<AnswerFixtureResponse>(config, "/evidence-workbench/answer"),
       fetchFixture<SourceInventoryResponse>(config, "/evidence-workbench/sources"),
@@ -254,10 +283,11 @@ export async function getEvidenceWorkbenchData(): Promise<EvidenceWorkbenchViewM
 }
 
 export async function recordEvidenceWorkbenchReviewAction(
-  request: EvidenceWorkbenchReviewActionMutationRequest
+  request: EvidenceWorkbenchReviewActionMutationRequest,
+  options: EvidenceWorkbenchServiceOptions = {}
 ): Promise<EvidenceWorkbenchReviewActionMutationResult> {
-  const config = loadEvidenceBackendConfig();
-  const response = await fetch(`${config.backendOrigin}/evidence-workbench/review-actions`, {
+  const config = requireBackendRuntime(getRuntimeConfig(options.config), options.fetchImpl);
+  const response = await config.fetchImpl(`${config.backendUrl}/evidence-workbench/review-actions`, {
     method: "POST",
     cache: "no-store",
     headers: {
@@ -299,10 +329,10 @@ export async function recordEvidenceWorkbenchReviewAction(
 }
 
 async function fetchFixture<TResponse>(
-  config: BackendServiceConfig,
+  config: EvidenceWorkbenchBackendRuntime,
   path: string
 ): Promise<TResponse> {
-  const response = await fetch(`${config.backendOrigin}${path}`, {
+  const response = await config.fetchImpl(`${config.backendUrl}${path}`, {
     cache: "no-store",
     headers: {
       accept: "application/json"
@@ -438,13 +468,18 @@ async function reviewActionErrorMessage(response: Response): Promise<string> {
 
   try {
     const payload = (await response.json()) as {
-      detail?: {
+      detail?: string | {
         message?: string;
       };
       message?: string;
     };
+    const detail = payload.detail;
 
-    return payload.detail?.message ?? payload.message ?? fallbackMessage;
+    if (typeof detail === "string") {
+      return detail;
+    }
+
+    return detail?.message ?? payload.message ?? fallbackMessage;
   } catch {
     return fallbackMessage;
   }

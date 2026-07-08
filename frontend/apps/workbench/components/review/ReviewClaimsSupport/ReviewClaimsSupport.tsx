@@ -5,7 +5,7 @@ import {
   QhdsContentSection
 } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import { statusTone } from "../../shared/viewFormatters";
 
 interface ReviewClaimsSupportProps {

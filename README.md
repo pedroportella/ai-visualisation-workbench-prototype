@@ -26,6 +26,11 @@ pnpm test:reviewer-evidence
 pnpm test:visual
 ```
 
+Optional local runtime overrides are documented in `.env.example`. The
+workbench app also has an app-local `.env.example` for frontend-only fixture
+mode; backend origins remain server-side and must not use `NEXT_PUBLIC_*`
+variables.
+
 ## Reviewer Problem
 
 AI-generated service guidance can sound confident even when the supporting
@@ -71,17 +76,17 @@ user-facing theme switcher.
 - Frontend: Next.js App Router, React, TypeScript, local `@aivis/*` packages
   and local QHDS/QGDS-style adapters.
 - App structure: PascalCase `AppShell/`, app-owned workbench component groups
-  under `frontend/apps/workbench/components/` and a flat server-only service
-  boundary under `frontend/apps/workbench/services/`.
+  under `frontend/apps/workbench/components/` and browser-only query helpers
+  under `frontend/apps/workbench/services/`.
 - Visualisation: React Flow through `@xyflow/react` for the evidence/process
   map, with a text fallback.
 - Content rendering: an app-local safe markdown renderer for the fixture answer
   shape, including citations, lists, tables, code blocks and controlled
   diagram fixtures.
-- State and data loading: server-only backend adapter configuration,
-  deterministic fixture endpoints, TanStack Query-backed same-origin
-  view-model refresh/review-action mutation state and local React state for
-  simulated review actions.
+- State and data loading: server-only Evidence Workbench services in
+  `@aivis/services/server`, deterministic fixture endpoints, TanStack
+  Query-backed same-origin view-model refresh/review-action mutation state and
+  local React state for simulated review actions.
 - Backend: FastAPI health, readiness, metadata, answer, source, graph and
   review-action fixture endpoints.
 - Verification: Vitest package tests, backend pytest, Playwright route and

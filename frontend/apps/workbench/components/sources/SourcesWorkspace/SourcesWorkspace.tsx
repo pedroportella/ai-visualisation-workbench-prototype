@@ -2,7 +2,7 @@ import type { ReactElement, ReactNode } from "react";
 
 import { QhdsAccordion } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import {
   REVIEW_ROUTE,
   SOURCE_INVENTORY_ROUTE

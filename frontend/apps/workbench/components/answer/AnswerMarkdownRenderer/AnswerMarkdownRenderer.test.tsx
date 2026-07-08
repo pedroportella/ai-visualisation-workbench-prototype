@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import type { EvidenceWorkbenchCitation } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchCitation } from "@aivis/services";
 import { AnswerMarkdown } from ".";
 
 const fixtureCitations: EvidenceWorkbenchCitation[] = [

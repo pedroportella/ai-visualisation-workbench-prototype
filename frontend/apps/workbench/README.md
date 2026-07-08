@@ -3,27 +3,21 @@
 Next.js App Router application for the AI Visualisation Workbench prototype.
 
 The app opens the Evidence Workbench at `/evidence-workbench` and uses local
-synthetic fixture content through the local backend fixture API. Backend origin
-configuration is server-only:
+synthetic fixture content through the shared `@aivis/services` package.
+Backend origin configuration is server-only and owned by
+`@aivis/services/server`. If the backend fixture API is unavailable, the route
+renders a local fallback state and labels it as fallback data.
 
-```text
-AIVIS_BACKEND_ORIGIN=http://127.0.0.1:8000
-```
-
-If the backend fixture API is unavailable, the route renders a bundled fallback
-state and labels it as fallback data. Do not expose backend origin settings
-through `NEXT_PUBLIC_*` variables.
+Use this app's `.env.example` only for frontend-only fixture mode. Repository
+root `.env.example` documents optional full-stack overrides. Do not expose
+backend origin settings through browser-visible variables.
 
 The source shape is intentionally simple and reviewable:
 
 ```text
 AppShell/
 components/
-services/EvidenceWorkbenchBackendService.ts
-services/EvidenceWorkbenchFallbackFixture.ts
 services/EvidenceWorkbenchQueryState.ts
-services/EvidenceWorkbenchReviewActionFixture.ts
-services/EvidenceWorkbenchTypes.ts
 ```
 
 `components/` is grouped by product responsibility: answer, audit, evidence,
@@ -57,6 +51,6 @@ pnpm docker:down
 ```
 
 The container uses Next.js standalone output and reads
-`AIVIS_BACKEND_ORIGIN` server-side. The Docker smoke checks that rendered HTML
-and browser-visible static assets stay free of backend origins, private labels,
-local paths and fallback-only fixture markers.
+server-side runtime configuration through `@aivis/services/server`. The Docker
+smoke checks that rendered HTML and browser-visible static assets stay free of
+backend origins, private labels, local paths and fallback-only fixture markers.

@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 
-import type { EvidenceWorkbenchCitation } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchCitation } from "@aivis/services";
 import { parseAnswerMarkdown } from "./answerMarkdownParser";
 import { renderAnswerMarkdownBlock } from "./AnswerMarkdownBlocks";
 

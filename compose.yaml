@@ -36,7 +36,8 @@ services:
     image: aivis-workbench:local
     init: true
     environment:
-      AIVIS_BACKEND_ORIGIN: http://backend:8000
+      AIVIS_BACKEND_ORIGIN: ${AIVIS_BACKEND_ORIGIN:-http://backend:8000}
+      AIVIS_FRONTEND_DATA_SOURCE: ${AIVIS_FRONTEND_DATA_SOURCE:-backend}
       HOSTNAME: 0.0.0.0
       PORT: "3200"
     ports:

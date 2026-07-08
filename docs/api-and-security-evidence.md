@@ -7,7 +7,7 @@ review. These checks are review-grade evidence, not a formal security assurance.
 
 | Boundary | Implemented posture | Evidence |
 | --- | --- | --- |
-| Server-only backend origin | The frontend reads backend origin configuration on the server and does not require `NEXT_PUBLIC_*BACKEND` variables. | `frontend/apps/workbench/services/EvidenceWorkbenchBackendService.ts`, `frontend/packages/services/src/server/runtimeConfig.ts` |
+| Server-only backend origin | The frontend reads backend origin configuration on the server and does not require `NEXT_PUBLIC_*BACKEND` variables. | `frontend/packages/services/src/server/evidenceWorkbenchService.ts`, `frontend/packages/services/src/server/runtimeConfig.ts` |
 | Same-origin workbench API routes | Browser code fetches the Evidence Workbench view model and records review-action mutations through `/api/evidence-workbench/...` routes, while those route handlers call server-only service helpers. | `frontend/apps/workbench/app/api/evidence-workbench/view-model/route.ts`, `frontend/apps/workbench/app/api/evidence-workbench/review-actions/route.ts`, `frontend/apps/workbench/services/EvidenceWorkbenchQueryState.ts` |
 | Browser-origin guard | Source scans fail browser-visible frontend files that expose backend origins or local machine paths. | `pnpm guard:browser-origins` |
 | Browser bundle guard | Built static assets can be scanned for backend origins, private labels and secret markers. | `pnpm guard:browser-bundles` |
@@ -20,9 +20,9 @@ review. These checks are review-grade evidence, not a formal security assurance.
 
 ## Server-Only Backend Origin
 
-The workbench uses a server-only backend origin. The current backend fixture
-loader imports `server-only`, reads `AIVIS_BACKEND_ORIGIN` server-side and
-falls back to bundled fixture data when the API is unavailable.
+The workbench uses a server-only backend origin. The package-owned backend
+fixture loader imports `server-only`, reads `AIVIS_BACKEND_ORIGIN` server-side
+and falls back to bundled fixture data when the API is unavailable.
 
 This protects reviewability by keeping backend hostnames out of browser
 configuration and by making fallback mode visible in the UI. It is also checked
@@ -30,8 +30,8 @@ by browser-origin and Docker smoke paths.
 
 The client-side TanStack Query hooks call same-origin workbench API routes only.
 Those route handlers run on the server, reuse the server-only workbench service
-and keep backend origin configuration outside browser-visible source and built
-assets.
+from `@aivis/services/server` and keep backend origin configuration outside
+browser-visible source and built assets.
 
 ## Generated Answer Content
 

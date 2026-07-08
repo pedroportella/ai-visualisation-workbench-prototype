@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { fallbackEvidenceWorkbenchData } from "../../../services/EvidenceWorkbenchFallbackFixture";
+import { fallbackEvidenceWorkbenchData } from "@aivis/services/fixtures";
 import {
   buildSourceBlockerIssues,
   selectedSourceIssue
@@ -38,7 +38,7 @@ describe("ReviewActionForm", () => {
     expect(html).toContain("Reviewer note");
     expect(html).toContain("Request source update selected.");
     expect(html).toContain("Local fallback action");
-    expect(html).toContain("Bundled fallback records this in local UI state.");
+    expect(html).toContain("Local fixture records this in local UI state.");
     expect(html).toContain("Target: WARN-FALLBACK-001 on SRC-FALLBACK-002.");
     expect(html).toContain("Copy unavailable");
     expect(html).toContain('data-copy-state="disabled"');

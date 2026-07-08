@@ -5,13 +5,13 @@ import {
   MARK_UNSAFE_ACTION_ID,
   PRIMARY_REVIEW_ACTION_ID,
   SOURCE_UPDATE_WARNING
-} from "../../services/EvidenceWorkbenchReviewActionFixture";
+} from "@aivis/services";
 import type {
   EvidenceWorkbenchAuditMetadata,
   EvidenceWorkbenchReviewAction,
   EvidenceWorkbenchViewModel,
   EvidenceWorkbenchWarning
-} from "../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
 
 export interface ReviewActionAvailability {
   disabled: boolean;
@@ -98,7 +98,7 @@ export function createInitialReviewDecisionState(
     feedback:
       data.fetchState.source === "backend"
         ? "Review state is seeded from the backend fixture."
-        : "Local review state is seeded from the bundled fallback fixture.",
+        : "Local review state is seeded from the local fixture.",
     fixtureSource: data.fetchState.source,
     initialAudit: cloneAudit(data.audit),
     initialReview: normalizeReview(data.review),
@@ -133,7 +133,7 @@ export function reviewDecisionReducer(
       feedback:
         state.fixtureSource === "backend"
           ? "Review state reset to the backend fixture seed."
-          : "Local review state reset to the bundled fallback fixture seed.",
+          : "Local review state reset to the local fixture seed.",
       isDirty: false,
       lastActionTarget: null,
       review,

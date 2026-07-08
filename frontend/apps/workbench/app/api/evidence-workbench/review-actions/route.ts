@@ -5,8 +5,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import {
   EvidenceWorkbenchBackendRequestError,
   recordEvidenceWorkbenchReviewAction
-} from "../../../../services/EvidenceWorkbenchBackendService";
-import type { EvidenceWorkbenchReviewActionMutationRequest } from "../../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services/server";
+import type { EvidenceWorkbenchReviewActionMutationRequest } from "@aivis/services";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

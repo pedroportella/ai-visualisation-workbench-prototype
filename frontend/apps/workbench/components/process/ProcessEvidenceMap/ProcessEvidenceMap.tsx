@@ -28,7 +28,7 @@ import {
 import type {
   EvidenceWorkbenchGraphPosition,
   EvidenceWorkbenchViewModel
-} from "../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
 import {
   createProcessEvidenceMapModel,
   formatProcessGraphStatus,

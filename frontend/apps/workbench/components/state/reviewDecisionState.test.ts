@@ -5,9 +5,9 @@ import {
   MARK_REVIEWED_ACTION_ID,
   PRIMARY_REVIEW_ACTION_ID,
   PRIMARY_REVIEWER_NOTE
-} from "../../services/EvidenceWorkbenchReviewActionFixture";
-import type { EvidenceWorkbenchViewModel } from "../../services/EvidenceWorkbenchTypes";
-import { fallbackEvidenceWorkbenchData } from "../../services/EvidenceWorkbenchFallbackFixture";
+} from "@aivis/services";
+import type { EvidenceWorkbenchViewModel } from "@aivis/services";
+import { fallbackEvidenceWorkbenchData } from "@aivis/services/fixtures";
 import {
   createInitialReviewDecisionState,
   getReviewActionAvailability,

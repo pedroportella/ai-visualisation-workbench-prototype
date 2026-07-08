@@ -2,7 +2,7 @@ import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter,
   EvidenceWorkbenchSourceWarning
-} from "../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
 
 interface SourceIssueSummary {
   description: string;

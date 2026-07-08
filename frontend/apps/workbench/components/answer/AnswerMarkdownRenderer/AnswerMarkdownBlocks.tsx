@@ -6,7 +6,7 @@ import {
   type QhdsTableRow
 } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchCitation } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchCitation } from "@aivis/services";
 import { AnswerGeneratedDiagram } from "./AnswerGeneratedDiagram";
 import type { MarkdownBlock } from "./answerMarkdownParser";
 

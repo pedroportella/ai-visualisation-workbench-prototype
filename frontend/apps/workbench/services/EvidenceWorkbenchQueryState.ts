@@ -11,7 +11,7 @@ import type {
   EvidenceWorkbenchReviewActionMutationResult,
   EvidenceWorkbenchSummaryItem,
   EvidenceWorkbenchViewModel
-} from "./EvidenceWorkbenchTypes";
+} from "@aivis/services";
 
 export const EVIDENCE_WORKBENCH_VIEW_MODEL_API_ROUTE =
   "/api/evidence-workbench/view-model";

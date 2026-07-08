@@ -5,7 +5,7 @@ import {
   QhdsContentSection
 } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import { ProcessEvidenceMap } from "../ProcessEvidenceMap";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import {

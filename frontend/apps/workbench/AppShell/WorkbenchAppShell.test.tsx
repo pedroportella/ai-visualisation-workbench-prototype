@@ -125,7 +125,7 @@ describe("WorkbenchAppShell", () => {
             title="Backend fixture unavailable. Showing bundled fallback data."
             verticalNav
           >
-            Review can continue against the bundled fallback fixture state.
+            Review can continue against the local fixture state.
           </QhdsGlobalAlert>
         }
       >

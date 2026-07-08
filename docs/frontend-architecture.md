@@ -22,11 +22,11 @@ route content so the shell can show fallback state consistently.
 
 ## Server-Only Data Loading
 
-The Evidence Workbench resolves fixture data in
-`frontend/apps/workbench/services/EvidenceWorkbenchBackendService.ts`.
-That module imports `server-only`, reads `AIVIS_BACKEND_ORIGIN` on the server
-and falls back to bundled fixture data if the backend fixture API is
-unavailable.
+The Evidence Workbench resolves fixture data through
+`@aivis/services/server`. The package service imports `server-only`, resolves
+`AIVIS_FRONTEND_DATA_SOURCE` and `AIVIS_BACKEND_ORIGIN` on the server and
+returns bundled fixture data in explicit mock mode or when a configured backend
+fixture API is unavailable.
 
 This server-only backend origin boundary is intentional:
 
@@ -36,15 +36,9 @@ This server-only backend origin boundary is intentional:
 - production-like runs can require a server-side backend origin without adding
   `NEXT_PUBLIC_*BACKEND` configuration.
 
-The shared `@aivis/services` package also keeps its runtime configuration and
-backend adapters server-only. Current Evidence Workbench fixture loading is
-app-local because the route uses a specialised answer, source, graph and
-review-action shape.
-
-The app-local service boundary is intentionally flat under
-`frontend/apps/workbench/services/`. The service modules use
-`EvidenceWorkbench*` PascalCase filenames so the boundary stays easy to scan
-beside PascalCase app shell and component modules.
+The app keeps same-origin route handlers and browser query state local. Backend
+endpoint composition, DTO mapping, fallback data and review-action backend
+mutation helpers live in `frontend/packages/services`.
 
 ## TanStack Query Server State
 
@@ -57,8 +51,8 @@ behaviour that is useful in the prototype:
   `/api/evidence-workbench/view-model` route;
 - browser code records backend fixture review actions through the same-origin
   `/api/evidence-workbench/review-actions` route;
-- the route handlers call the existing server-only workbench service, so
-  backend origin configuration stays out of browser-visible code and bundles;
+- the route handlers call `@aivis/services/server`, so backend origin
+  configuration stays out of browser-visible code and bundles;
 - the review-action mutation updates the TanStack Query cache from the backend
   fixture response, while bundled fallback mode keeps the existing local
   reducer transition and labels it as local fallback behaviour.
@@ -92,8 +86,8 @@ The frontend monorepo uses local AIVIS packages:
   theme entrypoint.
 - `@aivis/ui-tokens`: semantic CSS variables and design tokens.
 - `@aivis/ui-assets`: local icon and logo assets consumed by adapters.
-- `@aivis/services`: server-only service adapter patterns for prototype data
-  sources.
+- `@aivis/services`: Evidence Workbench view-model types, fallback fixture data
+  and server-only backend/runtime service helpers.
 - `@aivis/utils`: small shared formatting and utility functions.
 
 The workbench app imports local adapters rather than scattered upstream design

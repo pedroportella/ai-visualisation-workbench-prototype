@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import {
   createProcessEvidenceMapModel,
   getProcessEvidenceMapVisibleIds

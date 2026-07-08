@@ -1,5 +1,5 @@
 import { EvidenceWorkbenchClient } from "../../../components/evidence/EvidenceWorkbenchClient";
-import { getEvidenceWorkbenchData } from "../../../services/EvidenceWorkbenchBackendService";
+import { getEvidenceWorkbenchData } from "@aivis/services/server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

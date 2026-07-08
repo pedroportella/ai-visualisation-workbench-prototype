@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { fallbackEvidenceWorkbenchData } from "../../../services/EvidenceWorkbenchFallbackFixture";
+import { fallbackEvidenceWorkbenchData } from "@aivis/services/fixtures";
 import { EvidenceWorkbenchTaskHeader } from ".";
 
 describe("EvidenceWorkbenchTaskHeader", () => {
@@ -30,7 +30,7 @@ describe("EvidenceWorkbenchTaskHeader", () => {
     expect(html).toContain("3 blockers");
     expect(html).toContain("Copy Disabled");
     expect(html).toContain('aria-label="Evidence data state"');
-    expect(html).toContain("Bundled fallback");
+    expect(html).toContain("Local fixture");
     expect(html).toContain("Loaded with page");
     expect(html).toContain(">Refresh<");
   });

@@ -13,6 +13,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@aivis/services": "workspace:*",
     "@aivis/ui-library": "workspace:*",
     "@tanstack/react-query": "^5.101.2",
     "@xyflow/react": "^12.11.1",

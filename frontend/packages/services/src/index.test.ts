@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { createPrototypeAppSummary } from "./index";
+import { PRIMARY_REVIEW_ACTION_ID } from "./index";
+import { fallbackEvidenceWorkbenchData } from "./fixtures";
 
-describe("createPrototypeAppSummary", () => {
-  it("returns a typed app summary", () => {
-    expect(createPrototypeAppSummary("seniors-card")).toEqual({
-      key: "seniors-card",
-      label: "Seniors Card",
-      status: "UP"
-    });
+describe("@aivis/services client-safe workbench exports", () => {
+  it("exports bundled Evidence Workbench fallback data and action constants", () => {
+    expect(fallbackEvidenceWorkbenchData.fetchState.source).toBe("fallback");
+    expect(fallbackEvidenceWorkbenchData.review.availableActionIds).toContain(
+      PRIMARY_REVIEW_ACTION_ID
+    );
   });
 });

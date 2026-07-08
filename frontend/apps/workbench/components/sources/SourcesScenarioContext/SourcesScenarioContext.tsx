@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import { AivisEvidenceContextAnchors } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
+import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 
 export function SourcesScenarioContext({
   data

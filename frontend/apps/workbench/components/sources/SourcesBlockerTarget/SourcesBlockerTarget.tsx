@@ -13,7 +13,7 @@ import {
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
-} from "../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
 import type { ReviewActionTarget } from "../../state/reviewDecisionState";
 
 export interface SourceBlockerIssue extends ReviewActionTarget {

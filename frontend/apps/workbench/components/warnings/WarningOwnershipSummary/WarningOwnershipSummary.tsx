@@ -9,7 +9,7 @@ import {
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchWarning
-} from "../../../services/EvidenceWorkbenchTypes";
+} from "@aivis/services";
 import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 
 interface WarningOwnershipSectionProps {

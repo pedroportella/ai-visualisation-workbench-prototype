@@ -146,7 +146,7 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await expect(page.getByText("Copy Disabled").first()).toBeVisible();
   await page.getByRole("button", { name: "Reset local review state" }).click();
   await expect(
-    page.getByText("Local review state reset to the bundled fallback fixture seed.")
+    page.getByText("Local review state reset to the local fixture seed.")
   ).toBeVisible();
   await expect(
     page.getByText("No local action target recorded.")
