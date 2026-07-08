@@ -1,0 +1,38 @@
+.evidence-workbench-audit-reset {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--aivis-workbench-copy-gap);
+  min-width: 0;
+  width: 100%;
+}
+
+.evidence-workbench-audit-reset__content {
+  display: grid;
+  gap: var(--aivis-workbench-copy-gap);
+  min-width: 0;
+}
+
+.evidence-workbench-audit-reset__content p {
+  color: var(--aivis-shell-muted);
+  line-height: var(--aivis-line-height-note);
+  margin: 0;
+}
+
+.evidence-workbench-audit-reset__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aivis-space-2);
+  min-width: 0;
+}
+
+@media (max-width: 44rem) {
+  .evidence-workbench-audit-reset__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .evidence-workbench-audit-reset__actions .qhds-button {
+    justify-content: center;
+    width: 100%;
+  }
+}

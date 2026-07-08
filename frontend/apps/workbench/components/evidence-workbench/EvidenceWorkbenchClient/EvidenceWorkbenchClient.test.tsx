@@ -21,6 +21,22 @@ const styles = [
     "utf8"
   ),
   readFileSync(
+    join(componentDirectory, "../warnings/WarningOwnershipSummary/WarningOwnershipSummary.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../audit/AuditWorkspace/AuditWorkspace.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../audit/AuditSummary/AuditSummary.scss"),
+    "utf8"
+  ),
+  readFileSync(
+    join(componentDirectory, "../audit/AuditResetBoundary/AuditResetBoundary.scss"),
+    "utf8"
+  ),
+  readFileSync(
     join(componentDirectory, "../answer/AnswerMarkdownRenderer/AnswerMarkdownRenderer.scss"),
     "utf8"
   ),

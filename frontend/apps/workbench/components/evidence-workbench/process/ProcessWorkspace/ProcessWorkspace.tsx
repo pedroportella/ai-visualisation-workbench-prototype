@@ -9,9 +9,9 @@ import type { EvidenceWorkbenchViewModel } from "../../../../services/evidence-w
 import { ProcessEvidenceMap } from "../ProcessEvidenceMap";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import {
-  WorkbenchWarningOwnershipDetail,
-  WorkbenchWarningOwnershipSummary
-} from "../../workbench-warning-ownership";
+  WarningOwnershipDetail,
+  WarningOwnershipSummary
+} from "../../warnings/WarningOwnershipSummary";
 
 interface ProcessWorkspaceProps {
   data: EvidenceWorkbenchViewModel;
@@ -39,14 +39,14 @@ export function ProcessWorkspace({
         graph={data.graph}
         supportingEvidence={
           <div className="evidence-workbench-warning-ownership__content">
-            <WorkbenchWarningOwnershipSummary
+            <WarningOwnershipSummary
               blockedWarningIds={decisionState.review.blockedByWarningIds}
               heading="Process warning ownership"
               sourceItems={data.sourceItems}
               summary="The map explains how the evidence path happened. Warning records stay owned by Source evidence."
               warnings={decisionState.warnings}
             />
-            <WorkbenchWarningOwnershipDetail
+            <WarningOwnershipDetail
               heading="Process warning ownership"
               warnings={decisionState.warnings}
             />

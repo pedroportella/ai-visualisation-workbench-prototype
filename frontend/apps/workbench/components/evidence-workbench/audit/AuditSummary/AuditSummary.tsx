@@ -5,11 +5,11 @@ import {
   QhdsSummaryList
 } from "@aivis/ui-library";
 
-import { REVIEW_ROUTE } from "./routeModel";
+import { REVIEW_ROUTE } from "../../routeModel";
 import type {
   ReviewActionTarget,
   ReviewDecisionState
-} from "./state/reviewDecisionState";
+} from "../../state/reviewDecisionState";
 
 export function AuditSummary({
   decisionState,

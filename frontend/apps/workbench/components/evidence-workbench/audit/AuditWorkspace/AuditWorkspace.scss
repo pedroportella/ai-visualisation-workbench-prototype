@@ -1,0 +1,13 @@
+.evidence-workbench-audit-accordion,
+.evidence-workbench-audit-accordion .qhds-accordion__body-wrapper,
+.evidence-workbench-audit-accordion .evidence-workbench-warning-ownership {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+}
+
+.evidence-workbench-audit-accordion .qhds-accordion,
+.evidence-workbench-audit-accordion .evidence-workbench-warning-ownership {
+  max-width: none;
+  width: 100%;
+}

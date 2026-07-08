@@ -9,10 +9,10 @@ import {
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchWarning
-} from "../../services/evidence-workbench/types";
-import { SOURCE_INVENTORY_ROUTE } from "./routeModel";
+} from "../../../../services/evidence-workbench/types";
+import { SOURCE_INVENTORY_ROUTE } from "../../routeModel";
 
-interface WorkbenchWarningOwnershipProps {
+interface WarningOwnershipSectionProps {
   blockedWarningIds: string[];
   context: "audit" | "process";
   heading: string;
@@ -22,12 +22,12 @@ interface WorkbenchWarningOwnershipProps {
   warnings: EvidenceWorkbenchWarning[];
 }
 
-type WorkbenchWarningOwnershipContentProps = Omit<
-  WorkbenchWarningOwnershipProps,
+type WarningOwnershipContentProps = Omit<
+  WarningOwnershipSectionProps,
   "context" | "headingId"
 >;
 
-export function WorkbenchWarningOwnership({
+export function WarningOwnershipSection({
   blockedWarningIds,
   context,
   heading,
@@ -35,7 +35,7 @@ export function WorkbenchWarningOwnership({
   sourceItems,
   summary,
   warnings
-}: Readonly<WorkbenchWarningOwnershipProps>): ReactElement {
+}: Readonly<WarningOwnershipSectionProps>): ReactElement {
   return (
     <section
       aria-labelledby={headingId}
@@ -43,7 +43,7 @@ export function WorkbenchWarningOwnership({
     >
       <div className="evidence-workbench-supporting-evidence__section evidence-workbench-warning-ownership__summary">
         <h3 id={headingId}>{heading}</h3>
-        <WorkbenchWarningOwnershipSummary
+        <WarningOwnershipSummary
           blockedWarningIds={blockedWarningIds}
           heading={heading}
           sourceItems={sourceItems}
@@ -57,7 +57,7 @@ export function WorkbenchWarningOwnership({
         items={[
           {
             content: (
-              <WorkbenchWarningOwnershipDetail
+              <WarningOwnershipDetail
                 heading={heading}
                 warnings={warnings}
               />
@@ -71,13 +71,13 @@ export function WorkbenchWarningOwnership({
   );
 }
 
-export function WorkbenchWarningOwnershipSummary({
+export function WarningOwnershipSummary({
   blockedWarningIds,
   heading,
   sourceItems,
   summary,
   warnings
-}: Readonly<WorkbenchWarningOwnershipContentProps>): ReactElement {
+}: Readonly<WarningOwnershipContentProps>): ReactElement {
   const sourceOwners = warningSourceOwners(warnings, sourceItems);
 
   return (
@@ -118,10 +118,10 @@ export function WorkbenchWarningOwnershipSummary({
   );
 }
 
-export function WorkbenchWarningOwnershipDetail({
+export function WarningOwnershipDetail({
   heading,
   warnings
-}: Readonly<Pick<WorkbenchWarningOwnershipContentProps, "heading" | "warnings">>): ReactElement {
+}: Readonly<Pick<WarningOwnershipContentProps, "heading" | "warnings">>): ReactElement {
   return (
     <div className="evidence-workbench-warning-ownership__detail-panel">
       <p>
