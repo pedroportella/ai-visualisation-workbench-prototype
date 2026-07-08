@@ -23,7 +23,7 @@ describe("EvidenceWorkbenchTaskHeader", () => {
     expect(html).toContain("Copy Disabled");
     expect(html).not.toContain('aria-label="Evidence data state"');
     expect(html).not.toContain("Local fixture");
-    expect(html).not.toContain(">Refresh<");
+    expect(html).not.toContain("Refresh evidence");
     expect(html).not.toContain("workbench-task-header__server-state");
   });
 });

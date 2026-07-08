@@ -68,7 +68,7 @@ function getButtonClasses({
 
 function renderIcon(icon: ReactNode) {
   return (
-    <span aria-hidden="true" className="qld__icon qld__icon--sm qhds-button__icon">
+    <span aria-hidden="true" className="qhds-button__icon">
       {icon}
     </span>
   );

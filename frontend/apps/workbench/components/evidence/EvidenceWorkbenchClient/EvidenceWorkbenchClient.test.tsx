@@ -141,12 +141,14 @@ describe("EvidenceWorkbenchClient", () => {
     expect(taskHeader).not.toContain('aria-label="Evidence data state"');
     expect(taskHeader).not.toContain("Local fixture");
     expect(taskHeader).not.toContain("Loaded with page");
-    expect(taskHeader).not.toContain(">Refresh<");
+    expect(taskHeader).not.toContain("Refresh evidence");
     expect(html).toContain('aria-label="Evidence data state"');
     expect(html).toContain('class="evidence-workbench-data-state"');
+    expect(html).toContain("Source");
     expect(html).toContain("Local fixture");
     expect(html).toContain("Loaded with page");
-    expect(html).toContain(">Refresh<");
+    expect(html).toContain("Refresh evidence");
+    expect(html).toContain("qhds-button--icon-lead");
     expect(html).not.toContain("workbench-task-header__server-state");
     expect(html).not.toContain("AIVIS is a simulated evidence workbench");
     expect(html).toContain("Step-free transfer guidance needs evidence review");
@@ -543,11 +545,29 @@ describe("EvidenceWorkbenchClient", () => {
   });
 
   it("scopes answer content to a readable tokenized work surface", () => {
+    const dataStateStyles = styles.slice(
+      styles.indexOf(".evidence-workbench-data-state"),
+      styles.indexOf(".evidence-workbench-overview")
+    );
+
     expect(styles).toContain("background: var(--aivis-color-panel-surface);");
     expect(styles).toContain(".aivis-app-shell .qhds-layout__main-section-body .qhds-content-section");
     expect(styles).toContain(".workbench-task-header");
     expect(styles).toContain(".evidence-workbench-data-state");
-    expect(styles).toContain("border-block-end: var(--aivis-border-width-thin) solid var(--qhds-color-border);");
+    expect(dataStateStyles).toContain("display: flex;");
+    expect(dataStateStyles).toContain("flex-wrap: wrap;");
+    expect(dataStateStyles).toContain("justify-content: flex-end;");
+    expect(dataStateStyles).toContain(
+      "margin-block-start: calc(var(--aivis-space-1) - var(--aivis-workbench-section-gap));"
+    );
+    expect(dataStateStyles).toContain(
+      "margin-block-end: calc(var(--aivis-space-4) - var(--aivis-workbench-section-gap));"
+    );
+    expect(dataStateStyles).toContain("padding-block: 0;");
+    expect(dataStateStyles).toContain("flex-basis: 100%;");
+    expect(dataStateStyles).not.toContain("border-block-end");
+    expect(dataStateStyles).not.toContain("grid-template-columns");
+    expect(dataStateStyles).not.toContain("justify-self");
     expect(styles).toContain(".evidence-workbench-answer-markdown");
     expect(styles).toContain(".evidence-workbench-overview");
     expect(styles).toContain(".evidence-workbench-task-launcher");

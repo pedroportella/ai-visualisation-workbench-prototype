@@ -107,7 +107,21 @@
 }
 
 .qhds-button__icon {
+  align-items: center;
+  block-size: 1rem;
+  display: inline-flex;
   flex: 0 0 auto;
+  inline-size: 1rem;
+  justify-content: center;
+}
+
+.qhds-button__icon > svg,
+.qhds-button__icon .qld__icon {
+  block-size: 100%;
+  display: block;
+  inline-size: 100%;
+  max-block-size: 100%;
+  max-inline-size: 100%;
 }
 
 .qhds-button--primary,

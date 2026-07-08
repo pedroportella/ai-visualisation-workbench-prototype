@@ -5,6 +5,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { QhdsIcon } from "../QhdsIcon";
 import { QhdsButton } from "./QhdsButton";
 
 let root: Root | undefined;
@@ -86,7 +87,7 @@ describe("QhdsButton", () => {
   it("renders QHDS leading and trailing icon hooks", () => {
     const html = renderToStaticMarkup(
       <>
-        <QhdsButton leadingIcon={<svg focusable="false" />}>Leading icon</QhdsButton>
+        <QhdsButton leadingIcon={<QhdsIcon symbol="refresh" />}>Leading icon</QhdsButton>
         <QhdsButton trailingIcon={<svg focusable="false" />} variant="secondary">
           Trailing icon
         </QhdsButton>
@@ -97,10 +98,18 @@ describe("QhdsButton", () => {
     expect(html).toContain("qld__btn--icon-trail");
     expect(html).toContain("qhds-button--icon-lead");
     expect(html).toContain("qhds-button--icon-trail");
-    expect(html).toContain('class="qld__icon qld__icon--sm qhds-button__icon"');
+    expect(html).toContain('class="qhds-button__icon"');
+    expect(html).toContain('class="qld__icon"');
+    expect(html).toContain("#refresh");
     expect(html).toContain('aria-hidden="true"');
     expect(html).toContain("Leading icon");
     expect(html).toContain("Trailing icon");
+
+    const stylesheet = readFileSync("src/components/QhdsButton/QhdsButton.scss", "utf8");
+
+    expect(stylesheet).toContain(".qhds-button__icon > svg");
+    expect(stylesheet).toContain("inline-size: 1rem;");
+    expect(stylesheet).not.toContain(".qhds-button__icon .qhds-button__icon");
   });
 
   it("renders disabled native buttons and disabled anchor-style buttons safely", () => {
