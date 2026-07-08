@@ -1,0 +1,1 @@
+export { EvidenceWorkbenchQueryProvider } from "./EvidenceWorkbenchQueryProvider";

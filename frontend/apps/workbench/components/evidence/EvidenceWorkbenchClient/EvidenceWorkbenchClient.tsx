@@ -1,9 +1,14 @@
 "use client";
 
-import { useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 
 import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
+import {
+  useEvidenceWorkbenchReviewActionMutation,
+  useEvidenceWorkbenchViewModel
+} from "../../../services/EvidenceWorkbenchQueryState";
 import { EvidenceWorkbenchTaskHeader } from "../EvidenceWorkbenchTaskHeader";
+import { EvidenceWorkbenchQueryProvider } from "../EvidenceWorkbenchQueryProvider";
 import type { EvidenceWorkbenchView } from "../../shared/routeModel";
 import {
   createInitialReviewDecisionState,
@@ -27,6 +32,24 @@ export function EvidenceWorkbenchClient({
   activeView?: EvidenceWorkbenchView;
   data: EvidenceWorkbenchViewModel;
 }>) {
+  return (
+    <EvidenceWorkbenchQueryProvider>
+      <EvidenceWorkbenchClientContent activeView={activeView} data={data} />
+    </EvidenceWorkbenchQueryProvider>
+  );
+}
+
+function EvidenceWorkbenchClientContent({
+  activeView = "overview",
+  data: initialData
+}: Readonly<{
+  activeView?: EvidenceWorkbenchView;
+  data: EvidenceWorkbenchViewModel;
+}>) {
+  const viewModelQuery = useEvidenceWorkbenchViewModel(initialData);
+  const data = viewModelQuery.data ?? initialData;
+  const seededDataRef = useRef(data);
+  const reviewActionMutation = useEvidenceWorkbenchReviewActionMutation();
   const summary = summaryMap(data);
   const initialDecisionState = useMemo(() => createInitialReviewDecisionState(data), [data]);
   const [decisionState, dispatchReviewDecision] = useReducer(
@@ -41,21 +64,61 @@ export function EvidenceWorkbenchClient({
   const initialSourceIssueId = sourceBlockerIssues[0]?.id ?? null;
   const [selectedSourceIssueId, setSelectedSourceIssueId] = useState(initialSourceIssueId);
   const selectedIssue = selectedSourceIssue(sourceBlockerIssues, selectedSourceIssueId);
-  const applyReviewAction = (actionId: string, reviewerNote: string) =>
+  const applyReviewAction = (actionId: string, reviewerNote: string) => {
+    if (data.fetchState.source === "backend") {
+      reviewActionMutation.mutate({
+        reviewActionId: actionId,
+        reviewerNote,
+        reviewStateId: review.id,
+        selectedClaimId: review.selectedClaimId
+      });
+      return;
+    }
+
     dispatchReviewDecision({
       actionId,
       reviewerNote,
       targetIssue: selectedIssue,
       type: "apply-action"
     });
+  };
   const resetReviewState = () => {
+    reviewActionMutation.reset();
     dispatchReviewDecision({ type: "reset" });
     setSelectedSourceIssueId(initialSourceIssueId);
   };
+  const refreshWorkbenchData = () => {
+    void viewModelQuery.refetch();
+  };
+  const refreshLabel = refreshStateLabel(
+    viewModelQuery.dataUpdatedAt,
+    viewModelQuery.isFetchedAfterMount
+  );
+
+  useEffect(() => {
+    if (seededDataRef.current === data) {
+      return;
+    }
+
+    seededDataRef.current = data;
+    dispatchReviewDecision({ data, type: "replace-seed" });
+    setSelectedSourceIssueId(initialSourceIssueId);
+  }, [data, initialSourceIssueId]);
 
   return (
     <>
-      <EvidenceWorkbenchTaskHeader activeView={activeView} review={review} />
+      <EvidenceWorkbenchTaskHeader
+        activeView={activeView}
+        review={review}
+        serverState={{
+          errorMessage: viewModelQuery.error instanceof Error ? viewModelQuery.error.message : null,
+          isError: viewModelQuery.isError,
+          isRefreshing: viewModelQuery.isFetching,
+          onRefresh: refreshWorkbenchData,
+          refreshLabel,
+          source: data.fetchState.source
+        }}
+      />
 
       {activeView === "overview" ? (
         <OverviewWorkspace
@@ -72,6 +135,15 @@ export function EvidenceWorkbenchClient({
           onApplyAction={applyReviewAction}
           onReset={resetReviewState}
           onSelectIssue={setSelectedSourceIssueId}
+          reviewActionState={{
+            errorMessage:
+              reviewActionMutation.error instanceof Error
+                ? reviewActionMutation.error.message
+                : null,
+            isPending: reviewActionMutation.isPending,
+            mode: data.fetchState.source,
+            successMessage: reviewActionMutation.data?.message ?? null
+          }}
           selectedIssue={selectedIssue}
           sourceBlockerIssues={sourceBlockerIssues}
         />
@@ -101,4 +173,15 @@ export function EvidenceWorkbenchClient({
       ) : null}
     </>
   );
+}
+
+function refreshStateLabel(dataUpdatedAt: number, isFetchedAfterMount: boolean): string {
+  if (!isFetchedAfterMount || dataUpdatedAt === 0) {
+    return "Loaded with page";
+  }
+
+  return `Refreshed ${new Intl.DateTimeFormat("en-AU", {
+    hour: "numeric",
+    minute: "2-digit"
+  }).format(new Date(dataUpdatedAt))}`;
 }

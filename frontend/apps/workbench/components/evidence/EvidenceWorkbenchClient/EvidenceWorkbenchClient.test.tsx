@@ -133,7 +133,10 @@ describe("EvidenceWorkbenchClient", () => {
     expect(taskHeader).toContain("3 blockers");
     expect(taskHeader).toContain("Copy Disabled");
     expect(taskHeader).not.toContain("Step-free transfer guidance needs evidence review");
-    expect(taskHeader).not.toContain("Bundled fallback");
+    expect(taskHeader).toContain('aria-label="Evidence data state"');
+    expect(taskHeader).toContain("Bundled fallback");
+    expect(taskHeader).toContain("Loaded with page");
+    expect(taskHeader).toContain(">Refresh<");
     expect(html).not.toContain("AIVIS is a simulated evidence workbench");
     expect(html).toContain("Step-free transfer guidance needs evidence review");
     expect(html).toContain("Bundled fallback");
@@ -153,7 +156,7 @@ describe("EvidenceWorkbenchClient", () => {
     expect(html).toContain(">Review source evidence<");
     expect(html).toContain(">Open evidence map<");
     expect(html).toContain(">View audit state<");
-    expect(html).toContain("Local review state is seeded from the loaded fixture.");
+    expect(html).toContain("Local review state is seeded from the bundled fallback fixture.");
     expect(html).not.toContain('aria-label="Evidence Workbench views"');
     expect(html).not.toContain("evidence-workbench-mobile-nav");
     expect(html).toContain('href="/evidence-workbench/sources"');
@@ -199,7 +202,8 @@ describe("EvidenceWorkbenchClient", () => {
     expect(taskHeader).toContain("3 blockers");
     expect(taskHeader).toContain("Copy Disabled");
     expect(taskHeader).not.toContain("Inspect the draft answer");
-    expect(taskHeader).not.toContain("Bundled fallback");
+    expect(taskHeader).toContain("Bundled fallback");
+    expect(taskHeader).toContain("Loaded with page");
     expect(html).toContain("Decision required");
     expect(html).toContain("Start here: decide what must happen before this answer can be copied or approved.");
     expect(html).toContain("This answer cannot be used yet.");
@@ -245,6 +249,8 @@ describe("EvidenceWorkbenchClient", () => {
     expect(html).toContain("WARN-FALLBACK-003 on SRC-FALLBACK-003");
     expect(html).toContain("Target: WARN-FALLBACK-001 on SRC-FALLBACK-002.");
     expect(html).toContain("Local audit details");
+    expect(html).toContain("Local fallback action");
+    expect(html).toContain("Bundled fallback records this in local UI state.");
     expect(html).toContain('id="review-source-inspector-accordion-button"');
     expect(html).toContain('id="review-claims-accordion-button"');
     expect(html).toContain('id="review-local-audit-accordion-button"');

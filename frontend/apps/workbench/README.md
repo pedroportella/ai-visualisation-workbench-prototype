@@ -21,6 +21,7 @@ AppShell/
 components/
 services/EvidenceWorkbenchBackendService.ts
 services/EvidenceWorkbenchFallbackFixture.ts
+services/EvidenceWorkbenchQueryState.ts
 services/EvidenceWorkbenchReviewActionFixture.ts
 services/EvidenceWorkbenchTypes.ts
 ```
@@ -28,6 +29,8 @@ services/EvidenceWorkbenchTypes.ts
 `components/` is grouped by product responsibility: answer, audit, evidence,
 overview, process, review, sources and warnings. Route helpers and local review
 state sit under `components/shared/` and `components/state/`.
+`components/evidence/EvidenceWorkbenchQueryProvider/` supplies the small
+TanStack Query client boundary used by the Evidence Workbench.
 
 App and route styles use SCSS entrypoints. Reusable theme styling comes from
 `@aivis/ui-library/theme.scss`.

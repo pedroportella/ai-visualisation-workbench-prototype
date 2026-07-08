@@ -48,6 +48,9 @@ Implemented now:
 - FastAPI fixture backend with health, readiness, metadata, answer, source,
   graph and review-action endpoints.
 - Server-only backend origin handling in the frontend app.
+- TanStack Query server-state boundary for same-origin Evidence Workbench
+  view-model refresh and review-action mutation state, seeded from the
+  server-rendered view model.
 - React Flow through `@xyflow/react` for the evidence/process map.
 - App-local safe markdown rendering for the fixture answer shape.
 - Local React state for simulated review actions and reset behaviour.
@@ -58,7 +61,7 @@ Implemented now:
 Not claimed:
 
 - direct D3.js, Cytoscape.js or Mermaid implementation;
-- TanStack Query, app-owned Zustand or Redux integration;
+- app-owned Zustand or Redux integration;
 - production retrieval, production graph analytics or persisted review state;
 - axe, Lighthouse, WAVE, Dependabot or Socket.dev automation;
 - production RAG, GraphRAG, Amazon Bedrock, Neo4j, Terraform, SSO,

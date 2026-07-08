@@ -24,6 +24,13 @@ import {
   type ReviewDecisionState
 } from "../../state/reviewDecisionState";
 
+export interface ReviewActionMutationViewState {
+  errorMessage: string | null;
+  isPending: boolean;
+  mode: "backend" | "fallback";
+  successMessage: string | null;
+}
+
 export interface ReviewActionFormProps {
   flow?: "audit" | "decision";
   labelledBy?: string;
@@ -33,6 +40,7 @@ export interface ReviewActionFormProps {
     targetIssue: ReviewActionTarget | null
   ) => void;
   onReset: () => void;
+  reviewActionState: ReviewActionMutationViewState;
   selectedIssue: ReviewActionTarget | null;
   state: ReviewDecisionState;
 }
@@ -42,6 +50,7 @@ export function ReviewActionForm({
   labelledBy,
   onApplyAction,
   onReset,
+  reviewActionState,
   selectedIssue,
   state
 }: ReviewActionFormProps) {
@@ -102,14 +111,17 @@ export function ReviewActionForm({
     ? `${selectedAction.label} selected.`
     : "No action selected.";
   const canSubmitSelectedAction =
-    selectedAction !== null && selectedActionAvailability?.disabled !== true;
+    selectedAction !== null &&
+    selectedActionAvailability?.disabled !== true &&
+    !reviewActionState.isPending;
   const selectedActionSubmitLabel = selectedAction?.label ?? "Record action";
   const selectedActionSubmitVariant =
     selectedAction?.uiTone === "primary" && canSubmitSelectedAction
       ? "primary"
       : "secondary";
+  const reviewActionStatus = reviewActionStatusMessage(reviewActionState);
   const handleSelectedActionSubmit = () => {
-    if (!selectedAction || selectedActionAvailability?.disabled) {
+    if (!selectedAction || selectedActionAvailability?.disabled || reviewActionState.isPending) {
       return;
     }
 
@@ -196,6 +208,12 @@ export function ReviewActionForm({
             <div className="evidence-workbench-review-actions__footer-copy">
               <strong>{selectedActionStatus}</strong>
               <p id={selectedActionReasonId}>{selectedActionReason}</p>
+              <p
+                className="evidence-workbench-review-actions__mutation-state"
+                role={reviewActionState.errorMessage ? "alert" : "status"}
+              >
+                {reviewActionStatus}
+              </p>
             </div>
             <QhdsButton
               aria-describedby={selectedActionReasonId}
@@ -206,7 +224,7 @@ export function ReviewActionForm({
               type="button"
               variant={selectedActionSubmitVariant}
             >
-              {selectedActionSubmitLabel}
+              {reviewActionState.isPending ? "Recording..." : selectedActionSubmitLabel}
             </QhdsButton>
           </div>
         </>
@@ -288,6 +306,11 @@ export function ReviewActionForm({
               tone={state.review.blockedByWarningIds.length > 0 ? "warning" : "success"}
             >
               {state.review.blockedByWarningIds.length} approval blockers
+            </AivisEvidenceStatus>
+            <AivisEvidenceStatus
+              tone={reviewActionState.mode === "backend" ? "success" : "warning"}
+            >
+              {reviewActionState.mode === "backend" ? "Backend action" : "Local fallback action"}
             </AivisEvidenceStatus>
           </div>
         </div>
@@ -432,4 +455,22 @@ function lastActionTargetLabel(target: ReviewActionTarget | null): string {
   }
 
   return `${target.warningId} on ${target.sourceId}: ${target.warningMessage}`;
+}
+
+function reviewActionStatusMessage(state: ReviewActionMutationViewState): string {
+  if (state.isPending) {
+    return "Recording review action.";
+  }
+
+  if (state.errorMessage) {
+    return state.errorMessage;
+  }
+
+  if (state.successMessage) {
+    return state.successMessage;
+  }
+
+  return state.mode === "backend"
+    ? "Records through the backend fixture."
+    : "Bundled fallback records this in local UI state.";
 }

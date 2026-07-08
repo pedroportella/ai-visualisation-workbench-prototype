@@ -267,6 +267,10 @@
   color: var(--aivis-shell-text);
 }
 
+.evidence-workbench-review-actions__selected-action .evidence-workbench-review-actions__mutation-state {
+  color: var(--aivis-shell-muted);
+}
+
 .evidence-workbench-review-actions__copy-state p {
   color: var(--aivis-shell-muted);
 }

@@ -10,21 +10,37 @@ const { mode, playwrightArgs } = parseArgs(rawArgs);
 const isTestRun = playwrightArgs[0] === "test";
 const resolvedMode = mode ?? process.env.AIVIS_E2E_MODE ?? (isTestRun ? "mock" : "report");
 const defaultPort = resolvedMode === "docker" ? "3200" : "3210";
-const workbenchPort = process.env.AIVIS_E2E_WORKBENCH_PORT ?? defaultPort;
-const baseUrl =
+let workbenchPort = process.env.AIVIS_E2E_WORKBENCH_PORT ?? defaultPort;
+let baseUrl =
   process.env.AIVIS_E2E_BASE_URL ?? `http://127.0.0.1:${workbenchPort}`;
-const runtimeOwner =
+let runtimeOwner =
   resolvedMode === "mock"
     ? "mock-next-dev"
     : resolvedMode === "docker"
       ? "docker-compose-wrapper"
       : "playwright";
-const teardownOwner =
+let teardownOwner =
   resolvedMode === "mock"
     ? "playwright-webServer"
     : resolvedMode === "docker"
       ? "scripts/run-docker-e2e.mjs"
       : "not-required";
+
+if (
+  isTestRun &&
+  resolvedMode === "mock" &&
+  process.env.AIVIS_E2E_BASE_URL === undefined &&
+  process.env.AIVIS_E2E_WORKBENCH_PORT === undefined
+) {
+  const reusableMockUrl = await findReusableMockWorkbench();
+
+  if (reusableMockUrl) {
+    baseUrl = reusableMockUrl;
+    workbenchPort = new URL(reusableMockUrl).port;
+    runtimeOwner = "existing-next-dev";
+    teardownOwner = "already-running";
+  }
+}
 
 const env = normalisePlaywrightColourEnv({
   ...process.env,
@@ -40,7 +56,7 @@ if (isTestRun) {
   printRuntimeContract();
 }
 
-if (isTestRun && resolvedMode === "mock") {
+if (isTestRun && resolvedMode === "mock" && runtimeOwner === "mock-next-dev") {
   await assertMockPortIsAvailable(baseUrl);
 }
 
@@ -154,4 +170,26 @@ async function assertMockPortIsAvailable(url) {
 
     throw error;
   }
+}
+
+async function findReusableMockWorkbench() {
+  const reusableUrl = "http://127.0.0.1:3200";
+  const probeUrl = `${reusableUrl}/evidence-workbench`;
+
+  try {
+    const response = await fetch(probeUrl, { signal: AbortSignal.timeout(1_500) });
+    const body = await response.text();
+
+    if (
+      response.ok &&
+      body.includes("Evidence Workbench") &&
+      body.includes("Backend fixture unavailable. Showing bundled fallback data.")
+    ) {
+      return reusableUrl;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
 }

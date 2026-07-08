@@ -10,6 +10,14 @@ describe("EvidenceWorkbenchTaskHeader", () => {
       <EvidenceWorkbenchTaskHeader
         activeView="sources"
         review={fallbackEvidenceWorkbenchData.review}
+        serverState={{
+          errorMessage: null,
+          isError: false,
+          isRefreshing: false,
+          onRefresh: () => undefined,
+          refreshLabel: "Loaded with page",
+          source: "fallback"
+        }}
       />
     );
 
@@ -21,5 +29,9 @@ describe("EvidenceWorkbenchTaskHeader", () => {
     expect(html).toContain('aria-label="3 approval blockers"');
     expect(html).toContain("3 blockers");
     expect(html).toContain("Copy Disabled");
+    expect(html).toContain('aria-label="Evidence data state"');
+    expect(html).toContain("Bundled fallback");
+    expect(html).toContain("Loaded with page");
+    expect(html).toContain(">Refresh<");
   });
 });

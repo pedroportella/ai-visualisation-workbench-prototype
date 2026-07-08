@@ -32,6 +32,7 @@ export interface ReviewDecisionState {
   actions: EvidenceWorkbenchReviewAction[];
   audit: EvidenceWorkbenchAuditMetadata;
   feedback: string;
+  fixtureSource: EvidenceWorkbenchViewModel["fetchState"]["source"];
   initialAudit: EvidenceWorkbenchAuditMetadata;
   initialReview: EvidenceWorkbenchViewModel["review"];
   isDirty: boolean;
@@ -48,6 +49,11 @@ export type ReviewDecisionReducerAction =
       reviewerNote: string;
       targetIssue?: ReviewActionTarget | null;
       type: "apply-action";
+    }
+  | {
+      data: EvidenceWorkbenchViewModel;
+      feedback?: string;
+      type: "replace-seed";
     }
   | {
       type: "reset";
@@ -89,7 +95,11 @@ export function createInitialReviewDecisionState(
   return {
     actions: data.review.actions,
     audit: cloneAudit(data.audit),
-    feedback: "Local review state is seeded from the loaded fixture.",
+    feedback:
+      data.fetchState.source === "backend"
+        ? "Review state is seeded from the backend fixture."
+        : "Local review state is seeded from the bundled fallback fixture.",
+    fixtureSource: data.fetchState.source,
     initialAudit: cloneAudit(data.audit),
     initialReview: normalizeReview(data.review),
     isDirty: false,
@@ -105,13 +115,25 @@ export function reviewDecisionReducer(
   state: ReviewDecisionState,
   action: ReviewDecisionReducerAction
 ): ReviewDecisionState {
+  if (action.type === "replace-seed") {
+    const nextState = createInitialReviewDecisionState(action.data);
+
+    return {
+      ...nextState,
+      feedback: action.feedback ?? nextState.feedback
+    };
+  }
+
   if (action.type === "reset") {
     const review = normalizeReview(state.initialReview);
 
     return {
       ...state,
       audit: cloneAudit(state.initialAudit),
-      feedback: "Local review state reset to the loaded fixture seed.",
+      feedback:
+        state.fixtureSource === "backend"
+          ? "Review state reset to the backend fixture seed."
+          : "Local review state reset to the bundled fallback fixture seed.",
       isDirty: false,
       lastActionTarget: null,
       review,

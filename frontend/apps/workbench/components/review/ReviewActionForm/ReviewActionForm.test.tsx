@@ -20,6 +20,12 @@ describe("ReviewActionForm", () => {
         labelledBy="review-take-action-accordion-button"
         onApplyAction={() => undefined}
         onReset={() => undefined}
+        reviewActionState={{
+          errorMessage: null,
+          isPending: false,
+          mode: "fallback",
+          successMessage: null
+        }}
         selectedIssue={selectedIssue}
         state={state}
       />
@@ -31,6 +37,8 @@ describe("ReviewActionForm", () => {
     expect(html).toContain("Decision option");
     expect(html).toContain("Reviewer note");
     expect(html).toContain("Request source update selected.");
+    expect(html).toContain("Local fallback action");
+    expect(html).toContain("Bundled fallback records this in local UI state.");
     expect(html).toContain("Target: WARN-FALLBACK-001 on SRC-FALLBACK-002.");
     expect(html).toContain("Copy unavailable");
     expect(html).toContain('data-copy-state="disabled"');

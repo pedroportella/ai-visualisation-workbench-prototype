@@ -1,1 +1,5 @@
-export { ReviewActionForm, type ReviewActionFormProps } from "./ReviewActionForm";
+export {
+  ReviewActionForm,
+  type ReviewActionFormProps,
+  type ReviewActionMutationViewState
+} from "./ReviewActionForm";

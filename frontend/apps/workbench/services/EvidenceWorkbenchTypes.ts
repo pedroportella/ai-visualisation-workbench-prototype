@@ -159,6 +159,24 @@ export interface EvidenceWorkbenchFetchState {
   source: "backend" | "fallback";
 }
 
+export interface EvidenceWorkbenchReviewActionMutationRequest {
+  answerId?: string;
+  reviewActionId: string;
+  reviewerNote: string;
+  reviewStateId?: string;
+  selectedClaimId?: string;
+}
+
+export interface EvidenceWorkbenchReviewActionMutationResult {
+  audit: EvidenceWorkbenchAuditMetadata;
+  fetchState: EvidenceWorkbenchFetchState;
+  implementedActionIds: string[];
+  message: string;
+  review: EvidenceWorkbenchViewModel["review"];
+  reviewAction: EvidenceWorkbenchReviewAction;
+  warnings: EvidenceWorkbenchWarning[];
+}
+
 export interface EvidenceWorkbenchViewModel {
   answer: {
     generatedAt: string;

@@ -46,6 +46,27 @@ The app-local service boundary is intentionally flat under
 `EvidenceWorkbench*` PascalCase filenames so the boundary stays easy to scan
 beside PascalCase app shell and component modules.
 
+## TanStack Query Server State
+
+The workbench now has a narrow TanStack Query boundary for server-state
+behaviour that is useful in the prototype:
+
+- the initial view model is still rendered by the server route and passed to
+  the client as the first query seed;
+- browser code refreshes the workbench view model through the same-origin
+  `/api/evidence-workbench/view-model` route;
+- browser code records backend fixture review actions through the same-origin
+  `/api/evidence-workbench/review-actions` route;
+- the route handlers call the existing server-only workbench service, so
+  backend origin configuration stays out of browser-visible code and bundles;
+- the review-action mutation updates the TanStack Query cache from the backend
+  fixture response, while bundled fallback mode keeps the existing local
+  reducer transition and labels it as local fallback behaviour.
+
+TanStack Query is not used for route selection, accordion open state, source
+issue selection or process-map state. Those remain local UI state owned by the
+relevant workbench components.
+
 ## Component Ownership
 
 Workbench UI code is app-owned and grouped directly under
@@ -81,10 +102,11 @@ checks meaningful.
 
 ## Review State And Rendering
 
-The loaded fixture data is converted into a workbench view model. Client
-components then manage local review state with React reducer state. The
-current action path records a local source-update request and can reset back
-to the loaded fixture seed.
+The loaded fixture data is converted into a workbench view model. TanStack
+Query owns the client-side server-state read, refresh and backend review-action
+mutation state. Client components still manage reviewer UI state with React
+reducer state so fallback review actions, reset behaviour and route-local
+choices remain understandable.
 
 The answer renderer treats AI-generated markdown as untrusted content. It
 parses a constrained subset of markdown, renders citation markers from known
@@ -100,6 +122,8 @@ appears in route and no-screenshot visual checks.
 Useful checks for the frontend architecture:
 
 ```text
+pnpm --filter @aivis/workbench test
+pnpm --filter @aivis/workbench typecheck
 pnpm --filter @aivis/workbench check
 pnpm test:e2e:mock
 pnpm test:visual

@@ -19,7 +19,9 @@ These are the fastest checks for docs and reviewer-handover changes.
 
 | Command | What it checks |
 | --- | --- |
-| `pnpm --filter @aivis/workbench check` | Workbench package type, lint and test checks through its package script. |
+| `pnpm --filter @aivis/workbench test` | Workbench unit tests, including the review reducer, TanStack Query same-origin route constants and query-cache update from review-action mutation results. |
+| `pnpm --filter @aivis/workbench typecheck` | Workbench TypeScript types, including Next route handlers and TanStack Query hook integration. |
+| `pnpm --filter @aivis/workbench check` | Workbench package type, test and build checks through its package script. |
 | `pnpm --filter @aivis/ui-library check` | UI adapter package checks. |
 | `pnpm --filter @aivis/ui-tokens check` | Token package checks. |
 | `pnpm test:e2e:mock` | Evidence Workbench route journey in bundled fallback fixture mode. |
@@ -48,8 +50,8 @@ runtime.
 | `pnpm guard:app-naming` | Prevents drift from the current PascalCase app shell, component-module and flat service-boundary source shape. |
 | `pnpm guard:artifacts` | Prevents generated outputs and local environment files from being committed. |
 | `pnpm guard:secrets` | Scans text candidates for common secret markers. |
-| `pnpm guard:browser-origins` | Keeps backend origins and local paths out of browser-visible source files. |
-| `pnpm guard:browser-bundles` | Scans built browser assets for backend origins, private labels and secret markers. |
+| `pnpm guard:browser-origins` | Keeps backend origins and local paths out of browser-visible source files, including same-origin frontend API route boundaries. |
+| `pnpm guard:browser-bundles` | Scans built browser assets for backend origins, private labels and secret markers after the workbench bundle exists. |
 
 `pnpm guard:browser-bundles` requires a built frontend bundle. It is a
 release-path check rather than a default docs-only check.

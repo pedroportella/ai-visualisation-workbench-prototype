@@ -10,7 +10,11 @@ import { AnswerMarkdown } from "../../answer/AnswerMarkdownRenderer";
 import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
-import { ReviewActionForm, type ReviewActionFormProps } from "../ReviewActionForm";
+import {
+  ReviewActionForm,
+  type ReviewActionFormProps,
+  type ReviewActionMutationViewState
+} from "../ReviewActionForm";
 import { ReviewBlockerSelector } from "../ReviewBlockerSelector";
 import { ReviewDecisionGate } from "../ReviewDecisionGate";
 import { ReviewSupportingEvidence } from "../ReviewSupportingEvidence";
@@ -21,6 +25,7 @@ interface ReviewWorkspaceProps {
   onApplyAction: ReviewActionFormProps["onApplyAction"];
   onReset: () => void;
   onSelectIssue: (issueId: string) => void;
+  reviewActionState: ReviewActionMutationViewState;
   selectedIssue: SourceBlockerIssue | null;
   sourceBlockerIssues: SourceBlockerIssue[];
 }
@@ -31,6 +36,7 @@ export function ReviewWorkspace({
   onApplyAction,
   onReset,
   onSelectIssue,
+  reviewActionState,
   selectedIssue,
   sourceBlockerIssues
 }: Readonly<ReviewWorkspaceProps>): ReactElement {
@@ -104,6 +110,7 @@ export function ReviewWorkspace({
                   labelledBy="review-take-action-accordion-button"
                   onApplyAction={onApplyAction}
                   onReset={onReset}
+                  reviewActionState={reviewActionState}
                   selectedIssue={selectedIssue}
                   state={decisionState}
                 />

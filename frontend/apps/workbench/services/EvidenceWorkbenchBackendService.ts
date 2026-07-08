@@ -10,6 +10,8 @@ import type {
   EvidenceWorkbenchGraphNode,
   EvidenceWorkbenchGraphPosition,
   EvidenceWorkbenchReviewAction,
+  EvidenceWorkbenchReviewActionMutationRequest,
+  EvidenceWorkbenchReviewActionMutationResult,
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter,
   EvidenceWorkbenchSourceWarning,
@@ -210,6 +212,26 @@ interface EvidenceGraphResponse extends FixtureMetadata {
   smallViewportFallbackSteps: EvidenceGraphStepFixture[];
 }
 
+interface ReviewActionFixtureResponse extends FixtureMetadata {
+  auditMetadata: AuditMetadataFixture;
+  generatedAt: string;
+  implementedActionIds: string[];
+  reviewAction: EvidenceWorkbenchReviewAction;
+  reviewActions: EvidenceWorkbenchReviewAction[];
+  reviewState: ReviewStateFixture;
+  sourceWarnings: SourceWarningFixture[];
+}
+
+export class EvidenceWorkbenchBackendRequestError extends Error {
+  readonly statusCode: number;
+
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.name = "EvidenceWorkbenchBackendRequestError";
+    this.statusCode = statusCode;
+  }
+}
+
 export function loadEvidenceBackendConfig(env: NodeJS.ProcessEnv = process.env): BackendServiceConfig {
   return {
     backendOrigin: (env.AIVIS_BACKEND_ORIGIN ?? DEFAULT_BACKEND_ORIGIN).replace(/\/$/, "")
@@ -229,6 +251,51 @@ export async function getEvidenceWorkbenchData(): Promise<EvidenceWorkbenchViewM
   } catch {
     return fallbackEvidenceWorkbenchData;
   }
+}
+
+export async function recordEvidenceWorkbenchReviewAction(
+  request: EvidenceWorkbenchReviewActionMutationRequest
+): Promise<EvidenceWorkbenchReviewActionMutationResult> {
+  const config = loadEvidenceBackendConfig();
+  const response = await fetch(`${config.backendOrigin}/evidence-workbench/review-actions`, {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      answerId: request.answerId ?? "ANS-001",
+      reviewActionId: request.reviewActionId,
+      reviewerNote: request.reviewerNote,
+      reviewStateId: request.reviewStateId ?? "REV-001"
+    })
+  });
+
+  if (!response.ok) {
+    throw new EvidenceWorkbenchBackendRequestError(
+      await reviewActionErrorMessage(response),
+      response.status
+    );
+  }
+
+  const result = (await response.json()) as ReviewActionFixtureResponse;
+
+  return {
+    audit: mapAuditMetadata(result.auditMetadata),
+    fetchState: {
+      source: "backend"
+    },
+    implementedActionIds: result.implementedActionIds,
+    message: `${result.reviewAction.label} recorded by backend fixture.`,
+    review: mapReviewState(
+      result.reviewState,
+      request.selectedClaimId ?? "CLAIM-003",
+      result.reviewActions
+    ),
+    reviewAction: result.reviewAction,
+    warnings: result.sourceWarnings.map(mapWarning)
+  };
 }
 
 async function fetchFixture<TResponse>(
@@ -325,23 +392,11 @@ function buildEvidenceWorkbenchViewModel(
         .map(mapGraphNode),
       smallViewportFallback: graphResponse.evidenceGraph.smallViewportFallback
     },
-    review: {
-      actions: answerResponse.reviewActions ?? REVIEW_ACTION_RECORDS,
-      activeWarningCount: answerResponse.reviewState.activeWarningIds.length,
-      activeWarningIds: answerResponse.reviewState.activeWarningIds,
-      availableActionIds: answerResponse.reviewState.availableActionIds,
-      blockedByWarningIds: answerResponse.reviewState.approvalBlockedByWarningIds,
-      completedActionIds: answerResponse.reviewState.completedActionIds,
-      copyState: answerResponse.reviewState.copyState,
-      id: answerResponse.reviewState.id,
-      lastActionId: answerResponse.reviewState.lastActionId,
-      reviewerIdLabel: answerResponse.reviewState.reviewerIdLabel,
-      reviewerNote: answerResponse.reviewState.reviewerNote,
-      selectedClaimId: answerResponse.answer.defaultSelectedClaimId,
-      status: answerResponse.reviewState.statusLabel,
-      statusId: answerResponse.reviewState.status,
-      updatedAt: answerResponse.reviewState.updatedAt
-    },
+    review: mapReviewState(
+      answerResponse.reviewState,
+      answerResponse.answer.defaultSelectedClaimId,
+      answerResponse.reviewActions ?? REVIEW_ACTION_RECORDS
+    ),
     audit: mapAuditMetadata(answerResponse.auditMetadata),
     reviewClaims: answerResponse.answerClaims
       .slice()
@@ -375,6 +430,47 @@ function buildEvidenceWorkbenchViewModel(
       }
     ],
     warnings: activeWarnings.map(mapWarning)
+  };
+}
+
+async function reviewActionErrorMessage(response: Response): Promise<string> {
+  const fallbackMessage = `Review action request failed with status ${response.status}.`;
+
+  try {
+    const payload = (await response.json()) as {
+      detail?: {
+        message?: string;
+      };
+      message?: string;
+    };
+
+    return payload.detail?.message ?? payload.message ?? fallbackMessage;
+  } catch {
+    return fallbackMessage;
+  }
+}
+
+function mapReviewState(
+  reviewState: ReviewStateFixture,
+  selectedClaimId: string,
+  actions: EvidenceWorkbenchReviewAction[]
+): EvidenceWorkbenchViewModel["review"] {
+  return {
+    actions,
+    activeWarningCount: reviewState.activeWarningIds.length,
+    activeWarningIds: reviewState.activeWarningIds,
+    availableActionIds: reviewState.availableActionIds,
+    blockedByWarningIds: reviewState.approvalBlockedByWarningIds,
+    completedActionIds: reviewState.completedActionIds,
+    copyState: reviewState.copyState,
+    id: reviewState.id,
+    lastActionId: reviewState.lastActionId,
+    reviewerIdLabel: reviewState.reviewerIdLabel,
+    reviewerNote: reviewState.reviewerNote,
+    selectedClaimId,
+    status: reviewState.statusLabel,
+    statusId: reviewState.status,
+    updatedAt: reviewState.updatedAt
   };
 }
 

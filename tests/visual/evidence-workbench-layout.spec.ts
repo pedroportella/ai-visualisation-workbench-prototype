@@ -258,7 +258,7 @@ async function expectCompactTaskHeader(page: Page, minHeight: number, maxHeight:
   expect(metrics.workGap).toBeGreaterThanOrEqual(0);
   expect(metrics.workGap).toBeLessThanOrEqual(32);
   expect(metrics.routeDescriptionInHeader).toBe(false);
-  expect(metrics.fallbackTextInHeader).toBe(false);
+  expect(metrics.fallbackTextInHeader).toBe(true);
 }
 
 async function expectNoDuplicateIds(page: Page) {

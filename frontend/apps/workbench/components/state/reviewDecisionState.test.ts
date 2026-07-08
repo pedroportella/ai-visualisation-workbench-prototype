@@ -16,6 +16,9 @@ import {
 
 const backendLikeData: EvidenceWorkbenchViewModel = {
   ...fallbackEvidenceWorkbenchData,
+  fetchState: {
+    source: "backend"
+  },
   review: {
     ...fallbackEvidenceWorkbenchData.review,
     activeWarningCount: 6,
@@ -163,6 +166,6 @@ describe("review action state", () => {
     expect(resetState.review.activeWarningIds).not.toContain("WARN-007");
     expect(resetState.audit.lastReviewActionId).toBeNull();
     expect(resetState.lastActionTarget).toBeNull();
-    expect(resetState.feedback).toBe("Local review state reset to the loaded fixture seed.");
+    expect(resetState.feedback).toBe("Review state reset to the backend fixture seed.");
   });
 });

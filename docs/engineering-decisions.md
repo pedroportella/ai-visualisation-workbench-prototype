@@ -12,6 +12,7 @@ prototype. It links to the deeper notes rather than duplicating every detail.
 | Backend architecture | Thin FastAPI fixture/API spine. | Makes health, metadata, fixture contracts and local review actions inspectable without implying a production AI platform. |
 | Data posture | Deterministic synthetic fixture evidence. | Keeps reviewer evidence repeatable and avoids real operational claims. |
 | Backend-origin handling | Server-only backend origin. | Prevents browser-visible backend origin configuration and supports local fallback mode. |
+| Server-state boundary | TanStack Query over same-origin workbench API routes. | Gives refresh, loading/error and review-action mutation state without exposing backend origins or replacing local reviewer UI state. |
 | Visualisation | React Flow evidence map plus text fallback. | Supports interactive review while preserving a readable fallback path. |
 | Design system | Local QHDS/QGDS-style adapters and tokens. | Keeps design implementation testable and repo-owned. |
 | Verification | Guard scripts, package tests, browser checks and Docker smoke. | Connects public claims to checks reviewers can run locally. |

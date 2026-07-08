@@ -79,8 +79,9 @@ user-facing theme switcher.
   shape, including citations, lists, tables, code blocks and controlled
   diagram fixtures.
 - State and data loading: server-only backend adapter configuration,
-  deterministic fixture endpoints and local React state for simulated review
-  actions.
+  deterministic fixture endpoints, TanStack Query-backed same-origin
+  view-model refresh/review-action mutation state and local React state for
+  simulated review actions.
 - Backend: FastAPI health, readiness, metadata, answer, source, graph and
   review-action fixture endpoints.
 - Verification: Vitest package tests, backend pytest, Playwright route and
@@ -88,8 +89,8 @@ user-facing theme switcher.
   public guard scripts, including the app naming guard.
 
 The repository does not currently claim direct D3.js, Cytoscape.js, Mermaid,
-TanStack Query, app-owned Zustand, Redux, axe, Lighthouse, WAVE, Dependabot or
-Socket.dev automation.
+app-owned Zustand, Redux, axe, Lighthouse, WAVE, Dependabot or Socket.dev
+automation.
 
 ## Architecture And Evidence
 
