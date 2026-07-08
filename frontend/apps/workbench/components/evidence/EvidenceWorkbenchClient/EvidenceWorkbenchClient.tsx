@@ -7,14 +7,21 @@ import {
   useEvidenceWorkbenchReviewActionMutation,
   useEvidenceWorkbenchViewModel
 } from "../../../services/EvidenceWorkbenchQueryState";
+import { EvidenceWorkbenchDataState } from "../EvidenceWorkbenchDataState";
 import { EvidenceWorkbenchTaskHeader } from "../EvidenceWorkbenchTaskHeader";
-import { EvidenceWorkbenchQueryProvider } from "../EvidenceWorkbenchQueryProvider";
+import {
+  EvidenceWorkbenchQueryProvider,
+  useOptionalEvidenceWorkbenchInitialData
+} from "../EvidenceWorkbenchQueryProvider";
 import type { EvidenceWorkbenchView } from "../../shared/routeModel";
 import {
   createInitialReviewDecisionState,
   reviewDecisionReducer
 } from "../../state/reviewDecisionState";
-import { summaryMap } from "../../shared/viewFormatters";
+import {
+  refreshStateLabel,
+  summaryMap
+} from "../../shared/viewFormatters";
 import { OverviewWorkspace } from "../../overview/OverviewWorkspace";
 import { ReviewWorkspace } from "../../review/ReviewWorkspace";
 import {
@@ -30,11 +37,24 @@ export function EvidenceWorkbenchClient({
   data
 }: Readonly<{
   activeView?: EvidenceWorkbenchView;
-  data: EvidenceWorkbenchViewModel;
+  data?: EvidenceWorkbenchViewModel;
 }>) {
-  return (
-    <EvidenceWorkbenchQueryProvider>
-      <EvidenceWorkbenchClientContent activeView={activeView} data={data} />
+  const shellInitialData = useOptionalEvidenceWorkbenchInitialData();
+  const initialData = data ?? shellInitialData;
+
+  if (!initialData) {
+    throw new Error("Evidence Workbench initial data is required.");
+  }
+
+  const content = (
+    <EvidenceWorkbenchClientContent activeView={activeView} data={initialData} />
+  );
+
+  return shellInitialData ? (
+    content
+  ) : (
+    <EvidenceWorkbenchQueryProvider initialData={initialData}>
+      {content}
     </EvidenceWorkbenchQueryProvider>
   );
 }
@@ -90,10 +110,6 @@ function EvidenceWorkbenchClientContent({
   const refreshWorkbenchData = () => {
     void viewModelQuery.refetch();
   };
-  const refreshLabel = refreshStateLabel(
-    viewModelQuery.dataUpdatedAt,
-    viewModelQuery.isFetchedAfterMount
-  );
 
   useEffect(() => {
     if (seededDataRef.current === data) {
@@ -110,12 +126,17 @@ function EvidenceWorkbenchClientContent({
       <EvidenceWorkbenchTaskHeader
         activeView={activeView}
         review={review}
-        serverState={{
+      />
+      <EvidenceWorkbenchDataState
+        state={{
           errorMessage: viewModelQuery.error instanceof Error ? viewModelQuery.error.message : null,
           isError: viewModelQuery.isError,
           isRefreshing: viewModelQuery.isFetching,
           onRefresh: refreshWorkbenchData,
-          refreshLabel,
+          refreshLabel: refreshStateLabel(
+            viewModelQuery.dataUpdatedAt,
+            viewModelQuery.isFetchedAfterMount
+          ),
           source: data.fetchState.source
         }}
       />
@@ -173,15 +194,4 @@ function EvidenceWorkbenchClientContent({
       ) : null}
     </>
   );
-}
-
-function refreshStateLabel(dataUpdatedAt: number, isFetchedAfterMount: boolean): string {
-  if (!isFetchedAfterMount || dataUpdatedAt === 0) {
-    return "Loaded with page";
-  }
-
-  return `Refreshed ${new Intl.DateTimeFormat("en-AU", {
-    hour: "numeric",
-    minute: "2-digit"
-  }).format(new Date(dataUpdatedAt))}`;
 }

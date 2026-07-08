@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { QhdsGlobalAlert } from "@aivis/ui-library";
+import { fallbackEvidenceWorkbenchData } from "@aivis/services/fixtures";
 
 import { WorkbenchAppShell } from "./WorkbenchAppShell";
 
@@ -21,7 +22,7 @@ describe("WorkbenchAppShell", () => {
 
   it("renders the QGDS-style header, pre-header, crest lockup and side navigation", () => {
     const html = renderToStaticMarkup(
-      <WorkbenchAppShell>
+      <WorkbenchAppShell initialData={fallbackEvidenceWorkbenchData}>
         <section aria-labelledby="evidence-workbench-title">
           <h1 id="evidence-workbench-title">AI Visualisation Workbench</h1>
         </section>
@@ -64,14 +65,16 @@ describe("WorkbenchAppShell", () => {
     expect(html).toContain("Fixture reviewer");
     expect(html).toContain("Exit");
     expect(html).not.toContain('id="qld-header-main-nav"');
-    expect(html).not.toContain("Local fixture");
+    expect(html).not.toContain('aria-label="Evidence data state"');
+    expect(html).not.toContain("evidence-workbench-data-state");
+    expect(html).not.toContain("workbench-task-header__server-state");
   });
 
   it("marks the review route separately from the overview route", () => {
     mockUsePathname.mockReturnValue("/evidence-workbench/review");
 
     const html = renderToStaticMarkup(
-      <WorkbenchAppShell>
+      <WorkbenchAppShell initialData={fallbackEvidenceWorkbenchData}>
         <section aria-labelledby="evidence-workbench-title">
           <h1 id="evidence-workbench-title">AI Visualisation Workbench</h1>
         </section>
@@ -94,7 +97,7 @@ describe("WorkbenchAppShell", () => {
     mockUsePathname.mockReturnValue("/evidence-workbench/sources");
 
     const html = renderToStaticMarkup(
-      <WorkbenchAppShell>
+      <WorkbenchAppShell initialData={fallbackEvidenceWorkbenchData}>
         <section aria-labelledby="evidence-workbench-title">
           <h1 id="evidence-workbench-title">AI Visualisation Workbench</h1>
         </section>
@@ -128,6 +131,7 @@ describe("WorkbenchAppShell", () => {
             Review can continue against the local fixture state.
           </QhdsGlobalAlert>
         }
+        initialData={fallbackEvidenceWorkbenchData}
       >
         <section aria-labelledby="evidence-workbench-title">
           <h1 id="evidence-workbench-title">Evidence Workbench</h1>

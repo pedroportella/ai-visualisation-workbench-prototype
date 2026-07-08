@@ -19,3 +19,14 @@ export function formatStateLabel(value: string): string {
     .map((word) => `${word[0]?.toUpperCase() ?? ""}${word.slice(1)}`)
     .join(" ");
 }
+
+export function refreshStateLabel(dataUpdatedAt: number, isFetchedAfterMount: boolean): string {
+  if (!isFetchedAfterMount || dataUpdatedAt === 0) {
+    return "Loaded with page";
+  }
+
+  return `Refreshed ${new Intl.DateTimeFormat("en-AU", {
+    hour: "numeric",
+    minute: "2-digit"
+  }).format(new Date(dataUpdatedAt))}`;
+}

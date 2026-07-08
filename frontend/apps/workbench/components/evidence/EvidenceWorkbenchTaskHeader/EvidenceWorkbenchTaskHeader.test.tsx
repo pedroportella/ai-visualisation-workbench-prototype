@@ -10,14 +10,6 @@ describe("EvidenceWorkbenchTaskHeader", () => {
       <EvidenceWorkbenchTaskHeader
         activeView="sources"
         review={fallbackEvidenceWorkbenchData.review}
-        serverState={{
-          errorMessage: null,
-          isError: false,
-          isRefreshing: false,
-          onRefresh: () => undefined,
-          refreshLabel: "Loaded with page",
-          source: "fallback"
-        }}
       />
     );
 
@@ -29,9 +21,9 @@ describe("EvidenceWorkbenchTaskHeader", () => {
     expect(html).toContain('aria-label="3 approval blockers"');
     expect(html).toContain("3 blockers");
     expect(html).toContain("Copy Disabled");
-    expect(html).toContain('aria-label="Evidence data state"');
-    expect(html).toContain("Local fixture");
-    expect(html).toContain("Loaded with page");
-    expect(html).toContain(">Refresh<");
+    expect(html).not.toContain('aria-label="Evidence data state"');
+    expect(html).not.toContain("Local fixture");
+    expect(html).not.toContain(">Refresh<");
+    expect(html).not.toContain("workbench-task-header__server-state");
   });
 });

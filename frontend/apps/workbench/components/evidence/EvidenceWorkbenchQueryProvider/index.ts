@@ -1,1 +1,5 @@
-export { EvidenceWorkbenchQueryProvider } from "./EvidenceWorkbenchQueryProvider";
+export {
+  EvidenceWorkbenchQueryProvider,
+  useEvidenceWorkbenchInitialData,
+  useOptionalEvidenceWorkbenchInitialData
+} from "./EvidenceWorkbenchQueryProvider";

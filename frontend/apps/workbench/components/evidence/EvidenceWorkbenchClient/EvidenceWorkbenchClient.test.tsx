@@ -51,6 +51,10 @@ const styles = [
     "utf8"
   ),
   readFileSync(
+    join(componentDirectory, "../EvidenceWorkbenchDataState/EvidenceWorkbenchDataState.scss"),
+    "utf8"
+  ),
+  readFileSync(
     join(componentDirectory, "../../overview/OverviewWorkspace/OverviewWorkspace.scss"),
     "utf8"
   ),
@@ -113,6 +117,7 @@ describe("EvidenceWorkbenchClient", () => {
       <EvidenceWorkbenchClient data={fallbackEvidenceWorkbenchData} />
     );
     const headerIndex = html.indexOf("workbench-task-header");
+    const dataStateIndex = html.indexOf("evidence-workbench-data-state");
     const overviewIndex = html.indexOf('id="overview-title"');
     const launcherIndex = html.indexOf('id="task-launcher-title"');
     const taskHeader = extractTaskHeader(html);
@@ -133,13 +138,19 @@ describe("EvidenceWorkbenchClient", () => {
     expect(taskHeader).toContain("3 blockers");
     expect(taskHeader).toContain("Copy Disabled");
     expect(taskHeader).not.toContain("Step-free transfer guidance needs evidence review");
-    expect(taskHeader).toContain('aria-label="Evidence data state"');
-    expect(taskHeader).toContain("Local fixture");
-    expect(taskHeader).toContain("Loaded with page");
-    expect(taskHeader).toContain(">Refresh<");
+    expect(taskHeader).not.toContain('aria-label="Evidence data state"');
+    expect(taskHeader).not.toContain("Local fixture");
+    expect(taskHeader).not.toContain("Loaded with page");
+    expect(taskHeader).not.toContain(">Refresh<");
+    expect(html).toContain('aria-label="Evidence data state"');
+    expect(html).toContain('class="evidence-workbench-data-state"');
+    expect(html).toContain("Local fixture");
+    expect(html).toContain("Loaded with page");
+    expect(html).toContain(">Refresh<");
+    expect(html).not.toContain("workbench-task-header__server-state");
     expect(html).not.toContain("AIVIS is a simulated evidence workbench");
     expect(html).toContain("Step-free transfer guidance needs evidence review");
-    expect(html).toContain("Local fixture");
+    expect(html).toContain("Synthetic fixture / Bundled fallback");
     expect(html).toContain("Current review task");
     expect(html).toContain("The current synthetic case shows the review state");
     expect(html).toContain("Available next actions");
@@ -168,7 +179,8 @@ describe("EvidenceWorkbenchClient", () => {
     expect(html).not.toContain("evidence-workbench-generated-diagram");
     expect(html).not.toContain("qld__abstract");
     expect(headerIndex).toBeGreaterThanOrEqual(0);
-    expect(overviewIndex).toBeGreaterThan(headerIndex);
+    expect(dataStateIndex).toBeGreaterThan(headerIndex);
+    expect(overviewIndex).toBeGreaterThan(dataStateIndex);
     expect(launcherIndex).toBeGreaterThan(overviewIndex);
   });
 
@@ -180,6 +192,7 @@ describe("EvidenceWorkbenchClient", () => {
       />
     );
     const headerIndex = html.indexOf("workbench-task-header");
+    const dataStateIndex = html.indexOf("evidence-workbench-data-state");
     const decisionRequiredIndex = html.indexOf('id="review-decision-required-title"');
     const decisionIndex = html.indexOf('id="review-take-action-accordion-button"');
     const answerIndex = html.indexOf('id="review-answer-accordion-button"');
@@ -202,8 +215,12 @@ describe("EvidenceWorkbenchClient", () => {
     expect(taskHeader).toContain("3 blockers");
     expect(taskHeader).toContain("Copy Disabled");
     expect(taskHeader).not.toContain("Inspect the draft answer");
-    expect(taskHeader).toContain("Local fixture");
-    expect(taskHeader).toContain("Loaded with page");
+    expect(taskHeader).not.toContain('aria-label="Evidence data state"');
+    expect(taskHeader).not.toContain("Local fixture");
+    expect(taskHeader).not.toContain("Loaded with page");
+    expect(html).toContain('aria-label="Evidence data state"');
+    expect(dataStateIndex).toBeGreaterThan(headerIndex);
+    expect(decisionRequiredIndex).toBeGreaterThan(dataStateIndex);
     expect(html).toContain("Decision required");
     expect(html).toContain("Start here: decide what must happen before this answer can be copied or approved.");
     expect(html).toContain("This answer cannot be used yet.");
@@ -529,6 +546,7 @@ describe("EvidenceWorkbenchClient", () => {
     expect(styles).toContain("background: var(--aivis-color-panel-surface);");
     expect(styles).toContain(".aivis-app-shell .qhds-layout__main-section-body .qhds-content-section");
     expect(styles).toContain(".workbench-task-header");
+    expect(styles).toContain(".evidence-workbench-data-state");
     expect(styles).toContain("border-block-end: var(--aivis-border-width-thin) solid var(--qhds-color-border);");
     expect(styles).toContain(".evidence-workbench-answer-markdown");
     expect(styles).toContain(".evidence-workbench-overview");

@@ -25,5 +25,9 @@ export default async function EvidenceWorkbenchLayout({
     </QhdsGlobalAlert>
   ) : null;
 
-  return <WorkbenchAppShell globalAlert={globalAlert}>{children}</WorkbenchAppShell>;
+  return (
+    <WorkbenchAppShell globalAlert={globalAlert} initialData={data}>
+      {children}
+    </WorkbenchAppShell>
+  );
 }
