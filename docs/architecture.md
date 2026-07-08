@@ -10,7 +10,7 @@ what the architecture does not prove.
 | --- | --- | --- |
 | Next.js workbench app | Renders `/evidence-workbench` and the review, sources, process and audit routes. | `frontend/apps/workbench/app/evidence-workbench/*` |
 | Workbench app shell | Provides the header, side navigation, main region and route framing. | `frontend/apps/workbench/app-shell/` |
-| Evidence workspaces | Renders the answer, sources, evidence map, warnings and local action state. | `frontend/apps/workbench/components/evidence-workbench/` |
+| Evidence workspaces | Renders the answer, sources, evidence map, warnings and local action state. | `frontend/apps/workbench/components/` |
 | Shared frontend packages | Hold local services, design-system adapters, tokens, assets and utilities. | `frontend/packages/*` |
 | FastAPI API spine | Serves health, readiness, metadata and deterministic fixture endpoints. | `backend/src/aivis_api/main.py` |
 | Synthetic contract data | Provides answer, source, graph, warning, context-anchor and review-action fixtures. | `backend/src/aivis_api/fixture_data.py` |

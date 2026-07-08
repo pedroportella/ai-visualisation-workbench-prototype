@@ -113,17 +113,17 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await changeBlockerButton.click();
   await expect(changeBlockerButton).toHaveAttribute("aria-expanded", "true");
   await expect(page.getByText("WARN-FALLBACK-003").first()).toBeVisible();
-  const sourceIssueSelector = page.locator(
-    ".evidence-workbench-source-review__issue-selector"
+  const reviewBlockerSelector = page.locator(
+    ".evidence-workbench-review-blocker-selector__issue-selector"
   );
-  const fallback003Radio = sourceIssueSelector.getByRole("radio", {
+  const fallback003Radio = reviewBlockerSelector.getByRole("radio", {
     name: "WARN-FALLBACK-003 on SRC-FALLBACK-003"
   });
   await fallback003Radio.focus();
   await expect(fallback003Radio).toBeFocused();
   await expectControlCanReceiveFocus(page, "radio", /Request source update/);
   await expectControlCanReceiveFocus(page, "button", "Request source update");
-  await sourceIssueSelector
+  await reviewBlockerSelector
     .getByText("WARN-FALLBACK-003 on SRC-FALLBACK-003")
     .click();
   await expect(fallback003Radio).toBeChecked();
@@ -150,7 +150,7 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
     page.getByText("No local action target recorded.")
   ).toBeVisible();
   await expect(
-    sourceIssueSelector.getByRole("radio", {
+    reviewBlockerSelector.getByRole("radio", {
       name: "WARN-FALLBACK-001 on SRC-FALLBACK-002"
     })
   ).toBeChecked();

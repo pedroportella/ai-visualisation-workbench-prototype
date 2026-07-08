@@ -10,7 +10,7 @@ review. These checks are review-grade evidence, not a formal security assurance.
 | Server-only backend origin | The frontend reads backend origin configuration on the server and does not require `NEXT_PUBLIC_*BACKEND` variables. | `frontend/apps/workbench/services/evidence-workbench/backend-service.ts`, `frontend/packages/services/src/server/runtimeConfig.ts` |
 | Browser-origin guard | Source scans fail browser-visible frontend files that expose backend origins or local machine paths. | `pnpm guard:browser-origins` |
 | Browser bundle guard | Built static assets can be scanned for backend origins, private labels and secret markers. | `pnpm guard:browser-bundles` |
-| Safe markdown rendering | Generated answer markdown is parsed through a constrained renderer instead of raw HTML injection. | `frontend/apps/workbench/components/evidence-workbench/answer-markdown.tsx` |
+| Safe markdown rendering | Generated answer markdown is parsed through a constrained renderer instead of raw HTML injection. | `frontend/apps/workbench/components/answer/AnswerMarkdownRenderer/AnswerMarkdownRenderer.tsx`, `frontend/apps/workbench/components/answer/AnswerMarkdownRenderer/answerMarkdownParser.ts` |
 | API validation | Review-action requests reject unknown fields, missing ids and invalid fixture state. | `backend/src/aivis_api/review_state.py`, backend tests |
 | Local CORS | The backend allows local frontend development origins only and does not enable credentialed wildcard browser requests. | `backend/src/aivis_api/main.py` |
 | Public docs leakage guard | Public docs are scanned for private planning markers and local-only references. | `pnpm guard:public-docs` |
