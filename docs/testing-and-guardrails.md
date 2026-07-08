@@ -44,7 +44,8 @@ runtime.
 
 | Command | What it protects |
 | --- | --- |
-| `pnpm guard` | Runs artifact, public-doc, claim-boundary, secret and browser-origin guards. |
+| `pnpm guard` | Runs artifact, app-naming, public-doc, claim-boundary, secret and browser-origin guards. |
+| `pnpm guard:app-naming` | Keeps app shell modules, component TSX/SCSS modules and workbench service boundary files in PascalCase paths. |
 | `pnpm guard:artifacts` | Prevents generated outputs and local environment files from being committed. |
 | `pnpm guard:secrets` | Scans text candidates for common secret markers. |
 | `pnpm guard:browser-origins` | Keeps backend origins and local paths out of browser-visible source files. |

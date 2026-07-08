@@ -6,7 +6,7 @@ import {
   type QhdsTableRow
 } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchSource } from "../../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchSource } from "../../../services/EvidenceWorkbenchTypes";
 import {
   sourceAccordionHash,
   sourceIssueSummary

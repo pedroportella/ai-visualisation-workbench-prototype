@@ -14,15 +14,22 @@ If the backend fixture API is unavailable, the route renders a bundled fallback
 state and labels it as fallback data. Do not expose backend origin settings
 through `NEXT_PUBLIC_*` variables.
 
-The route follows an app-shell plus app-owned component split:
+The route follows an AppShell, app-owned component and flat service-boundary
+split:
 
 ```text
-app-shell/
+AppShell/
 components/
+services/EvidenceWorkbenchBackendService.ts
+services/EvidenceWorkbenchFallbackFixture.ts
+services/EvidenceWorkbenchReviewActionFixture.ts
+services/EvidenceWorkbenchTypes.ts
 ```
 
 App and route styles use SCSS entrypoints. Reusable theme styling comes from
 `@aivis/ui-library/theme.scss`.
+`pnpm guard:app-naming` keeps app shell, component TSX/SCSS modules and
+workbench service boundary files in PascalCase paths.
 
 Useful commands from the repository root:
 

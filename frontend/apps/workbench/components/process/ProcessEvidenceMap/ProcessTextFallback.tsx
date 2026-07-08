@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
 
 export function ProcessTextFallback({
   graph

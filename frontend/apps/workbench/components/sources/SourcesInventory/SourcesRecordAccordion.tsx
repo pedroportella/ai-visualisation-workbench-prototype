@@ -12,7 +12,7 @@ import {
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
-} from "../../../services/evidence-workbench/types";
+} from "../../../services/EvidenceWorkbenchTypes";
 import {
   hasApprovalBlocker,
   sourceAccordionItemId,

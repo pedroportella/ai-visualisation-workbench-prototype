@@ -5,9 +5,9 @@ import {
   MARK_REVIEWED_ACTION_ID,
   PRIMARY_REVIEW_ACTION_ID,
   PRIMARY_REVIEWER_NOTE
-} from "../../services/evidence-workbench/review-action-fixture";
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
-import { fallbackEvidenceWorkbenchData } from "../../services/evidence-workbench/fallback-fixture";
+} from "../../services/EvidenceWorkbenchReviewActionFixture";
+import type { EvidenceWorkbenchViewModel } from "../../services/EvidenceWorkbenchTypes";
+import { fallbackEvidenceWorkbenchData } from "../../services/EvidenceWorkbenchFallbackFixture";
 import {
   createInitialReviewDecisionState,
   getReviewActionAvailability,

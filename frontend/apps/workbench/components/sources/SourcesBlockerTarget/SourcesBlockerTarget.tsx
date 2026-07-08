@@ -13,7 +13,7 @@ import {
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
-} from "../../../services/evidence-workbench/types";
+} from "../../../services/EvidenceWorkbenchTypes";
 import type { ReviewActionTarget } from "../../state/reviewDecisionState";
 
 export interface SourceBlockerIssue extends ReviewActionTarget {

@@ -5,9 +5,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { QhdsGlobalAlert } from "@aivis/ui-library";
 
-import { WorkbenchAppShell } from "./workbench-app-shell";
+import { WorkbenchAppShell } from "./WorkbenchAppShell";
 
-const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "workbench-app-shell.scss"), "utf8");
+const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "WorkbenchAppShell.scss"), "utf8");
 const mockUsePathname = vi.hoisted(() => vi.fn(() => "/evidence-workbench"));
 
 vi.mock("next/navigation", () => ({

@@ -13,7 +13,7 @@ import type {
   EvidenceWorkbenchClaim,
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
-} from "../../../services/evidence-workbench/types";
+} from "../../../services/EvidenceWorkbenchTypes";
 
 interface SourcesSelectedSourceInspectorProps {
   selectedClaim?: EvidenceWorkbenchClaim;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
 import {
   createProcessEvidenceMapModel,
   getProcessEvidenceMapVisibleIds

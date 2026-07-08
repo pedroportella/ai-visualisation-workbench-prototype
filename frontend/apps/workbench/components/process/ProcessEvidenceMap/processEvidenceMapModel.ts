@@ -2,7 +2,7 @@ import type {
   EvidenceWorkbenchGraphEdge,
   EvidenceWorkbenchGraphNode,
   EvidenceWorkbenchViewModel
-} from "../../../services/evidence-workbench/types";
+} from "../../../services/EvidenceWorkbenchTypes";
 
 export type ProcessEvidenceMapFilterId = "review-path" | "warnings" | "context" | "all";
 export type ProcessEvidenceMapTone =

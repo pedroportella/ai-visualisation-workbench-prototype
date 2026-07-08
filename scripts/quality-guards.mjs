@@ -2,7 +2,7 @@
 
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { extname, join, relative } from "node:path";
+import { basename, extname, join, relative } from "node:path";
 
 const mode = process.argv[2] ?? "all";
 const root = process.cwd();
@@ -117,10 +117,13 @@ const generatedPathRules = [
   { label: "TypeScript build info", pattern: /\.tsbuildinfo$/i },
   { label: "log file", pattern: /\.log$/i }
 ];
+const pascalCaseNamePattern = /^[A-Z][A-Za-z0-9]*$/;
 
 const checks = {
   all: () => {
     checkArtifacts();
+    if (process.exitCode) return;
+    checkAppNaming();
     if (process.exitCode) return;
     checkPublicDocs();
     if (process.exitCode) return;
@@ -130,6 +133,7 @@ const checks = {
     if (process.exitCode) return;
     checkBrowserOrigins();
   },
+  "app-naming": checkAppNaming,
   artifacts: checkArtifacts,
   "browser-bundles": checkBrowserBundles,
   "browser-origins": checkBrowserOrigins,
@@ -165,6 +169,81 @@ function checkArtifacts() {
   }
 
   report("Tracked and unignored artefact guard", failures);
+}
+
+function checkAppNaming() {
+  const failures = [];
+  const files = listGitCandidateFiles();
+
+  for (const filePath of files) {
+    if (filePath.startsWith("frontend/apps/workbench/app-shell/")) {
+      failures.push(`${filePath} uses the legacy kebab-case AppShell folder`);
+    }
+
+    if (filePath.startsWith("frontend/apps/workbench/services/evidence-workbench/")) {
+      failures.push(`${filePath} uses the legacy nested Evidence Workbench service folder`);
+    }
+
+    if (filePath.startsWith("frontend/apps/workbench/AppShell/")) {
+      checkPascalCaseModuleFile(filePath, [".scss", ".tsx"], failures);
+    }
+
+    if (filePath.startsWith("frontend/apps/workbench/services/")) {
+      checkWorkbenchServicePath(filePath, failures);
+    }
+
+    if (filePath.startsWith("frontend/apps/workbench/components/")) {
+      checkWorkbenchComponentPath(filePath, failures);
+    }
+  }
+
+  report("Workbench app naming guard", failures);
+}
+
+function checkWorkbenchServicePath(filePath, failures) {
+  const servicePath = filePath.slice("frontend/apps/workbench/services/".length);
+
+  if (servicePath.includes("/")) {
+    failures.push(`${filePath} should live directly under frontend/apps/workbench/services/`);
+    return;
+  }
+
+  checkPascalCaseModuleFile(filePath, [".ts"], failures);
+}
+
+function checkWorkbenchComponentPath(filePath, failures) {
+  const pathParts = filePath.split("/");
+  const componentPath = pathParts.slice(4);
+  const componentFolder = componentPath[1];
+
+  if (componentPath.length >= 3 && !extname(componentFolder) && !isPascalCaseName(componentFolder)) {
+    failures.push(`${filePath} is inside a non-PascalCase component folder: ${componentFolder}`);
+  }
+
+  if (componentPath.length >= 3) {
+    checkPascalCaseModuleFile(filePath, [".scss", ".tsx"], failures);
+  }
+}
+
+function checkPascalCaseModuleFile(filePath, extensions, failures) {
+  const extension = extname(filePath).toLowerCase();
+
+  if (!extensions.includes(extension)) {
+    return;
+  }
+
+  const fileName = basename(filePath);
+  const moduleName = fileName
+    .slice(0, -extension.length)
+    .replace(/\.test$/, "");
+
+  if (!isPascalCaseName(moduleName)) {
+    failures.push(`${filePath} should use a PascalCase module filename`);
+  }
+}
+
+function isPascalCaseName(value) {
+  return pascalCaseNamePattern.test(value);
 }
 
 function checkPublicDocs() {

@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 
-import type { EvidenceWorkbenchCitation } from "../../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchCitation } from "../../../services/EvidenceWorkbenchTypes";
 import { parseAnswerMarkdown } from "./answerMarkdownParser";
-import { renderAnswerMarkdownBlock } from "./answerMarkdownBlocks";
+import { renderAnswerMarkdownBlock } from "./AnswerMarkdownBlocks";
 
 interface AnswerMarkdownProps {
   citations: EvidenceWorkbenchCitation[];

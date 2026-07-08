@@ -23,7 +23,7 @@ route content so the shell can show fallback state consistently.
 ## Server-Only Data Loading
 
 The Evidence Workbench resolves fixture data in
-`frontend/apps/workbench/services/evidence-workbench/backend-service.ts`.
+`frontend/apps/workbench/services/EvidenceWorkbenchBackendService.ts`.
 That module imports `server-only`, reads `AIVIS_BACKEND_ORIGIN` on the server
 and falls back to bundled fixture data if the backend fixture API is
 unavailable.
@@ -40,6 +40,11 @@ The shared `@aivis/services` package also keeps its runtime configuration and
 backend adapters server-only. Current Evidence Workbench fixture loading is
 app-local because the route uses a specialised answer, source, graph and
 review-action shape.
+
+The app-local service boundary is intentionally flat under
+`frontend/apps/workbench/services/`. The service modules use
+`EvidenceWorkbench*` PascalCase filenames so the boundary stays easy to scan
+beside PascalCase app shell and component modules.
 
 ## Package Boundaries
 

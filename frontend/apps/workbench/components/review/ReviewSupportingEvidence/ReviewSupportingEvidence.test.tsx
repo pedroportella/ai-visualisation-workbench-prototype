@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { fallbackEvidenceWorkbenchData } from "../../../services/evidence-workbench/fallback-fixture";
+import { fallbackEvidenceWorkbenchData } from "../../../services/EvidenceWorkbenchFallbackFixture";
 import { ReviewSupportingEvidence } from ".";
 
 describe("ReviewSupportingEvidence", () => {

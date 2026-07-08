@@ -28,7 +28,7 @@ import {
 import type {
   EvidenceWorkbenchGraphPosition,
   EvidenceWorkbenchViewModel
-} from "../../../services/evidence-workbench/types";
+} from "../../../services/EvidenceWorkbenchTypes";
 import {
   createProcessEvidenceMapModel,
   formatProcessGraphStatus,

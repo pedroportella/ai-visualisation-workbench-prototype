@@ -5,13 +5,13 @@ import {
   MARK_UNSAFE_ACTION_ID,
   PRIMARY_REVIEW_ACTION_ID,
   SOURCE_UPDATE_WARNING
-} from "../../services/evidence-workbench/review-action-fixture";
+} from "../../services/EvidenceWorkbenchReviewActionFixture";
 import type {
   EvidenceWorkbenchAuditMetadata,
   EvidenceWorkbenchReviewAction,
   EvidenceWorkbenchViewModel,
   EvidenceWorkbenchWarning
-} from "../../services/evidence-workbench/types";
+} from "../../services/EvidenceWorkbenchTypes";
 
 export interface ReviewActionAvailability {
   disabled: boolean;

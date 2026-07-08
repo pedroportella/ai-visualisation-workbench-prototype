@@ -8,7 +8,7 @@ import {
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter
-} from "../../../services/evidence-workbench/types";
+} from "../../../services/EvidenceWorkbenchTypes";
 import { SourcesInventoryTable } from "./SourcesInventoryTable";
 import {
   hasApprovalBlocker,

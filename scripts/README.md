@@ -19,8 +19,8 @@ Current scripts:
 - `run-docker-e2e.mjs`: owns the Docker-backed browser runtime for
   `pnpm test:e2e:real`, runs `pnpm docker:smoke` first and tears compose down
   before exiting.
-- `quality-guards.mjs`: powers `pnpm guard`, `pnpm guard:artifacts`,
-  `pnpm guard:public-docs`, `pnpm guard:claim-boundaries`,
+- `quality-guards.mjs`: powers `pnpm guard`, `pnpm guard:app-naming`,
+  `pnpm guard:artifacts`, `pnpm guard:public-docs`, `pnpm guard:claim-boundaries`,
   `pnpm guard:secrets`, `pnpm guard:browser-origins` and
   `pnpm guard:browser-bundles`.
 - `reviewer-evidence-smoke.mjs`: powers `pnpm test:reviewer-evidence` by

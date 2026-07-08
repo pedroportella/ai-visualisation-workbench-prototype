@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import { QhdsAccordion } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
 import { AuditResetBoundary } from "../AuditResetBoundary";
 import { AuditSummary } from "../AuditSummary";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";

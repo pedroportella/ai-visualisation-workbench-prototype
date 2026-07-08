@@ -9,7 +9,7 @@ import {
   QhdsSummaryList
 } from "@aivis/ui-library";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import { formatStateLabel, statusTone } from "../../shared/viewFormatters";
 import {

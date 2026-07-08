@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { QhdsHeader } from "@aivis/ui-library";
 
-import { findActiveWorkbenchHref, workbenchMobileMainNavItems } from "./workbench-navigation";
+import { findActiveWorkbenchHref, workbenchMobileMainNavItems } from "./WorkbenchNavigation";
 
 export function WorkbenchHeader() {
   const pathname = usePathname() ?? "/evidence-workbench";

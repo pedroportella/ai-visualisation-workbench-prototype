@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { QhdsGlobalAlert } from "@aivis/ui-library";
 
-import { WorkbenchAppShell } from "../../app-shell/workbench-app-shell";
-import { getEvidenceWorkbenchData } from "../../services/evidence-workbench/backend-service";
+import { WorkbenchAppShell } from "../../AppShell/WorkbenchAppShell";
+import { getEvidenceWorkbenchData } from "../../services/EvidenceWorkbenchBackendService";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

@@ -55,6 +55,7 @@ const requiredFiles = [
 ];
 const requiredRootScripts = [
   "guard",
+  "guard:app-naming",
   "guard:artifacts",
   "guard:browser-bundles",
   "guard:browser-origins",
@@ -72,6 +73,7 @@ const requiredRootScripts = [
 ];
 const requiredScriptReadmeText = [
   "pnpm guard",
+  "pnpm guard:app-naming",
   "pnpm guard:browser-bundles",
   "pnpm test:e2e:mock",
   "pnpm test:e2e:real",

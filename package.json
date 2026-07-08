@@ -13,6 +13,7 @@
     "docker:smoke": "backend/.venv/bin/python scripts/local-docker-smoke.py",
     "docker:up": "docker compose up --detach",
     "guard": "node scripts/quality-guards.mjs all",
+    "guard:app-naming": "node scripts/quality-guards.mjs app-naming",
     "guard:artifacts": "node scripts/quality-guards.mjs artifacts",
     "guard:browser-bundles": "node scripts/quality-guards.mjs browser-bundles",
     "guard:browser-origins": "node scripts/quality-guards.mjs browser-origins",

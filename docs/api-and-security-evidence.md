@@ -7,7 +7,7 @@ review. These checks are review-grade evidence, not a formal security assurance.
 
 | Boundary | Implemented posture | Evidence |
 | --- | --- | --- |
-| Server-only backend origin | The frontend reads backend origin configuration on the server and does not require `NEXT_PUBLIC_*BACKEND` variables. | `frontend/apps/workbench/services/evidence-workbench/backend-service.ts`, `frontend/packages/services/src/server/runtimeConfig.ts` |
+| Server-only backend origin | The frontend reads backend origin configuration on the server and does not require `NEXT_PUBLIC_*BACKEND` variables. | `frontend/apps/workbench/services/EvidenceWorkbenchBackendService.ts`, `frontend/packages/services/src/server/runtimeConfig.ts` |
 | Browser-origin guard | Source scans fail browser-visible frontend files that expose backend origins or local machine paths. | `pnpm guard:browser-origins` |
 | Browser bundle guard | Built static assets can be scanned for backend origins, private labels and secret markers. | `pnpm guard:browser-bundles` |
 | Safe markdown rendering | Generated answer markdown is parsed through a constrained renderer instead of raw HTML injection. | `frontend/apps/workbench/components/answer/AnswerMarkdownRenderer/AnswerMarkdownRenderer.tsx`, `frontend/apps/workbench/components/answer/AnswerMarkdownRenderer/answerMarkdownParser.ts` |

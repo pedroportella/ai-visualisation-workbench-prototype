@@ -2,7 +2,7 @@
 
 import { useMemo, useReducer, useState } from "react";
 
-import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchViewModel } from "../../../services/EvidenceWorkbenchTypes";
 import { EvidenceWorkbenchTaskHeader } from "../EvidenceWorkbenchTaskHeader";
 import type { EvidenceWorkbenchView } from "../../shared/routeModel";
 import {

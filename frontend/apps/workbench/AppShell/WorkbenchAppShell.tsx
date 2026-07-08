@@ -3,8 +3,8 @@ import {
   QhdsFooter,
   QhdsLayout
 } from "@aivis/ui-library";
-import { WorkbenchHeader } from "./workbench-header";
-import { WorkbenchSideNav } from "./workbench-side-nav";
+import { WorkbenchHeader } from "./WorkbenchHeader";
+import { WorkbenchSideNav } from "./WorkbenchSideNav";
 
 export function WorkbenchAppShell({
   children,

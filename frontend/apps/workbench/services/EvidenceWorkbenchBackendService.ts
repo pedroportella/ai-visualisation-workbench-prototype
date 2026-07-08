@@ -1,7 +1,7 @@
 import "server-only";
 
-import { fallbackEvidenceWorkbenchData } from "./fallback-fixture";
-import { REVIEW_ACTION_RECORDS } from "./review-action-fixture";
+import { fallbackEvidenceWorkbenchData } from "./EvidenceWorkbenchFallbackFixture";
+import { REVIEW_ACTION_RECORDS } from "./EvidenceWorkbenchReviewActionFixture";
 import type {
   EvidenceWorkbenchAuditMetadata,
   EvidenceWorkbenchCitation,
@@ -15,7 +15,7 @@ import type {
   EvidenceWorkbenchSourceWarning,
   EvidenceWorkbenchWarning,
   EvidenceWorkbenchViewModel
-} from "./types";
+} from "./EvidenceWorkbenchTypes";
 
 const DEFAULT_BACKEND_ORIGIN = "http://127.0.0.1:8000";
 
