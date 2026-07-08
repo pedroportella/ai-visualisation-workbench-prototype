@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { fallbackEvidenceWorkbenchData } from "../../../services/evidence-workbench/fallback-fixture";
 import { createInitialReviewDecisionState } from "../../state/reviewDecisionState";
-import { summaryMap } from "../../viewFormatters";
+import { summaryMap } from "../../shared/viewFormatters";
 import { OverviewWorkspace } from ".";
 
 describe("OverviewWorkspace", () => {

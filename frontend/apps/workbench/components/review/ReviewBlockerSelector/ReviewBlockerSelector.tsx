@@ -7,7 +7,7 @@ import {
   QhdsSummaryList
 } from "@aivis/ui-library";
 
-import { SOURCE_INVENTORY_ROUTE } from "../../routeModel";
+import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
 
 interface ReviewBlockerSelectorProps {

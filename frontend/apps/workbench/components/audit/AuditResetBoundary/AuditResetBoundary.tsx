@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import { QhdsButton } from "@aivis/ui-library";
 
-import { REVIEW_ROUTE } from "../../routeModel";
+import { REVIEW_ROUTE } from "../../shared/routeModel";
 
 export function AuditResetBoundary({
   onReset

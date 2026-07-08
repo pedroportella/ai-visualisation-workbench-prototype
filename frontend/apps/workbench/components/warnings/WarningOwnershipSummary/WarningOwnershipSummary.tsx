@@ -10,7 +10,7 @@ import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchWarning
 } from "../../../services/evidence-workbench/types";
-import { SOURCE_INVENTORY_ROUTE } from "../../routeModel";
+import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 
 interface WarningOwnershipSectionProps {
   blockedWarningIds: string[];

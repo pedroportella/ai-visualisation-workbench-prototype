@@ -11,13 +11,13 @@ import {
 
 import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
-import { formatStateLabel, statusTone } from "../../viewFormatters";
+import { formatStateLabel, statusTone } from "../../shared/viewFormatters";
 import {
   AUDIT_ROUTE,
   PROCESS_ROUTE,
   REVIEW_ROUTE,
   SOURCE_INVENTORY_ROUTE
-} from "../../routeModel";
+} from "../../shared/routeModel";
 
 interface OverviewWorkspaceProps {
   data: EvidenceWorkbenchViewModel;

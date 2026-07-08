@@ -6,7 +6,7 @@ import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-work
 import {
   REVIEW_ROUTE,
   SOURCE_INVENTORY_ROUTE
-} from "../../routeModel";
+} from "../../shared/routeModel";
 import { SourcesBlockerTarget, type SourceBlockerIssue } from "../SourcesBlockerTarget";
 import { SourcesInventory, SourcesRecordAccordion } from "../SourcesInventory";
 import { SourcesScenarioContext } from "../SourcesScenarioContext";

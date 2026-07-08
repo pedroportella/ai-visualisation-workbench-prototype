@@ -4,12 +4,12 @@ import { useMemo, useReducer, useState } from "react";
 
 import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
 import { EvidenceWorkbenchTaskHeader } from "../EvidenceWorkbenchTaskHeader";
-import type { EvidenceWorkbenchView } from "../../routeModel";
+import type { EvidenceWorkbenchView } from "../../shared/routeModel";
 import {
   createInitialReviewDecisionState,
   reviewDecisionReducer
 } from "../../state/reviewDecisionState";
-import { summaryMap } from "../../viewFormatters";
+import { summaryMap } from "../../shared/viewFormatters";
 import { OverviewWorkspace } from "../../overview/OverviewWorkspace";
 import { ReviewWorkspace } from "../../review/ReviewWorkspace";
 import {

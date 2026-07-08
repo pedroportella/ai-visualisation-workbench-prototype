@@ -5,7 +5,7 @@ import {
   QhdsSummaryList
 } from "@aivis/ui-library";
 
-import { REVIEW_ROUTE } from "../../routeModel";
+import { REVIEW_ROUTE } from "../../shared/routeModel";
 import type {
   ReviewActionTarget,
   ReviewDecisionState

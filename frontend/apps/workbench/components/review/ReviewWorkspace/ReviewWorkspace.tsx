@@ -7,7 +7,7 @@ import {
 
 import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
 import { AnswerMarkdown } from "../../answer/AnswerMarkdownRenderer";
-import { SOURCE_INVENTORY_ROUTE } from "../../routeModel";
+import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
 import { ReviewActionForm, type ReviewActionFormProps } from "../ReviewActionForm";

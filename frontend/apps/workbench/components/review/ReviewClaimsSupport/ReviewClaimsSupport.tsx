@@ -6,7 +6,7 @@ import {
 } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "../../../services/evidence-workbench/types";
-import { statusTone } from "../../viewFormatters";
+import { statusTone } from "../../shared/viewFormatters";
 
 interface ReviewClaimsSupportProps {
   asPanel?: boolean;
