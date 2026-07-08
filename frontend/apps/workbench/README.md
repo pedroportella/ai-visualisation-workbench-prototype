@@ -18,7 +18,7 @@ The route follows an app-shell plus app-owned component split:
 
 ```text
 app-shell/
-components/evidence-workbench/
+components/
 ```
 
 App and route styles use SCSS entrypoints. Reusable theme styling comes from
