@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import type { EvidenceWorkbenchViewModel } from "../../services/evidence-workbench/types";
+import type { EvidenceWorkbenchViewModel } from "../../../../services/evidence-workbench/types";
 import {
   createProcessEvidenceMapModel,
   getProcessEvidenceMapVisibleIds
-} from "./process/ProcessEvidenceMap/processEvidenceMapModel";
+} from "./processEvidenceMapModel";
 
 const graph: EvidenceWorkbenchViewModel["graph"] = {
   accessibleSummary:
