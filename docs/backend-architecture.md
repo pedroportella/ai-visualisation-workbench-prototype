@@ -34,6 +34,10 @@ review state and audit metadata and preserves active blocker warnings. The
 read-only answer and graph fixture endpoints continue to return the initial
 fixture state.
 
+The endpoint reports implemented review-action ids in mutation responses, and
+the backend-backed frontend constrains action choices to that implemented
+surface. Broader local action choices remain fallback-mode prototype behaviour.
+
 Restarting the API process resets the local review state.
 
 ## Validation And Error Shape
@@ -65,6 +69,7 @@ Useful backend checks:
 ```text
 backend/.venv/bin/python scripts/local-backend-smoke.py
 pnpm --filter @aivis/backend release:preflight
+pnpm test:backend-release-proof
 pnpm docker:smoke
 pnpm test:e2e:real
 ```

@@ -1,7 +1,10 @@
 import "server-only";
 
 import { fallbackEvidenceWorkbenchData } from "../evidenceWorkbenchFallbackFixture";
-import { REVIEW_ACTION_RECORDS } from "../evidenceWorkbenchReviewActionFixture";
+import {
+  PRIMARY_REVIEW_ACTION_ID,
+  REVIEW_ACTION_RECORDS
+} from "../evidenceWorkbenchReviewActionFixture";
 import type {
   EvidenceWorkbenchAuditMetadata,
   EvidenceWorkbenchCitation,
@@ -238,6 +241,8 @@ interface EvidenceWorkbenchBackendRuntime {
   fetchImpl: typeof fetch;
 }
 
+const DEFAULT_BACKEND_IMPLEMENTED_REVIEW_ACTION_IDS = [PRIMARY_REVIEW_ACTION_ID];
+
 function getRuntimeConfig(config?: FrontendRuntimeConfig): FrontendRuntimeConfig {
   return config ?? resolveFrontendRuntimeConfig();
 }
@@ -321,7 +326,7 @@ export async function recordEvidenceWorkbenchReviewAction(
     review: mapReviewState(
       result.reviewState,
       request.selectedClaimId ?? "CLAIM-003",
-      result.reviewActions
+      backendImplementedReviewActions(result.reviewActions, result.implementedActionIds)
     ),
     reviewAction: result.reviewAction,
     warnings: result.sourceWarnings.map(mapWarning)
@@ -425,7 +430,7 @@ function buildEvidenceWorkbenchViewModel(
     review: mapReviewState(
       answerResponse.reviewState,
       answerResponse.answer.defaultSelectedClaimId,
-      answerResponse.reviewActions ?? REVIEW_ACTION_RECORDS
+      backendImplementedReviewActions(answerResponse.reviewActions ?? REVIEW_ACTION_RECORDS)
     ),
     audit: mapAuditMetadata(answerResponse.auditMetadata),
     reviewClaims: answerResponse.answerClaims
@@ -507,6 +512,15 @@ function mapReviewState(
     statusId: reviewState.status,
     updatedAt: reviewState.updatedAt
   };
+}
+
+function backendImplementedReviewActions(
+  actions: EvidenceWorkbenchReviewAction[],
+  implementedActionIds: string[] = DEFAULT_BACKEND_IMPLEMENTED_REVIEW_ACTION_IDS
+): EvidenceWorkbenchReviewAction[] {
+  const implementedActionIdSet = new Set(implementedActionIds);
+
+  return actions.filter((action) => implementedActionIdSet.has(action.id));
 }
 
 function mapGraphNode(node: EvidenceGraphNodeFixture): EvidenceWorkbenchGraphNode {

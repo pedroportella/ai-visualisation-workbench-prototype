@@ -36,11 +36,17 @@ fallback fixture mode.
 | --- | --- |
 | `backend/.venv/bin/python scripts/local-backend-smoke.py` | Existing local FastAPI health, readiness and metadata endpoints. |
 | `pnpm --filter @aivis/backend release:preflight` | Backend-scoped package checks and local release rehearsal commands. |
+| `pnpm test:backend-release-proof` | Already-running workbench proves same-origin backend fixture mode and rejects silent fallback before backend-backed review evidence is claimed. |
 | `pnpm docker:smoke` | Local Docker Compose backend plus frontend runtime, fixture endpoints, review action and rendered assets. |
-| `pnpm test:e2e:real` | Browser journey against the Docker-backed runtime after Docker smoke. |
+| `pnpm test:e2e:real` | Browser journey against the Docker-backed runtime after Docker smoke and backend release proof. |
 
 Docker-backed checks are heavier because they own or require a local Compose
 runtime.
+
+`pnpm test:backend-release-proof` is GET-only. It should be run against a
+running workbench configured with `AIVIS_BACKEND_ORIGIN`; set
+`AIVIS_BACKEND_RELEASE_PROOF_BASE_URL` when the workbench is not on
+`http://127.0.0.1:3200`.
 
 ## Guard Families
 

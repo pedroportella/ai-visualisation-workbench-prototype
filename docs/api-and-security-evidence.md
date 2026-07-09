@@ -9,6 +9,7 @@ review. These checks are review-grade evidence, not a formal security assurance.
 | --- | --- | --- |
 | Server-only backend origin | The frontend reads backend origin configuration on the server and does not require `NEXT_PUBLIC_*BACKEND` variables. | `frontend/packages/services/src/server/evidenceWorkbenchService.ts`, `frontend/packages/services/src/server/runtimeConfig.ts` |
 | Same-origin workbench API routes | Browser code fetches the Evidence Workbench view model and records review-action mutations through `/api/evidence-workbench/...` routes, while those route handlers call server-only service helpers. | `frontend/apps/workbench/app/api/evidence-workbench/view-model/route.ts`, `frontend/apps/workbench/app/api/evidence-workbench/review-actions/route.ts`, `frontend/apps/workbench/services/EvidenceWorkbenchQueryState.ts` |
+| Backend release proof | An already-running workbench can be checked for backend fixture mode through same-origin JSON and rendered routes before backend-backed review evidence is claimed. | `pnpm test:backend-release-proof` |
 | Browser-origin guard | Source scans fail browser-visible frontend files that expose backend origins or local machine paths. | `pnpm guard:browser-origins` |
 | Browser bundle guard | Built static assets can be scanned for backend origins, private labels and secret markers. | `pnpm guard:browser-bundles` |
 | Safe markdown rendering | Generated answer markdown is parsed through a constrained renderer instead of raw HTML injection. | `frontend/apps/workbench/components/answer/AnswerMarkdownRenderer/AnswerMarkdownRenderer.tsx`, `frontend/apps/workbench/components/answer/AnswerMarkdownRenderer/answerMarkdownParser.ts` |
@@ -52,6 +53,7 @@ claim source-system writeback or production audit logging.
 ```text
 pnpm guard
 pnpm test:reviewer-evidence
+pnpm test:backend-release-proof
 pnpm docker:smoke
 pnpm guard:browser-bundles
 git diff --check

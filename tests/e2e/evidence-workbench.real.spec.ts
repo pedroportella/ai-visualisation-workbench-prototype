@@ -20,6 +20,11 @@ test("Docker-backed Evidence Workbench renders backend fixture journey", async (
   await page.locator("#review-answer-accordion-button").click();
   await expect(page.getByText("CIT-003-A").first()).toBeVisible();
   await page.locator("#review-take-action-accordion-button").click();
+  await expect(page.getByRole("radio", { name: /Request source update/ })).toBeChecked();
+  await expect(page.getByRole("radio", { name: /Add review note/ })).toHaveCount(0);
+  await expect(page.getByRole("radio", { name: /Escalate to source owner/ })).toHaveCount(0);
+  await expect(page.getByRole("radio", { name: /Mark unsafe to use/ })).toHaveCount(0);
+  await expect(page.getByRole("radio", { name: /Mark reviewed/ })).toHaveCount(0);
   await expectControlCanReceiveFocus(page, "button", "Request source update");
   await page.getByRole("button", { name: "Request source update" }).click();
   await expect(

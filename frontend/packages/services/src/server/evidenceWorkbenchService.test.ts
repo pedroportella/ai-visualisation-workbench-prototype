@@ -179,6 +179,9 @@ describe("Evidence Workbench server service", () => {
       label: "Data source",
       value: "Backend fixture"
     });
+    expect(data.review.actions.map((action) => action.id)).toEqual([
+      PRIMARY_REVIEW_ACTION_ID
+    ]);
     expect(data.sourceItems[0]?.trustState).toBe("missing_blocker");
   });
 
@@ -229,6 +232,9 @@ describe("Evidence Workbench server service", () => {
 
     expect(result.fetchState.source).toBe("backend");
     expect(result.review.status).toBe("Source update requested");
+    expect(result.review.actions.map((action) => action.id)).toEqual([
+      PRIMARY_REVIEW_ACTION_ID
+    ]);
     expect(result.audit.lastReviewActionId).toBe(PRIMARY_REVIEW_ACTION_ID);
   });
 

@@ -52,6 +52,7 @@ try {
   await waitForJson(`${backendBaseUrl}/health/live`, "backend live health");
   await waitForText(`${baseUrl}/evidence-workbench`, "frontend workbench route");
   runDockerSmoke();
+  run("pnpm", ["test:backend-release-proof"]);
   run(process.execPath, playwrightArgs);
 } catch (error) {
   exitCode = error.exitCode ?? 1;

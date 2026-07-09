@@ -42,6 +42,7 @@ pnpm --filter @aivis/frontend release:preflight
 pnpm test:e2e:mock
 pnpm test:visual
 pnpm test:reviewer-evidence
+pnpm test:backend-release-proof
 pnpm docker:config
 pnpm docker:build
 pnpm docker:up
@@ -65,8 +66,14 @@ current evidence set:
 ```
 
 `pnpm test:e2e:real` owns a separate local compose run for the browser check,
-executes `pnpm docker:smoke` before Playwright and tears the stack down before
-the command exits.
+executes `pnpm docker:smoke` and `pnpm test:backend-release-proof` before
+Playwright and tears the stack down before the command exits.
+
+Run `pnpm test:backend-release-proof` against the review workbench runtime that
+is meant to be backend-backed. It checks the same-origin view-model API and
+rendered routes, and fails if the app has silently fallen back to bundled
+fixture mode or exposes review actions beyond the backend endpoint's
+implemented transition.
 
 ## Monorepo Release Tracks
 
@@ -134,6 +141,8 @@ Public-safe release evidence should include:
 - backend health, readiness and metadata summary;
 - Evidence Workbench route summary;
 - fixture API and review-action behaviour summary;
+- backend fixture proof from the same-origin workbench API before
+  backend-backed review evidence is claimed;
 - compatibility target for separated component releases;
 - redacted runtime log snippets only where useful;
 - teardown confirmation after the review window.

@@ -55,7 +55,10 @@ behaviour that is useful in the prototype:
   configuration stays out of browser-visible code and bundles;
 - the review-action mutation updates the TanStack Query cache from the backend
   fixture response, while bundled fallback mode keeps the existing local
-  reducer transition and labels it as local fallback behaviour.
+  reducer transition and labels it as local fallback behaviour;
+- backend-seeded review choices are constrained to review actions implemented
+  by the backend endpoint, while bundled fallback mode can still demonstrate
+  the broader local action model.
 
 TanStack Query is not used for route selection, accordion open state, source
 issue selection or process-map state. Those remain local UI state owned by the
@@ -120,6 +123,7 @@ pnpm --filter @aivis/workbench test
 pnpm --filter @aivis/workbench typecheck
 pnpm --filter @aivis/workbench check
 pnpm test:e2e:mock
+pnpm test:backend-release-proof
 pnpm test:visual
 pnpm guard:browser-origins
 pnpm guard:browser-bundles

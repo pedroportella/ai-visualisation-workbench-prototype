@@ -164,9 +164,14 @@ pnpm test:visual
 pnpm test:reviewer-evidence
 pnpm docker:build
 pnpm test:e2e:real
+pnpm test:backend-release-proof
 pnpm guard:browser-bundles
 ```
 
 The mock browser checks use bundled fallback fixture mode. The Docker-backed
-browser check owns its local compose runtime, runs the Docker smoke first and
-tears the stack down before it exits.
+browser check owns its local compose runtime, runs Docker smoke and backend
+release proof first and tears the stack down before it exits.
+
+`pnpm test:backend-release-proof` is for an already-running backend-backed
+workbench. It fails if the same-origin view model or rendered routes have
+fallen back to bundled fixture mode.

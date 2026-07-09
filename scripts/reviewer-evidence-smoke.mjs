@@ -45,6 +45,7 @@ const requiredFiles = [
   "playwright.config.ts",
   "scripts/README.md",
   "scripts/local-docker-smoke.py",
+  "scripts/backend-release-proof.mjs",
   "scripts/quality-guards.mjs",
   "scripts/reviewer-evidence-smoke.mjs",
   "scripts/run-docker-e2e.mjs",
@@ -68,6 +69,7 @@ const requiredRootScripts = [
   "test:e2e:real",
   "test:e2e:real:headed",
   "test:e2e:report",
+  "test:backend-release-proof",
   "test:reviewer-evidence",
   "test:visual"
 ];
@@ -77,6 +79,7 @@ const requiredScriptReadmeText = [
   "pnpm guard:browser-bundles",
   "pnpm test:e2e:mock",
   "pnpm test:e2e:real",
+  "pnpm test:backend-release-proof",
   "pnpm test:reviewer-evidence",
   "pnpm test:visual",
   "no-screenshot"
@@ -109,6 +112,7 @@ const requiredAwsReadinessText = [
   "pnpm test:visual",
   "pnpm test:reviewer-evidence",
   "pnpm test:e2e:real",
+  "pnpm test:backend-release-proof",
   "pnpm guard:browser-bundles"
 ];
 const requiredReviewerPackText = [
@@ -192,6 +196,7 @@ const requiredEngineeringDocText = {
     "not formal WCAG assurance"
   ],
   "docs/testing-and-guardrails.md": [
+    "pnpm test:backend-release-proof",
     "pnpm test:reviewer-evidence",
     "pnpm guard:public-docs",
     "pnpm guard:claim-boundaries",

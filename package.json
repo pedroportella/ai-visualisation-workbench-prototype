@@ -28,6 +28,7 @@
     "test:e2e:real": "node scripts/run-docker-e2e.mjs",
     "test:e2e:real:headed": "node scripts/run-docker-e2e.mjs --headed",
     "test:e2e:report": "node scripts/run-playwright.mjs show-report",
+    "test:backend-release-proof": "node scripts/backend-release-proof.mjs",
     "test:reviewer-evidence": "node scripts/reviewer-evidence-smoke.mjs",
     "test:visual": "node scripts/run-playwright.mjs --mode=mock test -c playwright.config.ts tests/visual/evidence-workbench-layout.spec.ts",
     "typecheck": "pnpm -r typecheck"
