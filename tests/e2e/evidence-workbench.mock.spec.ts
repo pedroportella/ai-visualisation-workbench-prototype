@@ -11,6 +11,7 @@ test("mock Evidence Workbench journey stays in fallback fixture mode", async ({
   await expect(
     page.getByText("Backend fixture unavailable. Showing bundled fallback data.")
   ).toBeVisible();
+  await expectEvidenceDataState(page, "Local fixture");
   await expect(page.getByText("Synthetic fixture / Bundled fallback")).toBeVisible();
   await expect(page.getByText("Synthetic fixture / Backend fixture")).toHaveCount(0);
   await expectOverviewAndPersistentNavigationOwners(page);
@@ -758,6 +759,18 @@ async function expectSourceInventoryButtonContained(button: Locator) {
   expect(geometry?.buttonLeft).toBeGreaterThanOrEqual((geometry?.itemLeft ?? 0) - 1);
   expect(geometry?.buttonRight).toBeLessThanOrEqual((geometry?.itemRight ?? 0) + 1);
   await expect(button.locator(".evidence-workbench-source-inventory__cell-label").first()).toBeVisible();
+}
+
+async function expectEvidenceDataState(page: Page, sourceLabel: string) {
+  const taskHeader = page.locator(".workbench-task-header");
+  const dataState = page.locator('[aria-label="Evidence data state"]');
+
+  await expect(taskHeader.locator('[aria-label="Evidence data state"]')).toHaveCount(0);
+  await expect(dataState).toBeVisible();
+  await expect(dataState.getByText("Source")).toBeVisible();
+  await expect(dataState.getByText(sourceLabel)).toBeVisible();
+  await expect(dataState.getByRole("status")).toBeVisible();
+  await expect(dataState.getByRole("button", { name: "Refresh evidence" })).toBeVisible();
 }
 
 function assertRuntime(expectedMode: string, expectedBackend: string) {

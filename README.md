@@ -63,7 +63,8 @@ availability, disabled reasons and local audit feedback.
 
 These screenshots are reviewer examples, not visual baselines. The dark
 screenshots show a theme-token preview capture context, not proof of a
-user-facing theme switcher.
+user-facing theme switcher. The current captures include the compact
+page-level evidence data-state row below the task header.
 
 | View | Light | Dark theme-token preview |
 | --- | --- | --- |

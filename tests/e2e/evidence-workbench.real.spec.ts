@@ -8,6 +8,7 @@ test("Docker-backed Evidence Workbench renders backend fixture journey", async (
 
   await page.goto("/evidence-workbench");
   await expect(page.getByRole("heading", { level: 1, name: "Evidence Workbench" })).toBeVisible();
+  await expectEvidenceDataState(page, "Backend fixture");
   await expect(page.getByText("Synthetic fixture / Backend fixture")).toBeVisible();
   await expect(page.getByText("Backend fixture unavailable")).toHaveCount(0);
   await expect(page.getByText("Bundled fallback")).toHaveCount(0);
@@ -63,6 +64,18 @@ async function expectControlCanReceiveFocus(
   const control = page.getByRole(role, { name }).first();
   await control.focus();
   await expect(control).toBeFocused();
+}
+
+async function expectEvidenceDataState(page: Page, sourceLabel: string) {
+  const taskHeader = page.locator(".workbench-task-header");
+  const dataState = page.locator('[aria-label="Evidence data state"]');
+
+  await expect(taskHeader.locator('[aria-label="Evidence data state"]')).toHaveCount(0);
+  await expect(dataState).toBeVisible();
+  await expect(dataState.getByText("Source")).toBeVisible();
+  await expect(dataState.getByText(sourceLabel)).toBeVisible();
+  await expect(dataState.getByRole("status")).toBeVisible();
+  await expect(dataState.getByRole("button", { name: "Refresh evidence" })).toBeVisible();
 }
 
 function assertRuntime(expectedMode: string, expectedBackend: string) {

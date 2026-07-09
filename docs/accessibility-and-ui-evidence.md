@@ -14,6 +14,7 @@ accessibility assurance.
 | Navigation state | Side navigation and mobile drawer state are checked for `aria-current`, `aria-expanded`, hidden main content while the drawer is open and focus restoration. |
 | Text process map | The React Flow evidence map has a focusable text fallback region with ordered steps. |
 | Warning posture | Blockers, missing evidence, stale sources and disabled action reasons are text labels, not colour-only signals. |
+| Evidence data state | Route checks verify the source/freshness row is page-level, outside the task header, right aligned and labelled with an object-specific refresh action. |
 | Responsive layout | Checks cover desktop and mobile viewports, route height ceilings, horizontal overflow and action-control fit. |
 | Theme-token stability | Light and dark colour-scheme contexts are checked without capturing new screenshots. |
 

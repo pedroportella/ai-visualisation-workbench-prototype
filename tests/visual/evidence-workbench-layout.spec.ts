@@ -58,6 +58,7 @@ for (const viewport of viewports) {
 
           await expectMainAndHeadingContract(page, route.heading);
           await expectCompactTaskHeader(page, viewport.headerMin, viewport.headerMax);
+          await expectEvidenceDataStatePlacement(page);
           await expectNoDuplicateIds(page);
           await expectAriaReferencesResolve(page);
           await expectNoVisibleFocusableContentInsideAriaHidden(page);
@@ -232,11 +233,8 @@ async function expectCompactTaskHeader(page: Page, minHeight: number, maxHeight:
 
     return {
       bottom: rect?.bottom ?? 0,
+      dataStateInHeader: Boolean(header?.querySelector('[aria-label="Evidence data state"]')),
       height: rect?.height ?? 0,
-      localFixtureStateInHeader:
-        header
-          ?.querySelector('[aria-label="Evidence data state"]')
-          ?.textContent?.includes("Local fixture") ?? false,
       oldIntroCount: document.querySelectorAll(".workbench-view-intro").length,
       routeDescriptionInHeader:
         header?.textContent?.includes("AIVIS is a simulated evidence workbench") ??
@@ -261,7 +259,51 @@ async function expectCompactTaskHeader(page: Page, minHeight: number, maxHeight:
   expect(metrics.workGap).toBeGreaterThanOrEqual(0);
   expect(metrics.workGap).toBeLessThanOrEqual(32);
   expect(metrics.routeDescriptionInHeader).toBe(false);
-  expect(metrics.localFixtureStateInHeader).toBe(true);
+  expect(metrics.dataStateInHeader).toBe(false);
+}
+
+async function expectEvidenceDataStatePlacement(page: Page) {
+  const metrics = await page.evaluate(() => {
+    const header = document.querySelector<HTMLElement>(".workbench-task-header");
+    const dataState = document.querySelector<HTMLElement>('[aria-label="Evidence data state"]');
+    const summary = document.querySelector<HTMLElement>(".evidence-workbench-data-state__summary");
+    const refresh = document.querySelector<HTMLElement>(".evidence-workbench-data-state__refresh-action");
+    const headerRect = header?.getBoundingClientRect();
+    const dataStateRect = dataState?.getBoundingClientRect();
+    const summaryRect = summary?.getBoundingClientRect();
+    const refreshRect = refresh?.getBoundingClientRect();
+
+    return {
+      dataStateAfterHeader:
+        Boolean(headerRect && dataStateRect && dataStateRect.top >= headerRect.bottom),
+      dataStateIsNextSibling: header?.nextElementSibling === dataState,
+      gapFromHeader:
+        headerRect && dataStateRect ? Math.max(0, dataStateRect.top - headerRect.bottom) : -1,
+      refreshGapFromSummary:
+        summaryRect && refreshRect ? Math.max(0, refreshRect.left - summaryRect.right) : -1,
+      refreshRightGap:
+        dataStateRect && refreshRect ? Math.abs(dataStateRect.right - refreshRect.right) : -1,
+      text: dataState?.textContent?.replace(/\s+/g, " ").trim() ?? ""
+    };
+  });
+
+  console.log(
+    [
+      `[aivis-visual] dataStateGapFromHeader=${Math.round(metrics.gapFromHeader)}px`,
+      `[aivis-visual] dataStateRefreshRightGap=${Math.round(metrics.refreshRightGap)}px`,
+      `[aivis-visual] dataStateRefreshGapFromSummary=${Math.round(metrics.refreshGapFromSummary)}px`
+    ].join("\n")
+  );
+
+  expect(metrics.dataStateIsNextSibling).toBe(true);
+  expect(metrics.dataStateAfterHeader).toBe(true);
+  expect(metrics.gapFromHeader).toBeGreaterThanOrEqual(0);
+  expect(metrics.gapFromHeader).toBeLessThanOrEqual(12);
+  expect(metrics.refreshRightGap).toBeLessThanOrEqual(2);
+  expect(metrics.refreshGapFromSummary).toBeGreaterThanOrEqual(0);
+  expect(metrics.refreshGapFromSummary).toBeLessThanOrEqual(24);
+  expect(metrics.text).toContain("Source");
+  expect(metrics.text).toContain("Refresh evidence");
 }
 
 async function expectNoDuplicateIds(page: Page) {
