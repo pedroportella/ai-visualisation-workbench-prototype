@@ -17,9 +17,9 @@ import {
 import type { EvidenceWorkbenchReviewAction } from "@aivis/services";
 import { formatStateLabel } from "@aivis/utils";
 import {
-  AivisEvidenceStatus,
-  type AivisEvidenceTone
-} from "../../evidence/AivisEvidence";
+  EvidenceWorkbenchStatus,
+  type EvidenceWorkbenchTone
+} from "../../evidence/EvidenceWorkbenchAdapters";
 import {
   getReviewActionAvailability,
   type ReviewActionAvailability,
@@ -299,22 +299,22 @@ export function ReviewActionForm({
             aria-label="Review decision state"
             className="evidence-workbench-review-actions__status"
           >
-            <AivisEvidenceStatus tone={reviewStatusTone(state.review.statusId)}>
+            <EvidenceWorkbenchStatus tone={reviewStatusTone(state.review.statusId)}>
               {state.review.status}
-            </AivisEvidenceStatus>
-            <AivisEvidenceStatus tone={copyDisabled ? "warning" : "success"}>
+            </EvidenceWorkbenchStatus>
+            <EvidenceWorkbenchStatus tone={copyDisabled ? "warning" : "success"}>
               Copy {formatStateLabel(state.review.copyState)}
-            </AivisEvidenceStatus>
-            <AivisEvidenceStatus
+            </EvidenceWorkbenchStatus>
+            <EvidenceWorkbenchStatus
               tone={state.review.blockedByWarningIds.length > 0 ? "warning" : "success"}
             >
               {state.review.blockedByWarningIds.length} approval blockers
-            </AivisEvidenceStatus>
-            <AivisEvidenceStatus
+            </EvidenceWorkbenchStatus>
+            <EvidenceWorkbenchStatus
               tone={reviewActionState.mode === "backend" ? "success" : "warning"}
             >
               {reviewActionState.mode === "backend" ? "Backend action" : "Local fallback action"}
-            </AivisEvidenceStatus>
+            </EvidenceWorkbenchStatus>
           </div>
         </div>
 
@@ -432,7 +432,7 @@ function actionReason(
   return `${action.description}${targetReason}`;
 }
 
-function reviewStatusTone(statusId: string): AivisEvidenceTone {
+function reviewStatusTone(statusId: string): EvidenceWorkbenchTone {
   return statusId === "reviewed" ? "success" : "warning";
 }
 

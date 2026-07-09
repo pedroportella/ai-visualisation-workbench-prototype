@@ -10,9 +10,9 @@ import {
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import { formatStateLabel, statusTone } from "@aivis/utils";
 import {
-  AivisEvidenceStatus,
-  AivisEvidenceWarningList
-} from "../../evidence/AivisEvidence";
+  EvidenceWorkbenchStatus,
+  EvidenceWorkbenchWarningList
+} from "../../evidence/EvidenceWorkbenchAdapters";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import {
   AUDIT_ROUTE,
@@ -69,17 +69,17 @@ export function OverviewWorkspace({
               aria-label="Current review state"
               className="evidence-workbench-overview__status"
             >
-              <AivisEvidenceStatus tone={statusTone(review.status)}>
+              <EvidenceWorkbenchStatus tone={statusTone(review.status)}>
                 {review.status}
-              </AivisEvidenceStatus>
-              <AivisEvidenceStatus
+              </EvidenceWorkbenchStatus>
+              <EvidenceWorkbenchStatus
                 tone={review.blockedByWarningIds.length > 0 ? "warning" : "success"}
               >
                 {review.blockedByWarningIds.length} approval blockers
-              </AivisEvidenceStatus>
-              <AivisEvidenceStatus tone={review.copyState === "enabled" ? "success" : "warning"}>
+              </EvidenceWorkbenchStatus>
+              <EvidenceWorkbenchStatus tone={review.copyState === "enabled" ? "success" : "warning"}>
                 Copy {formatStateLabel(review.copyState)}
-              </AivisEvidenceStatus>
+              </EvidenceWorkbenchStatus>
             </div>
             <QhdsSummaryList
               ariaLabel="Synthetic review case summary"
@@ -142,7 +142,7 @@ export function OverviewWorkspace({
             variant="workbench"
           >
             {blockerWarnings.length > 0 ? (
-              <AivisEvidenceWarningList
+              <EvidenceWorkbenchWarningList
                 ariaLabel="Approval blockers for this review case"
                 warnings={blockerWarnings.map((warning) => ({
                   id: warning.id,

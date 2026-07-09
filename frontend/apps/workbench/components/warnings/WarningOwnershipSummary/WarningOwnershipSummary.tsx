@@ -7,9 +7,9 @@ import type {
   EvidenceWorkbenchWarning
 } from "@aivis/services";
 import {
-  AivisEvidenceStatus,
-  AivisEvidenceWarningList
-} from "../../evidence/AivisEvidence";
+  EvidenceWorkbenchStatus,
+  EvidenceWorkbenchWarningList
+} from "../../evidence/EvidenceWorkbenchAdapters";
 import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 
 interface WarningOwnershipSectionProps {
@@ -87,12 +87,12 @@ export function WarningOwnershipSummary({
         aria-label={`${heading} counts`}
         className="evidence-workbench-warning-ownership__counts"
       >
-        <AivisEvidenceStatus tone={warnings.length > 0 ? "warning" : "success"}>
+        <EvidenceWorkbenchStatus tone={warnings.length > 0 ? "warning" : "success"}>
           {warnings.length} active warning{warnings.length === 1 ? "" : "s"}
-        </AivisEvidenceStatus>
-        <AivisEvidenceStatus tone={blockedWarningIds.length > 0 ? "warning" : "success"}>
+        </EvidenceWorkbenchStatus>
+        <EvidenceWorkbenchStatus tone={blockedWarningIds.length > 0 ? "warning" : "success"}>
           {blockedWarningIds.length} approval blocker{blockedWarningIds.length === 1 ? "" : "s"}
-        </AivisEvidenceStatus>
+        </EvidenceWorkbenchStatus>
       </div>
       <p>
         Source evidence owns warning records. Open{" "}
@@ -128,7 +128,7 @@ export function WarningOwnershipDetail({
         Full warning messages are supporting evidence here. Use Source evidence
         to review the source records and owner queues.
       </p>
-      <AivisEvidenceWarningList
+      <EvidenceWorkbenchWarningList
         ariaLabel={`${heading} supporting warning details`}
         warnings={warnings.map((warning) => ({
           id: warning.id,

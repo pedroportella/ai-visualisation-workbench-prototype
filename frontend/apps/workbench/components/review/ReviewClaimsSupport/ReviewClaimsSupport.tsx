@@ -4,7 +4,7 @@ import { QhdsContentSection } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import { statusTone } from "@aivis/utils";
-import { AivisEvidenceClaimCard } from "../../evidence/AivisEvidence";
+import { EvidenceWorkbenchClaimCard } from "../../evidence/EvidenceWorkbenchAdapters";
 
 interface ReviewClaimsSupportProps {
   asPanel?: boolean;
@@ -25,7 +25,7 @@ export function ReviewClaimsSupport({
     >
       {data.reviewClaims.map((claim) => (
         <li key={claim.id}>
-          <AivisEvidenceClaimCard
+          <EvidenceWorkbenchClaimCard
             claimId={claim.id}
             id={`claim-${claim.id}`}
             selected={claim.id === selectedClaimId}

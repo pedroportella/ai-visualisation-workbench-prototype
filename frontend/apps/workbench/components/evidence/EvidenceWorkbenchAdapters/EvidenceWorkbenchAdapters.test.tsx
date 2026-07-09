@@ -6,21 +6,21 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import {
-  AivisEvidenceCallout,
-  AivisEvidenceClaimCard,
-  AivisEvidenceContextAnchors,
-  AivisEvidenceFilterNav,
-  AivisEvidencePathList,
-  AivisEvidenceSourceCard,
-  AivisEvidenceWarningGroup
-} from "./AivisEvidence";
+  EvidenceWorkbenchCallout,
+  EvidenceWorkbenchClaimCard,
+  EvidenceWorkbenchContextAnchors,
+  EvidenceWorkbenchFilterNav,
+  EvidenceWorkbenchPathList,
+  EvidenceWorkbenchSourceCard,
+  EvidenceWorkbenchWarningGroup
+} from "./EvidenceWorkbenchAdapters";
 
-const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "AivisEvidence.scss"), "utf8");
+const styles = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "EvidenceWorkbenchAdapters.scss"), "utf8");
 
-describe("AivisEvidence adapters", () => {
+describe("EvidenceWorkbench adapters", () => {
   it("composes selected claim cards from the government card and tag classes", () => {
     const html = renderToStaticMarkup(
-      <AivisEvidenceClaimCard
+      <EvidenceWorkbenchClaimCard
         claimId="CLAIM-003"
         id="claim-CLAIM-003"
         selected
@@ -42,7 +42,7 @@ describe("AivisEvidence adapters", () => {
 
   it("renders source cards with summary-list metadata and warning issue rows", () => {
     const html = renderToStaticMarkup(
-      <AivisEvidenceSourceCard
+      <EvidenceWorkbenchSourceCard
         data-source-filter-state="missing_blocker"
         id="source-SRC-006"
         metadataItems={[
@@ -57,7 +57,7 @@ describe("AivisEvidence adapters", () => {
         statusTone="warning"
         title="Day-of-service dispatch confirmation"
       >
-        <AivisEvidenceWarningGroup
+        <EvidenceWorkbenchWarningGroup
           label="Direct source warning"
           warnings={[
             {
@@ -68,7 +68,7 @@ describe("AivisEvidence adapters", () => {
             }
           ]}
         />
-      </AivisEvidenceSourceCard>
+      </EvidenceWorkbenchSourceCard>
     );
 
     expect(html).toContain('data-source-filter-state="missing_blocker"');
@@ -83,7 +83,7 @@ describe("AivisEvidence adapters", () => {
   it("renders context, path and filter wrappers with local adapter classes", () => {
     const html = renderToStaticMarkup(
       <>
-        <AivisEvidenceContextAnchors
+        <EvidenceWorkbenchContextAnchors
           anchorSummary="Place labels only."
           anchors={[
             {
@@ -96,13 +96,13 @@ describe("AivisEvidence adapters", () => {
           dateLabel="Planned fixture travel date: 28 June 2026"
           summary="Customer travel question."
         />
-        <AivisEvidencePathList
+        <EvidenceWorkbenchPathList
           items={[
             { heading: "Draft answer", summary: "Review the answer." },
             { heading: "Source trace", summary: "Check source blockers." }
           ]}
         />
-        <AivisEvidenceFilterNav
+        <EvidenceWorkbenchFilterNav
           ariaLabel="Source trace filters"
           filters={[
             {
@@ -132,9 +132,9 @@ describe("AivisEvidence adapters", () => {
 
   it("renders callouts with QHDS callout classes without alert semantics", () => {
     const html = renderToStaticMarkup(
-      <AivisEvidenceCallout heading="Review note" tone="warning">
+      <EvidenceWorkbenchCallout heading="Review note" tone="warning">
         <p>Keep the answer in review.</p>
-      </AivisEvidenceCallout>
+      </EvidenceWorkbenchCallout>
     );
 
     expect(html).toContain("qld__callout");

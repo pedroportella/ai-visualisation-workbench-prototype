@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { QhdsContentSection } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
-import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
+import { EvidenceWorkbenchPanelHeader } from "../../evidence/EvidenceWorkbenchAdapters";
 import { ProcessEvidenceMap } from "../ProcessEvidenceMap";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import {
@@ -29,7 +29,7 @@ export function ProcessWorkspace({
       leadDensity="compact"
       withBodyClass={false}
     >
-      <AivisEvidencePanelHeader
+      <EvidenceWorkbenchPanelHeader
         label="React Flow graph"
         status="Local fixture"
       />

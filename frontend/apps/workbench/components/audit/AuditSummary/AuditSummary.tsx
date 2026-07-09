@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import { QhdsSummaryList } from "@aivis/ui-library";
 
-import { AivisEvidenceStatus } from "../../evidence/AivisEvidence";
+import { EvidenceWorkbenchStatus } from "../../evidence/EvidenceWorkbenchAdapters";
 import { REVIEW_ROUTE } from "../../shared/routeModel";
 import type {
   ReviewActionTarget,
@@ -35,9 +35,9 @@ export function AuditSummary({
         className="evidence-workbench-audit-summary__state"
         data-copy-state={review.copyState}
       >
-        <AivisEvidenceStatus tone={review.copyState === "enabled" ? "success" : "warning"}>
+        <EvidenceWorkbenchStatus tone={review.copyState === "enabled" ? "success" : "warning"}>
           {review.copyState === "enabled" ? "Copy can be reviewed" : "Copy remains unavailable"}
-        </AivisEvidenceStatus>
+        </EvidenceWorkbenchStatus>
         <p className="evidence-workbench-review-note">
           Copy state is {review.copyState}. Approval remains blocked by{" "}
           {review.blockedByWarningIds.join(", ")}. Audit {decisionState.audit.id} last

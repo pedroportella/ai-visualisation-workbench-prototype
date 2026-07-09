@@ -55,7 +55,7 @@ const styles = [
     "utf8"
   ),
   readFileSync(
-    join(componentDirectory, "../AivisEvidence/AivisEvidence.scss"),
+    join(componentDirectory, "../EvidenceWorkbenchAdapters/EvidenceWorkbenchAdapters.scss"),
     "utf8"
   ),
   readFileSync(

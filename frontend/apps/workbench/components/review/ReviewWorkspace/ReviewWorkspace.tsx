@@ -4,7 +4,7 @@ import { QhdsAccordion } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import { AnswerMarkdown } from "../../answer/AnswerMarkdownRenderer";
-import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
+import { EvidenceWorkbenchPanelHeader } from "../../evidence/EvidenceWorkbenchAdapters";
 import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
@@ -67,7 +67,7 @@ export function ReviewWorkspace({
             {
               content: (
                 <ReviewAccordionPanel lead={data.answer.summary}>
-                  <AivisEvidencePanelHeader
+                  <EvidenceWorkbenchPanelHeader
                     label="Draft answer"
                     status={data.answer.status}
                     statusTone="warning"

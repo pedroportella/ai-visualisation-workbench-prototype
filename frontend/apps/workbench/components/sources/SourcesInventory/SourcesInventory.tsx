@@ -6,7 +6,7 @@ import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter
 } from "@aivis/services";
-import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
+import { EvidenceWorkbenchPanelHeader } from "../../evidence/EvidenceWorkbenchAdapters";
 import { SourcesInventoryTable } from "./SourcesInventoryTable";
 import {
   hasApprovalBlocker,
@@ -69,7 +69,7 @@ function SourceInventorySummaryCard({
       aria-labelledby="source-inventory-summary-title"
       className="evidence-workbench-summary-card evidence-workbench-summary-card--warning evidence-workbench-source-summary-card"
     >
-      <AivisEvidencePanelHeader
+      <EvidenceWorkbenchPanelHeader
         label="Source trace"
         status={`${blockerCount} source blocker${blockerCount === 1 ? "" : "s"}`}
         statusTone={blockerCount > 0 ? "warning" : "success"}

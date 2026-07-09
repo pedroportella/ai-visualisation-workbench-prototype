@@ -5,7 +5,7 @@ import {
   QhdsContentSection
 } from "@aivis/ui-library";
 
-import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
+import { EvidenceWorkbenchPanelHeader } from "../../evidence/EvidenceWorkbenchAdapters";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
 
@@ -32,7 +32,7 @@ export function ReviewDecisionGate({
       withBodyClass={false}
     >
       <div className="evidence-workbench-summary-card evidence-workbench-summary-card--warning evidence-workbench-review-decision-card">
-        <AivisEvidencePanelHeader
+        <EvidenceWorkbenchPanelHeader
           label="Current decision"
           status={review.copyState === "enabled" ? "Ready to copy" : "Do not use yet"}
           statusTone={review.copyState === "enabled" ? "success" : "warning"}

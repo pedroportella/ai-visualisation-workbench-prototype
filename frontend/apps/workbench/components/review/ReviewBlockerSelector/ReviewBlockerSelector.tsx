@@ -6,7 +6,7 @@ import {
   QhdsSummaryList
 } from "@aivis/ui-library";
 
-import { AivisEvidenceStatus } from "../../evidence/AivisEvidence";
+import { EvidenceWorkbenchStatus } from "../../evidence/EvidenceWorkbenchAdapters";
 import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
 
@@ -39,7 +39,7 @@ export function ReviewBlockerSelector({
         className="evidence-workbench-current-blocker__summary"
       >
         <div className="evidence-workbench-current-blocker__heading">
-          <AivisEvidenceStatus tone="warning">Approval blocker</AivisEvidenceStatus>
+          <EvidenceWorkbenchStatus tone="warning">Approval blocker</EvidenceWorkbenchStatus>
           <h3 id="current-blocker-title">
             {selectedIssue.warningId}: {selectedIssue.warningMessage}
           </h3>

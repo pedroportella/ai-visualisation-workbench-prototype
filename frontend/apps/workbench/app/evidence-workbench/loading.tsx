@@ -1,4 +1,4 @@
-import { AivisEvidenceStatus } from "../../components/evidence/AivisEvidence";
+import { EvidenceWorkbenchStatus } from "../../components/evidence/EvidenceWorkbenchAdapters";
 
 export default function EvidenceWorkbenchLoading() {
   return (
@@ -10,7 +10,7 @@ export default function EvidenceWorkbenchLoading() {
         aria-label="Review task state"
         className="workbench-task-header__status"
       >
-        <AivisEvidenceStatus tone="neutral">Loading review task</AivisEvidenceStatus>
+        <EvidenceWorkbenchStatus tone="neutral">Loading review task</EvidenceWorkbenchStatus>
       </div>
     </header>
   );

@@ -9,10 +9,10 @@ import type {
   EvidenceWorkbenchSourceWarning
 } from "@aivis/services";
 import {
-  AivisEvidenceAnchorChipList,
-  AivisEvidenceStatus,
-  AivisEvidenceTokenList
-} from "../../evidence/AivisEvidence";
+  EvidenceWorkbenchAnchorChipList,
+  EvidenceWorkbenchStatus,
+  EvidenceWorkbenchTokenList
+} from "../../evidence/EvidenceWorkbenchAdapters";
 import {
   hasApprovalBlocker,
   sourceAccordionItemId,
@@ -58,7 +58,7 @@ export function SourcesRecordAccordion({
 
                   <section aria-label={`${source.id} citation relationships`}>
                     <h3>Citation relationship</h3>
-                    <AivisEvidenceTokenList
+                    <EvidenceWorkbenchTokenList
                       ariaLabel={`${source.id} citation relationships`}
                       emptyMessage="Present in the inventory, not cited by this answer."
                       items={source.citations.map((citation) => ({
@@ -72,7 +72,7 @@ export function SourcesRecordAccordion({
 
                   <section aria-label={`${source.id} context anchors`}>
                     <h3>Context anchors</h3>
-                    <AivisEvidenceAnchorChipList
+                    <EvidenceWorkbenchAnchorChipList
                       anchors={source.contextAnchors.map((anchor) => ({
                         description: anchor.supportingText,
                         id: anchor.id,
@@ -189,10 +189,10 @@ function SourceRecordAccordionTitle({
 
       <span className="evidence-workbench-source-inventory__detail-status">
         {source.isSelectedClaimSource ? (
-          <AivisEvidenceStatus tone="neutral">Selected claim source</AivisEvidenceStatus>
+          <EvidenceWorkbenchStatus tone="neutral">Selected claim source</EvidenceWorkbenchStatus>
         ) : null}
         {hasApprovalBlocker(source) ? (
-          <AivisEvidenceStatus tone="warning">Approval blocker</AivisEvidenceStatus>
+          <EvidenceWorkbenchStatus tone="warning">Approval blocker</EvidenceWorkbenchStatus>
         ) : null}
       </span>
     </span>
@@ -287,7 +287,7 @@ function SourceWarningSummary({
           <li key={warning.id}>
             <div className="evidence-workbench-source-inventory__warning-row-header">
               <strong>{warning.id}</strong>
-              <AivisEvidenceStatus tone="warning">{warningSeverityLabel(warning)}</AivisEvidenceStatus>
+              <EvidenceWorkbenchStatus tone="warning">{warningSeverityLabel(warning)}</EvidenceWorkbenchStatus>
             </div>
             <dl className="evidence-workbench-source-inventory__warning-row">
               <div>

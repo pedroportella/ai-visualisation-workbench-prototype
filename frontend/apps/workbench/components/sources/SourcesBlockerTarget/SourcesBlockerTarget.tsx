@@ -13,7 +13,7 @@ import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
 } from "@aivis/services";
-import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
+import { EvidenceWorkbenchPanelHeader } from "../../evidence/EvidenceWorkbenchAdapters";
 import type { ReviewActionTarget } from "../../state/reviewDecisionState";
 
 export interface SourceBlockerIssue extends ReviewActionTarget {
@@ -71,7 +71,7 @@ export function SourcesBlockerTarget({
       className="evidence-workbench-source-review"
       data-selected-source-issue-id={selectedIssue?.id ?? ""}
     >
-      <AivisEvidencePanelHeader
+      <EvidenceWorkbenchPanelHeader
         label="Source blockers"
         status={`${issues.length} blocker issue${issues.length === 1 ? "" : "s"}`}
         statusTone="warning"

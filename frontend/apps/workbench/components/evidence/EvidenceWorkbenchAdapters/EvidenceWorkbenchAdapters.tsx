@@ -7,19 +7,19 @@ import {
   type QhdsSummaryListItem
 } from "@aivis/ui-library";
 
-export type AivisEvidenceTone = "neutral" | "success" | "warning";
+export type EvidenceWorkbenchTone = "neutral" | "success" | "warning";
 
-export interface AivisEvidenceStatusProps extends HTMLAttributes<HTMLSpanElement> {
+export interface EvidenceWorkbenchStatusProps extends HTMLAttributes<HTMLSpanElement> {
   children: ReactNode;
-  tone?: AivisEvidenceTone;
+  tone?: EvidenceWorkbenchTone;
 }
 
-export function AivisEvidenceStatus({
+export function EvidenceWorkbenchStatus({
   children,
   className,
   tone = "neutral",
   ...props
-}: AivisEvidenceStatusProps) {
+}: EvidenceWorkbenchStatusProps) {
   return (
     <span
       className={["qld__tag", "aivis-evidence-status", `aivis-evidence-status--${tone}`, className].filter(Boolean).join(" ")}
@@ -30,36 +30,36 @@ export function AivisEvidenceStatus({
   );
 }
 
-export interface AivisEvidencePanelHeaderProps {
+export interface EvidenceWorkbenchPanelHeaderProps {
   label: ReactNode;
   status?: ReactNode;
-  statusTone?: AivisEvidenceTone;
+  statusTone?: EvidenceWorkbenchTone;
 }
 
-export function AivisEvidencePanelHeader({
+export function EvidenceWorkbenchPanelHeader({
   label,
   status,
   statusTone = "neutral"
-}: AivisEvidencePanelHeaderProps) {
+}: EvidenceWorkbenchPanelHeaderProps) {
   return (
     <div className="aivis-evidence-panel-header">
       <p className="aivis-evidence-panel-header__label">{label}</p>
-      {status ? <AivisEvidenceStatus tone={statusTone}>{status}</AivisEvidenceStatus> : null}
+      {status ? <EvidenceWorkbenchStatus tone={statusTone}>{status}</EvidenceWorkbenchStatus> : null}
     </div>
   );
 }
 
-export interface AivisEvidenceMetadataProps {
+export interface EvidenceWorkbenchMetadataProps {
   ariaLabel?: string;
   className?: string;
   items: QhdsSummaryListItem[];
 }
 
-export function AivisEvidenceMetadata({
+export function EvidenceWorkbenchMetadata({
   ariaLabel,
   className,
   items
-}: AivisEvidenceMetadataProps) {
+}: EvidenceWorkbenchMetadataProps) {
   return (
     <QhdsSummaryList
       ariaLabel={ariaLabel}
@@ -69,21 +69,21 @@ export function AivisEvidenceMetadata({
   );
 }
 
-export interface AivisEvidenceCalloutProps {
+export interface EvidenceWorkbenchCalloutProps {
   children: ReactNode;
   className?: string;
   heading: ReactNode;
   headingLevel?: 3 | 4;
-  tone?: AivisEvidenceTone;
+  tone?: EvidenceWorkbenchTone;
 }
 
-export function AivisEvidenceCallout({
+export function EvidenceWorkbenchCallout({
   children,
   className,
   heading,
   headingLevel = 3,
   tone = "neutral"
-}: AivisEvidenceCalloutProps) {
+}: EvidenceWorkbenchCalloutProps) {
   const calloutClassName = [
     "qld__callout",
     "aivis-evidence-callout",
@@ -103,28 +103,28 @@ export function AivisEvidenceCallout({
   );
 }
 
-export interface AivisEvidenceAnchor {
+export interface EvidenceWorkbenchAnchor {
   description: ReactNode;
   id: string;
   label: ReactNode;
   meta?: ReactNode;
 }
 
-export interface AivisEvidenceContextAnchorsProps {
-  anchors: AivisEvidenceAnchor[];
+export interface EvidenceWorkbenchContextAnchorsProps {
+  anchors: EvidenceWorkbenchAnchor[];
   anchorSummary: ReactNode;
   ariaLabel?: string;
   dateLabel: ReactNode;
   summary: ReactNode;
 }
 
-export function AivisEvidenceContextAnchors({
+export function EvidenceWorkbenchContextAnchors({
   anchors,
   anchorSummary,
   ariaLabel = "Context anchors",
   dateLabel,
   summary
-}: AivisEvidenceContextAnchorsProps) {
+}: EvidenceWorkbenchContextAnchorsProps) {
   return (
     <div className="aivis-place-context">
       <div className="aivis-place-context__summary">
@@ -138,7 +138,7 @@ export function AivisEvidenceContextAnchors({
           {anchors.map((anchor) => (
             <li key={anchor.id}>
               <strong>{anchor.label}</strong>
-              {anchor.meta ? <AivisEvidenceStatus tone="neutral">{anchor.meta}</AivisEvidenceStatus> : null}
+              {anchor.meta ? <EvidenceWorkbenchStatus tone="neutral">{anchor.meta}</EvidenceWorkbenchStatus> : null}
               <small>{anchor.description}</small>
             </li>
           ))}
@@ -148,17 +148,17 @@ export function AivisEvidenceContextAnchors({
   );
 }
 
-export interface AivisEvidenceClaimCardProps extends Omit<HTMLAttributes<HTMLElement>, "children" | "title"> {
+export interface EvidenceWorkbenchClaimCardProps extends Omit<HTMLAttributes<HTMLElement>, "children" | "title"> {
   claimId: ReactNode;
   selected?: boolean;
   selectedLabel?: ReactNode;
   status: ReactNode;
-  statusTone?: AivisEvidenceTone;
+  statusTone?: EvidenceWorkbenchTone;
   text: ReactNode;
   title: ReactNode;
 }
 
-export function AivisEvidenceClaimCard({
+export function EvidenceWorkbenchClaimCard({
   claimId,
   className,
   selected = false,
@@ -168,7 +168,7 @@ export function AivisEvidenceClaimCard({
   text,
   title,
   ...props
-}: AivisEvidenceClaimCardProps) {
+}: EvidenceWorkbenchClaimCardProps) {
   return (
     <QhdsCard
       {...props}
@@ -191,15 +191,15 @@ export function AivisEvidenceClaimCard({
     >
       <div className="aivis-evidence-card__meta">
         <span className="aivis-evidence-card__id">{claimId}</span>
-        {selected && selectedLabel ? <AivisEvidenceStatus tone="neutral">{selectedLabel}</AivisEvidenceStatus> : null}
+        {selected && selectedLabel ? <EvidenceWorkbenchStatus tone="neutral">{selectedLabel}</EvidenceWorkbenchStatus> : null}
       </div>
       <p>{text}</p>
-      <AivisEvidenceStatus tone={statusTone}>{status}</AivisEvidenceStatus>
+      <EvidenceWorkbenchStatus tone={statusTone}>{status}</EvidenceWorkbenchStatus>
     </QhdsCard>
   );
 }
 
-export interface AivisEvidenceSourceCardProps extends Omit<HTMLAttributes<HTMLElement>, "children" | "title"> {
+export interface EvidenceWorkbenchSourceCardProps extends Omit<HTMLAttributes<HTMLElement>, "children" | "title"> {
   children: ReactNode;
   metadataItems: QhdsSummaryListItem[];
   preview: ReactNode;
@@ -207,11 +207,11 @@ export interface AivisEvidenceSourceCardProps extends Omit<HTMLAttributes<HTMLEl
   selectedLabel?: ReactNode;
   sourceId: ReactNode;
   status: ReactNode;
-  statusTone?: AivisEvidenceTone;
+  statusTone?: EvidenceWorkbenchTone;
   title: ReactNode;
 }
 
-export function AivisEvidenceSourceCard({
+export function EvidenceWorkbenchSourceCard({
   children,
   className,
   metadataItems,
@@ -223,7 +223,7 @@ export function AivisEvidenceSourceCard({
   statusTone = "neutral",
   title,
   ...props
-}: AivisEvidenceSourceCardProps) {
+}: EvidenceWorkbenchSourceCardProps) {
   return (
     <QhdsCard
       {...props}
@@ -246,11 +246,11 @@ export function AivisEvidenceSourceCard({
       <div className="aivis-evidence-source-card__header">
         <span className="aivis-evidence-card__id">{sourceId}</span>
         <div className="aivis-evidence-source-card__badges">
-          <AivisEvidenceStatus tone={statusTone}>{status}</AivisEvidenceStatus>
-          {selected && selectedLabel ? <AivisEvidenceStatus tone="neutral">{selectedLabel}</AivisEvidenceStatus> : null}
+          <EvidenceWorkbenchStatus tone={statusTone}>{status}</EvidenceWorkbenchStatus>
+          {selected && selectedLabel ? <EvidenceWorkbenchStatus tone="neutral">{selectedLabel}</EvidenceWorkbenchStatus> : null}
         </div>
       </div>
-      <AivisEvidenceMetadata
+      <EvidenceWorkbenchMetadata
         ariaLabel={typeof sourceId === "string" ? `${sourceId} source metadata` : undefined}
         items={metadataItems}
       />
@@ -260,20 +260,20 @@ export function AivisEvidenceSourceCard({
   );
 }
 
-export interface AivisEvidencePathItem {
+export interface EvidenceWorkbenchPathItem {
   heading: ReactNode;
   summary: ReactNode;
 }
 
-export interface AivisEvidencePathListProps {
+export interface EvidenceWorkbenchPathListProps {
   ariaLabel?: string;
-  items: AivisEvidencePathItem[];
+  items: EvidenceWorkbenchPathItem[];
 }
 
-export function AivisEvidencePathList({
+export function EvidenceWorkbenchPathList({
   ariaLabel = "Evidence path",
   items
-}: AivisEvidencePathListProps) {
+}: EvidenceWorkbenchPathListProps) {
   return (
     <ol aria-label={ariaLabel} className="aivis-evidence-path-list">
       {items.map((item, index) => (
@@ -294,22 +294,22 @@ export function AivisEvidencePathList({
   );
 }
 
-export interface AivisEvidenceWarning {
+export interface EvidenceWorkbenchWarning {
   id: ReactNode;
   impact?: ReactNode;
   message: ReactNode;
   severity: ReactNode;
 }
 
-export interface AivisEvidenceWarningListProps {
+export interface EvidenceWorkbenchWarningListProps {
   ariaLabel?: string;
-  warnings: AivisEvidenceWarning[];
+  warnings: EvidenceWorkbenchWarning[];
 }
 
-export function AivisEvidenceWarningList({
+export function EvidenceWorkbenchWarningList({
   ariaLabel = "Active warnings",
   warnings
-}: AivisEvidenceWarningListProps) {
+}: EvidenceWorkbenchWarningListProps) {
   return (
     <ul aria-label={ariaLabel} className="aivis-evidence-warning-list">
       {warnings.map((warning, index) => (
@@ -317,7 +317,7 @@ export function AivisEvidenceWarningList({
           <div className="aivis-evidence-warning-list__item">
             <div className="aivis-evidence-warning-list__header">
               <strong>{warning.id}</strong>
-              <AivisEvidenceStatus tone="warning">{warning.severity}</AivisEvidenceStatus>
+              <EvidenceWorkbenchStatus tone="warning">{warning.severity}</EvidenceWorkbenchStatus>
             </div>
             <p>{warning.message}</p>
             {warning.impact ? <small>{warning.impact}</small> : null}
@@ -328,7 +328,7 @@ export function AivisEvidenceWarningList({
   );
 }
 
-export interface AivisEvidenceTokenLink {
+export interface EvidenceWorkbenchTokenLink {
   ariaLabel?: string;
   description?: ReactNode;
   href: string;
@@ -336,17 +336,17 @@ export interface AivisEvidenceTokenLink {
   label: ReactNode;
 }
 
-export interface AivisEvidenceTokenListProps {
+export interface EvidenceWorkbenchTokenListProps {
   ariaLabel: string;
   emptyMessage?: ReactNode;
-  items: AivisEvidenceTokenLink[];
+  items: EvidenceWorkbenchTokenLink[];
 }
 
-export function AivisEvidenceTokenList({
+export function EvidenceWorkbenchTokenList({
   ariaLabel,
   emptyMessage,
   items
-}: AivisEvidenceTokenListProps) {
+}: EvidenceWorkbenchTokenListProps) {
   if (items.length === 0) {
     return emptyMessage ? <p className="aivis-evidence-note">{emptyMessage}</p> : null;
   }
@@ -370,19 +370,19 @@ export function AivisEvidenceTokenList({
   );
 }
 
-export interface AivisEvidenceFilterLink extends AivisEvidenceTokenLink {
+export interface EvidenceWorkbenchFilterLink extends EvidenceWorkbenchTokenLink {
   count: ReactNode;
 }
 
-export interface AivisEvidenceFilterNavProps {
+export interface EvidenceWorkbenchFilterNavProps {
   ariaLabel: string;
-  filters: AivisEvidenceFilterLink[];
+  filters: EvidenceWorkbenchFilterLink[];
 }
 
-export function AivisEvidenceFilterNav({
+export function EvidenceWorkbenchFilterNav({
   ariaLabel,
   filters
-}: AivisEvidenceFilterNavProps) {
+}: EvidenceWorkbenchFilterNavProps) {
   return (
     <nav aria-label={ariaLabel} className="aivis-evidence-filter-nav">
       <ul className="qld__link-list aivis-evidence-filter-nav__list">
@@ -403,17 +403,17 @@ export function AivisEvidenceFilterNav({
   );
 }
 
-export interface AivisEvidenceAnchorChipListProps {
-  anchors: AivisEvidenceAnchor[];
+export interface EvidenceWorkbenchAnchorChipListProps {
+  anchors: EvidenceWorkbenchAnchor[];
   ariaLabel: string;
   emptyMessage?: ReactNode;
 }
 
-export function AivisEvidenceAnchorChipList({
+export function EvidenceWorkbenchAnchorChipList({
   anchors,
   ariaLabel,
   emptyMessage
-}: AivisEvidenceAnchorChipListProps) {
+}: EvidenceWorkbenchAnchorChipListProps) {
   if (anchors.length === 0) {
     return emptyMessage ? <p className="aivis-evidence-note">{emptyMessage}</p> : null;
   }
@@ -430,15 +430,15 @@ export function AivisEvidenceAnchorChipList({
   );
 }
 
-export interface AivisEvidenceWarningGroupProps {
+export interface EvidenceWorkbenchWarningGroupProps {
   label: ReactNode;
-  warnings: AivisEvidenceWarning[];
+  warnings: EvidenceWorkbenchWarning[];
 }
 
-export function AivisEvidenceWarningGroup({
+export function EvidenceWorkbenchWarningGroup({
   label,
   warnings
-}: AivisEvidenceWarningGroupProps) {
+}: EvidenceWorkbenchWarningGroupProps) {
   if (warnings.length === 0) {
     return null;
   }
@@ -446,7 +446,7 @@ export function AivisEvidenceWarningGroup({
   return (
     <section aria-label={typeof label === "string" ? label : undefined} className="aivis-evidence-warning-group">
       <p className="aivis-evidence-warning-group__heading">{label}</p>
-      <AivisEvidenceWarningList warnings={warnings} />
+      <EvidenceWorkbenchWarningList warnings={warnings} />
     </section>
   );
 }

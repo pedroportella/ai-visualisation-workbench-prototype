@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import { formatStateLabel, statusTone } from "@aivis/utils";
-import { AivisEvidenceStatus } from "../AivisEvidence";
+import { EvidenceWorkbenchStatus } from "../EvidenceWorkbenchAdapters";
 import type { EvidenceWorkbenchView } from "../../shared/routeModel";
 
 interface EvidenceWorkbenchTaskHeaderProps {
@@ -32,18 +32,18 @@ export function EvidenceWorkbenchTaskHeader({
         aria-label="Review task state"
         className="workbench-task-header__status"
       >
-        <AivisEvidenceStatus tone={statusTone(review.status)}>
+        <EvidenceWorkbenchStatus tone={statusTone(review.status)}>
           {review.status}
-        </AivisEvidenceStatus>
-        <AivisEvidenceStatus
+        </EvidenceWorkbenchStatus>
+        <EvidenceWorkbenchStatus
           aria-label={`${blockerCount} approval ${blockerCount === 1 ? "blocker" : "blockers"}`}
           tone={blockerCount > 0 ? "warning" : "success"}
         >
           {blockerCount} {blockerCount === 1 ? "blocker" : "blockers"}
-        </AivisEvidenceStatus>
-        <AivisEvidenceStatus tone={review.copyState === "enabled" ? "success" : "warning"}>
+        </EvidenceWorkbenchStatus>
+        <EvidenceWorkbenchStatus tone={review.copyState === "enabled" ? "success" : "warning"}>
           Copy {formatStateLabel(review.copyState)}
-        </AivisEvidenceStatus>
+        </EvidenceWorkbenchStatus>
       </div>
     </header>
   );

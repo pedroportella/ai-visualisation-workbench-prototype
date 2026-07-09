@@ -11,11 +11,11 @@ import type {
   EvidenceWorkbenchSourceWarning
 } from "@aivis/services";
 import {
-  AivisEvidencePanelHeader,
-  AivisEvidenceStatus,
-  AivisEvidenceWarningGroup,
-  AivisEvidenceWarningList
-} from "../../evidence/AivisEvidence";
+  EvidenceWorkbenchPanelHeader,
+  EvidenceWorkbenchStatus,
+  EvidenceWorkbenchWarningGroup,
+  EvidenceWorkbenchWarningList
+} from "../../evidence/EvidenceWorkbenchAdapters";
 
 interface SourcesSelectedSourceInspectorProps {
   selectedClaim?: EvidenceWorkbenchClaim;
@@ -37,7 +37,7 @@ export function SourcesSelectedSourceInspector({
 
   return (
     <div className="evidence-workbench-source-inspector" id="selected-claim-sources">
-      <AivisEvidencePanelHeader
+      <EvidenceWorkbenchPanelHeader
         label="Selected source inspector"
         status={`${focusedSources.length} linked source${focusedSources.length === 1 ? "" : "s"}`}
         statusTone={focusedSources.some((source) => sourceStatusTone(source.status) === "warning") ? "warning" : "success"}
@@ -55,9 +55,9 @@ export function SourcesSelectedSourceInspector({
         <p className="evidence-workbench-source-inspector__eyebrow">Selected claim</p>
         {selectedClaim ? <p>{selectedClaim.text}</p> : null}
         {selectedClaim?.status ? (
-          <AivisEvidenceStatus tone={/missing|stale|weak|partial/i.test(selectedClaim.status) ? "warning" : "success"}>
+          <EvidenceWorkbenchStatus tone={/missing|stale|weak|partial/i.test(selectedClaim.status) ? "warning" : "success"}>
             {selectedClaim.status}
-          </AivisEvidenceStatus>
+          </EvidenceWorkbenchStatus>
         ) : null}
       </QhdsCard>
 
@@ -76,9 +76,9 @@ export function SourcesSelectedSourceInspector({
                 >
                   {source.id}
                 </a>
-                <AivisEvidenceStatus tone={sourceStatusTone(source.status)}>
+                <EvidenceWorkbenchStatus tone={sourceStatusTone(source.status)}>
                   {source.status}
-                </AivisEvidenceStatus>
+                </EvidenceWorkbenchStatus>
               </li>
             ))}
           </ul>
@@ -93,7 +93,7 @@ export function SourcesSelectedSourceInspector({
           className="evidence-workbench-source-inspector__top-warning"
         >
           <h4>Top selected-source blocker</h4>
-          <AivisEvidenceWarningList
+          <EvidenceWorkbenchWarningList
             ariaLabel="Top selected-source blocker detail"
             warnings={[
               {
@@ -135,11 +135,11 @@ export function SourcesSelectedSourceInspector({
                     {source.id}
                   </a>
                 </h5>
-                <AivisEvidenceWarningGroup
+                <EvidenceWorkbenchWarningGroup
                   label="Direct source warning"
                   warnings={source.directWarnings.map(inspectorWarning)}
                 />
-                <AivisEvidenceWarningGroup
+                <EvidenceWorkbenchWarningGroup
                   label="Citation or claim warning"
                   warnings={source.relationshipWarnings.map(inspectorWarning)}
                 />

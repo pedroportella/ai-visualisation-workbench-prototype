@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
-import { AivisEvidenceContextAnchors } from "../../evidence/AivisEvidence";
+import { EvidenceWorkbenchContextAnchors } from "../../evidence/EvidenceWorkbenchAdapters";
 
 export function SourcesScenarioContext({
   data
@@ -9,7 +9,7 @@ export function SourcesScenarioContext({
   return (
     <div className="evidence-workbench-scenario-context">
       <h3>{data.context.title}</h3>
-      <AivisEvidenceContextAnchors
+      <EvidenceWorkbenchContextAnchors
         anchorSummary="Place labels only; they are not treated as evidence sources."
         anchors={data.context.anchors.map((anchor) => ({
           description: anchor.supportingText,
