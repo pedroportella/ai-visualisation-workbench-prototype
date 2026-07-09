@@ -1,10 +1,8 @@
 import type { ReactElement } from "react";
 
-import {
-  AivisEvidenceStatus,
-  QhdsSummaryList
-} from "@aivis/ui-library";
+import { QhdsSummaryList } from "@aivis/ui-library";
 
+import { AivisEvidenceStatus } from "../../evidence/AivisEvidence";
 import { REVIEW_ROUTE } from "../../shared/routeModel";
 import type {
   ReviewActionTarget,

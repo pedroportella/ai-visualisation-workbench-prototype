@@ -1,12 +1,10 @@
 import type { ReactElement } from "react";
 
-import {
-  AivisEvidenceClaimCard,
-  QhdsContentSection
-} from "@aivis/ui-library";
+import { QhdsContentSection } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
-import { statusTone } from "../../shared/viewFormatters";
+import { statusTone } from "@aivis/utils";
+import { AivisEvidenceClaimCard } from "../../evidence/AivisEvidence";
 
 interface ReviewClaimsSupportProps {
   asPanel?: boolean;

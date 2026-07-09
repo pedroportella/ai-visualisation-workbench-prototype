@@ -7,7 +7,7 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 const nextConfig = {
   output: "standalone",
   outputFileTracingRoot: repoRoot,
-  transpilePackages: ["@aivis/ui-assets", "@aivis/ui-library", "@aivis/ui-tokens"]
+  transpilePackages: ["@aivis/ui-assets", "@aivis/ui-library", "@aivis/ui-tokens", "@aivis/utils"]
 };
 
 export default nextConfig;

@@ -55,11 +55,11 @@ const styles = [
     "utf8"
   ),
   readFileSync(
-    join(componentDirectory, "../../overview/OverviewWorkspace/OverviewWorkspace.scss"),
+    join(componentDirectory, "../AivisEvidence/AivisEvidence.scss"),
     "utf8"
   ),
   readFileSync(
-    join(componentDirectory, "../../overview/OverviewTaskLauncher/OverviewTaskLauncher.scss"),
+    join(componentDirectory, "../../overview/OverviewWorkspace/OverviewWorkspace.scss"),
     "utf8"
   ),
   readFileSync(
@@ -545,10 +545,14 @@ describe("EvidenceWorkbenchClient", () => {
   });
 
   it("scopes answer content to a readable tokenized work surface", () => {
+    const dataStateStart = styles.indexOf(".evidence-workbench-data-state");
+    const evidenceAdapterStart = styles.indexOf("\n.aivis-evidence-panel-header {", dataStateStart);
+    const evidenceAdapterEnd = styles.indexOf(".evidence-workbench-overview", evidenceAdapterStart);
     const dataStateStyles = styles.slice(
-      styles.indexOf(".evidence-workbench-data-state"),
-      styles.indexOf(".evidence-workbench-overview")
+      dataStateStart,
+      evidenceAdapterStart
     );
+    const workbenchLayoutStyles = `${styles.slice(0, evidenceAdapterStart)}${styles.slice(evidenceAdapterEnd)}`;
 
     expect(styles).toContain("background: var(--aivis-color-panel-surface);");
     expect(styles).toContain(".aivis-app-shell .qhds-layout__main-section-body .qhds-content-section");
@@ -634,8 +638,8 @@ describe("EvidenceWorkbenchClient", () => {
     expect(styles).toContain("max-width: 100%;");
     expect(styles).toContain("data-node-tone=\"warning\"");
     expect(styles).not.toContain("workbench-view-intro");
-    expect(styles).not.toContain("border-left");
-    expect(styles).not.toContain("border-inline-start");
+    expect(workbenchLayoutStyles).not.toContain("border-left");
+    expect(workbenchLayoutStyles).not.toContain("border-inline-start");
     expect(styles).not.toMatch(/#[0-9a-fA-F]{3,8}|rgb\(|rgba\(/);
   });
 });

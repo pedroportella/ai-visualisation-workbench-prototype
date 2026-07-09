@@ -1,14 +1,12 @@
 import type { ReactElement } from "react";
 
-import {
-  AivisEvidencePanelHeader,
-  QhdsButton
-} from "@aivis/ui-library";
+import { QhdsButton } from "@aivis/ui-library";
 
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceFilter
 } from "@aivis/services";
+import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
 import { SourcesInventoryTable } from "./SourcesInventoryTable";
 import {
   hasApprovalBlocker,

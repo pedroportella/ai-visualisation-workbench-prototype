@@ -28,7 +28,7 @@ import {
 } from "./index";
 
 describe("ui-library public exports", () => {
-  it("exports app-facing layout and core components", () => {
+  it("exports adapter public layout and core components", () => {
     expect(QhdsButton).toBeTypeOf("function");
     expect(QhdsCard).toBeTypeOf("function");
     expect(QhdsCategorizedFileUpload).toBeTypeOf("function");
@@ -47,7 +47,7 @@ describe("ui-library public exports", () => {
     expect(QhdsSummaryList).toBeTypeOf("function");
   });
 
-  it("exports app-facing form components", () => {
+  it("exports adapter public form components", () => {
     expect(QhdsCheckbox).toBeTypeOf("function");
     expect(QhdsCheckboxGroup).toBeTypeOf("function");
     expect(QhdsFormField).toBeTypeOf("function");

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
+import { refreshStateLabel } from "@aivis/utils";
 import {
   useEvidenceWorkbenchReviewActionMutation,
   useEvidenceWorkbenchViewModel
@@ -18,10 +19,7 @@ import {
   createInitialReviewDecisionState,
   reviewDecisionReducer
 } from "../../state/reviewDecisionState";
-import {
-  refreshStateLabel,
-  summaryMap
-} from "../../shared/viewFormatters";
+import { summaryMap } from "../../shared/viewFormatters";
 import { OverviewWorkspace } from "../../overview/OverviewWorkspace";
 import { ReviewWorkspace } from "../../review/ReviewWorkspace";
 import {

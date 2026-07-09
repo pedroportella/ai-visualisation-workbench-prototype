@@ -1,10 +1,6 @@
 import type { ReactElement } from "react";
 
 import {
-  AivisEvidencePanelHeader,
-  AivisEvidenceStatus,
-  AivisEvidenceWarningGroup,
-  AivisEvidenceWarningList,
   QhdsButton,
   QhdsCard
 } from "@aivis/ui-library";
@@ -14,6 +10,12 @@ import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
 } from "@aivis/services";
+import {
+  AivisEvidencePanelHeader,
+  AivisEvidenceStatus,
+  AivisEvidenceWarningGroup,
+  AivisEvidenceWarningList
+} from "../../evidence/AivisEvidence";
 
 interface SourcesSelectedSourceInspectorProps {
   selectedClaim?: EvidenceWorkbenchClaim;

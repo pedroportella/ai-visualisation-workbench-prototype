@@ -1,12 +1,10 @@
 import type { ReactElement, ReactNode } from "react";
 
-import {
-  AivisEvidencePanelHeader,
-  QhdsAccordion
-} from "@aivis/ui-library";
+import { QhdsAccordion } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
 import { AnswerMarkdown } from "../../answer/AnswerMarkdownRenderer";
+import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
 import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";

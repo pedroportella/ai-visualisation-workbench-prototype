@@ -1,5 +1,4 @@
 export * from "./components/QhdsAccordion";
-export * from "./components/AivisEvidence";
 export * from "./components/QhdsButton";
 export * from "./components/QhdsCard";
 export * from "./components/QhdsCategorizedFileUpload";

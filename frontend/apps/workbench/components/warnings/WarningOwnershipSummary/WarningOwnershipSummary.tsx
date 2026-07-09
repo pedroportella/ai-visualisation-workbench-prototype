@@ -1,15 +1,15 @@
 import type { ReactElement } from "react";
 
-import {
-  AivisEvidenceStatus,
-  AivisEvidenceWarningList,
-  QhdsAccordion
-} from "@aivis/ui-library";
+import { QhdsAccordion } from "@aivis/ui-library";
 
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchWarning
 } from "@aivis/services";
+import {
+  AivisEvidenceStatus,
+  AivisEvidenceWarningList
+} from "../../evidence/AivisEvidence";
 import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 
 interface WarningOwnershipSectionProps {

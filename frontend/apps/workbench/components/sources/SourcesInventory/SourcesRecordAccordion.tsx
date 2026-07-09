@@ -2,17 +2,17 @@
 
 import { useEffect, type ReactElement } from "react";
 
-import {
-  AivisEvidenceAnchorChipList,
-  AivisEvidenceStatus,
-  AivisEvidenceTokenList,
-  QhdsAccordion
-} from "@aivis/ui-library";
+import { QhdsAccordion } from "@aivis/ui-library";
 
 import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
 } from "@aivis/services";
+import {
+  AivisEvidenceAnchorChipList,
+  AivisEvidenceStatus,
+  AivisEvidenceTokenList
+} from "../../evidence/AivisEvidence";
 import {
   hasApprovalBlocker,
   sourceAccordionItemId,

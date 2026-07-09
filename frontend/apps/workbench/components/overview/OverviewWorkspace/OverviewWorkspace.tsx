@@ -1,8 +1,6 @@
 import type { ReactElement } from "react";
 
 import {
-  AivisEvidenceStatus,
-  AivisEvidenceWarningList,
   QhdsButton,
   QhdsCard,
   QhdsContentSection,
@@ -10,8 +8,12 @@ import {
 } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
+import { formatStateLabel, statusTone } from "@aivis/utils";
+import {
+  AivisEvidenceStatus,
+  AivisEvidenceWarningList
+} from "../../evidence/AivisEvidence";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
-import { formatStateLabel, statusTone } from "../../shared/viewFormatters";
 import {
   AUDIT_ROUTE,
   PROCESS_ROUTE,

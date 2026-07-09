@@ -1,9 +1,9 @@
 import type { ReactElement } from "react";
-import { AivisEvidenceStatus } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
+import { formatStateLabel, statusTone } from "@aivis/utils";
+import { AivisEvidenceStatus } from "../AivisEvidence";
 import type { EvidenceWorkbenchView } from "../../shared/routeModel";
-import { formatStateLabel, statusTone } from "../../shared/viewFormatters";
 
 interface EvidenceWorkbenchTaskHeaderProps {
   activeView: EvidenceWorkbenchView;

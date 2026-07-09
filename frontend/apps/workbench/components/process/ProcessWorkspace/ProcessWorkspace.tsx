@@ -1,11 +1,9 @@
 import type { ReactElement } from "react";
 
-import {
-  AivisEvidencePanelHeader,
-  QhdsContentSection
-} from "@aivis/ui-library";
+import { QhdsContentSection } from "@aivis/ui-library";
 
 import type { EvidenceWorkbenchViewModel } from "@aivis/services";
+import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
 import { ProcessEvidenceMap } from "../ProcessEvidenceMap";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import {

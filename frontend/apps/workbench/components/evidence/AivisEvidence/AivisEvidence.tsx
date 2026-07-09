@@ -1,9 +1,11 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-import { QhdsButton } from "../QhdsButton";
-import { QhdsCard } from "../QhdsCard";
-import { QhdsSummaryList, type QhdsSummaryListItem } from "../QhdsSummaryList";
-import "./AivisEvidence.scss";
+import {
+  QhdsButton,
+  QhdsCard,
+  QhdsSummaryList,
+  type QhdsSummaryListItem
+} from "@aivis/ui-library";
 
 export type AivisEvidenceTone = "neutral" | "success" | "warning";
 

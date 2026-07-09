@@ -1,11 +1,11 @@
 import type { ReactElement } from "react";
 
 import {
-  AivisEvidencePanelHeader,
   QhdsButton,
   QhdsContentSection
 } from "@aivis/ui-library";
 
+import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
 import type { ReviewDecisionState } from "../../state/reviewDecisionState";
 import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
 

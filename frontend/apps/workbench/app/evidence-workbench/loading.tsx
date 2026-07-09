@@ -1,4 +1,4 @@
-import { AivisEvidenceStatus } from "@aivis/ui-library";
+import { AivisEvidenceStatus } from "../../components/evidence/AivisEvidence";
 
 export default function EvidenceWorkbenchLoading() {
   return (

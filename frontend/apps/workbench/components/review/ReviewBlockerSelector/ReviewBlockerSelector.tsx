@@ -1,12 +1,12 @@
 import type { ReactElement } from "react";
 
 import {
-  AivisEvidenceStatus,
   QhdsAccordion,
   QhdsRadioGroup,
   QhdsSummaryList
 } from "@aivis/ui-library";
 
+import { AivisEvidenceStatus } from "../../evidence/AivisEvidence";
 import { SOURCE_INVENTORY_ROUTE } from "../../shared/routeModel";
 import type { SourceBlockerIssue } from "../../sources/SourcesBlockerTarget";
 

@@ -2,13 +2,11 @@
 
 import { useId, useState, type ChangeEvent } from "react";
 import {
-  AivisEvidenceStatus,
   QhdsAccordion,
   QhdsButton,
   QhdsRadioGroup,
   QhdsSummaryList,
-  QhdsTextarea,
-  type AivisEvidenceTone
+  QhdsTextarea
 } from "@aivis/ui-library";
 
 import {
@@ -17,6 +15,11 @@ import {
   PRIMARY_REVIEWER_NOTE
 } from "@aivis/services";
 import type { EvidenceWorkbenchReviewAction } from "@aivis/services";
+import { formatStateLabel } from "@aivis/utils";
+import {
+  AivisEvidenceStatus,
+  type AivisEvidenceTone
+} from "../../evidence/AivisEvidence";
 import {
   getReviewActionAvailability,
   type ReviewActionAvailability,
@@ -431,14 +434,6 @@ function actionReason(
 
 function reviewStatusTone(statusId: string): AivisEvidenceTone {
   return statusId === "reviewed" ? "success" : "warning";
-}
-
-function formatStateLabel(value: string): string {
-  return value
-    .split("_")
-    .filter(Boolean)
-    .map((word) => `${word[0]?.toUpperCase() ?? ""}${word.slice(1)}`)
-    .join(" ");
 }
 
 function formatList(values: string[]): string {

@@ -1,7 +1,6 @@
 import type { ReactElement } from "react";
 
 import {
-  AivisEvidencePanelHeader,
   QhdsDirectionLink,
   QhdsRadioGroup,
   QhdsSummaryList,
@@ -14,6 +13,7 @@ import type {
   EvidenceWorkbenchSource,
   EvidenceWorkbenchSourceWarning
 } from "@aivis/services";
+import { AivisEvidencePanelHeader } from "../../evidence/AivisEvidence";
 import type { ReviewActionTarget } from "../../state/reviewDecisionState";
 
 export interface SourceBlockerIssue extends ReviewActionTarget {
