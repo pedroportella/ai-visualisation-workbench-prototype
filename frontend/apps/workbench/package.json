@@ -18,7 +18,7 @@
     "@aivis/utils": "workspace:*",
     "@tanstack/react-query": "^5.101.2",
     "@xyflow/react": "^12.11.1",
-    "next": "16.2.9",
+    "next": "16.2.12",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "server-only": "^0.0.1"

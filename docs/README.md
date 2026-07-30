@@ -97,6 +97,9 @@ Not claimed:
 
 ## Decisions And Release Readiness
 
+- [DigitalOcean review deployment](digitalocean-deployment.md): short-lived
+  public reviewer runtime with a public workbench and private deterministic
+  fixture backend.
 - [AWS release readiness](aws-release-readiness.md): planned short AWS review
   release boundary, local gates, evidence model and teardown posture. This is
   readiness documentation only, not live AWS proof.

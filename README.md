@@ -148,6 +148,10 @@ review actions and repeatable no-screenshot verification.
 
 ## Release Readiness
 
+See [DigitalOcean review deployment](docs/digitalocean-deployment.md) for the
+short-lived public review runtime with a public workbench and private
+deterministic fixture backend.
+
 See [AWS release readiness](docs/aws-release-readiness.md) for the planned
 short review-release boundary. No live AWS deployment has been run for this
 repository.
