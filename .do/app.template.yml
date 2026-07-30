@@ -21,7 +21,7 @@ services:
     git:
       repo_clone_url: https://github.com/pedroportella/ai-visualisation-workbench-prototype.git
       branch: main
-    source_dir: /
+    source_dir: backend
     dockerfile_path: backend/Dockerfile
     internal_ports:
       - 8000
