@@ -4,6 +4,14 @@ This is the public reviewer handover for the AI Visualisation Workbench
 prototype. It is designed for a quick local review of the Evidence Workbench,
 the synthetic evidence story and the checks that keep the public claims honest.
 
+## Live Review
+
+[Open the temporary AI Visualisation Workbench review demo](https://aivis-evidence-workbench-review-qbd9o.ondigitalocean.app/)
+
+The public workbench uses a private deterministic fixture backend and synthetic
+review content. The temporary link is review infrastructure, not an official
+TMR environment or a production hosting claim.
+
 ## What This Demonstrates
 
 - A reviewer-facing workbench for inspecting one AI-generated service-guidance

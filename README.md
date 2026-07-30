@@ -9,6 +9,15 @@ reviewer decide whether an AI-generated service-guidance answer is safe to use
 by showing the answer, supporting sources, evidence gaps, process path,
 warnings and local review actions in one place.
 
+## Live Review
+
+[Open the AI Visualisation Workbench review demo](https://aivis-evidence-workbench-review-qbd9o.ondigitalocean.app/)
+
+The temporary DigitalOcean environment runs the public workbench against its
+private deterministic fixture backend. It uses synthetic review content and is
+not an official TMR environment or a production hosting claim. The link should
+be removed after the hiring review period.
+
 ## Five-Minute Review
 
 From the repository root:

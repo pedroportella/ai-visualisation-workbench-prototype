@@ -21,6 +21,12 @@ The App Platform specification deploys two services in one app:
 The backend review action uses process-local state. Restarting or redeploying
 the backend restores the initial fixture state.
 
+## Current Review Link
+
+[Open the AI Visualisation Workbench review demo](https://aivis-evidence-workbench-review-qbd9o.ondigitalocean.app/)
+
+The URL is temporary and should be removed after the hiring review period.
+
 ## Deploy
 
 The App Platform specification is
